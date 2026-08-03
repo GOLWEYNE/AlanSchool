@@ -1,0 +1,25 @@
+services:
+  postgres:
+    image: postgres:15
+    container_name: postgres_db
+    environment:
+      POSTGRES_USER: alan
+      POSTGRES_PASSWORD: alan123456
+      POSTGRES_DB: school
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  app:
+    build: .
+    container_name: nextjs_app
+    ports:
+      - '3000:3000'
+    environment:
+      DATABASE_URL: postgresql://alan:alan123456@postgres:5432/school?schema=public
+    depends_on:
+      - postgres
+
+volumes:
+  postgres_data:
