@@ -6,8 +6,10 @@ import prisma from "@/lib/prisma";
 import { ITEM_PER_PAGE } from "@/lib/settings";
 import { Parent, Prisma, Student } from "@/generated/prisma/client";
 import Image from "next/image";
+import Link from "next/link";
 
 import { auth } from "@clerk/nextjs/server";
+import { getUserRole } from "@/lib/auth";
 
 type ParentList = Parent & { students: Student[] };
 
@@ -18,7 +20,7 @@ const ParentListPage = async ({
 }) => {
 
 const { sessionClaims } = auth();
-const role = (sessionClaims?.metadata as { role?: string })?.role;
+const role = getUserRole(sessionClaims);
 
 
 const columns = [
@@ -69,6 +71,11 @@ const renderRow = (item: ParentList) => (
     <td className="hidden md:table-cell">{item.address}</td>
     <td>
       <div className="flex items-center gap-2">
+        <Link href={`/dashboard/list/parents/${item.id}`}>
+          <button className="circle-icon-btn">
+            <Image src="/view.png" alt="" width={16} height={16} />
+          </button>
+        </Link>
         {role === "admin" && (
           <>
             <FormContainer table="parent" type="update" data={item} />
@@ -115,17 +122,17 @@ const renderRow = (item: ParentList) => (
   ]);
 
   return (
-    <div className="bg-white p-4 rounded-md flex-1 m-4 mt-0">
+    <div className="panel-card p-4 md:p-5 rounded-md flex-1 m-4 mt-0 shine-hover">
       {/* TOP */}
       <div className="flex items-center justify-between">
-        <h1 className="hidden md:block text-lg font-semibold">All Parents</h1>
+        <h1 className="hidden md:block text-lg font-semibold text-blue-900">All Parents</h1>
         <div className="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
           <TableSearch />
           <div className="flex items-center gap-4 self-end">
-            <button className="w-8 h-8 flex items-center justify-center rounded-full bg-lamaYellow">
+            <button className="circle-icon-btn">
               <Image src="/filter.png" alt="" width={14} height={14} />
             </button>
-            <button className="w-8 h-8 flex items-center justify-center rounded-full bg-lamaYellow">
+            <button className="circle-icon-btn">
               <Image src="/sort.png" alt="" width={14} height={14} />
             </button>
             {role === "admin" && <FormContainer table="parent" type="create" />}

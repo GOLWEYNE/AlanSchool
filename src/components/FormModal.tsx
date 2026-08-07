@@ -1,8 +1,13 @@
 "use client";
 
 import {
+  deleteAnnouncement,
+  deleteAssignment,
   deleteClass,
   deleteExam,
+  deleteEvent,
+  deleteParent,
+  deleteResult,
   deleteStudent,
   deleteSubject,
   deleteTeacher,
@@ -15,20 +20,26 @@ import { useFormState } from "react-dom";
 import { toast } from "react-toastify";
 import { FormContainerProps } from "./FormContainer";
 
-const deleteActionMap = {
+type TableName = FormContainerProps["table"];
+type DeleteAction = typeof deleteSubject;
+type FormRenderer = (
+  setOpen: Dispatch<SetStateAction<boolean>>,
+  type: "create" | "update",
+  data?: any,
+  relatedData?: any
+) => JSX.Element;
+
+const deleteActionMap: Partial<Record<TableName, DeleteAction>> = {
   subject: deleteSubject,
   class: deleteClass,
   teacher: deleteTeacher,
   student: deleteStudent,
   exam: deleteExam,
-// TODO: OTHER DELETE ACTIONS
-  parent: deleteSubject,
-  lesson: deleteSubject,
-  assignment: deleteSubject,
-  result: deleteSubject,
-  attendance: deleteSubject,
-  event: deleteSubject,
-  announcement: deleteSubject,
+  parent: deleteParent,
+  assignment: deleteAssignment,
+  result: deleteResult,
+  event: deleteEvent,
+  announcement: deleteAnnouncement,
 };
 
 // USE LAZY LOADING
@@ -51,16 +62,23 @@ const ClassForm = dynamic(() => import("./forms/ClassForm"), {
 const ExamForm = dynamic(() => import("./forms/ExamForm"), {
   loading: () => <h1>Loading...</h1>,
 });
-// TODO: OTHER FORMS
+const ParentForm = dynamic(() => import("./forms/ParentForm"), {
+  loading: () => <h1>Loading...</h1>,
+});
+const AssignmentForm = dynamic(() => import("./forms/AssignmentForm"), {
+  loading: () => <h1>Loading...</h1>,
+});
+const ResultForm = dynamic(() => import("./forms/ResultForm"), {
+  loading: () => <h1>Loading...</h1>,
+});
+const EventForm = dynamic(() => import("./forms/EventForm"), {
+  loading: () => <h1>Loading...</h1>,
+});
+const AnnouncementForm = dynamic(() => import("./forms/AnnouncementForm"), {
+  loading: () => <h1>Loading...</h1>,
+});
 
-const forms: {
-  [key: string]: (
-    setOpen: Dispatch<SetStateAction<boolean>>,
-    type: "create" | "update",
-    data?: any,
-    relatedData?: any
-  ) => JSX.Element;
-} = {
+const forms: Partial<Record<TableName, FormRenderer>> = {
   subject: (setOpen, type, data, relatedData) => (
     <SubjectForm
       type={type}
@@ -100,7 +118,41 @@ const forms: {
       setOpen={setOpen}
       relatedData={relatedData}
     />
-    // TODO OTHER LIST ITEMS
+  ),
+  parent: (setOpen, type, data) => (
+    <ParentForm type={type} data={data} setOpen={setOpen} />
+  ),
+  assignment: (setOpen, type, data, relatedData) => (
+    <AssignmentForm
+      type={type}
+      data={data}
+      setOpen={setOpen}
+      relatedData={relatedData}
+    />
+  ),
+  result: (setOpen, type, data, relatedData) => (
+    <ResultForm
+      type={type}
+      data={data}
+      setOpen={setOpen}
+      relatedData={relatedData}
+    />
+  ),
+  event: (setOpen, type, data, relatedData) => (
+    <EventForm
+      type={type}
+      data={data}
+      setOpen={setOpen}
+      relatedData={relatedData}
+    />
+  ),
+  announcement: (setOpen, type, data, relatedData) => (
+    <AnnouncementForm
+      type={type}
+      data={data}
+      setOpen={setOpen}
+      relatedData={relatedData}
+    />
   ),
 };
 
@@ -111,6 +163,8 @@ const FormModal = ({
   id,
   relatedData,
 }: FormContainerProps & { relatedData?: any }) => {
+  const [open, setOpen] = useState(false);
+
   const size = type === "create" ? "w-8 h-8" : "w-7 h-7";
   const bgColor =
     type === "create"
@@ -118,11 +172,13 @@ const FormModal = ({
       : type === "update"
       ? "bg-lamaSky"
       : "bg-lamaPurple";
+  const deleteAction = deleteActionMap[table];
+  const selectedForm = forms[table];
 
-  const [open, setOpen] = useState(false);
+  const hasForm = type === "delete" ? !!deleteAction : !!selectedForm;
 
   const Form = () => {
-    const [state, formAction] = useFormState(deleteActionMap[table], {
+    const [state, formAction] = useFormState(deleteAction || deleteSubject, {
       success: false,
       error: false,
     });
@@ -148,7 +204,7 @@ const FormModal = ({
         </button>
       </form>
     ) : type === "create" || type === "update" ? (
-      forms[table](setOpen, type, data, relatedData)
+      selectedForm ? selectedForm(setOpen, type, data, relatedData) : "Form not found!"
     ) : (
       "Form not found!"
     );
@@ -157,10 +213,16 @@ const FormModal = ({
   return (
     <>
       <button
-        className={`${size} flex items-center justify-center rounded-full ${bgColor}`}
+        disabled={!hasForm}
+        className={`${size} flex items-center justify-center rounded-full ${bgColor} hover:shadow-lg transition-shadow`}
         onClick={() => setOpen(true)}
+        title={`${type.charAt(0).toUpperCase() + type.slice(1)} ${type === "create" ? "new" : ""}`}
       >
-        <Image src={`/${type}.png`} alt="" width={16} height={16} />
+        {type === "create" ? (
+          <span className="text-white font-bold text-lg">+</span>
+        ) : (
+          <Image src={`/${type}.png`} alt="" width={16} height={16} />
+        )}
       </button>
       {open && (
         <div className="w-screen h-screen absolute left-0 top-0 bg-black bg-opacity-60 z-50 flex items-center justify-center">

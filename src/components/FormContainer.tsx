@@ -1,6 +1,7 @@
 import prisma from "@/lib/prisma";
 import FormModal from "./FormModal";
-import { auth } from "@clerk/nextjs/server";
+import { auth, currentUser } from "@clerk/nextjs/server";
+import { getUserRole } from "@/lib/auth";
 
 export type FormContainerProps = {
   table:
@@ -24,9 +25,34 @@ export type FormContainerProps = {
 const FormContainer = async ({ table, type, data, id }: FormContainerProps) => {
   let relatedData = {};
 
+  const user = await currentUser();
   const { userId, sessionClaims } = auth();
-  const role = (sessionClaims?.metadata as { role?: string })?.role;
+  const role = getUserRole(
+    sessionClaims,
+    ((user?.publicMetadata as { role?: string } | undefined)?.role ?? "") as string
+  );
   const currentUserId = userId;
+
+  // Centralized permission guard for all create/update/delete modals.
+  if (role === "student" || role === "parent") {
+    return null;
+  }
+
+  if (role === "teacher") {
+    const teacherEditableTables = ["exam", "assignment", "result", "subject"];
+    const teacherAllowedTypes = ["create", "update"];
+
+    if (
+      !teacherEditableTables.includes(table) ||
+      !teacherAllowedTypes.includes(type)
+    ) {
+      return null;
+    }
+  }
+
+  if (role !== "admin" && role !== "teacher") {
+    return null;
+  }
 
   if (type !== "delete") {
     switch (table) {
@@ -60,6 +86,9 @@ const FormContainer = async ({ table, type, data, id }: FormContainerProps) => {
         });
         relatedData = { classes: studentClasses, grades: studentGrades };
         break;
+      case "parent":
+        relatedData = {};
+        break;
       case "exam":
         const examLessons = await prisma.lesson.findMany({
           where: {
@@ -68,6 +97,53 @@ const FormContainer = async ({ table, type, data, id }: FormContainerProps) => {
           select: { id: true, name: true },
         });
         relatedData = { lessons: examLessons };
+        break;
+      case "assignment":
+        const assignmentLessons = await prisma.lesson.findMany({
+          where: {
+            ...(role === "teacher" ? { teacherId: currentUserId! } : {}),
+          },
+          select: { id: true, name: true },
+        });
+        relatedData = { lessons: assignmentLessons };
+        break;
+      case "result":
+        const resultStudents = await prisma.student.findMany({
+          select: { id: true, name: true, surname: true },
+        });
+        const resultExams = await prisma.exam.findMany({
+          where: {
+            ...(role === "teacher"
+              ? { lesson: { teacherId: currentUserId! } }
+              : {}),
+          },
+          select: { id: true, title: true },
+        });
+        const resultAssignments = await prisma.assignment.findMany({
+          where: {
+            ...(role === "teacher"
+              ? { lesson: { teacherId: currentUserId! } }
+              : {}),
+          },
+          select: { id: true, title: true },
+        });
+        relatedData = {
+          students: resultStudents,
+          exams: resultExams,
+          assignments: resultAssignments,
+        };
+        break;
+      case "event":
+        const eventClasses = await prisma.class.findMany({
+          select: { id: true, name: true },
+        });
+        relatedData = { classes: eventClasses };
+        break;
+      case "announcement":
+        const announcementClasses = await prisma.class.findMany({
+          select: { id: true, name: true },
+        });
+        relatedData = { classes: announcementClasses };
         break;
 
       default:

@@ -1,9 +1,10 @@
 import Announcements from "@/components/Announcements";
-import BigCalendarContainer from "@/components/BigCalendar";
+import BigCalendarContainer from "@/components/BigCalendarContainer";
 import FormContainer from "@/components/FormContainer";
 import Performance from "@/components/Performance";
 import StudentAttendanceCard from "@/components/StudentAttendanceCard";
 import prisma from "@/lib/prisma";
+import { getUserRole } from "@/lib/auth";
 import { auth } from "@clerk/nextjs/server";
 import Image from "next/image";
 import Link from "next/link";
@@ -17,7 +18,7 @@ const SingleStudentPage = async ({
   params: { id: string };
 }) => {
   const { sessionClaims } = auth();
-  const role = (sessionClaims?.metadata as { role?: string })?.role;
+  const role = getUserRole(sessionClaims);
 
   const student:
     | (Student & {
@@ -44,7 +45,7 @@ const SingleStudentPage = async ({
           <div className="bg-lamaSky py-6 px-4 rounded-md flex-1 flex gap-4">
             <div className="w-1/3">
               <Image
-                src={typeof student.img === "string" && student.img.trim() ? student.img : "/noAvatar.png"}
+                src={typeof student.img === "string" && student.img.trim() ? student.img : "/Alan.png"}
                 alt=""
                 width={144}
                 height={144}
@@ -162,31 +163,31 @@ const SingleStudentPage = async ({
           <div className="mt-4 flex gap-4 flex-wrap text-xs text-gray-500">
             <Link
               className="p-3 rounded-md bg-lamaSkyLight"
-              href={`/list/lessons?classId=${student.class.id}`}
+              href={`/dashboard/list/lessons?classId=${student.class.id}`}
             >
               Student&apos;s Lessons
             </Link>
             <Link
               className="p-3 rounded-md bg-lamaPurpleLight"
-              href={`/list/teachers?classId=${student.class.id}`}
+              href={`/dashboard/list/teachers?classId=${student.class.id}`}
             >
               Student&apos;s Teachers
             </Link>
             <Link
               className="p-3 rounded-md bg-pink-50"
-              href={`/list/exams?classId=${student.class.id}`}
+              href={`/dashboard/list/exams?classId=${student.class.id}`}
             >
               Student&apos;s Exams
             </Link>
             <Link
               className="p-3 rounded-md bg-lamaSkyLight"
-              href={`/list/assignments?classId=${student.class.id}`}
+              href={`/dashboard/list/assignments?classId=${student.class.id}`}
             >
               Student&apos;s Assignments
             </Link>
             <Link
               className="p-3 rounded-md bg-lamaYellowLight"
-              href={`/list/results?studentId=${student.id}`}
+              href={`/dashboard/list/results?studentId=${student.id}`}
             >
               Student&apos;s Results
             </Link>

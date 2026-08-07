@@ -1,34 +1,68 @@
 import { UserButton } from "@clerk/nextjs";
 import { currentUser } from "@clerk/nextjs/server";
 import Image from "next/image";
+import Link from "next/link";
 
 const Navbar = async () => {
   const user = await currentUser();
   return (
-    <div className="flex items-center justify-between p-4">
+    <div className="mx-4 mt-4 panel-card px-4 py-3 flex items-center justify-between">
       {/* SEARCH BAR */}
-      <div className="hidden md:flex items-center gap-2 text-xs rounded-full ring-[1.5px] ring-gray-300 px-2">
+      <div className="hidden md:flex items-center gap-2 text-xs rounded-full border border-blue-200 bg-gradient-to-r from-white to-blue-50 px-3">
         <Image src="/search.png" alt="" width={14} height={14} />
         <input
           type="text"
           placeholder="Search..."
-          className="w-[200px] p-2 bg-transparent outline-none"
+          className="w-[220px] p-2 bg-transparent outline-none text-blue-900 placeholder:text-blue-400"
         />
       </div>
       {/* ICONS AND USER */}
       <div className="flex items-center gap-6 justify-end w-full">
-        <div className="bg-white rounded-full w-7 h-7 flex items-center justify-center cursor-pointer">
+        <div className="flex items-center gap-2">
+          <Link
+            href="/dashboard/settings"
+            className="md:hidden circle-icon-btn"
+            aria-label="Open settings"
+            title="Settings"
+          >
+            <Image src="/setting.png" alt="" width={16} height={16} />
+          </Link>
+          <Link
+            href="/dashboard/logout"
+            className="md:hidden circle-icon-btn"
+            aria-label="Log out"
+            title="Logout"
+          >
+            <Image src="/logout.png" alt="" width={16} height={16} />
+          </Link>
+
+          <div className="hidden md:flex items-center gap-2">
+          <Link
+            href="/dashboard/settings"
+            className="text-xs font-semibold text-blue-800 bg-blue-50 border border-blue-200 rounded-full px-3 py-1 hover:bg-blue-100 transition-colors"
+          >
+            Settings
+          </Link>
+          <Link
+            href="/dashboard/logout"
+            className="text-xs font-semibold text-white bg-blue-600 rounded-full px-3 py-1 hover:bg-blue-700 transition-colors"
+          >
+            Logout
+          </Link>
+          </div>
+        </div>
+        <div className="circle-icon-btn cursor-pointer">
           <Image src="/message.png" alt="" width={20} height={20} />
         </div>
-        <div className="bg-white rounded-full w-7 h-7 flex items-center justify-center cursor-pointer relative">
+        <div className="circle-icon-btn cursor-pointer relative">
           <Image src="/announcement.png" alt="" width={20} height={20} />
-          <div className="absolute -top-3 -right-3 w-5 h-5 flex items-center justify-center bg-purple-500 text-white rounded-full text-xs">
+          <div className="absolute -top-3 -right-3 w-5 h-5 flex items-center justify-center bg-blue-600 text-white rounded-full text-xs">
             1
           </div>
         </div>
-        <div className="flex flex-col">
-          <span className="text-xs leading-3 font-medium">AIS</span>
-          <span className="text-[10px] text-gray-500 text-right">
+        <div className="flex flex-col items-end">
+          <span className="text-xs leading-3 font-semibold text-blue-900">AIS</span>
+          <span className="text-[10px] text-blue-700 text-right bg-blue-50 border border-blue-100 rounded-full px-2 py-0.5 mt-1 capitalize">
             {user?.publicMetadata?.role as string}
           </span>
         </div>

@@ -3,24 +3,14 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import InputField from "../InputField";
-import {
-  examSchema,
-  ExamSchema,
-  subjectSchema,
-  SubjectSchema,
-} from "@/lib/formValidationSchemas";
-import {
-  createExam,
-  createSubject,
-  updateExam,
-  updateSubject,
-} from "@/lib/actions";
+import { assignmentSchema, AssignmentSchema } from "@/lib/formValidationSchemas";
+import { createAssignment, updateAssignment } from "@/lib/actions";
 import { useFormState } from "react-dom";
 import { Dispatch, SetStateAction, useEffect } from "react";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 
-const ExamForm = ({
+const AssignmentForm = ({
   type,
   data,
   setOpen,
@@ -35,30 +25,29 @@ const ExamForm = ({
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<ExamSchema>({
-    resolver: zodResolver(examSchema),
+  } = useForm<AssignmentSchema>({
+    resolver: zodResolver(assignmentSchema),
   });
 
-  // AFTER REACT 19 IT'LL BE USEACTIONSTATE
-
   const [state, formAction] = useFormState(
-    type === "create" ? createExam : updateExam,
+    type === "create" ? createAssignment : updateAssignment,
     {
       success: false,
       error: false,
     }
   );
 
-  const onSubmit = handleSubmit((data) => {
-    console.log(data);
-    formAction(data);
+  const onSubmit = handleSubmit((values) => {
+    formAction(values);
   });
 
   const router = useRouter();
 
   useEffect(() => {
     if (state.success) {
-      toast(`Exam has been ${type === "create" ? "created" : "updated"}!`);
+      toast(
+        `Assignment has been ${type === "create" ? "created" : "updated"}!`
+      );
       setOpen(false);
       router.refresh();
     }
@@ -69,12 +58,12 @@ const ExamForm = ({
   return (
     <form className="flex flex-col gap-8" onSubmit={onSubmit}>
       <h1 className="text-xl font-semibold">
-        {type === "create" ? "Create a new exam" : "Update the exam"}
+        {type === "create" ? "Create a new assignment" : "Update the assignment"}
       </h1>
 
       <div className="flex justify-between flex-wrap gap-4">
         <InputField
-          label="Exam title"
+          label="Title"
           name="title"
           defaultValue={data?.title}
           register={register}
@@ -82,26 +71,26 @@ const ExamForm = ({
         />
         <InputField
           label="Start Date"
-          name="startTime"
+          name="startDate"
           defaultValue={
-            data?.startTime
-              ? new Date(data.startTime).toISOString().slice(0, 16)
+            data?.startDate
+              ? new Date(data.startDate).toISOString().slice(0, 16)
               : undefined
           }
           register={register}
-          error={errors?.startTime}
+          error={errors?.startDate}
           type="datetime-local"
         />
         <InputField
-          label="End Date"
-          name="endTime"
+          label="Due Date"
+          name="dueDate"
           defaultValue={
-            data?.endTime
-              ? new Date(data.endTime).toISOString().slice(0, 16)
+            data?.dueDate
+              ? new Date(data.dueDate).toISOString().slice(0, 16)
               : undefined
           }
           register={register}
-          error={errors?.endTime}
+          error={errors?.dueDate}
           type="datetime-local"
         />
         {data && (
@@ -119,7 +108,7 @@ const ExamForm = ({
           <select
             className="ring-[1.5px] ring-gray-300 p-2 rounded-md text-sm w-full"
             {...register("lessonId")}
-            defaultValue={data?.teachers}
+            defaultValue={data?.lessonId}
           >
             {lessons.map((lesson: { id: number; name: string }) => (
               <option value={lesson.id} key={lesson.id}>
@@ -128,15 +117,12 @@ const ExamForm = ({
             ))}
           </select>
           {errors.lessonId?.message && (
-            <p className="text-xs text-red-400">
-              {errors.lessonId.message.toString()}
-            </p>
+            <p className="text-xs text-red-400">{errors.lessonId.message.toString()}</p>
           )}
         </div>
       </div>
-      {state.error && (
-        <span className="text-red-500">Something went wrong!</span>
-      )}
+
+      {state.error && <span className="text-red-500">Something went wrong!</span>}
       <button className="bg-blue-400 text-white p-2 rounded-md">
         {type === "create" ? "Create" : "Update"}
       </button>
@@ -144,4 +130,4 @@ const ExamForm = ({
   );
 };
 
-export default ExamForm;
+export default AssignmentForm;

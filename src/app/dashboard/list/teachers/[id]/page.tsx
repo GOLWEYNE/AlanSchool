@@ -4,6 +4,7 @@ import BigCalendar from "@/components/BigCalendar";
 // FormContainer component removed due to import resolution issues
 import Performance from "@/components/Performance";
 import prisma from "@/lib/prisma";
+import { getUserRole } from "@/lib/auth";
 import { auth } from "@clerk/nextjs/server";
 // Prisma client types may not export a direct 'Teacher' type in this setup
 // Use a local any-typed annotation for the fetched teacher to avoid type errors
@@ -28,8 +29,8 @@ const SingleTeacherPage = async ({
 }: {
   params: { id: string };
 }) => {
-  const { sessionClaims } = auth();
-  const role = (sessionClaims?.metadata as { role?: string })?.role;
+  const { userId, sessionClaims } = auth();
+  const role = getUserRole(sessionClaims);
 
   const teacher: TeacherWithCounts | null = await prisma.teacher.findUnique({
     where: { id },
@@ -57,7 +58,7 @@ const SingleTeacherPage = async ({
           <div className="bg-lamaSky py-6 px-4 rounded-md flex-1 flex gap-4">
             <div className="w-1/3">
               <Image
-                src={typeof teacher.img === "string" && teacher.img.trim() ? teacher.img : "/noAvatar.png"}
+                src={typeof teacher.img === "string" && teacher.img.trim() ? teacher.img : "/Alan.png"}
                 alt=""
                 width={144}
                 height={144}
@@ -69,12 +70,12 @@ const SingleTeacherPage = async ({
                 <h1 className="text-xl font-semibold">
                   {teacher.name + " " + teacher.surname}
                 </h1>
-                {role === "admin" && (
+                {(role === "admin" || (role === "teacher" && userId === teacher.id)) && (
                   <Link
                     href={`/dashboard/edit/teacher/${teacher.id}`}
-                    className="px-3 py-1 text-sm rounded-md bg-lamaPurple text-white"
+                    className="px-3 py-1 text-sm rounded-md bg-lamaPurple hover:bg-purple-700 text-white transition-colors font-semibold"
                   >
-                    Edit
+                    ✏️ Edit
                   </Link>
                 )}
               </div>
@@ -182,31 +183,31 @@ const SingleTeacherPage = async ({
           <div className="mt-4 flex gap-4 flex-wrap text-xs text-gray-500">
            <Link
               className="p-3 rounded-md bg-lamaSkyLight"
-              href={`/list/classes?supervisorId=${teacher.id}`}
+              href={`/dashboard/list/classes?supervisorId=${teacher.id}`}
             >
               Teacher&apos;s Classes
             </Link>
             <Link
               className="p-3 rounded-md bg-lamaPurpleLight"
-              href={`/list/students?teacherId=${teacher.id}`}
+              href={`/dashboard/list/students?teacherId=${teacher.id}`}
             >
               Teacher&apos;s Students
             </Link>
             <Link
               className="p-3 rounded-md bg-lamaYellowLight"
-              href={`/list/lessons?teacherId=${teacher.id}`}
+              href={`/dashboard/list/lessons?teacherId=${teacher.id}`}
             >
               Teacher&apos;s Lessons
             </Link>
             <Link
               className="p-3 rounded-md bg-pink-50"
-              href={`/list/exams?teacherId=${teacher.id}`}
+              href={`/dashboard/list/exams?teacherId=${teacher.id}`}
             >
               Teacher&apos;s Exams
             </Link>
             <Link
               className="p-3 rounded-md bg-lamaSkyLight"
-              href={`/list/assignments?teacherId=${teacher.id}`}
+              href={`/dashboard/list/assignments?teacherId=${teacher.id}`}
             >
               Teacher&apos;s Assignments
             </Link>

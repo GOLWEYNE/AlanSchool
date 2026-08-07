@@ -2,12 +2,14 @@ import FormContainer from "@/components/FormContainer";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
+import PageHero from "@/components/PageHero";
 import prisma from "@/lib/prisma";
 import { Class, Prisma, Subject, Teacher } from "@/generated/prisma/client";
 import Image from "next/image";
 import Link from "next/link";
 import { ITEM_PER_PAGE } from "@/lib/settings";
 import { auth } from "@clerk/nextjs/server";
+import { getUserRole } from "@/lib/auth";
 
 type TeacherList = Teacher & { subjects: Subject[] } & { classes: Class[] };
 
@@ -17,7 +19,7 @@ const TeacherListPage = async ({
   searchParams: { [key: string]: string | undefined };
 }) => {
   const { sessionClaims } = auth();
-  const role = (sessionClaims?.metadata as { role?: string })?.role;
+  const role = getUserRole(sessionClaims);
   const columns = [
     {
       header: "Info",
@@ -65,7 +67,7 @@ const TeacherListPage = async ({
     >
       <td className="flex items-center gap-4 p-4">
         <Image
-          src={item.img || "/noAvatar.png"}
+          src={item.img || "/Alan.png"}
           alt=""
           width={40}
           height={40}
@@ -87,16 +89,16 @@ const TeacherListPage = async ({
       <td className="hidden md:table-cell">{item.address}</td>
       <td>
         <div className="flex items-center gap-2">
-          <Link href={`/list/teachers/${item.id}`}>
-            <button className="w-7 h-7 flex items-center justify-center rounded-full bg-lamaSky">
+          <Link href={`/dashboard/list/teachers/${item.id}`}>
+            <button className="circle-icon-btn">
               <Image src="/view.png" alt="" width={16} height={16} />
             </button>
           </Link>
           {role === "admin" && (
-            // <button className="w-7 h-7 flex items-center justify-center rounded-full bg-lamaPurple">
-            //   <Image src="/delete.png" alt="" width={16} height={16} />
-            // </button>
-            <FormContainer table="teacher" type="delete" id={item.id} />
+            <>
+              <FormContainer table="teacher" type="update" data={item} />
+              <FormContainer table="teacher" type="delete" id={item.id} />
+            </>
           )}
         </div>
       </td>
@@ -145,17 +147,27 @@ const TeacherListPage = async ({
   ]);
 
   return (
-    <div className="bg-white p-4 rounded-md flex-1 m-4 mt-0">
+    <div className="panel-card p-4 md:p-5 rounded-md flex-1 m-4 mt-0 shine-hover">
+      <PageHero
+        title="Teachers"
+        subtitle="Manage profiles, subjects, and class assignments with quick actions."
+        emoji="🧑‍🏫"
+        stats={[
+          { label: "Total Teachers", value: count },
+          { label: "Loaded", value: data.length },
+          { label: "Create Enabled", value: role === "admin" ? "Yes" : "No" },
+        ]}
+      />
       {/* TOP */}
       <div className="flex items-center justify-between">
-        <h1 className="hidden md:block text-lg font-semibold">All Teachers</h1>
+        <h1 className="hidden md:block text-lg font-semibold text-blue-900">All Teachers</h1>
         <div className="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
           <TableSearch />
           <div className="flex items-center gap-4 self-end">
-            <button className="w-8 h-8 flex items-center justify-center rounded-full bg-lamaYellow">
+            <button className="circle-icon-btn">
               <Image src="/filter.png" alt="" width={14} height={14} />
             </button>
-            <button className="w-8 h-8 flex items-center justify-center rounded-full bg-lamaYellow">
+            <button className="circle-icon-btn">
               <Image src="/sort.png" alt="" width={14} height={14} />
             </button>
             {role === "admin" && (

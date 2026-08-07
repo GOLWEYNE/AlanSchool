@@ -2,21 +2,51 @@
 
 import { revalidatePath } from "next/cache";
 import {
+  AnnouncementSchema,
+  AssignmentSchema,
   ClassSchema,
   ExamSchema,
+  EventSchema,
+  ParentSchema,
+  ResultSchema,
   StudentSchema,
   SubjectSchema,
   TeacherSchema,
 } from "./formValidationSchemas";
 import prisma from "./prisma";
 import { clerkClient } from "@clerk/nextjs/server";
+import { auth } from "@clerk/nextjs/server";
+import { getUserRole } from "./auth";
 
 type CurrentState = { success: boolean; error: boolean };
+
+const getCurrentRole = () => {
+  const { sessionClaims } = auth();
+  return getUserRole(sessionClaims);
+};
+
+const isReadOnlyRole = (role: string) => {
+  return role === "student" || role === "parent";
+};
+
+const isAdmin = () => {
+  const role = getCurrentRole();
+  return !isReadOnlyRole(role) && role === "admin";
+};
+
+const isAdminOrTeacher = () => {
+  const role = getCurrentRole();
+  if (isReadOnlyRole(role)) return false;
+  return role === "admin" || role === "teacher";
+};
+
+const rejectUnauthorized = () => ({ success: false, error: true });
 
 export const createSubject = async (
   currentState: CurrentState,
   data: SubjectSchema
 ) => {
+  if (!isAdminOrTeacher()) return rejectUnauthorized();
   try {
     await prisma.subject.create({
       data: {
@@ -39,6 +69,7 @@ export const updateSubject = async (
   currentState: CurrentState,
   data: SubjectSchema
 ) => {
+  if (!isAdminOrTeacher()) return rejectUnauthorized();
   try {
     await prisma.subject.update({
       where: {
@@ -64,6 +95,7 @@ export const deleteSubject = async (
   currentState: CurrentState,
   data: FormData
 ) => {
+  if (!isAdmin()) return rejectUnauthorized();
   const id = data.get("id") as string;
   try {
     await prisma.subject.delete({
@@ -84,6 +116,7 @@ export const createClass = async (
   currentState: CurrentState,
   data: ClassSchema
 ) => {
+  if (!isAdmin()) return rejectUnauthorized();
   try {
     await prisma.class.create({
       data,
@@ -101,6 +134,7 @@ export const updateClass = async (
   currentState: CurrentState,
   data: ClassSchema
 ) => {
+  if (!isAdmin()) return rejectUnauthorized();
   try {
     await prisma.class.update({
       where: {
@@ -121,6 +155,7 @@ export const deleteClass = async (
   currentState: CurrentState,
   data: FormData
 ) => {
+  if (!isAdmin()) return rejectUnauthorized();
   const id = data.get("id") as string;
   try {
     await prisma.class.delete({
@@ -141,6 +176,7 @@ export const createTeacher = async (
   currentState: CurrentState,
   data: TeacherSchema
 ) => {
+  if (!isAdmin()) return rejectUnauthorized();
   try {
     const user = await clerkClient.users.createUser({
       username: data.username,
@@ -186,6 +222,18 @@ export const updateTeacher = async (
   if (!data.id) {
     return { success: false, error: true };
   }
+
+  const { userId, sessionClaims } = auth();
+  const role = getUserRole(sessionClaims);
+
+  if (isReadOnlyRole(role) || (role !== "admin" && role !== "teacher")) {
+    return rejectUnauthorized();
+  }
+
+  if (role === "teacher" && userId !== data.id) {
+    return rejectUnauthorized();
+  }
+
   try {
     const user = await clerkClient.users.updateUser(data.id, {
       username: data.username,
@@ -229,6 +277,7 @@ export const deleteTeacher = async (
   currentState: CurrentState,
   data: FormData
 ) => {
+  if (!isAdmin()) return rejectUnauthorized();
   const id = data.get("id") as string;
   try {
     await clerkClient.users.deleteUser(id);
@@ -251,6 +300,7 @@ export const createStudent = async (
   currentState: CurrentState,
   data: StudentSchema
 ) => {
+  if (!isAdmin()) return rejectUnauthorized();
   console.log(data);
   try {
     const classItem = await prisma.class.findUnique({
@@ -301,6 +351,7 @@ export const updateStudent = async (
   currentState: CurrentState,
   data: StudentSchema
 ) => {
+  if (!isAdmin()) return rejectUnauthorized();
   if (!data.id) {
     return { success: false, error: true };
   }
@@ -345,6 +396,7 @@ export const deleteStudent = async (
   currentState: CurrentState,
   data: FormData
 ) => {
+  if (!isAdmin()) return rejectUnauthorized();
   const id = data.get("id") as string;
   try {
     await clerkClient.users.deleteUser(id);
@@ -367,6 +419,7 @@ export const createExam = async (
   currentState: CurrentState,
   data: ExamSchema
 ) => {
+  if (!isAdminOrTeacher()) return rejectUnauthorized();
   // const { userId, sessionClaims } = auth();
   // const role = (sessionClaims?.metadata as { role?: string })?.role;
 
@@ -405,6 +458,7 @@ export const updateExam = async (
   currentState: CurrentState,
   data: ExamSchema
 ) => {
+  if (!isAdminOrTeacher()) return rejectUnauthorized();
   // const { userId, sessionClaims } = auth();
   // const role = (sessionClaims?.metadata as { role?: string })?.role;
 
@@ -446,6 +500,7 @@ export const deleteExam = async (
   currentState: CurrentState,
   data: FormData
 ) => {
+  if (!isAdmin()) return rejectUnauthorized();
   const id = data.get("id") as string;
 
   // const { userId, sessionClaims } = auth();
@@ -460,6 +515,460 @@ export const deleteExam = async (
     });
 
     // revalidatePath("/list/subjects");
+    return { success: true, error: false };
+  } catch (err) {
+    console.log(err);
+    return { success: false, error: true };
+  }
+};
+
+export const createParent = async (
+  currentState: CurrentState,
+  data: ParentSchema
+) => {
+  if (!isAdmin()) return rejectUnauthorized();
+  try {
+    const user = await clerkClient.users.createUser({
+      username: data.username,
+      password: data.password,
+      firstName: data.name,
+      lastName: data.surname,
+      publicMetadata: { role: "parent" },
+    });
+
+    await prisma.parent.create({
+      data: {
+        id: user.id,
+        username: data.username,
+        name: data.name,
+        surname: data.surname,
+        email: data.email || null,
+        phone: data.phone,
+        address: data.address,
+      },
+    });
+
+    return { success: true, error: false };
+  } catch (err) {
+    console.log(err);
+    return { success: false, error: true };
+  }
+};
+
+export const updateParent = async (
+  currentState: CurrentState,
+  data: ParentSchema
+) => {
+  if (!isAdmin()) return rejectUnauthorized();
+  if (!data.id) {
+    return { success: false, error: true };
+  }
+
+  try {
+    await clerkClient.users.updateUser(data.id, {
+      username: data.username,
+      ...(data.password !== "" && { password: data.password }),
+      firstName: data.name,
+      lastName: data.surname,
+    });
+
+    await prisma.parent.update({
+      where: { id: data.id },
+      data: {
+        username: data.username,
+        name: data.name,
+        surname: data.surname,
+        email: data.email || null,
+        phone: data.phone,
+        address: data.address,
+      },
+    });
+
+    return { success: true, error: false };
+  } catch (err) {
+    console.log(err);
+    return { success: false, error: true };
+  }
+};
+
+export const deleteParent = async (
+  currentState: CurrentState,
+  data: FormData
+) => {
+  if (!isAdmin()) return rejectUnauthorized();
+  const id = data.get("id") as string;
+
+  try {
+    await clerkClient.users.deleteUser(id);
+
+    await prisma.parent.delete({
+      where: { id },
+    });
+
+    return { success: true, error: false };
+  } catch (err) {
+    console.log(err);
+    return { success: false, error: true };
+  }
+};
+
+export const createAssignment = async (
+  currentState: CurrentState,
+  data: AssignmentSchema
+) => {
+  const { userId, sessionClaims } = auth();
+  const role = getUserRole(sessionClaims);
+
+  if (isReadOnlyRole(role) || (role !== "admin" && role !== "teacher")) {
+    return rejectUnauthorized();
+  }
+
+  try {
+    if (role === "teacher") {
+      const teacherLesson = await prisma.lesson.findFirst({
+        where: {
+          id: data.lessonId,
+          teacherId: userId!,
+        },
+      });
+
+      if (!teacherLesson) {
+        return { success: false, error: true };
+      }
+    }
+
+    await prisma.assignment.create({
+      data: {
+        title: data.title,
+        startDate: data.startDate,
+        dueDate: data.dueDate,
+        lessonId: data.lessonId,
+      },
+    });
+
+    return { success: true, error: false };
+  } catch (err) {
+    console.log(err);
+    return { success: false, error: true };
+  }
+};
+
+export const updateAssignment = async (
+  currentState: CurrentState,
+  data: AssignmentSchema
+) => {
+  if (!data.id) {
+    return { success: false, error: true };
+  }
+
+  const { userId, sessionClaims } = auth();
+  const role = getUserRole(sessionClaims);
+
+  if (isReadOnlyRole(role) || (role !== "admin" && role !== "teacher")) {
+    return rejectUnauthorized();
+  }
+
+  try {
+    if (role === "teacher") {
+      const teacherLesson = await prisma.lesson.findFirst({
+        where: {
+          id: data.lessonId,
+          teacherId: userId!,
+        },
+      });
+
+      if (!teacherLesson) {
+        return { success: false, error: true };
+      }
+    }
+
+    await prisma.assignment.update({
+      where: { id: data.id },
+      data: {
+        title: data.title,
+        startDate: data.startDate,
+        dueDate: data.dueDate,
+        lessonId: data.lessonId,
+      },
+    });
+
+    return { success: true, error: false };
+  } catch (err) {
+    console.log(err);
+    return { success: false, error: true };
+  }
+};
+
+export const deleteAssignment = async (
+  currentState: CurrentState,
+  data: FormData
+) => {
+  if (!isAdmin()) return rejectUnauthorized();
+  const id = data.get("id") as string;
+
+  try {
+    await prisma.assignment.delete({
+      where: { id: parseInt(id) },
+    });
+
+    return { success: true, error: false };
+  } catch (err) {
+    console.log(err);
+    return { success: false, error: true };
+  }
+};
+
+export const createResult = async (
+  currentState: CurrentState,
+  data: ResultSchema
+) => {
+  const { userId, sessionClaims } = auth();
+  const role = getUserRole(sessionClaims);
+
+  if (isReadOnlyRole(role) || (role !== "admin" && role !== "teacher")) {
+    return rejectUnauthorized();
+  }
+
+  try {
+    if (!data.examId && !data.assignmentId) {
+      return { success: false, error: true };
+    }
+
+    if (role === "teacher") {
+      if (data.examId) {
+        const exam = await prisma.exam.findFirst({
+          where: { id: data.examId, lesson: { teacherId: userId! } },
+        });
+        if (!exam) return { success: false, error: true };
+      }
+
+      if (data.assignmentId) {
+        const assignment = await prisma.assignment.findFirst({
+          where: { id: data.assignmentId, lesson: { teacherId: userId! } },
+        });
+        if (!assignment) return { success: false, error: true };
+      }
+    }
+
+    await prisma.result.create({
+      data: {
+        score: data.score,
+        studentId: data.studentId,
+        examId: data.examId,
+        assignmentId: data.assignmentId,
+      },
+    });
+
+    return { success: true, error: false };
+  } catch (err) {
+    console.log(err);
+    return { success: false, error: true };
+  }
+};
+
+export const updateResult = async (
+  currentState: CurrentState,
+  data: ResultSchema
+) => {
+  if (!data.id) {
+    return { success: false, error: true };
+  }
+
+  const { userId, sessionClaims } = auth();
+  const role = getUserRole(sessionClaims);
+
+  if (isReadOnlyRole(role) || (role !== "admin" && role !== "teacher")) {
+    return rejectUnauthorized();
+  }
+
+  try {
+    if (!data.examId && !data.assignmentId) {
+      return { success: false, error: true };
+    }
+
+    if (role === "teacher") {
+      if (data.examId) {
+        const exam = await prisma.exam.findFirst({
+          where: { id: data.examId, lesson: { teacherId: userId! } },
+        });
+        if (!exam) return { success: false, error: true };
+      }
+
+      if (data.assignmentId) {
+        const assignment = await prisma.assignment.findFirst({
+          where: { id: data.assignmentId, lesson: { teacherId: userId! } },
+        });
+        if (!assignment) return { success: false, error: true };
+      }
+    }
+
+    await prisma.result.update({
+      where: { id: data.id },
+      data: {
+        score: data.score,
+        studentId: data.studentId,
+        examId: data.examId,
+        assignmentId: data.assignmentId,
+      },
+    });
+
+    return { success: true, error: false };
+  } catch (err) {
+    console.log(err);
+    return { success: false, error: true };
+  }
+};
+
+export const deleteResult = async (
+  currentState: CurrentState,
+  data: FormData
+) => {
+  if (!isAdmin()) return rejectUnauthorized();
+  const id = data.get("id") as string;
+
+  try {
+    await prisma.result.delete({
+      where: { id: parseInt(id) },
+    });
+
+    return { success: true, error: false };
+  } catch (err) {
+    console.log(err);
+    return { success: false, error: true };
+  }
+};
+
+export const createEvent = async (
+  currentState: CurrentState,
+  data: EventSchema
+) => {
+  if (!isAdmin()) return rejectUnauthorized();
+  try {
+    await prisma.event.create({
+      data: {
+        title: data.title,
+        description: data.description,
+        startTime: data.startTime,
+        endTime: data.endTime,
+        classId: data.classId || null,
+      },
+    });
+
+    return { success: true, error: false };
+  } catch (err) {
+    console.log(err);
+    return { success: false, error: true };
+  }
+};
+
+export const updateEvent = async (
+  currentState: CurrentState,
+  data: EventSchema
+) => {
+  if (!isAdmin()) return rejectUnauthorized();
+  if (!data.id) {
+    return { success: false, error: true };
+  }
+
+  try {
+    await prisma.event.update({
+      where: { id: data.id },
+      data: {
+        title: data.title,
+        description: data.description,
+        startTime: data.startTime,
+        endTime: data.endTime,
+        classId: data.classId || null,
+      },
+    });
+
+    return { success: true, error: false };
+  } catch (err) {
+    console.log(err);
+    return { success: false, error: true };
+  }
+};
+
+export const deleteEvent = async (
+  currentState: CurrentState,
+  data: FormData
+) => {
+  if (!isAdmin()) return rejectUnauthorized();
+  const id = data.get("id") as string;
+
+  try {
+    await prisma.event.delete({
+      where: { id: parseInt(id) },
+    });
+
+    return { success: true, error: false };
+  } catch (err) {
+    console.log(err);
+    return { success: false, error: true };
+  }
+};
+
+export const createAnnouncement = async (
+  currentState: CurrentState,
+  data: AnnouncementSchema
+) => {
+  if (!isAdmin()) return rejectUnauthorized();
+  try {
+    await prisma.announcement.create({
+      data: {
+        title: data.title,
+        description: data.description,
+        date: data.date,
+        classId: data.classId || null,
+      },
+    });
+
+    return { success: true, error: false };
+  } catch (err) {
+    console.log(err);
+    return { success: false, error: true };
+  }
+};
+
+export const updateAnnouncement = async (
+  currentState: CurrentState,
+  data: AnnouncementSchema
+) => {
+  if (!isAdmin()) return rejectUnauthorized();
+  if (!data.id) {
+    return { success: false, error: true };
+  }
+
+  try {
+    await prisma.announcement.update({
+      where: { id: data.id },
+      data: {
+        title: data.title,
+        description: data.description,
+        date: data.date,
+        classId: data.classId || null,
+      },
+    });
+
+    return { success: true, error: false };
+  } catch (err) {
+    console.log(err);
+    return { success: false, error: true };
+  }
+};
+
+export const deleteAnnouncement = async (
+  currentState: CurrentState,
+  data: FormData
+) => {
+  if (!isAdmin()) return rejectUnauthorized();
+  const id = data.get("id") as string;
+
+  try {
+    await prisma.announcement.delete({
+      where: { id: parseInt(id) },
+    });
+
     return { success: true, error: false };
   } catch (err) {
     console.log(err);

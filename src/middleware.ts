@@ -13,7 +13,7 @@ const getRole = (sessionClaims: any) => {
   const directRole = sessionClaims?.role as string | undefined;
   const metadataRole = (sessionClaims?.metadata as { role?: string } | undefined)?.role;
   const publicMetadataRole = (sessionClaims?.publicMetadata as { role?: string } | undefined)?.role;
-  return directRole ?? metadataRole ?? publicMetadataRole;
+  return String(directRole ?? metadataRole ?? publicMetadataRole ?? "").trim().toLowerCase();
 };
 
 export default clerkMiddleware((auth, req) => {

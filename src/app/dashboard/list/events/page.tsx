@@ -2,11 +2,13 @@ import FormContainer from "@/components/FormContainer";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
+import PageHero from "@/components/PageHero";
 import prisma from "@/lib/prisma";
 import { ITEM_PER_PAGE } from "@/lib/settings";
 import { Class, Event, Prisma } from "@/generated/prisma/client";
 import Image from "next/image";
 import { auth } from "@clerk/nextjs/server";
+import { getUserRole } from "@/lib/auth";
 
 type EventList = Event & { class: Class };
 
@@ -17,7 +19,7 @@ const EventListPage = async ({
 }) => {
 
   const { userId, sessionClaims } = auth();
-  const role = (sessionClaims?.metadata as { role?: string })?.role;
+  const role = getUserRole(sessionClaims);
   const currentUserId = userId;
 
   const columns = [
@@ -141,19 +143,33 @@ const EventListPage = async ({
   ]);
 
   return (
-    <div className="bg-white p-4 rounded-md flex-1 m-4 mt-0">
+    <div className="panel-card p-4 md:p-5 rounded-md flex-1 m-4 mt-0 shine-hover">
+      <PageHero
+        title="Events"
+        subtitle="Coordinate school activities with timeline clarity across classes."
+        emoji="🗓️"
+        stats={[
+          { label: "Total Events", value: count },
+          { label: "Visible", value: data.length },
+          { label: "Admin Controls", value: role === "admin" ? "Enabled" : "Read Only" },
+        ]}
+      />
       {/* TOP */}
       <div className="flex items-center justify-between">
-        <h1 className="hidden md:block text-lg font-semibold">All Events</h1>
+        <h1 className="hidden md:block text-lg font-semibold text-blue-900">All Events</h1>
         <div className="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
           <TableSearch />
           <div className="flex items-center gap-4 self-end">
-            <button className="w-8 h-8 flex items-center justify-center rounded-full bg-lamaYellow">
-              <Image src="/filter.png" alt="" width={14} height={14} />
-            </button>
-            <button className="w-8 h-8 flex items-center justify-center rounded-full bg-lamaYellow">
-              <Image src="/sort.png" alt="" width={14} height={14} />
-            </button>
+            {role === "admin" && (
+              <>
+                <button className="circle-icon-btn">
+                  <Image src="/filter.png" alt="" width={14} height={14} />
+                </button>
+                <button className="circle-icon-btn">
+                  <Image src="/sort.png" alt="" width={14} height={14} />
+                </button>
+              </>
+            )}
             {role === "admin" && <FormContainer table="event" type="create" />}
           </div>
         </div>

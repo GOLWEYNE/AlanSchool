@@ -1,5 +1,6 @@
 import { auth, currentUser } from "@clerk/nextjs/server";
 import MenuContent from "./MenuContent";
+import { getUserRole } from "@/lib/auth";
 
 const menuItems = [
   {
@@ -58,7 +59,7 @@ const menuItems = [
         icon: "/assignment.png",
         label: "Assignments",
         href: "/dashboard/list/assignments",
-        visible: ["admin", "teacher", "student", "parent"],
+        visible: ["admin", "teacher", "student"],
       },
       {
         icon: "/result.png",
@@ -70,7 +71,7 @@ const menuItems = [
         icon: "/attendance.png",
         label: "Attendance",
         href: "/dashboard/list/students",
-        visible: ["admin", "teacher", "student", "parent"],
+        visible: ["admin", "teacher", "student"],
       },
       {
         icon: "/calendar.png",
@@ -82,14 +83,14 @@ const menuItems = [
         icon: "/message.png",
         label: "Messages",
         href: "/dashboard/list/announcements",
-        visible: ["admin", "teacher", "student", "parent"],
+        visible: ["admin", "teacher", "student"],
       },
       
       {
         icon: "/announcement.png",
         label: "Announcements",
         href: "/dashboard/list/announcements",
-        visible: ["admin", "teacher", "student", "parent"],
+        visible: ["admin", "teacher", "student"],
       },
     ],
   },
@@ -111,7 +112,7 @@ const menuItems = [
       {
         icon: "/logout.png",
         label: "Logout",
-        href: "/sign-in",
+        href: "/dashboard/logout",
         visible: ["admin", "teacher", "student", "parent"],
       },
     ],
@@ -122,11 +123,10 @@ const Menu = async () => {
   const user = await currentUser();
   const { sessionClaims } = auth();
 
-  const roleFromSession = (sessionClaims?.metadata as { role?: string } | undefined)?.role;
-  const roleFromPublicMetadata = (sessionClaims?.publicMetadata as { role?: string } | undefined)?.role;
-  const roleFromUser = (user?.publicMetadata as { role?: string } | undefined)?.role;
-
-  const role = roleFromSession ?? roleFromPublicMetadata ?? roleFromUser ?? "admin";
+  const role = getUserRole(
+    sessionClaims as { role?: string; metadata?: { role?: string }; publicMetadata?: { role?: string } },
+    ((user?.publicMetadata as { role?: string } | undefined)?.role ?? "") as string
+  );
 
   return <MenuContent items={menuItems} role={role} />;
 };

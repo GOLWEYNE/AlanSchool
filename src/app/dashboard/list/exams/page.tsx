@@ -2,11 +2,13 @@ import FormContainer from "@/components/FormContainer";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
+import PageHero from "@/components/PageHero";
 import prisma from "@/lib/prisma";
 import { ITEM_PER_PAGE } from "@/lib/settings";
 import { Class, Exam, Prisma, Subject, Teacher } from "@/generated/prisma/client";
 import Image from "next/image";
 import { auth } from "@clerk/nextjs/server";
+import { getUserRole } from "@/lib/auth";
 
 type ExamList = Exam & {
   lesson: {
@@ -23,7 +25,7 @@ const ExamListPage = async ({
 }) => {
 
 const { userId, sessionClaims } = auth();
-const role = (sessionClaims?.metadata as { role?: string })?.role;
+const role = getUserRole(sessionClaims);
 const currentUserId = userId;
 
 
@@ -74,7 +76,9 @@ const renderRow = (item: ExamList) => (
         {(role === "admin" || role === "teacher") && (
           <>
             <FormContainer table="exam" type="update" data={item} />
-            <FormContainer table="exam" type="delete" id={item.id} />
+            {role === "admin" && (
+              <FormContainer table="exam" type="delete" id={item.id} />
+            )}
           </>
         )}
       </div>
@@ -163,19 +167,33 @@ const renderRow = (item: ExamList) => (
   ]);
 
   return (
-    <div className="bg-white p-4 rounded-md flex-1 m-4 mt-0">
+    <div className="panel-card p-4 md:p-5 rounded-md flex-1 m-4 mt-0 shine-hover">
+      <PageHero
+        title="Exams"
+        subtitle="Plan assessments with clear dates and keep each class on schedule."
+        emoji="📝"
+        stats={[
+          { label: "Total Exams", value: count },
+          { label: "Showing", value: data.length },
+          { label: "Role", value: role || "guest" },
+        ]}
+      />
       {/* TOP */}
       <div className="flex items-center justify-between">
-        <h1 className="hidden md:block text-lg font-semibold">All Exams</h1>
+        <h1 className="hidden md:block text-lg font-semibold text-blue-900">All Exams</h1>
         <div className="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
           <TableSearch />
           <div className="flex items-center gap-4 self-end">
-            <button className="w-8 h-8 flex items-center justify-center rounded-full bg-lamaYellow">
-              <Image src="/filter.png" alt="" width={14} height={14} />
-            </button>
-            <button className="w-8 h-8 flex items-center justify-center rounded-full bg-lamaYellow">
-              <Image src="/sort.png" alt="" width={14} height={14} />
-            </button>
+            {(role === "admin" || role === "teacher") && (
+              <>
+                <button className="circle-icon-btn">
+                  <Image src="/filter.png" alt="" width={14} height={14} />
+                </button>
+                <button className="circle-icon-btn">
+                  <Image src="/sort.png" alt="" width={14} height={14} />
+                </button>
+              </>
+            )}
             {(role === "admin" || role === "teacher") && (
               <FormContainer table="exam" type="create" />
             )}
