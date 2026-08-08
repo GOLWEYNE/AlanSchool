@@ -39,7 +39,7 @@ const FormContainer = async ({ table, type, data, id }: FormContainerProps) => {
   }
 
   if (role === "teacher") {
-    const teacherEditableTables = ["exam", "assignment", "result", "subject"];
+    const teacherEditableTables = ["exam", "assignment", "result", "subject", "lesson"];
     const teacherAllowedTypes = ["create", "update"];
 
     if (
@@ -61,6 +61,22 @@ const FormContainer = async ({ table, type, data, id }: FormContainerProps) => {
           select: { id: true, name: true, surname: true },
         });
         relatedData = { teachers: subjectTeachers };
+        break;
+      case "lesson":
+        const lessonSubjects = await prisma.subject.findMany({
+          select: { id: true, name: true },
+        });
+        const lessonClasses = await prisma.class.findMany({
+          select: { id: true, name: true },
+        });
+        const lessonTeachers = await prisma.teacher.findMany({
+          select: { id: true, name: true, surname: true },
+        });
+        relatedData = {
+          subjects: lessonSubjects,
+          classes: lessonClasses,
+          teachers: lessonTeachers,
+        };
         break;
       case "class":
         const classGrades = await prisma.grade.findMany({
