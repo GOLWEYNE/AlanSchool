@@ -7,6 +7,7 @@ import {
   ClassSchema,
   ExamSchema,
   EventSchema,
+  LessonSchema,
   ParentSchema,
   ResultSchema,
   StudentSchema,
@@ -977,6 +978,105 @@ export const deleteAnnouncement = async (
     });
 
     return { success: true, error: false };
+  } catch (err) {
+    console.log(err);
+    return { success: false, error: true };
+  }
+};
+
+
+export const createLesson = async (
+  currentState: CurrentState,
+  data: LessonSchema
+  ) => {
+  const { userId, sessionClaims } = auth();
+  const role = getUserRole(sessionClaims);
+  if (isReadOnlyRole(role) || (role !== "admin" && role !== "teacher")) {
+    return rejectUnauthorized();
+  }
+  if (role === "teacher" && data.teacherId !== userId) {
+    return rejectUnauthorized();
+  }
+
+  try {
+    await prisma.lesson.create({
+      data: {
+        name: data.name,
+        day: data.day,
+        startTime: data.startTime,
+        endTime: data.endTime,
+        subjectId: data.subjectId,
+        classId: data.classId,
+        teacherId: data.teacherId,
+      },
+    });
+
+  return { success: true, error: false };
+  } catch (err) {
+    console.log(err);
+    return { success: false, error: true };
+  }
+};
+
+export const updateLesson = async (
+  currentState: CurrentState,
+  data: LessonSchema
+  ) => {
+  if (!data.id) {
+    return { success: false, error: true };
+  }
+
+  const { userId, sessionClaims } = auth();
+  const role = getUserRole(sessionClaims);
+  if (isReadOnlyRole(role) || (role !== "admin" && role !== "teacher")) {
+    return rejectUnauthorized();
+  }
+
+  try {
+    if (role === "teacher") {
+      const existingLesson = await prisma.lesson.findFirst({
+        where: { id: data.id, teacherId: userId! },
+      });
+      if (!existingLesson || data.teacherId !== userId) {
+        return { success: false, error: true };
+      }
+    }
+
+  await prisma.lesson.update({
+    where: { id: data.id },
+    data: {
+      name: data.name,
+      day: data.day,
+      startTime: data.startTime,
+      endTime: data.endTime,
+      subjectId: data.subjectId,
+      classId: data.classId,
+      teacherId: data.teacherId,
+    },
+  });
+
+  return { success: true, error: false };
+  } catch (err) {
+    console.log(err);
+    return { success: false, error: true };
+  }
+};
+
+export const deleteLesson = async (
+  currentState: CurrentState,
+  data: FormData
+  ) => {
+  if (!isAdmin()) {
+    return rejectUnauthorized();
+  }
+  const id = data.get("id") as string;
+
+  try {
+    await prisma.lesson.delete({
+      where: { id: parseInt(id) },
+    });
+
+  return { success: true, error: false };
   } catch (err) {
     console.log(err);
     return { success: false, error: true };
