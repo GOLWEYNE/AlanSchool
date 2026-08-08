@@ -277,8 +277,15 @@ export const deleteTeacher = async (
   currentState: CurrentState,
   data: FormData
 ) => {
-  if (!isAdmin()) return rejectUnauthorized();
   const id = data.get("id") as string;
+  const { userId, sessionClaims } = auth();
+  const role = getUserRole(sessionClaims);
+  if (isReadOnlyRole(role) || (role !== "admin" && role !== "teacher")) {
+    return rejectUnauthorized();
+  }
+  if (role === "teacher" && userId !== id) {
+    return rejectUnauthorized();
+  }
   try {
     await clerkClient.users.deleteUser(id);
 
@@ -300,7 +307,7 @@ export const createStudent = async (
   currentState: CurrentState,
   data: StudentSchema
 ) => {
-  if (!isAdmin()) return rejectUnauthorized();
+  if (!isAdminOrTeacher()) return rejectUnauthorized();
   console.log(data);
   try {
     const classItem = await prisma.class.findUnique({
@@ -526,7 +533,7 @@ export const createParent = async (
   currentState: CurrentState,
   data: ParentSchema
 ) => {
-  if (!isAdmin()) return rejectUnauthorized();
+  if (!isAdminOrTeacher()) return rejectUnauthorized();
   try {
     const user = await clerkClient.users.createUser({
       username: data.username,
