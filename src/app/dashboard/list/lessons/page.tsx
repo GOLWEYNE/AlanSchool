@@ -1,3 +1,4 @@
+import FormContainer from "@/components/FormContainer";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
@@ -47,6 +48,14 @@ const LessonsListPage = async ({
       accessor: "time",
       className: "hidden md:table-cell",
     },
+    ...(role === "admin" || role === "teacher"
+      ? [
+          {
+            header: "Actions",
+            accessor: "action",
+          },
+        ]
+      : []),
   ];
 
   const renderRow = (item: LessonList) => (
@@ -62,6 +71,18 @@ const LessonsListPage = async ({
       </td>
       <td className="hidden md:table-cell">
         {item.day} {item.startTime.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: false })}
+      </td>
+      <td>
+        <div className="flex items-center gap-2">
+          {(role === "admin" || role === "teacher") && (
+            <>
+              <FormContainer table="lesson" type="update" data={item} />
+              {role === "admin" && (
+                <FormContainer table="lesson" type="delete" id={item.id} />
+              )}
+            </>
+          )}
+        </div>
       </td>
     </tr>
   );
@@ -126,6 +147,9 @@ const LessonsListPage = async ({
             <button className="circle-icon-btn">
               <Image src="/sort.png" alt="" width={14} height={14} />
             </button>
+            {(role === "admin" || role === "teacher") && (
+              <FormContainer table="lesson" type="create" />
+            )}
           </div>
         </div>
       </div>
