@@ -2,11 +2,13 @@ import { UserButton } from "@clerk/nextjs";
 import { currentUser } from "@clerk/nextjs/server";
 import Image from "next/image";
 import Link from "next/link";
+import MobileMenuButton from "./MobileMenuButton";
 
 const Navbar = async () => {
   const user = await currentUser();
   return (
     <div className="mx-4 mt-4 panel-card px-4 py-3 flex items-center justify-between">
+      <MobileMenuButton />
       {/* SEARCH BAR */}
       <div className="hidden md:flex items-center gap-2 text-xs rounded-full border border-blue-200 bg-gradient-to-r from-white to-blue-50 px-3">
         <Image src="/search.png" alt="" width={14} height={14} />
@@ -37,18 +39,18 @@ const Navbar = async () => {
           </Link>
 
           <div className="hidden md:flex items-center gap-2">
-          <Link
-            href="/dashboard/settings"
-            className="text-xs font-semibold text-blue-800 bg-blue-50 border border-blue-200 rounded-full px-3 py-1 hover:bg-blue-100 transition-colors"
-          >
-            Settings
-          </Link>
-          <Link
-            href="/dashboard/logout"
-            className="text-xs font-semibold text-white bg-blue-600 rounded-full px-3 py-1 hover:bg-blue-700 transition-colors"
-          >
-            Logout
-          </Link>
+            <Link
+              href="/dashboard/settings"
+              className="text-xs font-semibold text-blue-800 bg-blue-50 border border-blue-200 rounded-full px-3 py-1 hover:bg-blue-100 transition-colors"
+            >
+              Settings
+            </Link>
+            <Link
+              href="/dashboard/logout"
+              className="text-xs font-semibold text-white bg-blue-600 rounded-full px-3 py-1 hover:bg-blue-700 transition-colors"
+            >
+              Logout
+            </Link>
           </div>
         </div>
         <div className="circle-icon-btn cursor-pointer">
