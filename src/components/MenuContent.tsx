@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
+import { useMobileSidebar } from "@/context/MobileSidebarContext";
 
 type MenuItem = {
   icon: string;
@@ -23,6 +24,7 @@ type MenuContentProps = {
 const MenuContent = ({ items, role }: MenuContentProps) => {
   const pathname = usePathname();
   const router = useRouter();
+  const { close } = useMobileSidebar();
 
   const isActiveLink = (href: string) => {
     if (href === "/dashboard") {
@@ -50,7 +52,10 @@ const MenuContent = ({ items, role }: MenuContentProps) => {
               <button
                 type="button"
                 key={item.label}
-                onClick={() => router.push(item.href)}
+                onClick={() => {
+                  router.push(item.href);
+                  close();
+                }}
                 className={`flex w-full items-center justify-center lg:justify-start gap-4 rounded-xl px-2 py-2.5 transition-all shine-hover ${
                   active
                     ? "bg-gradient-to-r from-blue-100 to-yellow-100 text-blue-900 shadow-md"
