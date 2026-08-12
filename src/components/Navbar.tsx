@@ -3,6 +3,7 @@ import { currentUser } from "@clerk/nextjs/server";
 import Image from "next/image";
 import Link from "next/link";
 import MobileMenuButton from "./MobileMenuButton";
+import LanguageSwitcher from "./LanguageSwitcher";
 
 const Navbar = async () => {
   const user = await currentUser();
@@ -52,6 +53,7 @@ const Navbar = async () => {
               Logout
             </Link>
           </div>
+          <LanguageSwitcher />
         </div>
         <div className="circle-icon-btn cursor-pointer">
           <Image src="/message.png" alt="" width={20} height={20} />
