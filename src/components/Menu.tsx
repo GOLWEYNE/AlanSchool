@@ -1,117 +1,116 @@
 import { auth, currentUser } from "@clerk/nextjs/server";
+import { getTranslations } from "next-intl/server";
 import MenuContent from "./MenuContent";
 import { getUserRole } from "@/lib/auth";
 
-const menuItems = [
+const getMenuItems = (t: Awaited<ReturnType<typeof getTranslations>>) => [
   {
-    title: "MENU",
+    title: t("menuTitle"),
     items: [
       {
         icon: "/home.png",
-        label: "Home",
+        label: t("home"),
         href: "/dashboard",
         visible: ["admin", "teacher", "student", "parent"],
       },
-      
       {
         icon: "/teacher.png",
-        label: "Teachers",
+        label: t("teachers"),
         href: "/dashboard/list/teachers",
         visible: ["admin", "teacher"],
       },
       {
         icon: "/student.png",
-        label: "Students",
+        label: t("students"),
         href: "/dashboard/list/students",
         visible: ["admin", "teacher"],
       },
       {
         icon: "/parent.png",
-        label: "Parents",
+        label: t("parents"),
         href: "/dashboard/list/parents",
         visible: ["admin", "teacher"],
       },
       {
         icon: "/subject.png",
-        label: "Subjects",
+        label: t("subjects"),
         href: "/dashboard/list/subjects",
         visible: ["admin"],
       },
       {
         icon: "/class.png",
-        label: "Classes",
+        label: t("classes"),
         href: "/dashboard/list/classes",
         visible: ["admin", "teacher"],
       },
       {
         icon: "/lesson.png",
-        label: "Lessons",
+        label: t("lessons"),
         href: "/dashboard/list/lessons",
         visible: ["admin", "teacher"],
       },
       {
         icon: "/exam.png",
-        label: "Exams",
+        label: t("exams"),
         href: "/dashboard/list/exams",
         visible: ["admin", "teacher", "student", "parent"],
       },
       {
         icon: "/assignment.png",
-        label: "Assignments",
+        label: t("assignments"),
         href: "/dashboard/list/assignments",
         visible: ["admin", "teacher", "student"],
       },
       {
         icon: "/result.png",
-        label: "Results",
+        label: t("results"),
         href: "/dashboard/list/results",
         visible: ["admin", "teacher", "student", "parent"],
       },
       {
         icon: "/attendance.png",
-        label: "Attendance",
+        label: t("attendance"),
         href: "/dashboard/list/students",
         visible: ["admin", "teacher", "student"],
       },
       {
         icon: "/calendar.png",
-        label: "Events",
+        label: t("events"),
         href: "/dashboard/list/events",
         visible: ["admin", "teacher", "student", "parent"],
       },
       {
         icon: "/message.png",
-        label: "Messages",
+        label: t("messages"),
         href: "/dashboard/list/announcements",
         visible: ["admin", "teacher", "student"],
       },
-      
       {
         icon: "/announcement.png",
-        label: "Announcements",
+        label: t("announcements"),
         href: "/dashboard/list/announcements",
         visible: ["admin", "teacher", "student"],
       },
     ],
   },
   {
-    title: "OTHER",
+    title: t("otherTitle"),
     items: [
       {
         icon: "/profile.png",
-        label: "Profile",
+        label: t("profile"),
         href: "/dashboard/profile",
         visible: ["admin", "teacher", "student", "parent"],
       },
       {
         icon: "/setting.png",
-        label: "Settings",
+        label: t("settings"),
         href: "/dashboard/settings",
         visible: ["admin", "teacher", "student", "parent"],
       },
       {
         icon: "/logout.png",
-        label: "Logout",
+        label: t("logout"),
         href: "/dashboard/logout",
         visible: ["admin", "teacher", "student", "parent"],
       },
@@ -122,13 +121,14 @@ const menuItems = [
 const Menu = async () => {
   const user = await currentUser();
   const { sessionClaims } = auth();
+  const t = await getTranslations("Menu");
 
   const role = getUserRole(
     sessionClaims as { role?: string; metadata?: { role?: string }; publicMetadata?: { role?: string } },
     ((user?.publicMetadata as { role?: string } | undefined)?.role ?? "") as string
   );
 
-  return <MenuContent items={menuItems} role={role} />;
+  return <MenuContent items={getMenuItems(t)} role={role} />;
 };
 
 export default Menu;
