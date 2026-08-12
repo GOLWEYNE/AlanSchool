@@ -4,5 +4,49 @@
     "en": "English",
     "ru": "Russian",
     "kk": "Kazakh"
+  },
+  "Menu": {
+    "menuTitle": "MENU",
+    "otherTitle": "OTHER",
+    "home": "Home",
+    "teachers": "Teachers",
+    "students": "Students",
+    "parents": "Parents",
+    "subjects": "Subjects",
+    "classes": "Classes",
+    "lessons": "Lessons",
+    "exams": "Exams",
+    "assignments": "Assignments",
+    "results": "Results",
+    "attendance": "Attendance",
+    "events": "Events",
+    "messages": "Messages",
+    "announcements": "Announcements",
+    "profile": "Profile",
+    "settings": "Settings",
+    "logout": "Logout"
+  },
+  "Navbar": {
+    "searchPlaceholder": "Search...",
+    "settings": "Settings",
+    "logout": "Logout",
+    "openSettings": "Open settings",
+    "logOut": "Log out"
+  },
+  "AdminPage": {
+    "title": "Admin Command Center",
+    "subtitle": "Manage users, classes, and performance from one place.",
+    "roleAdmin": "Role: Admin",
+    "accessFull": "Access: Full",
+    "workspace": "Workspace: School Ops",
+    "operations": "OPERATIONS",
+    "classManagement": "Class Management",
+    "classManagementDesc": "Create, assign supervisors, and adjust class capacity.",
+    "people": "PEOPLE",
+    "teacherDirectory": "Teacher Directory",
+    "teacherDirectoryDesc": "Update profiles and keep subject allocations aligned.",
+    "performance": "PERFORMANCE",
+    "academicResults": "Academic Results",
+    "academicResultsDesc": "Review outcomes, trends, and publish improvements."
   }
 }

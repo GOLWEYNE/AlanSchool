@@ -1,5 +1,6 @@
 import { UserButton } from "@clerk/nextjs";
 import { currentUser } from "@clerk/nextjs/server";
+import { getTranslations } from "next-intl/server";
 import Image from "next/image";
 import Link from "next/link";
 import MobileMenuButton from "./MobileMenuButton";
@@ -7,6 +8,7 @@ import LanguageSwitcher from "./LanguageSwitcher";
 
 const Navbar = async () => {
   const user = await currentUser();
+  const t = await getTranslations("Navbar");
   return (
     <div className="mx-4 mt-4 panel-card px-4 py-3 flex items-center justify-between">
       <MobileMenuButton />
@@ -15,7 +17,7 @@ const Navbar = async () => {
         <Image src="/search.png" alt="" width={14} height={14} />
         <input
           type="text"
-          placeholder="Search..."
+          placeholder={t("searchPlaceholder")}
           className="w-[220px] p-2 bg-transparent outline-none text-blue-900 placeholder:text-blue-400"
         />
       </div>
@@ -25,16 +27,16 @@ const Navbar = async () => {
           <Link
             href="/dashboard/settings"
             className="md:hidden circle-icon-btn"
-            aria-label="Open settings"
-            title="Settings"
+            aria-label={t("openSettings")}
+            title={t("settings")}
           >
             <Image src="/setting.png" alt="" width={16} height={16} />
           </Link>
           <Link
             href="/dashboard/logout"
             className="md:hidden circle-icon-btn"
-            aria-label="Log out"
-            title="Logout"
+            aria-label={t("logOut")}
+            title={t("logout")}
           >
             <Image src="/logout.png" alt="" width={16} height={16} />
           </Link>
@@ -44,13 +46,13 @@ const Navbar = async () => {
               href="/dashboard/settings"
               className="text-xs font-semibold text-blue-800 bg-blue-50 border border-blue-200 rounded-full px-3 py-1 hover:bg-blue-100 transition-colors"
             >
-              Settings
+              {t("settings")}
             </Link>
             <Link
               href="/dashboard/logout"
               className="text-xs font-semibold text-white bg-blue-600 rounded-full px-3 py-1 hover:bg-blue-700 transition-colors"
             >
-              Logout
+              {t("logout")}
             </Link>
           </div>
           <LanguageSwitcher />
