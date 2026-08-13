@@ -10,6 +10,7 @@ import Link from "next/link";
 
 import { auth } from "@clerk/nextjs/server";
 import { getUserRole } from "@/lib/auth";
+import { getTranslations } from "next-intl/server";
 
 type ParentList = Parent & { students: Student[] };
 
@@ -21,32 +22,33 @@ const ParentListPage = async ({
 
 const { sessionClaims } = auth();
 const role = getUserRole(sessionClaims);
+const t = await getTranslations("List.parents");
 
 
 const columns = [
   {
-    header: "Info",
+    header: t("columns.info"),
     accessor: "info",
   },
   {
-    header: "Student Names",
+    header: t("columns.studentNames"),
     accessor: "students",
     className: "hidden md:table-cell",
   },
   {
-    header: "Phone",
+    header: t("columns.phone"),
     accessor: "phone",
     className: "hidden lg:table-cell",
   },
   {
-    header: "Address",
+    header: t("columns.address"),
     accessor: "address",
     className: "hidden lg:table-cell",
   },
   ...(role === "admin"
     ? [
         {
-          header: "Actions",
+          header: t("columns.actions"),
           accessor: "action",
         },
       ]
@@ -125,7 +127,7 @@ const renderRow = (item: ParentList) => (
     <div className="panel-card p-4 md:p-5 rounded-md flex-1 m-4 mt-0 shine-hover">
       {/* TOP */}
       <div className="flex items-center justify-between">
-        <h1 className="hidden md:block text-lg font-semibold text-blue-900">All Parents</h1>
+        <h1 className="hidden md:block text-lg font-semibold text-blue-900">{t("heading")}</h1>
         <div className="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
           <TableSearch />
           <div className="flex items-center gap-4 self-end">
