@@ -9,6 +9,7 @@ import { useFormState } from "react-dom";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 
 const ResultForm = ({
   type,
@@ -21,6 +22,7 @@ const ResultForm = ({
   setOpen: Dispatch<SetStateAction<boolean>>;
   relatedData?: any;
 }) => {
+  const t = useTranslations("Forms");
   const {
     register,
     handleSubmit,
@@ -28,14 +30,10 @@ const ResultForm = ({
     formState: { errors },
   } = useForm<ResultSchema>({
     resolver: zodResolver(resultSchema),
-    defaultValues: {
-      examId: data?.examId ?? undefined,
-      assignmentId: data?.assignmentId ?? undefined,
-    },
   });
 
   const [assessmentType, setAssessmentType] = useState<"exam" | "assignment">(
-    data?.assignmentId ? "assignment" : "exam"
+    data?.examId ? "exam" : "assignment"
   );
 
   const [state, formAction] = useFormState(
@@ -62,7 +60,7 @@ const ResultForm = ({
 
   useEffect(() => {
     if (state.success) {
-      toast(`Result has been ${type === "create" ? "created" : "updated"}!`);
+      toast(type === "create" ? t("result.toastCreated") : t("result.toastUpdated"));
       setOpen(false);
       router.refresh();
     }
@@ -73,12 +71,12 @@ const ResultForm = ({
   return (
     <form className="flex flex-col gap-8" onSubmit={onSubmit}>
       <h1 className="text-xl font-semibold">
-        {type === "create" ? "Create a new result" : "Update the result"}
+        {type === "create" ? t("result.createTitle") : t("result.updateTitle")}
       </h1>
 
       <div className="flex justify-between flex-wrap gap-4">
         <InputField
-          label="Score"
+          label={t("result.score")}
           name="score"
           defaultValue={data?.score}
           register={register}
@@ -88,7 +86,7 @@ const ResultForm = ({
         />
         {data && (
           <InputField
-            label="Id"
+            label={t("common.id")}
             name="id"
             defaultValue={data?.id}
             register={register}
@@ -97,7 +95,7 @@ const ResultForm = ({
           />
         )}
         <div className="flex flex-col gap-2 w-full md:w-1/4">
-          <label className="text-xs text-gray-500">Student</label>
+          <label className="text-xs text-gray-500">{t("result.student")}</label>
           <select
             className="ring-[1.5px] ring-gray-300 p-2 rounded-md text-sm w-full"
             {...register("studentId")}
@@ -114,7 +112,7 @@ const ResultForm = ({
           )}
         </div>
         <div className="flex flex-col gap-2 w-full md:w-1/4">
-          <label className="text-xs text-gray-500">Assessment Type</label>
+          <label className="text-xs text-gray-500">{t("result.assessmentType")}</label>
           <select
             className="ring-[1.5px] ring-gray-300 p-2 rounded-md text-sm w-full"
             value={assessmentType}
@@ -128,13 +126,13 @@ const ResultForm = ({
               }
             }}
           >
-            <option value="exam">Exam</option>
-            <option value="assignment">Assignment</option>
+            <option value="exam">{t("result.exam")}</option>
+            <option value="assignment">{t("result.assignment")}</option>
           </select>
         </div>
         {assessmentType === "exam" ? (
           <div className="flex flex-col gap-2 w-full md:w-1/4">
-            <label className="text-xs text-gray-500">Exam</label>
+            <label className="text-xs text-gray-500">{t("result.exam")}</label>
             <select
               className="ring-[1.5px] ring-gray-300 p-2 rounded-md text-sm w-full"
               {...register("examId")}
@@ -149,7 +147,7 @@ const ResultForm = ({
           </div>
         ) : (
           <div className="flex flex-col gap-2 w-full md:w-1/4">
-            <label className="text-xs text-gray-500">Assignment</label>
+            <label className="text-xs text-gray-500">{t("result.assignment")}</label>
             <select
               className="ring-[1.5px] ring-gray-300 p-2 rounded-md text-sm w-full"
               {...register("assignmentId")}
@@ -165,12 +163,13 @@ const ResultForm = ({
         )}
       </div>
 
-      {state.error && <span className="text-red-500">Something went wrong!</span>}
+      {state.error && <span className="text-red-500">{t("common.somethingWrong")}</span>}
       <button className="bg-blue-400 text-white p-2 rounded-md">
-        {type === "create" ? "Create" : "Update"}
+        {type === "create" ? t("common.create") : t("common.update")}
       </button>
     </form>
   );
 };
 
+export default ResultForm;
 export default ResultForm;
