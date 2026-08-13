@@ -157,4 +157,3 @@ const ClassForm = ({
 };
 
 export default ClassForm;
-export default ClassForm;
