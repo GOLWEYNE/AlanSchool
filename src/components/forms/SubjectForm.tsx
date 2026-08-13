@@ -112,4 +112,3 @@ const SubjectForm = ({
 };
 
 export default SubjectForm;
-export default SubjectForm;
