@@ -9,6 +9,7 @@ import { useFormState } from "react-dom";
 import { Dispatch, SetStateAction, useEffect } from "react";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 
 const ParentForm = ({
   type,
@@ -19,6 +20,7 @@ const ParentForm = ({
   data?: any;
   setOpen: Dispatch<SetStateAction<boolean>>;
 }) => {
+  const t = useTranslations("Forms");
   const {
     register,
     handleSubmit,
@@ -35,15 +37,15 @@ const ParentForm = ({
     }
   );
 
-  const onSubmit = handleSubmit((values) => {
-    formAction(values);
+  const onSubmit = handleSubmit((data) => {
+    formAction(data);
   });
 
   const router = useRouter();
 
   useEffect(() => {
     if (state.success) {
-      toast(`Parent has been ${type === "create" ? "created" : "updated"}!`);
+      toast(type === "create" ? t("parent.toastCreated") : t("parent.toastUpdated"));
       setOpen(false);
       router.refresh();
     }
@@ -52,26 +54,26 @@ const ParentForm = ({
   return (
     <form className="flex flex-col gap-8" onSubmit={onSubmit}>
       <h1 className="text-xl font-semibold">
-        {type === "create" ? "Create a new parent" : "Update the parent"}
+        {type === "create" ? t("parent.createTitle") : t("parent.updateTitle")}
       </h1>
 
       <div className="flex justify-between flex-wrap gap-4">
         <InputField
-          label="Username"
+          label={t("common.username")}
           name="username"
           defaultValue={data?.username}
           register={register}
           error={errors?.username}
         />
         <InputField
-          label="Email"
+          label={t("common.email")}
           name="email"
           defaultValue={data?.email}
           register={register}
           error={errors?.email}
         />
         <InputField
-          label="Password"
+          label={t("common.password")}
           name="password"
           type="password"
           defaultValue={data?.password}
@@ -79,28 +81,28 @@ const ParentForm = ({
           error={errors?.password}
         />
         <InputField
-          label="First Name"
+          label={t("common.firstName")}
           name="name"
           defaultValue={data?.name}
           register={register}
           error={errors?.name}
         />
         <InputField
-          label="Last Name"
+          label={t("common.lastName")}
           name="surname"
           defaultValue={data?.surname}
           register={register}
           error={errors?.surname}
         />
         <InputField
-          label="Phone"
+          label={t("common.phone")}
           name="phone"
           defaultValue={data?.phone}
           register={register}
           error={errors?.phone}
         />
         <InputField
-          label="Address"
+          label={t("common.address")}
           name="address"
           defaultValue={data?.address}
           register={register}
@@ -108,7 +110,7 @@ const ParentForm = ({
         />
         {data && (
           <InputField
-            label="Id"
+            label={t("common.id")}
             name="id"
             defaultValue={data?.id}
             register={register}
@@ -118,12 +120,13 @@ const ParentForm = ({
         )}
       </div>
 
-      {state.error && <span className="text-red-500">Something went wrong!</span>}
+      {state.error && <span className="text-red-500">{t("common.somethingWrong")}</span>}
       <button className="bg-blue-400 text-white p-2 rounded-md">
-        {type === "create" ? "Create" : "Update"}
+        {type === "create" ? t("common.create") : t("common.update")}
       </button>
     </form>
   );
 };
 
+export default ParentForm;
 export default ParentForm;
