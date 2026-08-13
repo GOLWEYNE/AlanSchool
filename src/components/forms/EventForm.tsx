@@ -9,6 +9,7 @@ import { useFormState } from "react-dom";
 import { Dispatch, SetStateAction, useEffect } from "react";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 
 const EventForm = ({
   type,
@@ -21,6 +22,7 @@ const EventForm = ({
   setOpen: Dispatch<SetStateAction<boolean>>;
   relatedData?: any;
 }) => {
+  const t = useTranslations("Forms");
   const {
     register,
     handleSubmit,
@@ -45,7 +47,7 @@ const EventForm = ({
 
   useEffect(() => {
     if (state.success) {
-      toast(`Event has been ${type === "create" ? "created" : "updated"}!`);
+      toast(type === "create" ? t("event.toastCreated") : t("event.toastUpdated"));
       setOpen(false);
       router.refresh();
     }
@@ -56,43 +58,39 @@ const EventForm = ({
   return (
     <form className="flex flex-col gap-8" onSubmit={onSubmit}>
       <h1 className="text-xl font-semibold">
-        {type === "create" ? "Create a new event" : "Update the event"}
+        {type === "create" ? t("event.createTitle") : t("event.updateTitle")}
       </h1>
 
       <div className="flex justify-between flex-wrap gap-4">
         <InputField
-          label="Title"
+          label={t("common.title")}
           name="title"
           defaultValue={data?.title}
           register={register}
           error={errors?.title}
         />
         <InputField
-          label="Description"
+          label={t("common.description")}
           name="description"
           defaultValue={data?.description}
           register={register}
           error={errors?.description}
         />
         <InputField
-          label="Start Time"
+          label={t("event.startTime")}
           name="startTime"
           defaultValue={
-            data?.startTime
-              ? new Date(data.startTime).toISOString().slice(0, 16)
-              : undefined
+            data?.startTime ? new Date(data.startTime).toISOString().slice(0, 16) : undefined
           }
           register={register}
           error={errors?.startTime}
           type="datetime-local"
         />
         <InputField
-          label="End Time"
+          label={t("event.endTime")}
           name="endTime"
           defaultValue={
-            data?.endTime
-              ? new Date(data.endTime).toISOString().slice(0, 16)
-              : undefined
+            data?.endTime ? new Date(data.endTime).toISOString().slice(0, 16) : undefined
           }
           register={register}
           error={errors?.endTime}
@@ -100,7 +98,7 @@ const EventForm = ({
         />
         {data && (
           <InputField
-            label="Id"
+            label={t("common.id")}
             name="id"
             defaultValue={data?.id}
             register={register}
@@ -109,13 +107,13 @@ const EventForm = ({
           />
         )}
         <div className="flex flex-col gap-2 w-full md:w-1/4">
-          <label className="text-xs text-gray-500">Class</label>
+          <label className="text-xs text-gray-500">{t("common.class")}</label>
           <select
             className="ring-[1.5px] ring-gray-300 p-2 rounded-md text-sm w-full"
             {...register("classId")}
             defaultValue={data?.classId ?? ""}
           >
-            <option value="">General (all classes)</option>
+            <option value="">{t("common.generalAllClasses")}</option>
             {classes.map((classItem: { id: number; name: string }) => (
               <option value={classItem.id} key={classItem.id}>
                 {classItem.name}
@@ -128,12 +126,13 @@ const EventForm = ({
         </div>
       </div>
 
-      {state.error && <span className="text-red-500">Something went wrong!</span>}
+      {state.error && <span className="text-red-500">{t("common.somethingWrong")}</span>}
       <button className="bg-blue-400 text-white p-2 rounded-md">
-        {type === "create" ? "Create" : "Update"}
+        {type === "create" ? t("common.create") : t("common.update")}
       </button>
     </form>
   );
 };
 
+export default EventForm;
 export default EventForm;
