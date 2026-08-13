@@ -133,4 +133,3 @@ const AssignmentForm = ({
 };
 
 export default AssignmentForm;
-export default AssignmentForm;
