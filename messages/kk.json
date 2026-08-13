@@ -48,5 +48,181 @@
     "performance": "НӘТИЖЕЛІЛІК",
     "academicResults": "Оқу нәтижелері",
     "academicResultsDesc": "Нәтижелерді, үрдістерді қарап шығып, жақсартуларды жариялаңыз."
+  },
+  "Pagination": {
+    "previous": "Артқа",
+    "next": "Келесі"
+  },
+  "TableSearch": {
+    "placeholder": "Жазбаларды іздеу..."
+  },
+  "List": {
+    "teachers": {
+      "title": "Мұғалімдер",
+      "subtitle": "Профильдерді, пәндерді және сынып тағайындауларын жылдам әрекеттер арқылы басқарыңыз.",
+      "emoji": "🧑‍🏫",
+      "totalLabel": "Мұғалімдер саны",
+      "loadedLabel": "Жүктелді",
+      "createEnabledLabel": "Құру қосылған",
+      "yes": "Иә",
+      "no": "Жоқ",
+      "heading": "Барлық мұғалімдер",
+      "columns": {
+        "info": "Ақпарат",
+        "teacherId": "Мұғалім ID",
+        "subjects": "Пәндер",
+        "classes": "Сыныптар",
+        "phone": "Телефон",
+        "address": "Мекенжай",
+        "actions": "Әрекеттер"
+      }
+    },
+    "students": {
+      "title": "Оқушылар",
+      "subtitle": "Оқушылардың жазбаларын, сынып бөлуін және мәліметтерін бір қарағанда бақылаңыз.",
+      "emoji": "🎓",
+      "totalLabel": "Оқушылар саны",
+      "visibleLabel": "Көрінеді",
+      "adminActionsLabel": "Әкімші әрекеттері",
+      "heading": "Барлық оқушылар",
+      "columns": {
+        "info": "Ақпарат",
+        "studentId": "Оқушы ID",
+        "grade": "Сынып",
+        "phone": "Телефон",
+        "address": "Мекенжай",
+        "actions": "Әрекеттер"
+      }
+    },
+    "parents": {
+      "heading": "Барлық ата-аналар",
+      "columns": {
+        "info": "Ақпарат",
+        "studentNames": "Оқушылардың аты-жөні",
+        "phone": "Телефон",
+        "address": "Мекенжай",
+        "actions": "Әрекеттер"
+      }
+    },
+    "subjects": {
+      "heading": "Барлық пәндер",
+      "columns": {
+        "subjectName": "Пән атауы",
+        "teachers": "Мұғалімдер",
+        "actions": "Әрекеттер"
+      }
+    },
+    "classes": {
+      "title": "Сыныптар",
+      "subtitle": "Сынып топтарын, жетекшілерін және сыйымдылығын бір ыңғайлы көріністе ұйымдастырыңыз.",
+      "emoji": "🏫",
+      "totalLabel": "Сыныптар саны",
+      "visibleNowLabel": "Қазір көрінеді",
+      "adminModeLabel": "Әкімші режимі",
+      "on": "Қосулы",
+      "heading": "Барлық сыныптар",
+      "columns": {
+        "className": "Сынып атауы",
+        "capacity": "Сыйымдылығы",
+        "grade": "Деңгейі",
+        "supervisor": "Жетекшісі",
+        "actions": "Әрекеттер"
+      }
+    },
+    "lessons": {
+      "heading": "Барлық сабақтар",
+      "columns": {
+        "lesson": "Сабақ",
+        "subject": "Пән",
+        "class": "Сынып",
+        "teacher": "Мұғалім",
+        "time": "Уақыт",
+        "actions": "Әрекеттер"
+      }
+    },
+    "exams": {
+      "title": "Экзамендер",
+      "subtitle": "Бағалауларды нақты мерзімдермен жоспарлаңыз және әр сыныпты кестеде ұстаңыз.",
+      "emoji": "📝",
+      "totalLabel": "Экзамендер саны",
+      "showingLabel": "Көрсетілді",
+      "roleLabel": "Рөл",
+      "heading": "Барлық экзамендер",
+      "columns": {
+        "subjectName": "Пән атауы",
+        "class": "Сынып",
+        "teacher": "Мұғалім",
+        "date": "Күні",
+        "actions": "Әрекеттер"
+      }
+    },
+    "assignments": {
+      "title": "Тапсырмалар",
+      "subtitle": "Әр сынып үшін тапсырмалардың мерзімдерін жасаңыз және тапсыру күндерін бақылаңыз.",
+      "emoji": "📚",
+      "totalLabel": "Тапсырмалар саны",
+      "currentPageLabel": "Ағымдағы бет",
+      "teacherToolsLabel": "Мұғалім құралдары",
+      "heading": "Барлық тапсырмалар",
+      "columns": {
+        "subjectName": "Пән атауы",
+        "class": "Сынып",
+        "teacher": "Мұғалім",
+        "dueDate": "Тапсыру мерзімі",
+        "actions": "Әрекеттер"
+      }
+    },
+    "results": {
+      "title": "Нәтижелер",
+      "subtitle": "Экзамендер мен тапсырмалар бойынша үлгерім нәтижелерін бір ағында қарап шығыңыз.",
+      "emoji": "📊",
+      "totalLabel": "Нәтижелер саны",
+      "loadedLabel": "Жүктелді",
+      "roleLabel": "Рөл",
+      "heading": "Барлық нәтижелер",
+      "columns": {
+        "title": "Атауы",
+        "student": "Оқушы",
+        "score": "Балл",
+        "teacher": "Мұғалім",
+        "class": "Сынып",
+        "date": "Күні",
+        "actions": "Әрекеттер"
+      }
+    },
+    "events": {
+      "title": "Іс-шаралар",
+      "subtitle": "Мектеп іс-шараларын барлық сыныптар бойынша нақты кестемен үйлестіріңіз.",
+      "emoji": "🗓️",
+      "totalLabel": "Іс-шаралар саны",
+      "visibleLabel": "Көрінеді",
+      "adminControlsLabel": "Әкімші басқаруы",
+      "enabled": "Қосулы",
+      "heading": "Барлық іс-шаралар",
+      "columns": {
+        "title": "Атауы",
+        "class": "Сынып",
+        "date": "Күні",
+        "startTime": "Басталу уақыты",
+        "endTime": "Аяқталу уақыты",
+        "actions": "Әрекеттер"
+      }
+    },
+    "announcements": {
+      "title": "Хабарландырулар",
+      "subtitle": "Маңызды жаңартуларды қажетті сыныптарға қажетті уақытта жеткізіңіз.",
+      "emoji": "📣",
+      "totalLabel": "Жарияланымдар саны",
+      "thisViewLabel": "Осы көріністе",
+      "postingLabel": "Жариялау",
+      "available": "Қолжетімді",
+      "heading": "Барлық хабарландырулар",
+      "columns": {
+        "title": "Атауы",
+        "class": "Сынып",
+        "date": "Күні",
+        "actions": "Әрекеттер"
+      }
+    }
   }
 }
