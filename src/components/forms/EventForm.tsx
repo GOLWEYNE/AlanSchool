@@ -135,4 +135,3 @@ const EventForm = ({
 };
 
 export default EventForm;
-export default EventForm;
