@@ -92,7 +92,9 @@
         "phone": "Телефон",
         "address": "Адрес",
         "actions": "Действия"
-      }
+      },
+      "enabled": "Включено",
+      "hidden": "Скрыто"
     },
     "parents": {
       "heading": "Все родители",
