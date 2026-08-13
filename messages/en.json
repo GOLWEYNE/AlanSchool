@@ -48,5 +48,181 @@
     "performance": "PERFORMANCE",
     "academicResults": "Academic Results",
     "academicResultsDesc": "Review outcomes, trends, and publish improvements."
+  },
+  "Pagination": {
+    "previous": "Previous",
+    "next": "Next"
+  },
+  "TableSearch": {
+    "placeholder": "Search records..."
+  },
+  "List": {
+    "teachers": {
+      "title": "Teachers",
+      "subtitle": "Manage profiles, subjects, and class assignments with quick actions.",
+      "emoji": "🧑‍🏫",
+      "totalLabel": "Total Teachers",
+      "loadedLabel": "Loaded",
+      "createEnabledLabel": "Create Enabled",
+      "yes": "Yes",
+      "no": "No",
+      "heading": "All Teachers",
+      "columns": {
+        "info": "Info",
+        "teacherId": "Teacher ID",
+        "subjects": "Subjects",
+        "classes": "Classes",
+        "phone": "Phone",
+        "address": "Address",
+        "actions": "Actions"
+      }
+    },
+    "students": {
+      "title": "Students",
+      "subtitle": "Track learner records, class placement, and student details at a glance.",
+      "emoji": "🎓",
+      "totalLabel": "Total Students",
+      "visibleLabel": "Visible",
+      "adminActionsLabel": "Admin Actions",
+      "heading": "All Students",
+      "columns": {
+        "info": "Info",
+        "studentId": "Student ID",
+        "grade": "Grade",
+        "phone": "Phone",
+        "address": "Address",
+        "actions": "Actions"
+      }
+    },
+    "parents": {
+      "heading": "All Parents",
+      "columns": {
+        "info": "Info",
+        "studentNames": "Student Names",
+        "phone": "Phone",
+        "address": "Address",
+        "actions": "Actions"
+      }
+    },
+    "subjects": {
+      "heading": "All Subjects",
+      "columns": {
+        "subjectName": "Subject Name",
+        "teachers": "Teachers",
+        "actions": "Actions"
+      }
+    },
+    "classes": {
+      "title": "Classes",
+      "subtitle": "Organize class groups, supervisors, and capacity in one clean view.",
+      "emoji": "🏫",
+      "totalLabel": "Total Classes",
+      "visibleNowLabel": "Visible Now",
+      "adminModeLabel": "Admin Mode",
+      "on": "On",
+      "heading": "All Classes",
+      "columns": {
+        "className": "Class Name",
+        "capacity": "Capacity",
+        "grade": "Grade",
+        "supervisor": "Supervisor",
+        "actions": "Actions"
+      }
+    },
+    "lessons": {
+      "heading": "All Lessons",
+      "columns": {
+        "lesson": "Lesson",
+        "subject": "Subject",
+        "class": "Class",
+        "teacher": "Teacher",
+        "time": "Time",
+        "actions": "Actions"
+      }
+    },
+    "exams": {
+      "title": "Exams",
+      "subtitle": "Plan assessments with clear dates and keep each class on schedule.",
+      "emoji": "📝",
+      "totalLabel": "Total Exams",
+      "showingLabel": "Showing",
+      "roleLabel": "Role",
+      "heading": "All Exams",
+      "columns": {
+        "subjectName": "Subject Name",
+        "class": "Class",
+        "teacher": "Teacher",
+        "date": "Date",
+        "actions": "Actions"
+      }
+    },
+    "assignments": {
+      "title": "Assignments",
+      "subtitle": "Create coursework timelines and monitor due dates for every class.",
+      "emoji": "📚",
+      "totalLabel": "Total Assignments",
+      "currentPageLabel": "Current Page",
+      "teacherToolsLabel": "Teacher Tools",
+      "heading": "All Assignments",
+      "columns": {
+        "subjectName": "Subject Name",
+        "class": "Class",
+        "teacher": "Teacher",
+        "dueDate": "Due Date",
+        "actions": "Actions"
+      }
+    },
+    "results": {
+      "title": "Results",
+      "subtitle": "Review performance outcomes from exams and assignments in one stream.",
+      "emoji": "📊",
+      "totalLabel": "Total Results",
+      "loadedLabel": "Loaded",
+      "roleLabel": "Role",
+      "heading": "All Results",
+      "columns": {
+        "title": "Title",
+        "student": "Student",
+        "score": "Score",
+        "teacher": "Teacher",
+        "class": "Class",
+        "date": "Date",
+        "actions": "Actions"
+      }
+    },
+    "events": {
+      "title": "Events",
+      "subtitle": "Coordinate school activities with timeline clarity across classes.",
+      "emoji": "🗓️",
+      "totalLabel": "Total Events",
+      "visibleLabel": "Visible",
+      "adminControlsLabel": "Admin Controls",
+      "enabled": "Enabled",
+      "heading": "All Events",
+      "columns": {
+        "title": "Title",
+        "class": "Class",
+        "date": "Date",
+        "startTime": "Start Time",
+        "endTime": "End Time",
+        "actions": "Actions"
+      }
+    },
+    "announcements": {
+      "title": "Announcements",
+      "subtitle": "Broadcast important updates to the right classes at the right time.",
+      "emoji": "📣",
+      "totalLabel": "Total Posts",
+      "thisViewLabel": "This View",
+      "postingLabel": "Posting",
+      "available": "Available",
+      "heading": "All Announcements",
+      "columns": {
+        "title": "Title",
+        "class": "Class",
+        "date": "Date",
+        "actions": "Actions"
+      }
+    }
   }
 }
