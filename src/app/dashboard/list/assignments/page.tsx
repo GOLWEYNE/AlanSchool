@@ -9,6 +9,7 @@ import { Assignment, Class, Prisma, Subject, Teacher } from "@/generated/prisma/
 import Image from "next/image";
 import { auth } from "@clerk/nextjs/server";
 import { getUserRole } from "@/lib/auth";
+import { getTranslations } from "next-intl/server";
 
 type AssignmentList = Assignment & {
   lesson: {
@@ -27,31 +28,32 @@ const AssignmentListPage = async ({
   const { userId, sessionClaims } = auth();
   const role = getUserRole(sessionClaims);
   const currentUserId = userId;
+  const t = await getTranslations("List.assignments");
   
   
   const columns = [
     {
-      header: "Subject Name",
+      header: t("columns.subjectName"),
       accessor: "name",
     },
     {
-      header: "Class",
+      header: t("columns.class"),
       accessor: "class",
     },
     {
-      header: "Teacher",
+      header: t("columns.teacher"),
       accessor: "teacher",
       className: "hidden md:table-cell",
     },
     {
-      header: "Due Date",
+      header: t("columns.dueDate"),
       accessor: "dueDate",
       className: "hidden md:table-cell",
     },
     ...(role === "admin" || role === "teacher"
       ? [
           {
-            header: "Actions",
+            header: t("columns.actions"),
             accessor: "action",
           },
         ]
@@ -168,19 +170,19 @@ const AssignmentListPage = async ({
   return (
     <div className="panel-card p-4 md:p-5 rounded-md flex-1 m-4 mt-0 shine-hover">
       <PageHero
-        title="Assignments"
-        subtitle="Create coursework timelines and monitor due dates for every class."
-        emoji="📚"
+        title={t("title")}
+        subtitle={t("subtitle")}
+        emoji={t("emoji")}
         stats={[
-          { label: "Total Assignments", value: count },
-          { label: "Current Page", value: data.length },
-          { label: "Teacher Tools", value: role === "teacher" || role === "admin" ? "On" : "Off" },
+          { label: t("totalLabel"), value: count },
+          { label: t("currentPageLabel"), value: data.length },
+          { label: t("teacherToolsLabel"), value: role === "teacher" || role === "admin" ? t("on") : t("off") },
         ]}
       />
       {/* TOP */}
       <div className="flex items-center justify-between">
         <h1 className="hidden md:block text-lg font-semibold text-blue-900">
-          All Assignments
+          {t("heading")}
         </h1>
         <div className="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
           <TableSearch />
