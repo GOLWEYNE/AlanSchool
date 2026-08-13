@@ -129,4 +129,3 @@ const ParentForm = ({
 };
 
 export default ParentForm;
-export default ParentForm;
