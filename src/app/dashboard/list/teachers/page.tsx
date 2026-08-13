@@ -10,6 +10,7 @@ import Link from "next/link";
 import { ITEM_PER_PAGE } from "@/lib/settings";
 import { auth } from "@clerk/nextjs/server";
 import { getUserRole } from "@/lib/auth";
+import { getTranslations } from "next-intl/server";
 
 type TeacherList = Teacher & { subjects: Subject[] } & { classes: Class[] };
 
@@ -20,40 +21,41 @@ const TeacherListPage = async ({
 }) => {
   const { sessionClaims } = auth();
   const role = getUserRole(sessionClaims);
+  const t = await getTranslations("List.teachers");
   const columns = [
     {
-      header: "Info",
+      header: t("columns.info"),
       accessor: "info",
     },
     {
-      header: "Teacher ID",
+      header: t("columns.teacherId"),
       accessor: "teacherId",
       className: "hidden md:table-cell",
     },
     {
-      header: "Subjects",
+      header: t("columns.subjects"),
       accessor: "subjects",
       className: "hidden md:table-cell",
     },
     {
-      header: "Classes",
+      header: t("columns.classes"),
       accessor: "classes",
       className: "hidden md:table-cell",
     },
     {
-      header: "Phone",
+      header: t("columns.phone"),
       accessor: "phone",
       className: "hidden lg:table-cell",
     },
     {
-      header: "Address",
+      header: t("columns.address"),
       accessor: "address",
       className: "hidden lg:table-cell",
     },
     ...(role === "admin"
       ? [
           {
-            header: "Actions",
+            header: t("columns.actions"),
             accessor: "action",
           },
         ]
@@ -149,18 +151,18 @@ const TeacherListPage = async ({
   return (
     <div className="panel-card p-4 md:p-5 rounded-md flex-1 m-4 mt-0 shine-hover">
       <PageHero
-        title="Teachers"
-        subtitle="Manage profiles, subjects, and class assignments with quick actions."
-        emoji="🧑‍🏫"
+        title={t("title")}
+        subtitle={t("subtitle")}
+        emoji={t("emoji")}
         stats={[
-          { label: "Total Teachers", value: count },
-          { label: "Loaded", value: data.length },
-          { label: "Create Enabled", value: role === "admin" ? "Yes" : "No" },
+          { label: t("totalLabel"), value: count },
+          { label: t("loadedLabel"), value: data.length },
+          { label: t("createEnabledLabel"), value: role === "admin" ? t("yes") : t("no") },
         ]}
       />
       {/* TOP */}
       <div className="flex items-center justify-between">
-        <h1 className="hidden md:block text-lg font-semibold text-blue-900">All Teachers</h1>
+        <h1 className="hidden md:block text-lg font-semibold text-blue-900">{t("heading")}</h1>
         <div className="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
           <TableSearch />
           <div className="flex items-center gap-4 self-end">
