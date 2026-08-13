@@ -11,6 +11,7 @@ import { createTeacher, updateTeacher } from "@/lib/actions";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import { CldUploadWidget } from "next-cloudinary";
+import { useTranslations } from "next-intl";
 
 const TeacherForm = ({
   type,
@@ -23,6 +24,7 @@ const TeacherForm = ({
   setOpen: Dispatch<SetStateAction<boolean>>;
   relatedData?: any;
 }) => {
+  const t = useTranslations("Forms");
   const {
     register,
     handleSubmit,
@@ -50,7 +52,7 @@ const TeacherForm = ({
 
   useEffect(() => {
     if (state.success) {
-      toast(`Teacher has been ${type === "create" ? "created" : "updated"}!`);
+      toast(type === "create" ? t("teacher.toastCreated") : t("teacher.toastUpdated"));
       setOpen(false);
       router.refresh();
     }
@@ -61,28 +63,28 @@ const TeacherForm = ({
   return (
     <form className="flex flex-col gap-8" onSubmit={onSubmit}>
       <h1 className="text-xl font-semibold">
-        {type === "create" ? "Create a new teacher" : "Update the teacher"}
+        {type === "create" ? t("teacher.createTitle") : t("teacher.updateTitle")}
       </h1>
       <span className="text-xs text-gray-400 font-medium">
-        Authentication Information
+        {t("common.authenticationInfo")}
       </span>
       <div className="flex justify-between flex-wrap gap-4">
         <InputField
-          label="Username"
+          label={t("common.username")}
           name="username"
           defaultValue={data?.username}
           register={register}
           error={errors?.username}
         />
         <InputField
-          label="Email"
+          label={t("common.email")}
           name="email"
           defaultValue={data?.email}
           register={register}
           error={errors?.email}
         />
         <InputField
-          label="Password"
+          label={t("common.password")}
           name="password"
           type="password"
           defaultValue={data?.password}
@@ -91,46 +93,46 @@ const TeacherForm = ({
         />
       </div>
       <span className="text-xs text-gray-400 font-medium">
-        Personal Information
+        {t("common.personalInfo")}
       </span>
       <div className="flex justify-between flex-wrap gap-4">
         <InputField
-          label="First Name"
+          label={t("common.firstName")}
           name="name"
           defaultValue={data?.name}
           register={register}
           error={errors.name}
         />
         <InputField
-          label="Last Name"
+          label={t("common.lastName")}
           name="surname"
           defaultValue={data?.surname}
           register={register}
           error={errors.surname}
         />
         <InputField
-          label="Phone"
+          label={t("common.phone")}
           name="phone"
           defaultValue={data?.phone}
           register={register}
           error={errors.phone}
         />
         <InputField
-          label="Address"
+          label={t("common.address")}
           name="address"
           defaultValue={data?.address}
           register={register}
           error={errors.address}
         />
         <InputField
-          label="Blood Type"
+          label={t("common.bloodType")}
           name="bloodType"
           defaultValue={data?.bloodType}
           register={register}
           error={errors.bloodType}
         />
         <InputField
-          label="Birthday"
+          label={t("common.birthday")}
           name="birthday"
           defaultValue={data?.birthday.toISOString().split("T")[0]}
           register={register}
@@ -139,7 +141,7 @@ const TeacherForm = ({
         />
         {data && (
           <InputField
-            label="Id"
+            label={t("common.id")}
             name="id"
             defaultValue={data?.id}
             register={register}
@@ -148,14 +150,14 @@ const TeacherForm = ({
           />
         )}
         <div className="flex flex-col gap-2 w-full md:w-1/4">
-          <label className="text-xs text-gray-500">Sex</label>
+          <label className="text-xs text-gray-500">{t("common.sex")}</label>
           <select
             className="ring-[1.5px] ring-gray-300 p-2 rounded-md text-sm w-full"
             {...register("sex")}
             defaultValue={data?.sex}
           >
-            <option value="MALE">Male</option>
-            <option value="FEMALE">Female</option>
+            <option value="MALE">{t("common.male")}</option>
+            <option value="FEMALE">{t("common.female")}</option>
           </select>
           {errors.sex?.message && (
             <p className="text-xs text-red-400">
@@ -164,7 +166,7 @@ const TeacherForm = ({
           )}
         </div>
         <div className="flex flex-col gap-2 w-full md:w-1/4">
-          <label className="text-xs text-gray-500">Subjects</label>
+          <label className="text-xs text-gray-500">{t("teacher.subjects")}</label>
           <select
             multiple
             className="ring-[1.5px] ring-gray-300 p-2 rounded-md text-sm w-full"
@@ -197,17 +199,17 @@ const TeacherForm = ({
                 onClick={() => open()}
               >
                 <Image src="/upload.png" alt="" width={28} height={28} />
-                <span>Upload a photo</span>
+                <span>{t("common.uploadPhoto")}</span>
               </div>
             );
           }}
         </CldUploadWidget>
       </div>
       {state.error && (
-        <span className="text-red-500">Something went wrong!</span>
+        <span className="text-red-500">{t("common.somethingWrong")}</span>
       )}
       <button className="bg-blue-400 text-white p-2 rounded-md">
-        {type === "create" ? "Create" : "Update"}
+        {type === "create" ? t("common.create") : t("common.update")}
       </button>
     </form>
   );
