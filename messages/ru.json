@@ -48,5 +48,181 @@
     "performance": "УСПЕВАЕМОСТЬ",
     "academicResults": "Академические результаты",
     "academicResultsDesc": "Просматривайте результаты, тенденции и публикуйте улучшения."
+  },
+  "Pagination": {
+    "previous": "Назад",
+    "next": "Далее"
+  },
+  "TableSearch": {
+    "placeholder": "Поиск записей..."
+  },
+  "List": {
+    "teachers": {
+      "title": "Учителя",
+      "subtitle": "Управляйте профилями, предметами и распределением классов с помощью быстрых действий.",
+      "emoji": "🧑‍🏫",
+      "totalLabel": "Всего учителей",
+      "loadedLabel": "Загружено",
+      "createEnabledLabel": "Создание доступно",
+      "yes": "Да",
+      "no": "Нет",
+      "heading": "Все учителя",
+      "columns": {
+        "info": "Информация",
+        "teacherId": "ID учителя",
+        "subjects": "Предметы",
+        "classes": "Классы",
+        "phone": "Телефон",
+        "address": "Адрес",
+        "actions": "Действия"
+      }
+    },
+    "students": {
+      "title": "Ученики",
+      "subtitle": "Отслеживайте учебные записи, распределение по классам и данные учеников в одном месте.",
+      "emoji": "🎓",
+      "totalLabel": "Всего учеников",
+      "visibleLabel": "Отображается",
+      "adminActionsLabel": "Действия администратора",
+      "heading": "Все ученики",
+      "columns": {
+        "info": "Информация",
+        "studentId": "ID ученика",
+        "grade": "Класс",
+        "phone": "Телефон",
+        "address": "Адрес",
+        "actions": "Действия"
+      }
+    },
+    "parents": {
+      "heading": "Все родители",
+      "columns": {
+        "info": "Информация",
+        "studentNames": "Имена учеников",
+        "phone": "Телефон",
+        "address": "Адрес",
+        "actions": "Действия"
+      }
+    },
+    "subjects": {
+      "heading": "Все предметы",
+      "columns": {
+        "subjectName": "Название предмета",
+        "teachers": "Учителя",
+        "actions": "Действия"
+      }
+    },
+    "classes": {
+      "title": "Классы",
+      "subtitle": "Организуйте группы классов, руководителей и вместимость в одном удобном окне.",
+      "emoji": "🏫",
+      "totalLabel": "Всего классов",
+      "visibleNowLabel": "Отображается сейчас",
+      "adminModeLabel": "Режим администратора",
+      "on": "Включен",
+      "heading": "Все классы",
+      "columns": {
+        "className": "Название класса",
+        "capacity": "Вместимость",
+        "grade": "Уровень",
+        "supervisor": "Руководитель",
+        "actions": "Действия"
+      }
+    },
+    "lessons": {
+      "heading": "Все уроки",
+      "columns": {
+        "lesson": "Урок",
+        "subject": "Предмет",
+        "class": "Класс",
+        "teacher": "Учитель",
+        "time": "Время",
+        "actions": "Действия"
+      }
+    },
+    "exams": {
+      "title": "Экзамены",
+      "subtitle": "Планируйте оценивания с четкими датами и держите каждый класс в графике.",
+      "emoji": "📝",
+      "totalLabel": "Всего экзаменов",
+      "showingLabel": "Показано",
+      "roleLabel": "Роль",
+      "heading": "Все экзамены",
+      "columns": {
+        "subjectName": "Название предмета",
+        "class": "Класс",
+        "teacher": "Учитель",
+        "date": "Дата",
+        "actions": "Действия"
+      }
+    },
+    "assignments": {
+      "title": "Задания",
+      "subtitle": "Создавайте сроки выполнения заданий и следите за датами сдачи для каждого класса.",
+      "emoji": "📚",
+      "totalLabel": "Всего заданий",
+      "currentPageLabel": "Текущая страница",
+      "teacherToolsLabel": "Инструменты учителя",
+      "heading": "Все задания",
+      "columns": {
+        "subjectName": "Название предмета",
+        "class": "Класс",
+        "teacher": "Учитель",
+        "dueDate": "Срок сдачи",
+        "actions": "Действия"
+      }
+    },
+    "results": {
+      "title": "Результаты",
+      "subtitle": "Просматривайте результаты успеваемости по экзаменам и заданиям в одном потоке.",
+      "emoji": "📊",
+      "totalLabel": "Всего результатов",
+      "loadedLabel": "Загружено",
+      "roleLabel": "Роль",
+      "heading": "Все результаты",
+      "columns": {
+        "title": "Название",
+        "student": "Ученик",
+        "score": "Балл",
+        "teacher": "Учитель",
+        "class": "Класс",
+        "date": "Дата",
+        "actions": "Действия"
+      }
+    },
+    "events": {
+      "title": "Мероприятия",
+      "subtitle": "Координируйте школьные мероприятия с четким графиком по всем классам.",
+      "emoji": "🗓️",
+      "totalLabel": "Всего мероприятий",
+      "visibleLabel": "Отображается",
+      "adminControlsLabel": "Управление администратора",
+      "enabled": "Включено",
+      "heading": "Все мероприятия",
+      "columns": {
+        "title": "Название",
+        "class": "Класс",
+        "date": "Дата",
+        "startTime": "Время начала",
+        "endTime": "Время окончания",
+        "actions": "Действия"
+      }
+    },
+    "announcements": {
+      "title": "Объявления",
+      "subtitle": "Транслируйте важные обновления нужным классам в нужное время.",
+      "emoji": "📣",
+      "totalLabel": "Всего публикаций",
+      "thisViewLabel": "В этом виде",
+      "postingLabel": "Публикация",
+      "available": "Доступно",
+      "heading": "Все объявления",
+      "columns": {
+        "title": "Название",
+        "class": "Класс",
+        "date": "Дата",
+        "actions": "Действия"
+      }
+    }
   }
 }
