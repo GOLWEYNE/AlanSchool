@@ -173,7 +173,9 @@
         "teacher": "Teacher",
         "dueDate": "Due Date",
         "actions": "Actions"
-      }
+      },
+      "on": "On",
+      "off": "Off"
     },
     "results": {
       "title": "Results",
