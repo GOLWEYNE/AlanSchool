@@ -211,7 +211,8 @@
         "startTime": "Время начала",
         "endTime": "Время окончания",
         "actions": "Действия"
-      }
+      },
+      "readOnly": "Только просмотр"
     },
     "announcements": {
       "title": "Объявления",
