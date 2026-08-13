@@ -249,4 +249,3 @@ const StudentForm = ({
 };
 
 export default StudentForm;
-export default StudentForm;
