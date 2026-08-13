@@ -129,7 +129,8 @@
         "grade": "Grade",
         "supervisor": "Supervisor",
         "actions": "Actions"
-      }
+      },
+      "off": "Off"
     },
     "lessons": {
       "heading": "All Lessons",
