@@ -172,4 +172,3 @@ const ResultForm = ({
 };
 
 export default ResultForm;
-export default ResultForm;
