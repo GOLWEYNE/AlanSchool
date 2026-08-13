@@ -211,7 +211,8 @@
         "startTime": "Start Time",
         "endTime": "End Time",
         "actions": "Actions"
-      }
+      },
+      "readOnly": "Read Only"
     },
     "announcements": {
       "title": "Announcements",
