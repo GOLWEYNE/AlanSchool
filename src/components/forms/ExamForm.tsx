@@ -3,22 +3,13 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import InputField from "../InputField";
-import {
-  examSchema,
-  ExamSchema,
-  subjectSchema,
-  SubjectSchema,
-} from "@/lib/formValidationSchemas";
-import {
-  createExam,
-  createSubject,
-  updateExam,
-  updateSubject,
-} from "@/lib/actions";
+import { examSchema, ExamSchema } from "@/lib/formValidationSchemas";
+import { createExam, updateExam } from "@/lib/actions";
 import { useFormState } from "react-dom";
 import { Dispatch, SetStateAction, useEffect } from "react";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 
 const ExamForm = ({
   type,
@@ -31,6 +22,7 @@ const ExamForm = ({
   setOpen: Dispatch<SetStateAction<boolean>>;
   relatedData?: any;
 }) => {
+  const t = useTranslations("Forms");
   const {
     register,
     handleSubmit,
@@ -58,7 +50,7 @@ const ExamForm = ({
 
   useEffect(() => {
     if (state.success) {
-      toast(`Exam has been ${type === "create" ? "created" : "updated"}!`);
+      toast(type === "create" ? t("exam.toastCreated") : t("exam.toastUpdated"));
       setOpen(false);
       router.refresh();
     }
@@ -69,19 +61,19 @@ const ExamForm = ({
   return (
     <form className="flex flex-col gap-8" onSubmit={onSubmit}>
       <h1 className="text-xl font-semibold">
-        {type === "create" ? "Create a new exam" : "Update the exam"}
+        {type === "create" ? t("exam.createTitle") : t("exam.updateTitle")}
       </h1>
 
       <div className="flex justify-between flex-wrap gap-4">
         <InputField
-          label="Exam title"
+          label={t("exam.examTitle")}
           name="title"
           defaultValue={data?.title}
           register={register}
           error={errors?.title}
         />
         <InputField
-          label="Start Date"
+          label={t("exam.startDate")}
           name="startTime"
           defaultValue={
             data?.startTime
@@ -93,7 +85,7 @@ const ExamForm = ({
           type="datetime-local"
         />
         <InputField
-          label="End Date"
+          label={t("exam.endDate")}
           name="endTime"
           defaultValue={
             data?.endTime
@@ -106,7 +98,7 @@ const ExamForm = ({
         />
         {data && (
           <InputField
-            label="Id"
+            label={t("common.id")}
             name="id"
             defaultValue={data?.id}
             register={register}
@@ -115,7 +107,7 @@ const ExamForm = ({
           />
         )}
         <div className="flex flex-col gap-2 w-full md:w-1/4">
-          <label className="text-xs text-gray-500">Lesson</label>
+          <label className="text-xs text-gray-500">{t("exam.lesson")}</label>
           <select
             className="ring-[1.5px] ring-gray-300 p-2 rounded-md text-sm w-full"
             {...register("lessonId")}
@@ -128,20 +120,18 @@ const ExamForm = ({
             ))}
           </select>
           {errors.lessonId?.message && (
-            <p className="text-xs text-red-400">
-              {errors.lessonId.message.toString()}
-            </p>
+            <p className="text-xs text-red-400">{errors.lessonId.message.toString()}</p>
           )}
         </div>
       </div>
-      {state.error && (
-        <span className="text-red-500">Something went wrong!</span>
-      )}
+
+      {state.error && <span className="text-red-500">{t("common.somethingWrong")}</span>}
       <button className="bg-blue-400 text-white p-2 rounded-md">
-        {type === "create" ? "Create" : "Update"}
+        {type === "create" ? t("common.create") : t("common.update")}
       </button>
     </form>
   );
 };
 
+export default ExamForm;
 export default ExamForm;
