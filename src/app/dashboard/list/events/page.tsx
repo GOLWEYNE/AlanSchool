@@ -9,6 +9,7 @@ import { Class, Event, Prisma } from "@/generated/prisma/client";
 import Image from "next/image";
 import { auth } from "@clerk/nextjs/server";
 import { getUserRole } from "@/lib/auth";
+import { getTranslations } from "next-intl/server";
 
 type EventList = Event & { class: Class };
 
@@ -21,35 +22,36 @@ const EventListPage = async ({
   const { userId, sessionClaims } = auth();
   const role = getUserRole(sessionClaims);
   const currentUserId = userId;
+  const t = await getTranslations("List.events");
 
   const columns = [
     {
-      header: "Title",
+      header: t("columns.title"),
       accessor: "title",
     },
     {
-      header: "Class",
+      header: t("columns.class"),
       accessor: "class",
     },
     {
-      header: "Date",
+      header: t("columns.date"),
       accessor: "date",
       className: "hidden md:table-cell",
     },
     {
-      header: "Start Time",
+      header: t("columns.startTime"),
       accessor: "startTime",
       className: "hidden md:table-cell",
     },
     {
-      header: "End Time",
+      header: t("columns.endTime"),
       accessor: "endTime",
       className: "hidden md:table-cell",
     },
     ...(role === "admin"
       ? [
           {
-            header: "Actions",
+            header: t("columns.actions"),
             accessor: "action",
           },
         ]
@@ -145,18 +147,18 @@ const EventListPage = async ({
   return (
     <div className="panel-card p-4 md:p-5 rounded-md flex-1 m-4 mt-0 shine-hover">
       <PageHero
-        title="Events"
-        subtitle="Coordinate school activities with timeline clarity across classes."
-        emoji="🗓️"
+        title={t("title")}
+        subtitle={t("subtitle")}
+        emoji={t("emoji")}
         stats={[
-          { label: "Total Events", value: count },
-          { label: "Visible", value: data.length },
-          { label: "Admin Controls", value: role === "admin" ? "Enabled" : "Read Only" },
+          { label: t("totalLabel"), value: count },
+          { label: t("visibleLabel"), value: data.length },
+          { label: t("adminControlsLabel"), value: role === "admin" ? t("enabled") : t("readOnly") },
         ]}
       />
       {/* TOP */}
       <div className="flex items-center justify-between">
-        <h1 className="hidden md:block text-lg font-semibold text-blue-900">All Events</h1>
+        <h1 className="hidden md:block text-lg font-semibold text-blue-900">{t("heading")}</h1>
         <div className="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
           <TableSearch />
           <div className="flex items-center gap-4 self-end">
