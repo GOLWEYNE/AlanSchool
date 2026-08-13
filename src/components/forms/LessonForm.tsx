@@ -203,4 +203,3 @@ const LessonForm = ({
 };
 
 export default LessonForm;
-export default LessonForm;
