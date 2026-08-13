@@ -231,5 +231,134 @@
       },
       "disabled": "Отключено"
     }
-  }
+  },
+    "Forms": {
+          "common": {
+                  "somethingWrong": "Что-то пошло не так!",
+                  "create": "Создать",
+                  "update": "Обновить",
+                  "id": "Id",
+                  "title": "Заголовок",
+                  "description": "Описание",
+                  "date": "Дата",
+                  "class": "Класс",
+                  "generalAllClasses": "Общее (все классы)",
+                  "grade": "Уровень",
+                  "authenticationInfo": "Данные для входа",
+                  "personalInfo": "Личная информация",
+                  "username": "Имя пользователя",
+                  "email": "Электронная почта",
+                  "password": "Пароль",
+                  "firstName": "Имя",
+                  "lastName": "Фамилия",
+                  "phone": "Телефон",
+                  "address": "Адрес",
+                  "bloodType": "Группа крови",
+                  "birthday": "Дата рождения",
+                  "sex": "Пол",
+                  "male": "Мужской",
+                  "female": "Женский",
+                  "uploadPhoto": "Загрузить фото",
+                  "capacity": "Вместимость",
+                  "days": {
+                            "monday": "Понедельник",
+                            "tuesday": "Вторник",
+                            "wednesday": "Среда",
+                            "thursday": "Четверг",
+                            "friday": "Пятница"
+                  }
+          },
+          "announcement": {
+                  "createTitle": "Создать новое объявление",
+                  "updateTitle": "Обновить объявление",
+                  "toastCreated": "Объявление создано!",
+                  "toastUpdated": "Объявление обновлено!"
+          },
+          "assignment": {
+                  "createTitle": "Создать новое задание",
+                  "updateTitle": "Обновить задание",
+                  "startDate": "Дата начала",
+                  "dueDate": "Срок сдачи",
+                  "lesson": "Урок",
+                  "toastCreated": "Задание создано!",
+                  "toastUpdated": "Задание обновлено!"
+          },
+          "class": {
+                  "createTitle": "Создать новый класс",
+                  "updateTitle": "Обновить класс",
+                  "className": "Название класса",
+                  "supervisor": "Руководитель",
+                  "toastCreated": "Предмет создан!",
+                  "toastUpdated": "Предмет обновлён!"
+          },
+          "event": {
+                  "createTitle": "Создать новое мероприятие",
+                  "updateTitle": "Обновить мероприятие",
+                  "startTime": "Время начала",
+                  "endTime": "Время окончания",
+                  "toastCreated": "Мероприятие создано!",
+                  "toastUpdated": "Мероприятие обновлено!"
+          },
+          "exam": {
+                  "createTitle": "Создать новый экзамен",
+                  "updateTitle": "Обновить экзамен",
+                  "examTitle": "Название экзамена",
+                  "startDate": "Дата начала",
+                  "endDate": "Дата окончания",
+                  "lesson": "Урок",
+                  "toastCreated": "Экзамен создан!",
+                  "toastUpdated": "Экзамен обновлён!"
+          },
+          "lesson": {
+                  "createTitle": "Создать новый урок",
+                  "updateTitle": "Обновить урок",
+                  "lessonName": "Название урока",
+                  "startTime": "Время начала",
+                  "endTime": "Время окончания",
+                  "day": "День",
+                  "subject": "Предмет",
+                  "teacher": "Учитель",
+                  "toastCreated": "Урок создан!",
+                  "toastUpdated": "Урок обновлён!"
+          },
+          "parent": {
+                  "createTitle": "Создать нового родителя",
+                  "updateTitle": "Обновить родителя",
+                  "toastCreated": "Родитель создан!",
+                  "toastUpdated": "Родитель обновлён!"
+          },
+          "result": {
+                  "createTitle": "Создать новый результат",
+                  "updateTitle": "Обновить результат",
+                  "score": "Балл",
+                  "student": "Ученик",
+                  "assessmentType": "Тип оценивания",
+                  "exam": "Экзамен",
+                  "assignment": "Задание",
+                  "toastCreated": "Результат создан!",
+                  "toastUpdated": "Результат обновлён!"
+          },
+          "student": {
+                  "createTitle": "Создать нового ученика",
+                  "updateTitle": "Обновить ученика",
+                  "parentId": "Id родителя",
+                  "toastCreated": "Ученик создан!",
+                  "toastUpdated": "Ученик обновлён!"
+          },
+          "subject": {
+                  "createTitle": "Создать новый предмет",
+                  "updateTitle": "Обновить предмет",
+                  "subjectName": "Название предмета",
+                  "teachers": "Учителя",
+                  "toastCreated": "Предмет создан!",
+                  "toastUpdated": "Предмет обновлён!"
+          },
+          "teacher": {
+                  "createTitle": "Создать нового учителя",
+                  "updateTitle": "Обновить учителя",
+                  "subjects": "Предметы",
+                  "toastCreated": "Учитель создан!",
+                  "toastUpdated": "Учитель обновлён!"
+          }
+    }
 }
