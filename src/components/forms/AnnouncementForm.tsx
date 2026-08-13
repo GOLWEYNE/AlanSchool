@@ -12,6 +12,7 @@ import { useFormState } from "react-dom";
 import { Dispatch, SetStateAction, useEffect } from "react";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 
 const AnnouncementForm = ({
   type,
@@ -24,6 +25,7 @@ const AnnouncementForm = ({
   setOpen: Dispatch<SetStateAction<boolean>>;
   relatedData?: any;
 }) => {
+  const t = useTranslations("Forms");
   const {
     register,
     handleSubmit,
@@ -49,7 +51,7 @@ const AnnouncementForm = ({
   useEffect(() => {
     if (state.success) {
       toast(
-        `Announcement has been ${type === "create" ? "created" : "updated"}!`
+        type === "create" ? t("announcement.toastCreated") : t("announcement.toastUpdated")
       );
       setOpen(false);
       router.refresh();
@@ -62,27 +64,27 @@ const AnnouncementForm = ({
     <form className="flex flex-col gap-8" onSubmit={onSubmit}>
       <h1 className="text-xl font-semibold">
         {type === "create"
-          ? "Create a new announcement"
-          : "Update the announcement"}
+          ? t("announcement.createTitle")
+          : t("announcement.updateTitle")}
       </h1>
 
       <div className="flex justify-between flex-wrap gap-4">
         <InputField
-          label="Title"
+          label={t("common.title")}
           name="title"
           defaultValue={data?.title}
           register={register}
           error={errors?.title}
         />
         <InputField
-          label="Description"
+          label={t("common.description")}
           name="description"
           defaultValue={data?.description}
           register={register}
           error={errors?.description}
         />
         <InputField
-          label="Date"
+          label={t("common.date")}
           name="date"
           defaultValue={
             data?.date ? new Date(data.date).toISOString().slice(0, 16) : undefined
@@ -93,7 +95,7 @@ const AnnouncementForm = ({
         />
         {data && (
           <InputField
-            label="Id"
+            label={t("common.id")}
             name="id"
             defaultValue={data?.id}
             register={register}
@@ -102,13 +104,13 @@ const AnnouncementForm = ({
           />
         )}
         <div className="flex flex-col gap-2 w-full md:w-1/4">
-          <label className="text-xs text-gray-500">Class</label>
+          <label className="text-xs text-gray-500">{t("common.class")}</label>
           <select
             className="ring-[1.5px] ring-gray-300 p-2 rounded-md text-sm w-full"
             {...register("classId")}
             defaultValue={data?.classId ?? ""}
           >
-            <option value="">General (all classes)</option>
+            <option value="">{t("common.generalAllClasses")}</option>
             {classes.map((classItem: { id: number; name: string }) => (
               <option value={classItem.id} key={classItem.id}>
                 {classItem.name}
@@ -121,9 +123,9 @@ const AnnouncementForm = ({
         </div>
       </div>
 
-      {state.error && <span className="text-red-500">Something went wrong!</span>}
+      {state.error && <span className="text-red-500">{t("common.somethingWrong")}</span>}
       <button className="bg-blue-400 text-white p-2 rounded-md">
-        {type === "create" ? "Create" : "Update"}
+        {type === "create" ? t("common.create") : t("common.update")}
       </button>
     </form>
   );
