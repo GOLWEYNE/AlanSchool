@@ -134,4 +134,3 @@ const ExamForm = ({
 };
 
 export default ExamForm;
-export default ExamForm;
