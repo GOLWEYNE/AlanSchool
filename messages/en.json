@@ -92,7 +92,9 @@
         "phone": "Phone",
         "address": "Address",
         "actions": "Actions"
-      }
+      },
+      "enabled": "Enabled",
+      "hidden": "Hidden"
     },
     "parents": {
       "heading": "All Parents",
