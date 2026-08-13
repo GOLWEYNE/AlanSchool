@@ -231,5 +231,134 @@
       },
       "disabled": "Өшірілген"
     }
-  }
+  },
+    "Forms": {
+          "common": {
+                  "somethingWrong": "Қате пайда болды!",
+                  "create": "Құру",
+                  "update": "Жаңарту",
+                  "id": "Id",
+                  "title": "Атауы",
+                  "description": "Сипаттама",
+                  "date": "Күні",
+                  "class": "Сынып",
+                  "generalAllClasses": "Жалпы (барлық сыныптар)",
+                  "grade": "Деңгей",
+                  "authenticationInfo": "Кіру деректері",
+                  "personalInfo": "Жеке ақпарат",
+                  "username": "Пайдаланушы аты",
+                  "email": "Электрондық пошта",
+                  "password": "Құпия сөз",
+                  "firstName": "Аты",
+                  "lastName": "Тегі",
+                  "phone": "Телефон",
+                  "address": "Мекенжай",
+                  "bloodType": "Қан тобы",
+                  "birthday": "Туған күні",
+                  "sex": "Жынысы",
+                  "male": "Ер",
+                  "female": "Әйел",
+                  "uploadPhoto": "Фото жүктеу",
+                  "capacity": "Сыйымдылығы",
+                  "days": {
+                            "monday": "Дүйсенбі",
+                            "tuesday": "Сейсенбі",
+                            "wednesday": "Сәрсенбі",
+                            "thursday": "Бейсенбі",
+                            "friday": "Жұма"
+                  }
+          },
+          "announcement": {
+                  "createTitle": "Жаңа хабарландыру құру",
+                  "updateTitle": "Хабарландыруды жаңарту",
+                  "toastCreated": "Хабарландыру құрылды!",
+                  "toastUpdated": "Хабарландыру жаңартылды!"
+          },
+          "assignment": {
+                  "createTitle": "Жаңа тапсырма құру",
+                  "updateTitle": "Тапсырманы жаңарту",
+                  "startDate": "Басталу күні",
+                  "dueDate": "Тапсыру мерзімі",
+                  "lesson": "Сабақ",
+                  "toastCreated": "Тапсырма құрылды!",
+                  "toastUpdated": "Тапсырма жаңартылды!"
+          },
+          "class": {
+                  "createTitle": "Жаңа сынып құру",
+                  "updateTitle": "Сыныпты жаңарту",
+                  "className": "Сынып атауы",
+                  "supervisor": "Жетекші",
+                  "toastCreated": "Пән құрылды!",
+                  "toastUpdated": "Пән жаңартылды!"
+          },
+          "event": {
+                  "createTitle": "Жаңа іс-шара құру",
+                  "updateTitle": "Іс-шараны жаңарту",
+                  "startTime": "Басталу уақыты",
+                  "endTime": "Аяқталу уақыты",
+                  "toastCreated": "Іс-шара құрылды!",
+                  "toastUpdated": "Іс-шара жаңартылды!"
+          },
+          "exam": {
+                  "createTitle": "Жаңа экзамен құру",
+                  "updateTitle": "Экзаменді жаңарту",
+                  "examTitle": "Экзамен атауы",
+                  "startDate": "Басталу күні",
+                  "endDate": "Аяқталу күні",
+                  "lesson": "Сабақ",
+                  "toastCreated": "Экзамен құрылды!",
+                  "toastUpdated": "Экзамен жаңартылды!"
+          },
+          "lesson": {
+                  "createTitle": "Жаңа сабақ құру",
+                  "updateTitle": "Сабақты жаңарту",
+                  "lessonName": "Сабақ атауы",
+                  "startTime": "Басталу уақыты",
+                  "endTime": "Аяқталу уақыты",
+                  "day": "Күн",
+                  "subject": "Пән",
+                  "teacher": "Мұғалім",
+                  "toastCreated": "Сабақ құрылды!",
+                  "toastUpdated": "Сабақ жаңартылды!"
+          },
+          "parent": {
+                  "createTitle": "Жаңа ата-ана құру",
+                  "updateTitle": "Ата-ананы жаңарту",
+                  "toastCreated": "Ата-ана құрылды!",
+                  "toastUpdated": "Ата-ана жаңартылды!"
+          },
+          "result": {
+                  "createTitle": "Жаңа нәтиже құру",
+                  "updateTitle": "Нәтижені жаңарту",
+                  "score": "Балл",
+                  "student": "Оқушы",
+                  "assessmentType": "Бағалау түрі",
+                  "exam": "Экзамен",
+                  "assignment": "Тапсырма",
+                  "toastCreated": "Нәтиже құрылды!",
+                  "toastUpdated": "Нәтиже жаңартылды!"
+          },
+          "student": {
+                  "createTitle": "Жаңа оқушы құру",
+                  "updateTitle": "Оқушыны жаңарту",
+                  "parentId": "Ата-ана Id",
+                  "toastCreated": "Оқушы құрылды!",
+                  "toastUpdated": "Оқушы жаңартылды!"
+          },
+          "subject": {
+                  "createTitle": "Жаңа пән құру",
+                  "updateTitle": "Пәнді жаңарту",
+                  "subjectName": "Пән атауы",
+                  "teachers": "Мұғалімдер",
+                  "toastCreated": "Пән құрылды!",
+                  "toastUpdated": "Пән жаңартылды!"
+          },
+          "teacher": {
+                  "createTitle": "Жаңа мұғалім құру",
+                  "updateTitle": "Мұғалімді жаңарту",
+                  "subjects": "Пәндер",
+                  "toastCreated": "Мұғалім құрылды!",
+                  "toastUpdated": "Мұғалім жаңартылды!"
+          }
+    }
 }
