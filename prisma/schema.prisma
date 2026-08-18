@@ -2,7 +2,7 @@
 generator client {
   provider = "prisma-client"
   output   = "../src/generated/prisma"
-  
+
 }
 
 datasource db {
@@ -35,6 +35,18 @@ model Student {
   attendances Attendance[]
   results     Result[]
   birthday    DateTime
+
+  // --- Master module package relations (additive) ---
+  submissions          StudentSubmission[]
+  attendanceRecords     AttendanceRecord[]
+  behaviorLogs          BehaviorLog[]
+  permissionResponses   PermissionResponse[]
+  portfolioItems        PortfolioItem[]
+  reportCards           ReportCard[]
+  tickets               Ticket[]             @relation("TicketStudent")
+  conferenceBookings    ConferenceBooking[]
+  clubEnrollments       ClubEnrollment[]
+  clubAttendances       ClubAttendance[]
 }
 
 model Teacher {
@@ -53,6 +65,12 @@ model Teacher {
   lessons   Lesson[]
   classes   Class[]
   birthday  DateTime
+
+  // --- Master module package relations (additive) ---
+  behaviorLogsGiven    BehaviorLog[]
+  attendanceRecordsMarked AttendanceRecord[]
+  ledClubs             Club[]
+  conferenceSlots      ConferenceSlot[]
 }
 
 model Parent {
@@ -65,6 +83,10 @@ model Parent {
   address   String
   createdAt DateTime  @default(now())
   students  Student[]
+
+  // --- Master module package relations (additive) ---
+  permissionResponses PermissionResponse[]
+  conferenceBookings ConferenceBooking[]
 }
 
 model Grade {
@@ -88,6 +110,10 @@ model Class {
   grade         Grade          @relation(fields: [gradeId], references: [id])
   events        Event[]
   announcements Announcement[]
+
+  // --- Master module package relations (additive) ---
+  attendanceRecords AttendanceRecord[]
+  permissionSlips   PermissionSlip[]
 }
 
 model Subject {
@@ -103,6 +129,8 @@ model Lesson {
   day       Day
   startTime DateTime
   endTime   DateTime
+  // Classroom locator: physical room/location for this timetable period (additive, optional)
+  room      String?
 
   subjectId   Int
   subject     Subject      @relation(fields: [subjectId], references: [id])
@@ -113,6 +141,9 @@ model Lesson {
   exams       Exam[]
   assignments Assignment[]
   attendances Attendance[]
+
+  // --- Master module package relations (additive) ---
+  attendanceRecords AttendanceRecord[]
 }
 
 model Exam {
@@ -120,10 +151,18 @@ model Exam {
   title     String
   startTime DateTime
   endTime   DateTime
+  // Online exam portal (additive, optional so existing exams keep working)
+  description  String?
+  totalMarks   Int?
+  durationMinutes Int?
+  instructionsFileUrl String?
 
   lessonId Int
   lesson   Lesson   @relation(fields: [lessonId], references: [id])
   results  Result[]
+
+  // --- Master module package relations (additive) ---
+  submissions StudentSubmission[]
 }
 
 model Assignment {
@@ -131,10 +170,17 @@ model Assignment {
   title     String
   startDate DateTime
   dueDate   DateTime
+  // Assignment submission portal (additive, optional so existing assignments keep working)
+  description  String?
+  totalMarks   Int?
+  instructionsFileUrl String?
 
   lessonId Int
   lesson   Lesson   @relation(fields: [lessonId], references: [id])
   results  Result[]
+
+  // --- Master module package relations (additive) ---
+  submissions StudentSubmission[]
 }
 
 model Result {
@@ -192,4 +238,390 @@ enum Day {
   WEDNESDAY
   THURSDAY
   FRIDAY
+}
+
+// =====================================================================
+// MASTER MODULE PACKAGE — additive schema for the 10 advanced modules.
+// Every model/enum below is new; every field added to pre-existing
+// models above is optional or has a safe default, so this migration is
+// purely additive and does not alter or remove any existing data.
+// =====================================================================
+
+// ---- Module 1: Online Exam & Assignment Submission Portal ----------
+
+enum SubmissionStatus {
+  PENDING
+  SUBMITTED
+  LATE
+  GRADED
+  MISSING
+}
+
+model StudentSubmission {
+  id     Int @id @default(autoincrement())
+  fileUrl   String?
+  content   String?
+  submittedAt DateTime?
+  status      SubmissionStatus @default(PENDING)
+  grade       Int?
+  feedback    String?
+  gradedAt    DateTime?
+  gradedById  String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  examId       Int?
+  exam         Exam?       @relation(fields: [examId], references: [id])
+  assignmentId Int?
+  assignment   Assignment? @relation(fields: [assignmentId], references: [id])
+  studentId    String
+  student      Student     @relation(fields: [studentId], references: [id])
+
+  @@index([studentId])
+  @@index([examId])
+  @@index([assignmentId])
+}
+
+// ---- Module 2: Automated Attendance Tracker -------------------------
+
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+  LATE
+  EXCUSED
+}
+
+model AttendanceRecord {
+  id     Int      @id @default(autoincrement())
+  date   DateTime
+  status AttendanceStatus @default(PRESENT)
+  note   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  studentId String
+  student   Student @relation(fields: [studentId], references: [id])
+  classId   Int
+  class     Class   @relation(fields: [classId], references: [id])
+  lessonId  Int?
+  lesson    Lesson? @relation(fields: [lessonId], references: [id])
+  markedById String?
+  markedBy   Teacher? @relation(fields: [markedById], references: [id])
+
+  @@unique([studentId, date, lessonId])
+  @@index([classId, date])
+}
+
+// ---- Module 3: Parent-Teacher Behavior Feedback & Communication Hub -
+
+enum BehaviorType {
+  POSITIVE
+  CONCERN
+  INCIDENT
+}
+
+model BehaviorLog {
+  id          Int          @id @default(autoincrement())
+  type        BehaviorType
+  title       String
+  description String
+  date        DateTime     @default(now())
+  visibleToParent Boolean  @default(true)
+  createdAt   DateTime     @default(now())
+
+  studentId String
+  student   Student @relation(fields: [studentId], references: [id])
+  teacherId String
+  teacher   Teacher @relation(fields: [teacherId], references: [id])
+
+  @@index([studentId, date])
+}
+
+// Direct messaging channel across Admin / Teacher / Student / Parent.
+// senderId/receiverId reference whichever role table matches
+// senderRole/receiverRole (Clerk user id shared across all role tables),
+// resolved in application code rather than a typed FK, since a single
+// column cannot be a foreign key into 4 different role tables at once.
+model Message {
+  id        Int      @id @default(autoincrement())
+  senderId   String
+  senderRole String
+  receiverId String
+  receiverRole String
+  studentId  String? // optional context: which student's thread this belongs to
+  content    String
+  createdAt  DateTime @default(now())
+  readAt     DateTime?
+
+  @@index([senderId])
+  @@index([receiverId])
+  @@index([studentId])
+}
+
+// ---- Module 4: Remote Parent Master Dashboard ------------------------
+// (digital signature workflow for trip / policy permissions)
+
+enum PermissionStatus {
+  PENDING
+  SIGNED
+  DECLINED
+}
+
+model PermissionSlip {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String
+  eventDate   DateTime?
+  createdById String
+  createdAt   DateTime @default(now())
+
+  classId Int?
+  class   Class? @relation(fields: [classId], references: [id])
+
+  responses PermissionResponse[]
+}
+
+model PermissionResponse {
+  id        Int               @id @default(autoincrement())
+  status    PermissionStatus  @default(PENDING)
+  signatureDataUrl String?
+  respondedAt DateTime?
+  createdAt DateTime          @default(now())
+
+  permissionSlipId Int
+  permissionSlip   PermissionSlip @relation(fields: [permissionSlipId], references: [id])
+  studentId        String
+  student          Student        @relation(fields: [studentId], references: [id])
+  parentId         String
+  parent           Parent         @relation(fields: [parentId], references: [id])
+
+  @@unique([permissionSlipId, studentId])
+}
+
+// ---- Module 5: Student Digital Portfolio & Achievement Showcase -----
+
+enum PortfolioCategory {
+  CERTIFICATE
+  PROJECT
+  MILESTONE
+  ACHIEVEMENT
+  EXTRACURRICULAR
+}
+
+model PortfolioItem {
+  id          Int               @id @default(autoincrement())
+  title       String
+  description String?
+  category    PortfolioCategory
+  fileUrl     String?
+  imageUrl    String?
+  schoolYear  String
+  dateAchieved DateTime?
+  createdAt   DateTime          @default(now())
+
+  studentId String
+  student   Student @relation(fields: [studentId], references: [id])
+
+  @@index([studentId, schoolYear])
+}
+
+// ---- Module 6: Automated Report Card Generation & Digital Archiving -
+
+enum Term {
+  TERM_1
+  TERM_2
+  TERM_3
+}
+
+model ReportCard {
+  id             Int      @id @default(autoincrement())
+  term           Term
+  schoolYear     String
+  gpa            Float?
+  attendanceRate Float?
+  behaviorSummary String?
+  pdfUrl         String?
+  generatedAt    DateTime @default(now())
+  generatedById  String?
+
+  studentId String
+  student   Student @relation(fields: [studentId], references: [id])
+
+  @@unique([studentId, term, schoolYear])
+}
+
+// ---- Module 7: Personalized Timetable & Classroom Locator -----------
+// Uses the existing Lesson model (day/startTime/endTime/classId/
+// teacherId) plus the new Lesson.room field added above — no
+// additional tables required.
+
+// ---- Module 8: Lost & Found / Student Support Ticketing System ------
+
+enum TicketCategory {
+  TECHNICAL
+  LOST_ITEM
+  ACADEMIC
+  OTHER
+}
+
+enum TicketStatus {
+  OPEN
+  IN_PROGRESS
+  RESOLVED
+  CLOSED
+}
+
+enum TicketPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+model Ticket {
+  id            Int            @id @default(autoincrement())
+  title         String
+  description   String
+  category      TicketCategory
+  status        TicketStatus   @default(OPEN)
+  priority      TicketPriority @default(MEDIUM)
+  createdById   String
+  createdByRole String
+  assignedToId  String?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  resolvedAt    DateTime?
+
+  studentId String?
+  student   Student? @relation("TicketStudent", fields: [studentId], references: [id])
+
+  comments TicketComment[]
+
+  @@index([status])
+  @@index([createdById])
+}
+
+model TicketComment {
+  id        Int      @id @default(autoincrement())
+  authorId   String
+  authorRole String
+  message    String
+  createdAt  DateTime @default(now())
+
+  ticketId Int
+  ticket   Ticket @relation(fields: [ticketId], references: [id])
+
+  @@index([ticketId])
+}
+
+// ---- Module 9: Parent-Teacher Conference Scheduling Hub -------------
+
+enum ConferenceLocation {
+  ONLINE
+  IN_PERSON
+}
+
+model ConferenceSlot {
+  id        Int                @id @default(autoincrement())
+  startTime DateTime
+  endTime   DateTime
+  location  ConferenceLocation @default(IN_PERSON)
+  isBooked  Boolean            @default(false)
+  createdAt DateTime           @default(now())
+
+  teacherId String
+  teacher   Teacher @relation(fields: [teacherId], references: [id])
+
+  booking ConferenceBooking?
+
+  @@index([teacherId, startTime])
+}
+
+model ConferenceBooking {
+  id        Int      @id @default(autoincrement())
+  notes     String?
+  createdAt DateTime @default(now())
+
+  slotId Int    @unique
+  slot   ConferenceSlot @relation(fields: [slotId], references: [id])
+
+  studentId String
+  student   Student @relation(fields: [studentId], references: [id])
+  parentId  String
+  parent    Parent  @relation(fields: [parentId], references: [id])
+}
+
+// ---- Module 10: Extracurricular Activities & Club Management --------
+
+enum ClubCategory {
+  DANCING
+  PIANO
+  CHESS
+  HANDICRAFTS
+  FOOTBALL
+  VOLLEYBALL
+  BASKETBALL
+  TENNIS
+  TABLE_TENNIS
+  OTHER
+}
+
+enum ClubEnrollmentStatus {
+  ACTIVE
+  WAITLISTED
+  WITHDRAWN
+}
+
+model Club {
+  id          Int          @id @default(autoincrement())
+  name        String       @unique
+  category    ClubCategory
+  description String?
+  capacity    Int
+  schedule    String?
+  location    String?
+  createdAt   DateTime     @default(now())
+
+  instructorId String?
+  instructor   Teacher? @relation(fields: [instructorId], references: [id])
+
+  enrollments ClubEnrollment[]
+  sessions    ClubSession[]
+}
+
+model ClubEnrollment {
+  id         Int                   @id @default(autoincrement())
+  status     ClubEnrollmentStatus  @default(ACTIVE)
+  enrolledAt DateTime              @default(now())
+
+  clubId    Int
+  club      Club    @relation(fields: [clubId], references: [id])
+  studentId String
+  student   Student @relation(fields: [studentId], references: [id])
+
+  @@unique([clubId, studentId])
+}
+
+model ClubSession {
+  id        Int      @id @default(autoincrement())
+  date      DateTime
+  startTime DateTime
+  endTime   DateTime
+
+  clubId Int
+  club   Club @relation(fields: [clubId], references: [id])
+
+  attendances ClubAttendance[]
+}
+
+model ClubAttendance {
+  id     Int               @id @default(autoincrement())
+  status AttendanceStatus  @default(PRESENT)
+
+  clubSessionId Int
+  clubSession   ClubSession @relation(fields: [clubSessionId], references: [id])
+  studentId     String
+  student       Student     @relation(fields: [studentId], references: [id])
+
+  @@unique([clubSessionId, studentId])
 }
