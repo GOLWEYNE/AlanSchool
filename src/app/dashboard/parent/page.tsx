@@ -1,4 +1,5 @@
 import Announcements from "@/components/Announcements";
+import BirthdayAnnouncements from "@/components/BirthdayAnnouncements";
 import BigCalendarContainer from "@/components/BigCalendarContainer";
 import ParentChildAttendanceCard from "@/components/ParentChildAttendanceCard";
 import prisma from "@/lib/prisma";
@@ -126,6 +127,7 @@ const Parentpage = async () => {
 
       {/* RIGHT */}
       <div className="w-full xl:w-1/3 flex flex-col gap-8">
+        <BirthdayAnnouncements />
         <div className="panel-card p-4 rounded-md">
           <h1 className="text-xl font-semibold text-blue-900">Children&apos;s Attendance</h1>
           <div className="mt-4 grid gap-4">

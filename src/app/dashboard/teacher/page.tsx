@@ -1,4 +1,5 @@
 import Announcements from "@/components/Announcements";
+import BirthdayAnnouncements from "@/components/BirthdayAnnouncements";
 import BigCalendarContainer from "@/components/BigCalendarContainer";
 import prisma from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
@@ -51,6 +52,7 @@ const TeacherPage = async () => {
       </div>
       {/* RIGHT */}
       <div className="w-full xl:w-1/3 flex flex-col gap-8">
+        <BirthdayAnnouncements />
         <Announcements />
       </div>
     </div>
