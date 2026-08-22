@@ -76,22 +76,21 @@ const ClassLeaderboard = async ({
     take: 100,
   });
 
-  const rows: ResultRow[] = rawResults
-    .map((r) => {
-      const source = r.exam ?? r.assignment;
-      if (!source) return null;
-      return {
-        id: r.id,
-        score: r.score,
-        studentId: r.studentId,
-        studentName: `${r.student.name} ${r.student.surname}`,
-        img: r.student.img,
-        title: source.title,
-        subject: source.lesson?.subject?.name ?? null,
-        totalMarks: source.totalMarks,
-      };
-    })
-    .filter((r): r is ResultRow => r !== null);
+  const rows: ResultRow[] = rawResults.flatMap((r) => {
+    const source = r.exam ?? r.assignment;
+    if (!source) return [];
+    const row: ResultRow = {
+      id: r.id,
+      score: r.score,
+      studentId: r.studentId,
+      studentName: `${r.student.name} ${r.student.surname}`,
+      img: r.student.img,
+      title: source.title,
+      subject: source.lesson?.subject?.name ?? null,
+      totalMarks: source.totalMarks,
+    };
+    return [row];
+  });
 
   const percentage = (r: ResultRow) =>
     r.totalMarks ? Math.round((r.score / r.totalMarks) * 100) : null;
