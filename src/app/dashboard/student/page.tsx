@@ -1,5 +1,8 @@
 import Announcements from "@/components/Announcements";
 import BirthdayAnnouncements from "@/components/BirthdayAnnouncements";
+import WeekAtAGlance from "@/components/WeekAtAGlance";
+import AttendancePulse from "@/components/AttendancePulse";
+import ClassLeaderboard from "@/components/ClassLeaderboard";
 import BigCalendarContainer from "@/components/BigCalendarContainer";
 import EventCalendar from "@/components/EventCalendar";
 import prisma from "@/lib/prisma";
@@ -76,6 +79,9 @@ const StudentPage = async () => {
       {/* RIGHT */}
       <div className="w-full xl:w-1/3 flex flex-col gap-4">
         <BirthdayAnnouncements />
+        <WeekAtAGlance role="student" classIds={classId ? [classId] : []} />
+        <AttendancePulse role="student" studentIds={userId ? [userId] : []} />
+        <ClassLeaderboard role="student" studentIds={userId ? [userId] : []} />
         {/* EVENTS CARD */}
         <div className="bg-gradient-to-r from-yellow-400 to-yellow-300 rounded-lg p-4 shadow-md">
           <div className="flex items-center gap-2 mb-3">
