@@ -1,5 +1,8 @@
 import Announcements from "@/components/Announcements";
 import BirthdayAnnouncements from "@/components/BirthdayAnnouncements";
+import WeekAtAGlance from "@/components/WeekAtAGlance";
+import AttendancePulse from "@/components/AttendancePulse";
+import ClassLeaderboard from "@/components/ClassLeaderboard";
 import BigCalendarContainer from "@/components/BigCalendarContainer";
 import prisma from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
@@ -53,6 +56,9 @@ const TeacherPage = async () => {
       {/* RIGHT */}
       <div className="w-full xl:w-1/3 flex flex-col gap-8">
         <BirthdayAnnouncements />
+        <WeekAtAGlance role="teacher" teacherId={userId!} />
+        <AttendancePulse role="teacher" teacherId={userId!} />
+        <ClassLeaderboard role="teacher" teacherId={userId!} />
         <Announcements />
       </div>
     </div>
