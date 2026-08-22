@@ -1,5 +1,8 @@
 import Announcements from "@/components/Announcements";
 import BirthdayAnnouncements from "@/components/BirthdayAnnouncements";
+import WeekAtAGlance from "@/components/WeekAtAGlance";
+import AttendancePulse from "@/components/AttendancePulse";
+import ClassLeaderboard from "@/components/ClassLeaderboard";
 import BigCalendarContainer from "@/components/BigCalendarContainer";
 import ParentChildAttendanceCard from "@/components/ParentChildAttendanceCard";
 import prisma from "@/lib/prisma";
@@ -24,6 +27,7 @@ const Parentpage = async () => {
   endOfToday.setHours(23, 59, 59, 999);
 
   const studentIds = children.map((child) => child.id);
+  const childClassIds = Array.from(new Set(children.map((child) => child.classId)));
 
   const todayAttendance = await prisma.attendance.findMany({
     where: {
@@ -128,6 +132,9 @@ const Parentpage = async () => {
       {/* RIGHT */}
       <div className="w-full xl:w-1/3 flex flex-col gap-8">
         <BirthdayAnnouncements />
+        <WeekAtAGlance role="parent" classIds={childClassIds} />
+        <AttendancePulse role="parent" studentIds={studentIds} />
+        <ClassLeaderboard role="parent" studentIds={studentIds} />
         <div className="panel-card p-4 rounded-md">
           <h1 className="text-xl font-semibold text-blue-900">Children&apos;s Attendance</h1>
           <div className="mt-4 grid gap-4">
