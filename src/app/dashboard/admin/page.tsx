@@ -1,4 +1,5 @@
 import Announcements from "@/components/Announcements";
+import BirthdayAnnouncements from "@/components/BirthdayAnnouncements";
 import AttendanceChartContainer from "@/components/AttendanceChartContainer";
 import CountChartContainer from "@/components/CountChartContainer";
 import EventCalendarContainer from "@/components/EventCalendarContainer";
@@ -80,6 +81,7 @@ const AdminPage = async ({
       </div>
       {/* RIGHT */}
       <div className="w-full lg:w-1/3 flex flex-col gap-8">
+        <BirthdayAnnouncements />
         <EventCalendarContainer searchParams={searchParams}/>
         <Announcements />
       </div>
