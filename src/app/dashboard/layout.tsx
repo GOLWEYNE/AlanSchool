@@ -4,12 +4,21 @@ import Image from "next/image";
 import Link from "next/link";
 import { MobileSidebarProvider } from "@/context/MobileSidebarContext";
 import SidebarShell from "@/components/SidebarShell";
+import CommandPalette from "@/components/CommandPalette";
+import { auth } from "@clerk/nextjs/server";
+import { getUserRole } from "@/lib/auth";
 
-export default function DashboardLayout({
+export default async function DashboardLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const { sessionClaims } = auth();
+  const role = getUserRole(sessionClaims);
+  // Mirrors the same admin/teacher scoping as the search API and its Navbar
+  // trigger, so the shortcut doesn't open a palette that can't return anything.
+  const canSearch = role === "admin" || role === "teacher";
+
   return (
     <MobileSidebarProvider>
       <div className="h-screen flex app-shell-bg">
@@ -32,6 +41,7 @@ export default function DashboardLayout({
           {children}
         </div>
       </div>
+      {canSearch && <CommandPalette />}
     </MobileSidebarProvider>
   );
 }
