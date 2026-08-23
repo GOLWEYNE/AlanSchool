@@ -5,6 +5,11 @@
     "ru": "Russian",
     "kk": "Kazakh"
   },
+  "ThemeToggle": {
+    "label": "Theme",
+    "switchToLight": "Switch to light mode",
+    "switchToDark": "Switch to dark mode"
+  },
   "Menu": {
     "menuTitle": "MENU",
     "otherTitle": "OTHER",
