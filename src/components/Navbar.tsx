@@ -5,25 +5,24 @@ import Image from "next/image";
 import Link from "next/link";
 import MobileMenuButton from "./MobileMenuButton";
 import LanguageSwitcher from "./LanguageSwitcher";
+import { SearchTrigger, MobileSearchTrigger } from "./SearchTrigger";
 
 const Navbar = async () => {
   const user = await currentUser();
   const t = await getTranslations("Navbar");
+  const role = user?.publicMetadata?.role as string | undefined;
+  // The command palette (and its backing /api/search route) only covers
+  // roles that have browsable student/ticket detail pages today.
+  const canSearch = role === "admin" || role === "teacher";
   return (
     <div className="mx-4 mt-4 panel-card px-4 py-3 flex items-center justify-between">
       <MobileMenuButton />
       {/* SEARCH BAR */}
-      <div className="hidden md:flex items-center gap-2 text-xs rounded-full border border-blue-200 bg-gradient-to-r from-white to-blue-50 px-3">
-        <Image src="/search.png" alt="" width={14} height={14} />
-        <input
-          type="text"
-          placeholder={t("searchPlaceholder")}
-          className="w-[220px] p-2 bg-transparent outline-none text-blue-900 placeholder:text-blue-400"
-        />
-      </div>
+      {canSearch && <SearchTrigger />}
       {/* ICONS AND USER */}
       <div className="flex items-center gap-6 justify-end w-full">
         <div className="flex items-center gap-2">
+          {canSearch && <MobileSearchTrigger />}
           <Link
             href="/dashboard/settings"
             className="md:hidden circle-icon-btn"
