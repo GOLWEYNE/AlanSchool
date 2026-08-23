@@ -45,7 +45,7 @@ type FlatResult = {
 
 const EMPTY: SearchResponse = { students: [], tickets: [], messages: [] };
 
-// Global âK / Ctrl+K search palette. Opens via the keyboard shortcut from
+// Global ⌘K / Ctrl+K search palette. Opens via the keyboard shortcut from
 // anywhere in the dashboard, or via the "open-command-palette" window event
 // (dispatched by the Navbar search trigger and the mobile search button).
 const CommandPalette = () => {
@@ -113,7 +113,7 @@ const CommandPalette = () => {
           setActiveIndex(0);
         }
       } catch {
-        // Silently ignore â the palette just shows no results.
+        // Silently ignore — the palette just shows no results.
       } finally {
         setLoading(false);
       }
@@ -127,20 +127,20 @@ const CommandPalette = () => {
       key: `student-${s.id}`,
       group: "students" as const,
       primary: `${s.name} ${s.surname}`,
-      secondary: `@${s.username} Â· ${s.class.name}`,
+      secondary: `@${s.username} · ${s.class.name}`,
       href: `/dashboard/list/students/${s.id}`,
     })),
     ...results.tickets.map((tk) => ({
       key: `ticket-${tk.id}`,
       group: "tickets" as const,
       primary: tk.title,
-      secondary: `${tk.status.replace("_", " ")} Â· ${tk.priority}`,
+      secondary: `${tk.status.replace("_", " ")} · ${tk.priority}`,
       href: `/dashboard/list/tickets/${tk.id}`,
     })),
     ...results.messages.map((m) => ({
       key: `message-${m.id}`,
       group: "messages" as const,
-      primary: m.content.length > 80 ? `${m.content.slice(0, 80)}â¦` : m.content,
+      primary: m.content.length > 80 ? `${m.content.slice(0, 80)}…` : m.content,
       secondary: m.student ? `${m.student.name} ${m.student.surname}` : t("noStudentContext"),
       href: `/dashboard/list/students/${m.studentId}`,
     })),
