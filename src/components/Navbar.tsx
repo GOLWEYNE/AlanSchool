@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import MobileMenuButton from "./MobileMenuButton";
 import LanguageSwitcher from "./LanguageSwitcher";
+import ThemeToggle from "./ThemeToggle";
 import { SearchTrigger, MobileSearchTrigger } from "./SearchTrigger";
 
 const Navbar = async () => {
@@ -43,17 +44,18 @@ const Navbar = async () => {
           <div className="hidden md:flex items-center gap-2">
             <Link
               href="/dashboard/settings"
-              className="text-xs font-semibold text-blue-800 bg-blue-50 border border-blue-200 rounded-full px-3 py-1 hover:bg-blue-100 transition-colors"
+              className="text-xs font-semibold text-blue-800 bg-blue-50 border border-blue-200 rounded-full px-3 py-1 hover:bg-blue-100 transition-colors dark:text-blue-200 dark:bg-blue-950/50 dark:border-blue-900 dark:hover:bg-blue-900/60"
             >
               {t("settings")}
             </Link>
             <Link
               href="/dashboard/logout"
-              className="text-xs font-semibold text-white bg-blue-600 rounded-full px-3 py-1 hover:bg-blue-700 transition-colors"
+              className="text-xs font-semibold text-white bg-blue-600 rounded-full px-3 py-1 hover:bg-blue-700 transition-colors dark:bg-blue-700 dark:hover:bg-blue-600"
             >
               {t("logout")}
             </Link>
           </div>
+          <ThemeToggle />
           <LanguageSwitcher />
         </div>
         <div className="circle-icon-btn cursor-pointer">
@@ -66,8 +68,8 @@ const Navbar = async () => {
           </div>
         </div>
         <div className="flex flex-col items-end">
-          <span className="text-xs leading-3 font-semibold text-blue-900">AIS</span>
-          <span className="text-[10px] text-blue-700 text-right bg-blue-50 border border-blue-100 rounded-full px-2 py-0.5 mt-1 capitalize">
+          <span className="text-xs leading-3 font-semibold text-blue-900 dark:text-blue-100">AIS</span>
+          <span className="text-[10px] text-blue-700 text-right bg-blue-50 border border-blue-100 rounded-full px-2 py-0.5 mt-1 capitalize dark:text-blue-300 dark:bg-blue-950/50 dark:border-blue-900">
             {user?.publicMetadata?.role as string}
           </span>
         </div>
