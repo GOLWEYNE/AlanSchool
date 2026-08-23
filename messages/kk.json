@@ -5,6 +5,11 @@
     "ru": "Орыс",
     "kk": "Қазақ"
   },
+  "ThemeToggle": {
+    "label": "Тема",
+    "switchToLight": "Жарық режимге ауысу",
+    "switchToDark": "Қараңғы режимге ауысу"
+  },
   "Menu": {
     "menuTitle": "МЕНЮ",
     "otherTitle": "БАСҚА",

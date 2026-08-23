@@ -178,42 +178,42 @@ const CommandPalette = () => {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-start justify-center pt-[12vh] px-4 bg-blue-950/40 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-start justify-center pt-[12vh] px-4 bg-blue-950/40 backdrop-blur-sm dark:bg-black/60"
       onClick={close}
     >
       <div
-        className="w-full max-w-xl rounded-2xl border border-blue-100 bg-white shadow-2xl shadow-blue-900/20 overflow-hidden"
+        className="w-full max-w-xl rounded-2xl border border-blue-100 bg-white shadow-2xl shadow-blue-900/20 overflow-hidden dark:border-slate-800 dark:bg-slate-900 dark:shadow-black/40"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center gap-2 border-b border-blue-100 px-4 py-3">
-          <Image src="/search.png" alt="" width={16} height={16} />
+        <div className="flex items-center gap-2 border-b border-blue-100 px-4 py-3 dark:border-slate-800">
+          <Image src="/search.png" alt="" width={16} height={16} className="dark:invert dark:opacity-70" />
           <input
             ref={inputRef}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder={t("placeholder")}
-            className="flex-1 bg-transparent outline-none text-sm text-blue-900 placeholder:text-blue-400"
+            className="flex-1 bg-transparent outline-none text-sm text-blue-900 placeholder:text-blue-400 dark:text-blue-100 dark:placeholder:text-blue-500"
           />
-          <kbd className="text-[10px] font-semibold text-blue-400 border border-blue-200 rounded px-1.5 py-0.5">
+          <kbd className="text-[10px] font-semibold text-blue-400 border border-blue-200 rounded px-1.5 py-0.5 dark:text-blue-400 dark:border-slate-700">
             ESC
           </kbd>
         </div>
 
         <div className="max-h-[60vh] overflow-y-auto">
           {query.trim().length < 2 ? (
-            <p className="px-4 py-6 text-sm text-gray-400 text-center">{t("prompt")}</p>
+            <p className="px-4 py-6 text-sm text-gray-400 text-center dark:text-slate-500">{t("prompt")}</p>
           ) : loading ? (
-            <p className="px-4 py-6 text-sm text-gray-400 text-center">{t("searching")}</p>
+            <p className="px-4 py-6 text-sm text-gray-400 text-center dark:text-slate-500">{t("searching")}</p>
           ) : flatResults.length === 0 ? (
-            <p className="px-4 py-6 text-sm text-gray-400 text-center">{t("noResults")}</p>
+            <p className="px-4 py-6 text-sm text-gray-400 text-center dark:text-slate-500">{t("noResults")}</p>
           ) : (
             groups.map((group) => {
               const items = flatResults.filter((r) => r.group === group.key);
               if (items.length === 0) return null;
               return (
                 <div key={group.key} className="py-2">
-                  <p className="px-4 pb-1 text-[10px] font-semibold uppercase tracking-wide text-blue-400">
+                  <p className="px-4 pb-1 text-[10px] font-semibold uppercase tracking-wide text-blue-400 dark:text-blue-500">
                     {group.label}
                   </p>
                   {items.map((item) => {
@@ -225,15 +225,15 @@ const CommandPalette = () => {
                         onMouseEnter={() => setActiveIndex(runningIndex)}
                         onClick={() => goTo(item.href)}
                         className={`w-full flex items-center gap-3 px-4 py-2 text-left transition-colors ${
-                          isActive ? "bg-blue-50" : "hover:bg-blue-50/60"
+                          isActive ? "bg-blue-50 dark:bg-blue-950/50" : "hover:bg-blue-50/60 dark:hover:bg-blue-950/30"
                         }`}
                       >
-                        <Image src={group.icon} alt="" width={16} height={16} />
+                        <Image src={group.icon} alt="" width={16} height={16} className="dark:invert dark:opacity-70" />
                         <span className="flex flex-col overflow-hidden">
-                          <span className="text-sm font-medium text-blue-900 truncate">
+                          <span className="text-sm font-medium text-blue-900 truncate dark:text-blue-100">
                             {item.primary}
                           </span>
-                          <span className="text-xs text-gray-400 truncate">{item.secondary}</span>
+                          <span className="text-xs text-gray-400 truncate dark:text-slate-500">{item.secondary}</span>
                         </span>
                       </button>
                     );

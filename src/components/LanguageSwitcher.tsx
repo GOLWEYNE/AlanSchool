@@ -35,19 +35,19 @@ const LanguageSwitcher = () => {
         title={t("label")}
         disabled={isPending}
       >
-        <span className="text-xs font-semibold text-blue-800">
+        <span className="text-xs font-semibold text-blue-800 dark:text-blue-200">
           {locale.toUpperCase()}
         </span>
       </button>
       {open && (
-        <div className="absolute right-0 mt-2 w-36 bg-white border border-blue-200 rounded-md shadow-lg py-1 z-50">
+        <div className="absolute right-0 mt-2 w-36 bg-white border border-blue-200 rounded-md shadow-lg py-1 z-50 dark:bg-slate-900 dark:border-slate-700">
           {LOCALES.map(({ code, label }) => (
             <button
               key={code}
               type="button"
               onClick={() => selectLocale(code)}
-              className={`w-full text-left px-3 py-1.5 text-xs hover:bg-blue-50 ${
-                locale === code ? "font-semibold text-blue-700" : "text-blue-900"
+              className={`w-full text-left px-3 py-1.5 text-xs hover:bg-blue-50 dark:hover:bg-blue-950/60 ${
+                locale === code ? "font-semibold text-blue-700 dark:text-blue-300" : "text-blue-900 dark:text-blue-100"
               }`}
             >
               {label} · {t(code)}
