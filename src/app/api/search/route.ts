@@ -69,12 +69,26 @@ export async function GET(req: NextRequest) {
         content: true,
         studentId: true,
         createdAt: true,
-        student: { select: { name: true, surname: true } },
       },
       take: 5,
       orderBy: { createdAt: "desc" },
     }),
   ]);
 
-  return NextResponse.json({ students, tickets, messages });
+  // Message has no Prisma relation to Student (studentId is a plain scalar),
+  // so the display name for each message's student is resolved separately.
+  const studentIds = [...new Set(messages.map((m) => m.studentId).filter((id): id is string => id !== null))];
+  const messageStudents = studentIds.length
+    ? await prisma.student.findMany({
+        where: { id: { in: studentIds } },
+        select: { id: true, name: true, surname: true },
+      })
+    : [];
+  const studentById = new Map(messageStudents.map((s) => [s.id, s]));
+  const messagesWithStudent = messages.map((m) => ({
+    ...m,
+    student: m.studentId ? studentById.get(m.studentId) ?? null : null,
+  }));
+
+  return NextResponse.json({ students, tickets, messages: messagesWithStudent });
 }
