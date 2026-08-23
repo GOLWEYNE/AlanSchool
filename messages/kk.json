@@ -56,6 +56,16 @@
   "TableSearch": {
     "placeholder": "Жазбаларды іздеу..."
   },
+  "CommandPalette": {
+    "placeholder": "Оқушыларды, өтінімдерді, хабарларды іздеу...",
+    "prompt": "Іздеу үшін кемінде 2 таңба енгізіңіз.",
+    "searching": "Ізделуде...",
+    "noResults": "Ештеңе табылмады.",
+    "groupStudents": "Оқушылар",
+    "groupTickets": "Өтінімдер",
+    "groupMessages": "Хабарлар",
+    "noStudentContext": "Оқушымен байланыссыз"
+  },
   "List": {
     "teachers": {
       "title": "Мұғалімдер",
