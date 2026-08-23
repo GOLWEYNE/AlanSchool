@@ -5,6 +5,11 @@
     "ru": "Русский",
     "kk": "Казахский"
   },
+  "ThemeToggle": {
+    "label": "Тема",
+    "switchToLight": "Переключить на светлую тему",
+    "switchToDark": "Переключить на тёмную тему"
+  },
   "Menu": {
     "menuTitle": "МЕНЮ",
     "otherTitle": "ДРУГОЕ",
