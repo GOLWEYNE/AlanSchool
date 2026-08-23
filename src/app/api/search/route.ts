@@ -77,7 +77,7 @@ export async function GET(req: NextRequest) {
 
   // Message has no Prisma relation to Student (studentId is a plain scalar),
   // so the display name for each message's student is resolved separately.
-  const studentIds = [...new Set(messages.map((m) => m.studentId).filter((id): id is string => id !== null))];
+  const studentIds = Array.from(new Set(messages.map((m) => m.studentId).filter((id): id is string => id !== null)));
   const messageStudents = studentIds.length
     ? await prisma.student.findMany({
         where: { id: { in: studentIds } },
