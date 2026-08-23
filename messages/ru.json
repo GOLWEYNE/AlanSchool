@@ -56,6 +56,16 @@
   "TableSearch": {
     "placeholder": "Поиск записей..."
   },
+  "CommandPalette": {
+    "placeholder": "Поиск учеников, заявок, сообщений...",
+    "prompt": "Введите минимум 2 символа для поиска.",
+    "searching": "Поиск...",
+    "noResults": "Ничего не найдено.",
+    "groupStudents": "Ученики",
+    "groupTickets": "Заявки",
+    "groupMessages": "Сообщения",
+    "noStudentContext": "Без привязки к ученику"
+  },
   "List": {
     "teachers": {
       "title": "Учителя",
@@ -84,7 +94,7 @@
       "totalLabel": "Всего учеников",
       "visibleLabel": "Отображается",
       "adminActionsLabel": "Действия администратора",
-      "heading": "Все ученики",
+      "heading": "Все учители",
       "columns": {
         "info": "Информация",
         "studentId": "ID ученика",
