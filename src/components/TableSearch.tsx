@@ -21,13 +21,13 @@ const TableSearch = () => {
   return (
     <form
       onSubmit={handleSubmit}
-      className="w-full md:w-auto flex items-center gap-2 text-xs rounded-full border border-blue-200 bg-gradient-to-r from-white via-blue-50 to-yellow-50 px-3 shadow-sm"
+      className="w-full md:w-auto flex items-center gap-2 text-xs rounded-full border border-blue-200 dark:border-slate-800 bg-gradient-to-r from-white via-blue-50 to-yellow-50 dark:from-slate-900 dark:via-slate-900 dark:to-slate-900 px-3 shadow-sm"
     >
       <Image src="/search.png" alt="" width={14} height={14} />
       <input
         type="text"
         placeholder={t("placeholder")}
-        className="w-[220px] p-2 bg-transparent outline-none text-blue-900 placeholder:text-blue-400"
+        className="w-[220px] p-2 bg-transparent outline-none text-blue-900 dark:text-blue-100 placeholder:text-blue-400 dark:placeholder:text-blue-500/60"
       />
     </form>
   );
