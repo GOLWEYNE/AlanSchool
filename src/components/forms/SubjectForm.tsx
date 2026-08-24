@@ -58,7 +58,7 @@ const SubjectForm = ({
 
   return (
     <form className="flex flex-col gap-8" onSubmit={onSubmit}>
-      <h1 className="text-xl font-semibold">
+      <h1 className="text-xl font-semibold dark:text-blue-100">
         {type === "create" ? t("subject.createTitle") : t("subject.updateTitle")}
       </h1>
 
@@ -80,10 +80,10 @@ const SubjectForm = ({
           />
         )}
         <div className="flex flex-col gap-2 w-full md:w-1/4">
-          <label className="text-xs text-gray-500">{t("subject.teachers")}</label>
+          <label className="text-xs text-gray-500 dark:text-slate-400">{t("subject.teachers")}</label>
           <select
             multiple
-            className="ring-[1.5px] ring-gray-300 p-2 rounded-md text-sm w-full"
+            className="ring-[1.5px] ring-gray-300 dark:ring-slate-700 dark:bg-slate-800 dark:text-slate-100 p-2 rounded-md text-sm w-full"
             {...register("teachers")}
             defaultValue={data?.teachers}
           >

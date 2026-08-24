@@ -63,10 +63,10 @@ const StudentForm = ({
 
   return (
     <form className="flex flex-col gap-8" onSubmit={onSubmit}>
-      <h1 className="text-xl font-semibold">
+      <h1 className="text-xl font-semibold dark:text-blue-100">
         {type === "create" ? t("student.createTitle") : t("student.updateTitle")}
       </h1>
-      <span className="text-xs text-gray-400 font-medium">
+      <span className="text-xs text-gray-400 dark:text-slate-500 font-medium">
         {t("common.authenticationInfo")}
       </span>
       <div className="flex justify-between flex-wrap gap-4">
@@ -93,7 +93,7 @@ const StudentForm = ({
           error={errors?.password}
         />
       </div>
-      <span className="text-xs text-gray-400 font-medium">
+      <span className="text-xs text-gray-400 dark:text-slate-500 font-medium">
         {t("common.personalInfo")}
       </span>
       <CldUploadWidget
@@ -106,10 +106,10 @@ const StudentForm = ({
         {({ open }) => {
           return (
             <div
-              className="text-xs text-gray-500 flex items-center gap-2 cursor-pointer"
+              className="text-xs text-gray-500 dark:text-slate-400 flex items-center gap-2 cursor-pointer"
               onClick={() => open()}
             >
-              <Image src="/upload.png" alt="" width={28} height={28} />
+              <Image src="/upload.png" alt="" width={28} height={28} className="dark:invert dark:opacity-70" />
               <span>{t("common.uploadPhoto")}</span>
             </div>
           );
@@ -177,9 +177,9 @@ const StudentForm = ({
           />
         )}
         <div className="flex flex-col gap-2 w-full md:w-1/4">
-          <label className="text-xs text-gray-500">{t("common.sex")}</label>
+          <label className="text-xs text-gray-500 dark:text-slate-400">{t("common.sex")}</label>
           <select
-            className="ring-[1.5px] ring-gray-300 p-2 rounded-md text-sm w-full"
+            className="ring-[1.5px] ring-gray-300 dark:ring-slate-700 dark:bg-slate-800 dark:text-slate-100 p-2 rounded-md text-sm w-full"
             {...register("sex")}
             defaultValue={data?.sex}
           >
@@ -193,9 +193,9 @@ const StudentForm = ({
           )}
         </div>
         <div className="flex flex-col gap-2 w-full md:w-1/4">
-          <label className="text-xs text-gray-500">{t("common.grade")}</label>
+          <label className="text-xs text-gray-500 dark:text-slate-400">{t("common.grade")}</label>
           <select
-            className="ring-[1.5px] ring-gray-300 p-2 rounded-md text-sm w-full"
+            className="ring-[1.5px] ring-gray-300 dark:ring-slate-700 dark:bg-slate-800 dark:text-slate-100 p-2 rounded-md text-sm w-full"
             {...register("gradeId")}
             defaultValue={data?.gradeId}
           >
@@ -212,9 +212,9 @@ const StudentForm = ({
           )}
         </div>
         <div className="flex flex-col gap-2 w-full md:w-1/4">
-          <label className="text-xs text-gray-500">{t("common.class")}</label>
+          <label className="text-xs text-gray-500 dark:text-slate-400">{t("common.class")}</label>
           <select
-            className="ring-[1.5px] ring-gray-300 p-2 rounded-md text-sm w-full"
+            className="ring-[1.5px] ring-gray-300 dark:ring-slate-700 dark:bg-slate-800 dark:text-slate-100 p-2 rounded-md text-sm w-full"
             {...register("classId")}
             defaultValue={data?.classId}
           >

@@ -53,7 +53,7 @@ const ParentForm = ({
 
   return (
     <form className="flex flex-col gap-8" onSubmit={onSubmit}>
-      <h1 className="text-xl font-semibold">
+      <h1 className="text-xl font-semibold dark:text-blue-100">
         {type === "create" ? t("parent.createTitle") : t("parent.updateTitle")}
       </h1>
 
