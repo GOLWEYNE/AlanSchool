@@ -29,7 +29,8 @@
     "announcements": "Хабарландырулар",
     "profile": "Профиль",
     "settings": "Параметрлер",
-    "logout": "Шығу"
+    "logout": "Шығу",
+    "reportCards": "Үлгерім табельдері"
   },
   "Navbar": {
     "searchPlaceholder": "Іздеу...",
@@ -245,6 +246,25 @@
         "actions": "Әрекеттер"
       },
       "disabled": "Өшірілген"
+    },
+    "reportCards": {
+      "title": "Үлгерім табельдері",
+      "subtitle": "Оқушылардың табельдерін жасаңыз, қараңыз және PDF форматында жүктеп алыңыз.",
+      "emoji": "🧾",
+      "totalLabel": "Барлық табельдер",
+      "columns": {
+        "student": "Оқушы",
+        "class": "Сынып",
+        "term": "Тоқсан",
+        "schoolYear": "Оқу жылы",
+        "gpa": "Орташа балл",
+        "attendance": "Қатысу",
+        "generatedAt": "Жасалған күні",
+        "actions": "Әрекеттер"
+      },
+      "downloadLabel": "PDF жүктеу",
+      "regenerateLabel": "Қайта жасау",
+      "empty": "Әзірге үлгерім табельдері жасалмаған."
     }
   },
     "Forms": {
@@ -374,6 +394,22 @@
                   "subjects": "Пәндер",
                   "toastCreated": "Мұғалім құрылды!",
                   "toastUpdated": "Мұғалім жаңартылды!"
+          },
+          "reportCard": {
+                  "generateTitle": "Үлгерім табелін жасау",
+                  "term": "Тоқсан",
+                  "term1": "1-тоқсан",
+                  "term2": "2-тоқсан",
+                  "term3": "3-тоқсан",
+                  "schoolYear": "Оқу жылы",
+                  "generate": "Жасау",
+                  "regenerate": "Қайта жасау",
+                  "toastGenerated": "Үлгерім табелі жасалды!",
+                  "bulkTitle": "Сынып үшін жаппай жасау",
+                  "class": "Сынып",
+                  "generateForClass": "Сынып үшін жасау",
+                  "toastBulkGenerated": "Сынып үшін үлгерім табельдері жасалды!",
+                  "error": "Бір нәрсе дұрыс болмады. Қайталап көріңіз."
           }
     }
 }

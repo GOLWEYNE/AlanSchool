@@ -29,7 +29,8 @@
     "announcements": "Объявления",
     "profile": "Профиль",
     "settings": "Настройки",
-    "logout": "Выйти"
+    "logout": "Выйти",
+    "reportCards": "Табели успеваемости"
   },
   "Navbar": {
     "searchPlaceholder": "Поиск...",
@@ -245,6 +246,25 @@
         "actions": "Действия"
       },
       "disabled": "Отключено"
+    },
+    "reportCards": {
+      "title": "Табели успеваемости",
+      "subtitle": "Создавайте, просматривайте и скачивайте PDF-табели учащихся.",
+      "emoji": "🧾",
+      "totalLabel": "Всего табелей",
+      "columns": {
+        "student": "Учащийся",
+        "class": "Класс",
+        "term": "Четверть",
+        "schoolYear": "Учебный год",
+        "gpa": "Средний балл",
+        "attendance": "Посещаемость",
+        "generatedAt": "Создан",
+        "actions": "Действия"
+      },
+      "downloadLabel": "Скачать PDF",
+      "regenerateLabel": "Пересоздать",
+      "empty": "Табели успеваемости ещё не созданы."
     }
   },
     "Forms": {
@@ -374,6 +394,22 @@
                   "subjects": "Предметы",
                   "toastCreated": "Учитель создан!",
                   "toastUpdated": "Учитель обновлён!"
+          },
+          "reportCard": {
+                  "generateTitle": "Создать табель успеваемости",
+                  "term": "Четверть",
+                  "term1": "1 четверть",
+                  "term2": "2 четверть",
+                  "term3": "3 четверть",
+                  "schoolYear": "Учебный год",
+                  "generate": "Создать",
+                  "regenerate": "Пересоздать",
+                  "toastGenerated": "Табель успеваемости создан!",
+                  "bulkTitle": "Массовое создание для класса",
+                  "class": "Класс",
+                  "generateForClass": "Создать для класса",
+                  "toastBulkGenerated": "Табели успеваемости созданы для класса!",
+                  "error": "Что-то пошло не так. Попробуйте снова."
           }
     }
 }
