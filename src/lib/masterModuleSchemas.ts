@@ -131,6 +131,14 @@ export const reportCardGenerateSchema = z.object({
 
 export type ReportCardGenerateSchema = z.infer<typeof reportCardGenerateSchema>;
 
+export const reportCardBulkGenerateSchema = z.object({
+    classId: z.coerce.number(),
+    term: z.enum(["TERM_1", "TERM_2", "TERM_3"]),
+    schoolYear: z.string().min(1, { message: "School year is required!" }),
+});
+
+export type ReportCardBulkGenerateSchema = z.infer<typeof reportCardBulkGenerateSchema>;
+
 // ---- Module 7: Classroom Locator (Lesson.room) -----------------------
 
 export const lessonRoomSchema = z.object({

@@ -19,6 +19,7 @@ import {
       PermissionResponseSchema,
       PermissionSlipSchema,
       PortfolioItemSchema,
+      ReportCardBulkGenerateSchema,
       ReportCardGenerateSchema,
       SubmissionCreateSchema,
       SubmissionGradeSchema,
@@ -475,62 +476,126 @@ export const deletePortfolioItem = async (
 // Module 6: Automated Report Card Generation & Digital Archiving
 // =====================================================================
 
+// Shared by the single-student and class-wide (bulk) generation actions
+// below. Computes GPA / attendance rate / behavior summary, upserts the
+// ReportCard row, and stamps a stable pdfUrl pointing at the on-demand
+// PDF route (the PDF itself is rendered lazily on request, not stored
+// as a static file).
+const buildReportCardForStudent = async (
+      studentId: string,
+      term: ReportCardGenerateSchema["term"],
+      schoolYear: string,
+      generatedById?: string
+    ) => {
+      const [results, attendance] = await Promise.all([
+                prisma.result.findMany({ where: { studentId } }),
+                prisma.attendanceRecord.findMany({ where: { studentId } }),
+              ]);
+
+      const gpa = results.length
+        ? results.reduce((sum, r) => sum + r.score, 0) / results.length
+          : null;
+      const attendanceRate = attendance.length
+        ? (attendance.filter((a) => a.status === "PRESENT").length /
+                     attendance.length) *
+                  100
+                : null;
+
+      const behaviorLogs = await prisma.behaviorLog.findMany({
+                where: { studentId },
+                orderBy: { date: "desc" },
+                take: 5,
+      });
+      const behaviorSummary = behaviorLogs.length
+        ? behaviorLogs.map((b) => `${b.type}: ${b.title}`).join("; ")
+                : null;
+
+      const reportCard = await prisma.reportCard.upsert({
+                where: {
+                            studentId_term_schoolYear: {
+                                          studentId,
+                                          term,
+                                          schoolYear,
+                            },
+                },
+                update: {
+                            gpa,
+                            attendanceRate,
+                            behaviorSummary,
+                            generatedAt: new Date(),
+                            generatedById: generatedById ?? undefined,
+                },
+                create: {
+                            studentId,
+                            term,
+                            schoolYear,
+                            gpa,
+                            attendanceRate,
+                            behaviorSummary,
+                            generatedById: generatedById ?? undefined,
+                },
+      });
+
+      const pdfUrl = `/api/report-cards/${reportCard.id}/pdf`;
+      if (reportCard.pdfUrl !== pdfUrl) {
+                await prisma.reportCard.update({
+                          where: { id: reportCard.id },
+                          data: { pdfUrl },
+                });
+      }
+
+      return reportCard;
+};
+
 export const generateReportCard = async (
       currentState: CurrentState,
       data: ReportCardGenerateSchema
     ) => {
       if (!isAdminOrTeacher()) return rejectUnauthorized();
       try {
-              const [results, attendance] = await Promise.all([
-                        prisma.result.findMany({ where: { studentId: data.studentId } }),
-                        prisma.attendanceRecord.findMany({ where: { studentId: data.studentId } }),
-                      ]);
-
-        const gpa = results.length
-                ? results.reduce((sum, r) => sum + r.score, 0) / results.length
-                  : null;
-              const attendanceRate = attendance.length
-                ? (attendance.filter((a) => a.status === "PRESENT").length /
-                             attendance.length) *
-                          100
-                        : null;
-
-        const behaviorLogs = await prisma.behaviorLog.findMany({
-                  where: { studentId: data.studentId },
-                  orderBy: { date: "desc" },
-                  take: 5,
-        });
-              const behaviorSummary = behaviorLogs.length
-                ? behaviorLogs.map((b) => `${b.type}: ${b.title}`).join("; ")
-                        : null;
-
-        await prisma.reportCard.upsert({
-                  where: {
-                              studentId_term_schoolYear: {
-                                            studentId: data.studentId,
-                                            term: data.term,
-                                            schoolYear: data.schoolYear,
-                              },
-                  },
-                  update: {
-                              gpa,
-                              attendanceRate,
-                              behaviorSummary,
-                              generatedAt: new Date(),
-                              generatedById: getCurrentUserId() ?? undefined,
-                  },
-                  create: {
-                              studentId: data.studentId,
-                              term: data.term,
-                              schoolYear: data.schoolYear,
-                              gpa,
-                              attendanceRate,
-                              behaviorSummary,
-                              generatedById: getCurrentUserId() ?? undefined,
-                  },
-        });
+              await buildReportCardForStudent(
+                        data.studentId,
+                        data.term,
+                        data.schoolYear,
+                        getCurrentUserId() ?? undefined
+              );
 
         revalidatePath("/dashboard/list/results");
+              revalidatePath("/dashboard/list/students");
+              revalidatePath("/dashboard/list/report-cards");
+              return ok();
+      } catch (err) {
+              console.log(err);
+              return fail();
+      }
+};
+
+export const generateReportCardsForClass = async (
+      currentState: CurrentState,
+      data: ReportCardBulkGenerateSchema
+    ) => {
+      if (!isAdminOrTeacher()) return rejectUnauthorized();
+      try {
+              const students = await prisma.student.findMany({
+                        where: { classId: data.classId },
+                        select: { id: true },
+              });
+
+        if (!students.length) return fail("No students found in this class.");
+
+              const generatedById = getCurrentUserId() ?? undefined;
+              for (const student of students) {
+                        await buildReportCardForStudent(
+                                  student.id,
+                                  data.term,
+                                  data.schoolYear,
+                                  generatedById
+                        );
+              }
+
+        revalidatePath("/dashboard/list/results");
+              revalidatePath("/dashboard/list/students");
+              revalidatePath("/dashboard/list/report-cards");
               return ok();
       } catch (err) {
               console.log(err);
