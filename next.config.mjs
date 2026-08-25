@@ -8,6 +8,14 @@ const nextConfig = {
     remotePatterns: [
       { hostname: "images.pexels.com" }],
   },
+    experimental: {
+          outputFileTracingIncludes: {
+                  "/api/**/*": [
+                            "./node_modules/pdfkit/js/standard-fonts/**/*",
+                            "./node_modules/pdfkit/js/data/**/*",
+                          ],
+          },
+    },
 };
 
 export default withNextIntl(nextConfig);
