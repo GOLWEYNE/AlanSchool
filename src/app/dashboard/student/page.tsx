@@ -5,6 +5,7 @@ import AttendancePulse from "@/components/AttendancePulse";
 import ClassLeaderboard from "@/components/ClassLeaderboard";
 import BigCalendarContainer from "@/components/BigCalendarContainer";
 import EventCalendar from "@/components/EventCalendar";
+import ReportCardsPanel from "@/components/ReportCardsPanel";
 import prisma from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 import Link from "next/link";
@@ -82,6 +83,7 @@ const StudentPage = async () => {
         <WeekAtAGlance role="student" classIds={classId ? [classId] : []} />
         <AttendancePulse role="student" studentIds={userId ? [userId] : []} />
         <ClassLeaderboard role="student" studentIds={userId ? [userId] : []} />
+        {userId && <ReportCardsPanel studentId={userId} />}
         {/* EVENTS CARD */}
         <div className="bg-gradient-to-r from-yellow-400 to-yellow-300 rounded-lg p-4 shadow-md">
           <div className="flex items-center gap-2 mb-3">

@@ -29,7 +29,8 @@
     "announcements": "Announcements",
     "profile": "Profile",
     "settings": "Settings",
-    "logout": "Logout"
+    "logout": "Logout",
+    "reportCards": "Report Cards"
   },
   "Navbar": {
     "searchPlaceholder": "Search...",
@@ -245,6 +246,25 @@
         "actions": "Actions"
       },
       "disabled": "Disabled"
+    },
+    "reportCards": {
+      "title": "Report Cards",
+      "subtitle": "Generate, review, and download student report card PDFs.",
+      "emoji": "🧾",
+      "totalLabel": "Total Report Cards",
+      "columns": {
+        "student": "Student",
+        "class": "Class",
+        "term": "Term",
+        "schoolYear": "School Year",
+        "gpa": "GPA",
+        "attendance": "Attendance",
+        "generatedAt": "Generated",
+        "actions": "Actions"
+      },
+      "downloadLabel": "Download PDF",
+      "regenerateLabel": "Regenerate",
+      "empty": "No report cards generated yet."
     }
   },
     "Forms": {
@@ -374,6 +394,22 @@
                   "subjects": "Subjects",
                   "toastCreated": "Teacher has been created!",
                   "toastUpdated": "Teacher has been updated!"
+          },
+          "reportCard": {
+                  "generateTitle": "Generate Report Card",
+                  "term": "Term",
+                  "term1": "Term 1",
+                  "term2": "Term 2",
+                  "term3": "Term 3",
+                  "schoolYear": "School Year",
+                  "generate": "Generate",
+                  "regenerate": "Regenerate",
+                  "toastGenerated": "Report card generated!",
+                  "bulkTitle": "Bulk Generate for Class",
+                  "class": "Class",
+                  "generateForClass": "Generate for Class",
+                  "toastBulkGenerated": "Report cards generated for the class!",
+                  "error": "Something went wrong. Please try again."
           }
     }
 }

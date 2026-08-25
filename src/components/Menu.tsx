@@ -91,6 +91,12 @@ const getMenuItems = (t: Awaited<ReturnType<typeof getTranslations>>) => [
         href: "/dashboard/list/announcements",
         visible: ["admin", "teacher", "student"],
       },
+      {
+        icon: "/result.png",
+        label: t("reportCards"),
+        href: "/dashboard/list/report-cards",
+        visible: ["admin", "teacher"],
+      },
     ],
   },
   {

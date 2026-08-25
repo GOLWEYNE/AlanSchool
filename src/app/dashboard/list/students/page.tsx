@@ -3,6 +3,7 @@ import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
 import PageHero from "@/components/PageHero";
+import ReportCardGenerateButton from "@/components/ReportCardGenerateButton";
 
 import prisma from "@/lib/prisma";
 import { ITEM_PER_PAGE } from "@/lib/settings";
@@ -50,7 +51,7 @@ const StudentListPage = async ({
       accessor: "address",
       className: "hidden lg:table-cell",
     },
-    ...(role === "admin"
+    ...(role === "admin" || role === "teacher"
       ? [
           {
             header: t("columns.actions"),
@@ -89,6 +90,12 @@ const StudentListPage = async ({
               <Image src="/view.png" alt="" width={16} height={16} />
             </button>
           </Link>
+          {(role === "admin" || role === "teacher") && (
+            <ReportCardGenerateButton
+              studentId={item.id}
+              studentLabel={`${item.name} ${item.surname}`}
+            />
+          )}
           {role === "admin" && (
             // <button className="w-7 h-7 flex items-center justify-center rounded-full bg-lamaPurple">
             //   <Image src="/delete.png" alt="" width={16} height={16} />
