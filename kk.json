@@ -1,0 +1,415 @@
+{
+  "LanguageSwitcher": {
+    "label": "Тіл",
+    "en": "Ағылшын",
+    "ru": "Орыс",
+    "kk": "Қазақ"
+  },
+  "ThemeToggle": {
+    "label": "Тема",
+    "switchToLight": "Жарық режимге ауысу",
+    "switchToDark": "Қараңғы режимге ауысу"
+  },
+  "Menu": {
+    "menuTitle": "МЕНЮ",
+    "otherTitle": "БАСҚА",
+    "home": "Басты бет",
+    "teachers": "Мұғалімдер",
+    "students": "Оқушылар",
+    "parents": "Ата-аналар",
+    "subjects": "Пәндер",
+    "classes": "Сыныптар",
+    "lessons": "Сабақтар",
+    "exams": "Экзамендер",
+    "assignments": "Тапсырмалар",
+    "results": "Нәтижелер",
+    "attendance": "Қатысу",
+    "events": "Іс-шаралар",
+    "messages": "Хабарлар",
+    "announcements": "Хабарландырулар",
+    "profile": "Профиль",
+    "settings": "Параметрлер",
+    "logout": "Шығу",
+    "reportCards": "Үлгерім табельдері"
+  },
+  "Navbar": {
+    "searchPlaceholder": "Іздеу...",
+    "settings": "Параметрлер",
+    "logout": "Шығу",
+    "openSettings": "Параметрлерді ашу",
+    "logOut": "Жүйеден шығу"
+  },
+  "AdminPage": {
+    "title": "Әкімші басқару орталығы",
+    "subtitle": "Пайдаланушыларды, сыныптарды және нәтижелерді бір жерден басқарыңыз.",
+    "roleAdmin": "Рөлі: Әкімші",
+    "accessFull": "Қолжетімділік: Толық",
+    "workspace": "Жұмыс кеңістігі: Мектеп операциялары",
+    "operations": "ОПЕРАЦИЯЛАР",
+    "classManagement": "Сыныптарды басқару",
+    "classManagementDesc": "Сыныптар құрыңыз, жетекшілерін тағайындаңыз және сыйымдылығын реттеңіз.",
+    "people": "АДАМДАР",
+    "teacherDirectory": "Мұғалімдер анықтамалығы",
+    "teacherDirectoryDesc": "Профильдерді жаңартып, пәндерді бөлуді сәйкес ұстаңыз.",
+    "performance": "НӘТИЖЕЛІЛІК",
+    "academicResults": "Оқу нәтижелері",
+    "academicResultsDesc": "Нәтижелерді, үрдістерді қарап шығып, жақсартуларды жариялаңыз."
+  },
+  "Pagination": {
+    "previous": "Артқа",
+    "next": "Келесі"
+  },
+  "TableSearch": {
+    "placeholder": "Жазбаларды іздеу..."
+  },
+  "CommandPalette": {
+    "placeholder": "Оқушыларды, өтінімдерді, хабарларды іздеу...",
+    "prompt": "Іздеу үшін кемінде 2 таңба енгізіңіз.",
+    "searching": "Ізделуде...",
+    "noResults": "Ештеңе табылмады.",
+    "groupStudents": "Оқушылар",
+    "groupTickets": "Өтінімдер",
+    "groupMessages": "Хабарлар",
+    "noStudentContext": "Оқушымен байланыссыз"
+  },
+  "List": {
+    "teachers": {
+      "title": "Мұғалімдер",
+      "subtitle": "Профильдерді, пәндерді және сынып тағайындауларын жылдам әрекеттер арқылы басқарыңыз.",
+      "emoji": "🧑‍🏫",
+      "totalLabel": "Мұғалімдер саны",
+      "loadedLabel": "Жүктелді",
+      "createEnabledLabel": "Құру қосылған",
+      "yes": "Иә",
+      "no": "Жоқ",
+      "heading": "Барлық мұғалімдер",
+      "columns": {
+        "info": "Ақпарат",
+        "teacherId": "Мұғалім ID",
+        "subjects": "Пәндер",
+        "classes": "Сыныптар",
+        "phone": "Телефон",
+        "address": "Мекенжай",
+        "actions": "Әрекеттер"
+      }
+    },
+    "students": {
+      "title": "Оқушылар",
+      "subtitle": "Оқушылардың жазбаларын, сынып бөлуін және мәліметтерін бір қарағанда бақылаңыз.",
+      "emoji": "🎓",
+      "totalLabel": "Оқушылар саны",
+      "visibleLabel": "Көрінеді",
+      "adminActionsLabel": "Әкімші әрекеттері",
+      "heading": "Барлық оқушылар",
+      "columns": {
+        "info": "Ақпарат",
+        "studentId": "Оқушы ID",
+        "grade": "Сынып",
+        "phone": "Телефон",
+        "address": "Мекенжай",
+        "actions": "Әрекеттер"
+      },
+            "enabled": "Қосулы",
+            "hidden": "Жасырын"
+    },
+    "parents": {
+      "heading": "Барлық ата-аналар",
+      "columns": {
+        "info": "Ақпарат",
+        "studentNames": "Оқушылардың аты-жөні",
+        "phone": "Телефон",
+        "address": "Мекенжай",
+        "actions": "Әрекеттер"
+      }
+    },
+    "subjects": {
+      "heading": "Барлық пәндер",
+      "columns": {
+        "subjectName": "Пән атауы",
+        "teachers": "Мұғалімдер",
+        "actions": "Әрекеттер"
+      }
+    },
+    "classes": {
+      "title": "Сыныптар",
+      "subtitle": "Сынып топтарын, жетекшілерін және сыйымдылығын бір ыңғайлы көріністе ұйымдастырыңыз.",
+      "emoji": "🏫",
+      "totalLabel": "Сыныптар саны",
+      "visibleNowLabel": "Қазір көрінеді",
+      "adminModeLabel": "Әкімші режимі",
+      "on": "Қосулы",
+      "heading": "Барлық сыныптар",
+      "columns": {
+        "className": "Сынып атауы",
+        "capacity": "Сыйымдылығы",
+        "grade": "Деңгейі",
+        "supervisor": "Жетекшісі",
+        "actions": "Әрекеттер"
+      },
+      "off": "Өшірулі"
+    },
+    "lessons": {
+      "heading": "Барлық сабақтар",
+      "columns": {
+        "lesson": "Сабақ",
+        "subject": "Пән",
+        "class": "Сынып",
+        "teacher": "Мұғалім",
+        "time": "Уақыт",
+        "actions": "Әрекеттер"
+      }
+    },
+    "exams": {
+      "title": "Экзамендер",
+      "subtitle": "Бағалауларды нақты мерзімдермен жоспарлаңыз және әр сыныпты кестеде ұстаңыз.",
+      "emoji": "📝",
+      "totalLabel": "Экзамендер саны",
+      "showingLabel": "Көрсетілді",
+      "roleLabel": "Рөл",
+      "heading": "Барлық экзамендер",
+      "columns": {
+        "subjectName": "Пән атауы",
+        "class": "Сынып",
+        "teacher": "Мұғалім",
+        "date": "Күні",
+        "actions": "Әрекеттер"
+      }
+    },
+    "assignments": {
+      "title": "Тапсырмалар",
+      "subtitle": "Әр сынып үшін тапсырмалардың мерзімдерін жасаңыз және тапсыру күндерін бақылаңыз.",
+      "emoji": "📚",
+      "totalLabel": "Тапсырмалар саны",
+      "currentPageLabel": "Ағымдағы бет",
+      "teacherToolsLabel": "Мұғалім құралдары",
+      "heading": "Барлық тапсырмалар",
+      "columns": {
+        "subjectName": "Пән атауы",
+        "class": "Сынып",
+        "teacher": "Мұғалім",
+        "dueDate": "Тапсыру мерзімі",
+        "actions": "Әрекеттер"
+      },
+      "on": "Қосулы",
+      "off": "Өшірулі"
+    },
+    "results": {
+      "title": "Нәтижелер",
+      "subtitle": "Экзамендер мен тапсырмалар бойынша үлгерім нәтижелерін бір ағында қарап шығыңыз.",
+      "emoji": "📊",
+      "totalLabel": "Нәтижелер саны",
+      "loadedLabel": "Жүктелді",
+      "roleLabel": "Рөл",
+      "heading": "Барлық нәтижелер",
+      "columns": {
+        "title": "Атауы",
+        "student": "Оқушы",
+        "score": "Балл",
+        "teacher": "Мұғалім",
+        "class": "Сынып",
+        "date": "Күні",
+        "actions": "Әрекеттер"
+      }
+    },
+    "events": {
+      "title": "Іс-шаралар",
+      "subtitle": "Мектеп іс-шараларын барлық сыныптар бойынша нақты кестемен үйлестіріңіз.",
+      "emoji": "🗓️",
+      "totalLabel": "Іс-шаралар саны",
+      "visibleLabel": "Көрінеді",
+      "adminControlsLabel": "Әкімші басқаруы",
+      "enabled": "Қосулы",
+      "heading": "Барлық іс-шаралар",
+      "columns": {
+        "title": "Атауы",
+        "class": "Сынып",
+        "date": "Күні",
+        "startTime": "Басталу уақыты",
+        "endTime": "Аяқталу уақыты",
+        "actions": "Әрекеттер"
+      },
+            "readOnly": "Тек оқу"
+    },
+    "announcements": {
+      "title": "Хабарландырулар",
+      "subtitle": "Маңызды жаңартуларды қажетті сыныптарға қажетті уақытта жеткізіңіз.",
+      "emoji": "📣",
+      "totalLabel": "Жарияланымдар саны",
+      "thisViewLabel": "Осы көріністе",
+      "postingLabel": "Жариялау",
+      "available": "Қолжетімді",
+      "heading": "Барлық хабарландырулар",
+      "columns": {
+        "title": "Атауы",
+        "class": "Сынып",
+        "date": "Күні",
+        "actions": "Әрекеттер"
+      },
+      "disabled": "Өшірілген"
+    },
+    "reportCards": {
+      "title": "Үлгерім табельдері",
+      "subtitle": "Оқушылардың табельдерін жасаңыз, қараңыз және PDF форматында жүктеп алыңыз.",
+      "emoji": "🧾",
+      "totalLabel": "Барлық табельдер",
+      "columns": {
+        "student": "Оқушы",
+        "class": "Сынып",
+        "term": "Тоқсан",
+        "schoolYear": "Оқу жылы",
+        "gpa": "Орташа балл",
+        "attendance": "Қатысу",
+        "generatedAt": "Жасалған күні",
+        "actions": "Әрекеттер"
+      },
+      "downloadLabel": "PDF жүктеу",
+      "regenerateLabel": "Қайта жасау",
+      "empty": "Әзірге үлгерім табельдері жасалмаған."
+    }
+  },
+    "Forms": {
+          "common": {
+                  "somethingWrong": "Қате пайда болды!",
+                  "create": "Құру",
+                  "update": "Жаңарту",
+                  "id": "Id",
+                  "title": "Атауы",
+                  "description": "Сипаттама",
+                  "date": "Күні",
+                  "class": "Сынып",
+                  "generalAllClasses": "Жалпы (барлық сыныптар)",
+                  "grade": "Деңгей",
+                  "authenticationInfo": "Кіру деректері",
+                  "personalInfo": "Жеке ақпарат",
+                  "username": "Пайдаланушы аты",
+                  "email": "Электрондық пошта",
+                  "password": "Құпия сөз",
+                  "firstName": "Аты",
+                  "lastName": "Тегі",
+                  "phone": "Телефон",
+                  "address": "Мекенжай",
+                  "bloodType": "Қан тобы",
+                  "birthday": "Туған күні",
+                  "sex": "Жынысы",
+                  "male": "Ер",
+                  "female": "Әйел",
+                  "uploadPhoto": "Фото жүктеу",
+                  "capacity": "Сыйымдылығы",
+                  "days": {
+                            "monday": "Дүйсенбі",
+                            "tuesday": "Сейсенбі",
+                            "wednesday": "Сәрсенбі",
+                            "thursday": "Бейсенбі",
+                            "friday": "Жұма"
+                  }
+          },
+          "announcement": {
+                  "createTitle": "Жаңа хабарландыру құру",
+                  "updateTitle": "Хабарландыруды жаңарту",
+                  "toastCreated": "Хабарландыру құрылды!",
+                  "toastUpdated": "Хабарландыру жаңартылды!"
+          },
+          "assignment": {
+                  "createTitle": "Жаңа тапсырма құру",
+                  "updateTitle": "Тапсырманы жаңарту",
+                  "startDate": "Басталу күні",
+                  "dueDate": "Тапсыру мерзімі",
+                  "lesson": "Сабақ",
+                  "toastCreated": "Тапсырма құрылды!",
+                  "toastUpdated": "Тапсырма жаңартылды!"
+          },
+          "class": {
+                  "createTitle": "Жаңа сынып құру",
+                  "updateTitle": "Сыныпты жаңарту",
+                  "className": "Сынып атауы",
+                  "supervisor": "Жетекші",
+                  "toastCreated": "Пән құрылды!",
+                  "toastUpdated": "Пән жаңартылды!"
+          },
+          "event": {
+                  "createTitle": "Жаңа іс-шара құру",
+                  "updateTitle": "Іс-шараны жаңарту",
+                  "startTime": "Басталу уақыты",
+                  "endTime": "Аяқталу уақыты",
+                  "toastCreated": "Іс-шара құрылды!",
+                  "toastUpdated": "Іс-шара жаңартылды!"
+          },
+          "exam": {
+                  "createTitle": "Жаңа экзамен құру",
+                  "updateTitle": "Экзаменді жаңарту",
+                  "examTitle": "Экзамен атауы",
+                  "startDate": "Басталу күні",
+                  "endDate": "Аяқталу күні",
+                  "lesson": "Сабақ",
+                  "toastCreated": "Экзамен құрылды!",
+                  "toastUpdated": "Экзамен жаңартылды!"
+          },
+          "lesson": {
+                  "createTitle": "Жаңа сабақ құру",
+                  "updateTitle": "Сабақты жаңарту",
+                  "lessonName": "Сабақ атауы",
+                  "startTime": "Басталу уақыты",
+                  "endTime": "Аяқталу уақыты",
+                  "day": "Күн",
+                  "subject": "Пән",
+                  "teacher": "Мұғалім",
+                  "toastCreated": "Сабақ құрылды!",
+                  "toastUpdated": "Сабақ жаңартылды!"
+          },
+          "parent": {
+                  "createTitle": "Жаңа ата-ана құру",
+                  "updateTitle": "Ата-ананы жаңарту",
+                  "toastCreated": "Ата-ана құрылды!",
+                  "toastUpdated": "Ата-ана жаңартылды!"
+          },
+          "result": {
+                  "createTitle": "Жаңа нәтиже құру",
+                  "updateTitle": "Нәтижені жаңарту",
+                  "score": "Балл",
+                  "student": "Оқушы",
+                  "assessmentType": "Бағалау түрі",
+                  "exam": "Экзамен",
+                  "assignment": "Тапсырма",
+                  "toastCreated": "Нәтиже құрылды!",
+                  "toastUpdated": "Нәтиже жаңартылды!"
+          },
+          "student": {
+                  "createTitle": "Жаңа оқушы құру",
+                  "updateTitle": "Оқушыны жаңарту",
+                  "parentId": "Ата-ана Id",
+                  "toastCreated": "Оқушы құрылды!",
+                  "toastUpdated": "Оқушы жаңартылды!"
+          },
+          "subject": {
+                  "createTitle": "Жаңа пән құру",
+                  "updateTitle": "Пәнді жаңарту",
+                  "subjectName": "Пән атауы",
+                  "teachers": "Мұғалімдер",
+                  "toastCreated": "Пән құрылды!",
+                  "toastUpdated": "Пән жаңартылды!"
+          },
+          "teacher": {
+                  "createTitle": "Жаңа мұғалім құру",
+                  "updateTitle": "Мұғалімді жаңарту",
+                  "subjects": "Пәндер",
+                  "toastCreated": "Мұғалім құрылды!",
+                  "toastUpdated": "Мұғалім жаңартылды!"
+          },
+          "reportCard": {
+                  "generateTitle": "Үлгерім табелін жасау",
+                  "term": "Тоқсан",
+                  "term1": "1-тоқсан",
+                  "term2": "2-тоқсан",
+                  "term3": "3-тоқсан",
+                  "schoolYear": "Оқу жылы",
+                  "generate": "Жасау",
+                  "regenerate": "Қайта жасау",
+                  "toastGenerated": "Үлгерім табелі жасалды!",
+                  "bulkTitle": "Сынып үшін жаппай жасау",
+                  "class": "Сынып",
+                  "generateForClass": "Сынып үшін жасау",
+                  "toastBulkGenerated": "Сынып үшін үлгерім табельдері жасалды!",
+                  "error": "Бір нәрсе дұрыс болмады. Қайталап көріңіз."
+          }
+    }
+}

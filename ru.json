@@ -1,0 +1,415 @@
+{
+  "LanguageSwitcher": {
+    "label": "Язык",
+    "en": "Английский",
+    "ru": "Русский",
+    "kk": "Казахский"
+  },
+  "ThemeToggle": {
+    "label": "Тема",
+    "switchToLight": "Переключить на светлую тему",
+    "switchToDark": "Переключить на тёмную тему"
+  },
+  "Menu": {
+    "menuTitle": "МЕНЮ",
+    "otherTitle": "ДРУГОЕ",
+    "home": "Главная",
+    "teachers": "Учителя",
+    "students": "Ученики",
+    "parents": "Родители",
+    "subjects": "Предметы",
+    "classes": "Классы",
+    "lessons": "Уроки",
+    "exams": "Экзамены",
+    "assignments": "Задания",
+    "results": "Результаты",
+    "attendance": "Посещаемость",
+    "events": "Мероприятия",
+    "messages": "Сообщения",
+    "announcements": "Объявления",
+    "profile": "Профиль",
+    "settings": "Настройки",
+    "logout": "Выйти",
+    "reportCards": "Табели успеваемости"
+  },
+  "Navbar": {
+    "searchPlaceholder": "Поиск...",
+    "settings": "Настройки",
+    "logout": "Выйти",
+    "openSettings": "Открыть настройки",
+    "logOut": "Выйти из системы"
+  },
+  "AdminPage": {
+    "title": "Центр управления администратора",
+    "subtitle": "Управляйте пользователями, классами и результатами в одном месте.",
+    "roleAdmin": "Роль: Администратор",
+    "accessFull": "Доступ: Полный",
+    "workspace": "Рабочее пространство: Школьные операции",
+    "operations": "ОПЕРАЦИИ",
+    "classManagement": "Управление классами",
+    "classManagementDesc": "Создавайте классы, назначайте руководителей и корректируйте вместимость.",
+    "people": "ЛЮДИ",
+    "teacherDirectory": "Справочник учителей",
+    "teacherDirectoryDesc": "Обновляйте профили и согласовывайте распределение предметов.",
+    "performance": "УСПЕВАЕМОСТЬ",
+    "academicResults": "Академические результаты",
+    "academicResultsDesc": "Просматривайте результаты, тенденции и публикуйте улучшения."
+  },
+  "Pagination": {
+    "previous": "Назад",
+    "next": "Далее"
+  },
+  "TableSearch": {
+    "placeholder": "Поиск записей..."
+  },
+  "CommandPalette": {
+    "placeholder": "Поиск учеников, заявок, сообщений...",
+    "prompt": "Введите минимум 2 символа для поиска.",
+    "searching": "Поиск...",
+    "noResults": "Ничего не найдено.",
+    "groupStudents": "Ученики",
+    "groupTickets": "Заявки",
+    "groupMessages": "Сообщения",
+    "noStudentContext": "Без привязки к ученику"
+  },
+  "List": {
+    "teachers": {
+      "title": "Учителя",
+      "subtitle": "Управляйте профилями, предметами и распределением классов с помощью быстрых действий.",
+      "emoji": "🧑‍🏫",
+      "totalLabel": "Всего учителей",
+      "loadedLabel": "Загружено",
+      "createEnabledLabel": "Создание доступно",
+      "yes": "Да",
+      "no": "Нет",
+      "heading": "Все учителя",
+      "columns": {
+        "info": "Информация",
+        "teacherId": "ID учителя",
+        "subjects": "Предметы",
+        "classes": "Классы",
+        "phone": "Телефон",
+        "address": "Адрес",
+        "actions": "Действия"
+      }
+    },
+    "students": {
+      "title": "Ученики",
+      "subtitle": "Отслеживайте учебные записи, распределение по классам и данные учеников в одном месте.",
+      "emoji": "🎓",
+      "totalLabel": "Всего учеников",
+      "visibleLabel": "Отображается",
+      "adminActionsLabel": "Действия администратора",
+      "heading": "Все учители",
+      "columns": {
+        "info": "Информация",
+        "studentId": "ID ученика",
+        "grade": "Класс",
+        "phone": "Телефон",
+        "address": "Адрес",
+        "actions": "Действия"
+      },
+      "enabled": "Включено",
+      "hidden": "Скрыто"
+    },
+    "parents": {
+      "heading": "Все родители",
+      "columns": {
+        "info": "Информация",
+        "studentNames": "Имена учеников",
+        "phone": "Телефон",
+        "address": "Адрес",
+        "actions": "Действия"
+      }
+    },
+    "subjects": {
+      "heading": "Все предметы",
+      "columns": {
+        "subjectName": "Название предмета",
+        "teachers": "Учителя",
+        "actions": "Действия"
+      }
+    },
+    "classes": {
+      "title": "Классы",
+      "subtitle": "Организуйте группы классов, руководителей и вместимость в одном удобном окне.",
+      "emoji": "🏫",
+      "totalLabel": "Всего классов",
+      "visibleNowLabel": "Отображается сейчас",
+      "adminModeLabel": "Режим администратора",
+      "on": "Включен",
+      "heading": "Все классы",
+      "columns": {
+        "className": "Название класса",
+        "capacity": "Вместимость",
+        "grade": "Уровень",
+        "supervisor": "Руководитель",
+        "actions": "Действия"
+      },
+      "off": "Выключен"
+    },
+    "lessons": {
+      "heading": "Все уроки",
+      "columns": {
+        "lesson": "Урок",
+        "subject": "Предмет",
+        "class": "Класс",
+        "teacher": "Учитель",
+        "time": "Время",
+        "actions": "Действия"
+      }
+    },
+    "exams": {
+      "title": "Экзамены",
+      "subtitle": "Планируйте оценивания с четкими датами и держите каждый класс в графике.",
+      "emoji": "📝",
+      "totalLabel": "Всего экзаменов",
+      "showingLabel": "Показано",
+      "roleLabel": "Роль",
+      "heading": "Все экзамены",
+      "columns": {
+        "subjectName": "Название предмета",
+        "class": "Класс",
+        "teacher": "Учитель",
+        "date": "Дата",
+        "actions": "Действия"
+      }
+    },
+    "assignments": {
+      "title": "Задания",
+      "subtitle": "Создавайте сроки выполнения заданий и следите за датами сдачи для каждого класса.",
+      "emoji": "📚",
+      "totalLabel": "Всего заданий",
+      "currentPageLabel": "Текущая страница",
+      "teacherToolsLabel": "Инструменты учителя",
+      "heading": "Все задания",
+      "columns": {
+        "subjectName": "Название предмета",
+        "class": "Класс",
+        "teacher": "Учитель",
+        "dueDate": "Срок сдачи",
+        "actions": "Действия"
+      },
+      "on": "Включено",
+      "off": "Выключено"
+    },
+    "results": {
+      "title": "Результаты",
+      "subtitle": "Просматривайте результаты успеваемости по экзаменам и заданиям в одном потоке.",
+      "emoji": "📊",
+      "totalLabel": "Всего результатов",
+      "loadedLabel": "Загружено",
+      "roleLabel": "Роль",
+      "heading": "Все результаты",
+      "columns": {
+        "title": "Название",
+        "student": "Ученик",
+        "score": "Балл",
+        "teacher": "Учитель",
+        "class": "Класс",
+        "date": "Дата",
+        "actions": "Действия"
+      }
+    },
+    "events": {
+      "title": "Мероприятия",
+      "subtitle": "Координируйте школьные мероприятия с четким графиком по всем классам.",
+      "emoji": "🗓️",
+      "totalLabel": "Всего мероприятий",
+      "visibleLabel": "Отображается",
+      "adminControlsLabel": "Управление администратора",
+      "enabled": "Включено",
+      "heading": "Все мероприятия",
+      "columns": {
+        "title": "Название",
+        "class": "Класс",
+        "date": "Дата",
+        "startTime": "Время начала",
+        "endTime": "Время окончания",
+        "actions": "Действия"
+      },
+      "readOnly": "Только просмотр"
+    },
+    "announcements": {
+      "title": "Объявления",
+      "subtitle": "Транслируйте важные обновления нужным классам в нужное время.",
+      "emoji": "📣",
+      "totalLabel": "Всего публикаций",
+      "thisViewLabel": "В этом виде",
+      "postingLabel": "Публикация",
+      "available": "Доступно",
+      "heading": "Все объявления",
+      "columns": {
+        "title": "Название",
+        "class": "Класс",
+        "date": "Дата",
+        "actions": "Действия"
+      },
+      "disabled": "Отключено"
+    },
+    "reportCards": {
+      "title": "Табели успеваемости",
+      "subtitle": "Создавайте, просматривайте и скачивайте PDF-табели учащихся.",
+      "emoji": "🧾",
+      "totalLabel": "Всего табелей",
+      "columns": {
+        "student": "Учащийся",
+        "class": "Класс",
+        "term": "Четверть",
+        "schoolYear": "Учебный год",
+        "gpa": "Средний балл",
+        "attendance": "Посещаемость",
+        "generatedAt": "Создан",
+        "actions": "Действия"
+      },
+      "downloadLabel": "Скачать PDF",
+      "regenerateLabel": "Пересоздать",
+      "empty": "Табели успеваемости ещё не созданы."
+    }
+  },
+    "Forms": {
+          "common": {
+                  "somethingWrong": "Что-то пошло не так!",
+                  "create": "Создать",
+                  "update": "Обновить",
+                  "id": "Id",
+                  "title": "Заголовок",
+                  "description": "Описание",
+                  "date": "Дата",
+                  "class": "Класс",
+                  "generalAllClasses": "Общее (все классы)",
+                  "grade": "Уровень",
+                  "authenticationInfo": "Данные для входа",
+                  "personalInfo": "Личная информация",
+                  "username": "Имя пользователя",
+                  "email": "Электронная почта",
+                  "password": "Пароль",
+                  "firstName": "Имя",
+                  "lastName": "Фамилия",
+                  "phone": "Телефон",
+                  "address": "Адрес",
+                  "bloodType": "Группа крови",
+                  "birthday": "Дата рождения",
+                  "sex": "Пол",
+                  "male": "Мужской",
+                  "female": "Женский",
+                  "uploadPhoto": "Загрузить фото",
+                  "capacity": "Вместимость",
+                  "days": {
+                            "monday": "Понедельник",
+                            "tuesday": "Вторник",
+                            "wednesday": "Среда",
+                            "thursday": "Четверг",
+                            "friday": "Пятница"
+                  }
+          },
+          "announcement": {
+                  "createTitle": "Создать новое объявление",
+                  "updateTitle": "Обновить объявление",
+                  "toastCreated": "Объявление создано!",
+                  "toastUpdated": "Объявление обновлено!"
+          },
+          "assignment": {
+                  "createTitle": "Создать новое задание",
+                  "updateTitle": "Обновить задание",
+                  "startDate": "Дата начала",
+                  "dueDate": "Срок сдачи",
+                  "lesson": "Урок",
+                  "toastCreated": "Задание создано!",
+                  "toastUpdated": "Задание обновлено!"
+          },
+          "class": {
+                  "createTitle": "Создать новый класс",
+                  "updateTitle": "Обновить класс",
+                  "className": "Название класса",
+                  "supervisor": "Руководитель",
+                  "toastCreated": "Предмет создан!",
+                  "toastUpdated": "Предмет обновлён!"
+          },
+          "event": {
+                  "createTitle": "Создать новое мероприятие",
+                  "updateTitle": "Обновить мероприятие",
+                  "startTime": "Время начала",
+                  "endTime": "Время окончания",
+                  "toastCreated": "Мероприятие создано!",
+                  "toastUpdated": "Мероприятие обновлено!"
+          },
+          "exam": {
+                  "createTitle": "Создать новый экзамен",
+                  "updateTitle": "Обновить экзамен",
+                  "examTitle": "Название экзамена",
+                  "startDate": "Дата начала",
+                  "endDate": "Дата окончания",
+                  "lesson": "Урок",
+                  "toastCreated": "Экзамен создан!",
+                  "toastUpdated": "Экзамен обновлён!"
+          },
+          "lesson": {
+                  "createTitle": "Создать новый урок",
+                  "updateTitle": "Обновить урок",
+                  "lessonName": "Название урока",
+                  "startTime": "Время начала",
+                  "endTime": "Время окончания",
+                  "day": "День",
+                  "subject": "Предмет",
+                  "teacher": "Учитель",
+                  "toastCreated": "Урок создан!",
+                  "toastUpdated": "Урок обновлён!"
+          },
+          "parent": {
+                  "createTitle": "Создать нового родителя",
+                  "updateTitle": "Обновить родителя",
+                  "toastCreated": "Родитель создан!",
+                  "toastUpdated": "Родитель обновлён!"
+          },
+          "result": {
+                  "createTitle": "Создать новый результат",
+                  "updateTitle": "Обновить результат",
+                  "score": "Балл",
+                  "student": "Ученик",
+                  "assessmentType": "Тип оценивания",
+                  "exam": "Экзамен",
+                  "assignment": "Задание",
+                  "toastCreated": "Результат создан!",
+                  "toastUpdated": "Результат обновлён!"
+          },
+          "student": {
+                  "createTitle": "Создать нового ученика",
+                  "updateTitle": "Обновить ученика",
+                  "parentId": "Id родителя",
+                  "toastCreated": "Ученик создан!",
+                  "toastUpdated": "Ученик обновлён!"
+          },
+          "subject": {
+                  "createTitle": "Создать новый предмет",
+                  "updateTitle": "Обновить предмет",
+                  "subjectName": "Название предмета",
+                  "teachers": "Учителя",
+                  "toastCreated": "Предмет создан!",
+                  "toastUpdated": "Предмет обновлён!"
+          },
+          "teacher": {
+                  "createTitle": "Создать нового учителя",
+                  "updateTitle": "Обновить учителя",
+                  "subjects": "Предметы",
+                  "toastCreated": "Учитель создан!",
+                  "toastUpdated": "Учитель обновлён!"
+          },
+          "reportCard": {
+                  "generateTitle": "Создать табель успеваемости",
+                  "term": "Четверть",
+                  "term1": "1 четверть",
+                  "term2": "2 четверть",
+                  "term3": "3 четверть",
+                  "schoolYear": "Учебный год",
+                  "generate": "Создать",
+                  "regenerate": "Пересоздать",
+                  "toastGenerated": "Табель успеваемости создан!",
+                  "bulkTitle": "Массовое создание для класса",
+                  "class": "Класс",
+                  "generateForClass": "Создать для класса",
+                  "toastBulkGenerated": "Табели успеваемости созданы для класса!",
+                  "error": "Что-то пошло не так. Попробуйте снова."
+          }
+    }
+}
