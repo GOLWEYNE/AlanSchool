@@ -5,6 +5,7 @@ import AttendancePulse from "@/components/AttendancePulse";
 import ClassLeaderboard from "@/components/ClassLeaderboard";
 import BigCalendarContainer from "@/components/BigCalendarContainer";
 import ParentChildAttendanceCard from "@/components/ParentChildAttendanceCard";
+import ReportCardsPanel from "@/components/ReportCardsPanel";
 import prisma from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 import Link from "next/link";
@@ -155,6 +156,13 @@ const Parentpage = async () => {
             )}
           </div>
         </div>
+        {children.map((child) => (
+          <ReportCardsPanel
+            key={child.id}
+            studentId={child.id}
+            studentName={`${child.name} ${child.surname}`}
+          />
+        ))}
         <Announcements />
       </div>
     </div>
