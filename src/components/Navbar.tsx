@@ -22,7 +22,7 @@ const Navbar = async () => {
       {/* SEARCH BAR */}
       {canSearch && <SearchTrigger />}
       {/* ICONS AND USER */}
-      <div className="flex items-center gap-6 justify-end w-full">
+        <div className="flex items-center gap-6 justify-end flex-1 min-w-0">
         <div className="flex items-center gap-2">
           {canSearch && <MobileSearchTrigger />}
           <Link
