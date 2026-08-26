@@ -1,5 +1,6 @@
 import Announcements from "@/components/Announcements";
 import BirthdayAnnouncements from "@/components/BirthdayAnnouncements";
+import TodaysTimetableStrip from "@/components/TodaysTimetableStrip";
 import WeekAtAGlance from "@/components/WeekAtAGlance";
 import AttendancePulse from "@/components/AttendancePulse";
 import ClassLeaderboard from "@/components/ClassLeaderboard";
@@ -80,6 +81,7 @@ const StudentPage = async () => {
       {/* RIGHT */}
       <div className="w-full xl:w-1/3 flex flex-col gap-4">
         <BirthdayAnnouncements />
+        <TodaysTimetableStrip role="student" classIds={classId ? [classId] : []} />
         <WeekAtAGlance role="student" classIds={classId ? [classId] : []} />
         <AttendancePulse role="student" studentIds={userId ? [userId] : []} />
         <ClassLeaderboard role="student" studentIds={userId ? [userId] : []} />
