@@ -1,5 +1,6 @@
 import Announcements from "@/components/Announcements";
 import BirthdayAnnouncements from "@/components/BirthdayAnnouncements";
+import TodaysTimetableStrip from "@/components/TodaysTimetableStrip";
 import WeekAtAGlance from "@/components/WeekAtAGlance";
 import AttendancePulse from "@/components/AttendancePulse";
 import ClassLeaderboard from "@/components/ClassLeaderboard";
@@ -85,6 +86,7 @@ const AdminPage = async ({
       {/* RIGHT */}
       <div className="w-full lg:w-1/3 flex flex-col gap-8">
         <BirthdayAnnouncements />
+        <TodaysTimetableStrip role="admin" />
         <WeekAtAGlance role="admin" />
         <AttendancePulse role="admin" />
         <ClassLeaderboard role="admin" />
