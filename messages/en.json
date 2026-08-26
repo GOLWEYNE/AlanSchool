@@ -37,7 +37,15 @@
     "settings": "Settings",
     "logout": "Logout",
     "openSettings": "Open settings",
-    "logOut": "Log out"
+    "logOut": "Log out",
+    "notifications": "Notifications",
+    "loading": "Loading…",
+    "noNotifications": "You're all caught up",
+    "newMessages": "New Messages",
+    "ticketUpdates": "Ticket Updates",
+    "slipUpdates": "Permission Slips",
+    "pendingResponses": "{count} pending response(s)",
+    "awaitingYourResponse": "Awaiting your response"
   },
   "AdminPage": {
     "title": "Admin Command Center",
@@ -267,149 +275,149 @@
       "empty": "No report cards generated yet."
     }
   },
-    "Forms": {
-          "common": {
-                  "somethingWrong": "Something went wrong!",
-                  "create": "Create",
-                  "update": "Update",
-                  "id": "Id",
-                  "title": "Title",
-                  "description": "Description",
-                  "date": "Date",
-                  "class": "Class",
-                  "generalAllClasses": "General (all classes)",
-                  "grade": "Grade",
-                  "authenticationInfo": "Authentication Information",
-                  "personalInfo": "Personal Information",
-                  "username": "Username",
-                  "email": "Email",
-                  "password": "Password",
-                  "firstName": "First Name",
-                  "lastName": "Last Name",
-                  "phone": "Phone",
-                  "address": "Address",
-                  "bloodType": "Blood Type",
-                  "birthday": "Birthday",
-                  "sex": "Sex",
-                  "male": "Male",
-                  "female": "Female",
-                  "uploadPhoto": "Upload a photo",
-                  "capacity": "Capacity",
-                  "days": {
-                            "monday": "Monday",
-                            "tuesday": "Tuesday",
-                            "wednesday": "Wednesday",
-                            "thursday": "Thursday",
-                            "friday": "Friday"
-                  }
-          },
-          "announcement": {
-                  "createTitle": "Create a new announcement",
-                  "updateTitle": "Update the announcement",
-                  "toastCreated": "Announcement has been created!",
-                  "toastUpdated": "Announcement has been updated!"
-          },
-          "assignment": {
-                  "createTitle": "Create a new assignment",
-                  "updateTitle": "Update the assignment",
-                  "startDate": "Start Date",
-                  "dueDate": "Due Date",
-                  "lesson": "Lesson",
-                  "toastCreated": "Assignment has been created!",
-                  "toastUpdated": "Assignment has been updated!"
-          },
-          "class": {
-                  "createTitle": "Create a new class",
-                  "updateTitle": "Update the class",
-                  "className": "Class name",
-                  "supervisor": "Supervisor",
-                  "toastCreated": "Subject has been created!",
-                  "toastUpdated": "Subject has been updated!"
-          },
-          "event": {
-                  "createTitle": "Create a new event",
-                  "updateTitle": "Update the event",
-                  "startTime": "Start Time",
-                  "endTime": "End Time",
-                  "toastCreated": "Event has been created!",
-                  "toastUpdated": "Event has been updated!"
-          },
-          "exam": {
-                  "createTitle": "Create a new exam",
-                  "updateTitle": "Update the exam",
-                  "examTitle": "Exam title",
-                  "startDate": "Start Date",
-                  "endDate": "End Date",
-                  "lesson": "Lesson",
-                  "toastCreated": "Exam has been created!",
-                  "toastUpdated": "Exam has been updated!"
-          },
-          "lesson": {
-                  "createTitle": "Create a new lesson",
-                  "updateTitle": "Update the lesson",
-                  "lessonName": "Lesson name",
-                  "startTime": "Start Time",
-                  "endTime": "End Time",
-                  "day": "Day",
-                  "subject": "Subject",
-                  "teacher": "Teacher",
-                  "toastCreated": "Lesson has been created!",
-                  "toastUpdated": "Lesson has been updated!"
-          },
-          "parent": {
-                  "createTitle": "Create a new parent",
-                  "updateTitle": "Update the parent",
-                  "toastCreated": "Parent has been created!",
-                  "toastUpdated": "Parent has been updated!"
-          },
-          "result": {
-                  "createTitle": "Create a new result",
-                  "updateTitle": "Update the result",
-                  "score": "Score",
-                  "student": "Student",
-                  "assessmentType": "Assessment Type",
-                  "exam": "Exam",
-                  "assignment": "Assignment",
-                  "toastCreated": "Result has been created!",
-                  "toastUpdated": "Result has been updated!"
-          },
-          "student": {
-                  "createTitle": "Create a new student",
-                  "updateTitle": "Update the student",
-                  "parentId": "Parent Id",
-                  "toastCreated": "Student has been created!",
-                  "toastUpdated": "Student has been updated!"
-          },
-          "subject": {
-                  "createTitle": "Create a new subject",
-                  "updateTitle": "Update the subject",
-                  "subjectName": "Subject name",
-                  "teachers": "Teachers",
-                  "toastCreated": "Subject has been created!",
-                  "toastUpdated": "Subject has been updated!"
-          },
-          "teacher": {
-                  "createTitle": "Create a new teacher",
-                  "updateTitle": "Update the teacher",
-                  "subjects": "Subjects",
-                  "toastCreated": "Teacher has been created!",
-                  "toastUpdated": "Teacher has been updated!"
-          },
-          "reportCard": {
-                  "generateTitle": "Generate Report Card",
-                  "term": "Term",
-                  "term1": "Term 1",
-                  "term2": "Term 2",
-                  "term3": "Term 3",
-                  "schoolYear": "School Year",
-                  "generate": "Generate",
-                  "regenerate": "Regenerate",
-                  "toastGenerated": "Report card generated!",
-                  "bulkTitle": "Bulk Generate for Class",
-                  "class": "Class",
-                  "generateForClass": "Generate for Class",
-                  "toastBulkGenerated": "Report cards generated for the class!",
-                  "error": "Something went wrong. Please try again."
-          }
+  "Forms": {
+    "common": {
+      "somethingWrong": "Something went wrong!",
+      "create": "Create",
+      "update": "Update",
+      "id": "Id",
+      "title": "Title",
+      "description": "Description",
+      "date": "Date",
+      "class": "Class",
+      "generalAllClasses": "General (all classes)",
+      "grade": "Grade",
+      "authenticationInfo": "Authentication Information",
+      "personalInfo": "Personal Information",
+      "username": "Username",
+      "email": "Email",
+      "password": "Password",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "phone": "Phone",
+      "address": "Address",
+      "bloodType": "Blood Type",
+      "birthday": "Birthday",
+      "sex": "Sex",
+      "male": "Male",
+      "female": "Female",
+      "uploadPhoto": "Upload a photo",
+      "capacity": "Capacity",
+      "days": {
+        "monday": "Monday",
+        "tuesday": "Tuesday",
+        "wednesday": "Wednesday",
+        "thursday": "Thursday",
+        "friday": "Friday"
+      }
+    },
+    "announcement": {
+      "createTitle": "Create a new announcement",
+      "updateTitle": "Update the announcement",
+      "toastCreated": "Announcement has been created!",
+      "toastUpdated": "Announcement has been updated!"
+    },
+    "assignment": {
+      "createTitle": "Create a new assignment",
+      "updateTitle": "Update the assignment",
+      "startDate": "Start Date",
+      "dueDate": "Due Date",
+      "lesson": "Lesson",
+      "toastCreated": "Assignment has been created!",
+      "toastUpdated": "Assignment has been updated!"
+    },
+    "class": {
+      "createTitle": "Create a new class",
+      "updateTitle": "Update the class",
+      "className": "Class name",
+      "supervisor": "Supervisor",
+      "toastCreated": "Subject has been created!",
+      "toastUpdated": "Subject has been updated!"
+    },
+    "event": {
+      "createTitle": "Create a new event",
+      "updateTitle": "Update the event",
+      "startTime": "Start Time",
+      "endTime": "End Time",
+      "toastCreated": "Event has been created!",
+      "toastUpdated": "Event has been updated!"
+    },
+    "exam": {
+      "createTitle": "Create a new exam",
+      "updateTitle": "Update the exam",
+      "examTitle": "Exam title",
+      "startDate": "Start Date",
+      "endDate": "End Date",
+      "lesson": "Lesson",
+      "toastCreated": "Exam has been created!",
+      "toastUpdated": "Exam has been updated!"
+    },
+    "lesson": {
+      "createTitle": "Create a new lesson",
+      "updateTitle": "Update the lesson",
+      "lessonName": "Lesson name",
+      "startTime": "Start Time",
+      "endTime": "End Time",
+      "day": "Day",
+      "subject": "Subject",
+      "teacher": "Teacher",
+      "toastCreated": "Lesson has been created!",
+      "toastUpdated": "Lesson has been updated!"
+    },
+    "parent": {
+      "createTitle": "Create a new parent",
+      "updateTitle": "Update the parent",
+      "toastCreated": "Parent has been created!",
+      "toastUpdated": "Parent has been updated!"
+    },
+    "result": {
+      "createTitle": "Create a new result",
+      "updateTitle": "Update the result",
+      "score": "Score",
+      "student": "Student",
+      "assessmentType": "Assessment Type",
+      "exam": "Exam",
+      "assignment": "Assignment",
+      "toastCreated": "Result has been created!",
+      "toastUpdated": "Result has been updated!"
+    },
+    "student": {
+      "createTitle": "Create a new student",
+      "updateTitle": "Update the student",
+      "parentId": "Parent Id",
+      "toastCreated": "Student has been created!",
+      "toastUpdated": "Student has been updated!"
+    },
+    "subject": {
+      "createTitle": "Create a new subject",
+      "updateTitle": "Update the subject",
+      "subjectName": "Subject name",
+      "teachers": "Teachers",
+      "toastCreated": "Subject has been created!",
+      "toastUpdated": "Subject has been updated!"
+    },
+    "teacher": {
+      "createTitle": "Create a new teacher",
+      "updateTitle": "Update the teacher",
+      "subjects": "Subjects",
+      "toastCreated": "Teacher has been created!",
+      "toastUpdated": "Teacher has been updated!"
+    },
+    "reportCard": {
+      "generateTitle": "Generate Report Card",
+      "term": "Term",
+      "term1": "Term 1",
+      "term2": "Term 2",
+      "term3": "Term 3",
+      "schoolYear": "School Year",
+      "generate": "Generate",
+      "regenerate": "Regenerate",
+      "toastGenerated": "Report card generated!",
+      "bulkTitle": "Bulk Generate for Class",
+      "class": "Class",
+      "generateForClass": "Generate for Class",
+      "toastBulkGenerated": "Report cards generated for the class!",
+      "error": "Something went wrong. Please try again."
     }
+  }
 }
