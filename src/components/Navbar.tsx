@@ -7,6 +7,7 @@ import MobileMenuButton from "./MobileMenuButton";
 import LanguageSwitcher from "./LanguageSwitcher";
 import ThemeToggle from "./ThemeToggle";
 import { SearchTrigger, MobileSearchTrigger } from "./SearchTrigger";
+import NotificationBell from "./NotificationBell";
 
 const Navbar = async () => {
   const user = await currentUser();
@@ -58,15 +59,7 @@ const Navbar = async () => {
           <ThemeToggle />
           <LanguageSwitcher />
         </div>
-        <div className="circle-icon-btn cursor-pointer">
-          <Image src="/message.png" alt="" width={20} height={20} />
-        </div>
-        <div className="circle-icon-btn cursor-pointer relative">
-          <Image src="/announcement.png" alt="" width={20} height={20} />
-          <div className="absolute -top-3 -right-3 w-5 h-5 flex items-center justify-center bg-blue-600 text-white rounded-full text-xs">
-            1
-          </div>
-        </div>
+        <NotificationBell />
         <div className="flex flex-col items-end">
           <span className="text-xs leading-3 font-semibold text-blue-900 dark:text-blue-100">AIS</span>
           <span className="text-[10px] text-blue-700 text-right bg-blue-50 border border-blue-100 rounded-full px-2 py-0.5 mt-1 capitalize dark:text-blue-300 dark:bg-blue-950/50 dark:border-blue-900">
