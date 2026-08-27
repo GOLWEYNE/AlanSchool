@@ -4,6 +4,7 @@ import {
   deleteAnnouncement,
   deleteAssignment,
   deleteClass,
+  deleteClub,
   deleteExam,
   deleteEvent,
   deleteLesson,
@@ -42,6 +43,7 @@ const deleteActionMap: Partial<Record<TableName, DeleteAction>> = {
   event: deleteEvent,
   announcement: deleteAnnouncement,
   lesson: deleteLesson,
+  club: deleteClub,
 };
 
 // USE LAZY LOADING
@@ -80,6 +82,9 @@ const EventForm = dynamic(() => import("./forms/EventForm"), {
   loading: () => <h1>Loading...</h1>,
 });
 const AnnouncementForm = dynamic(() => import("./forms/AnnouncementForm"), {
+  loading: () => <h1>Loading...</h1>,
+});
+const ClubForm = dynamic(() => import("./forms/ClubForm"), {
   loading: () => <h1>Loading...</h1>,
 });
 
@@ -161,6 +166,14 @@ const forms: Partial<Record<TableName, FormRenderer>> = {
   ),
   announcement: (setOpen, type, data, relatedData) => (
     <AnnouncementForm
+      type={type}
+      data={data}
+      setOpen={setOpen}
+      relatedData={relatedData}
+    />
+  ),
+  club: (setOpen, type, data, relatedData) => (
+    <ClubForm
       type={type}
       data={data}
       setOpen={setOpen}
