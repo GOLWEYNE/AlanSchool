@@ -44,6 +44,12 @@ const getMenuItems = (t: Awaited<ReturnType<typeof getTranslations>>) => [
         visible: ["admin", "teacher"],
       },
       {
+        icon: "/subject.png",
+        label: t("clubs"),
+        href: "/dashboard/list/clubs",
+        visible: ["admin", "teacher"],
+      },
+      {
         icon: "/lesson.png",
         label: t("lessons"),
         href: "/dashboard/list/lessons",
