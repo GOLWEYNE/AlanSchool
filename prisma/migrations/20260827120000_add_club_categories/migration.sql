@@ -1,0 +1,7 @@
+-- AlterEnum
+ALTER TYPE "ClubCategory" ADD VALUE 'KARATE';
+ALTER TYPE "ClubCategory" ADD VALUE 'JUDO';
+ALTER TYPE "ClubCategory" ADD VALUE 'GYMNASTICS';
+ALTER TYPE "ClubCategory" ADD VALUE 'ASYQ';
+ALTER TYPE "ClubCategory" ADD VALUE 'DOMBRA';
+ALTER TYPE "ClubCategory" ADD VALUE 'GUITAR';
