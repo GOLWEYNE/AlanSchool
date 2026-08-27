@@ -5,6 +5,7 @@ import {
   AnnouncementSchema,
   AssignmentSchema,
   ClassSchema,
+  ClubSchema,
   ExamSchema,
   EventSchema,
   LessonSchema,
@@ -166,6 +167,79 @@ export const deleteClass = async (
     });
 
     // revalidatePath("/list/class");
+    return { success: true, error: false };
+  } catch (err) {
+    console.log(err);
+    return { success: false, error: true };
+  }
+};
+
+export const createClub = async (
+  currentState: CurrentState,
+  data: ClubSchema
+) => {
+  if (!isAdmin()) return rejectUnauthorized();
+  try {
+    await prisma.club.create({
+      data: {
+        name: data.name,
+        category: data.category,
+        description: data.description || undefined,
+        capacity: data.capacity,
+        schedule: data.schedule || undefined,
+        location: data.location || undefined,
+        instructorId: data.instructorId || undefined,
+      },
+    });
+
+    return { success: true, error: false };
+  } catch (err) {
+    console.log(err);
+    return { success: false, error: true };
+  }
+};
+
+export const updateClub = async (
+  currentState: CurrentState,
+  data: ClubSchema
+) => {
+  if (!isAdmin()) return rejectUnauthorized();
+  try {
+    await prisma.club.update({
+      where: {
+        id: data.id,
+      },
+      data: {
+        name: data.name,
+        category: data.category,
+        description: data.description || undefined,
+        capacity: data.capacity,
+        schedule: data.schedule || undefined,
+        location: data.location || undefined,
+        instructorId: data.instructorId || undefined,
+      },
+    });
+
+    return { success: true, error: false };
+  } catch (err) {
+    console.log(err);
+    return { success: false, error: true };
+  }
+};
+
+export const deleteClub = async (
+  currentState: CurrentState,
+  data: FormData
+) => {
+  if (!isAdmin()) return rejectUnauthorized();
+  const id = data.get("id") as string;
+  try {
+    await prisma.club.delete({
+      where: {
+        id: parseInt(id),
+      },
+    });
+
     return { success: true, error: false };
   } catch (err) {
     console.log(err);
