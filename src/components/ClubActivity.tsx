@@ -12,6 +12,12 @@ const CATEGORY_META: Record<
   VOLLEYBALL: { emoji: "\u{1F3D0}", gradient: "from-sky-400 to-blue-500", track: "bg-sky-100 dark:bg-sky-950/40" },
   BASKETBALL: { emoji: "\u{1F3C0}", gradient: "from-orange-400 to-red-500", track: "bg-orange-100 dark:bg-orange-950/40" },
   TENNIS: { emoji: "\u{1F3BE}", gradient: "from-lime-400 to-green-500", track: "bg-lime-100 dark:bg-lime-950/40" },
+  KARATE: { emoji: "\u{1F94B}", gradient: "from-red-400 to-rose-600", track: "bg-red-100 dark:bg-red-950/40" },
+  JUDO: { emoji: "\u{1F93C}", gradient: "from-indigo-400 to-blue-600", track: "bg-indigo-100 dark:bg-indigo-950/40" },
+  GYMNASTICS: { emoji: "\u{1F938}", gradient: "from-fuchsia-400 to-purple-600", track: "bg-fuchsia-100 dark:bg-fuchsia-950/40" },
+  ASYQ: { emoji: "\u{1F3B2}", gradient: "from-yellow-400 to-amber-600", track: "bg-yellow-100 dark:bg-yellow-950/40" },
+  DOMBRA: { emoji: "\u{1FA95}", gradient: "from-teal-400 to-cyan-600", track: "bg-teal-100 dark:bg-teal-950/40" },
+  GUITAR: { emoji: "\u{1F3B8}", gradient: "from-orange-400 to-amber-600", track: "bg-orange-100 dark:bg-orange-950/40" },
 };
 
 const DEFAULT_META = { emoji: "\u{1F3AF}", gradient: "from-blue-400 to-indigo-500", track: "bg-blue-100 dark:bg-blue-950/40" };
