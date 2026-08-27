@@ -171,3 +171,38 @@ export const lessonSchema = z.object({
 });
 
 export type LessonSchema = z.infer<typeof lessonSchema>;
+
+export const clubCategories = [
+  "DANCING",
+  "PIANO",
+  "CHESS",
+  "HANDICRAFTS",
+  "FOOTBALL",
+  "VOLLEYBALL",
+  "BASKETBALL",
+  "TENNIS",
+  "TABLE_TENNIS",
+  "KARATE",
+  "JUDO",
+  "GYMNASTICS",
+  "ASYQ",
+  "DOMBRA",
+  "GUITAR",
+  "OTHER",
+] as const;
+
+export const clubSchema = z.object({
+  id: z.coerce.number().optional(),
+  name: z.string().min(1, { message: "Club name is required!" }),
+  category: z.enum(clubCategories, { message: "Category is required!" }),
+  description: z.string().optional(),
+  capacity: z.coerce.number().min(1, { message: "Capacity is required!" }),
+  schedule: z.string().optional(),
+  location: z.string().optional(),
+  instructorId: z.preprocess(
+    (value) => (value === "" ? undefined : value),
+    z.string().optional()
+  ),
+});
+
+export type ClubSchema = z.infer<typeof clubSchema>;
