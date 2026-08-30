@@ -63,7 +63,7 @@ const renderRow = (item: ClassList) => (
     <td className="hidden md:table-cell">{item.capacity}</td>
     <td className="hidden md:table-cell">{item.name[0]}</td>
     <td className="hidden md:table-cell">
-      {item.supervisor.name + " " + item.supervisor.surname}
+      {item.supervisor ? item.supervisor.name + " " + item.supervisor.surname : "—"}
     </td>
     <td>
       <div className="flex items-center gap-2">
