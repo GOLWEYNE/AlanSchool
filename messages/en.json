@@ -415,8 +415,14 @@
       "regenerate": "Regenerate",
       "toastGenerated": "Report card generated!",
       "bulkTitle": "Bulk Generate for Class",
+      "studentTitle": "Generate for a Specific Student",
+      "modeClass": "Whole Class",
+      "modeStudent": "Specific Student",
       "class": "Class",
+      "student": "Student",
+      "noStudentsInClass": "No students in this class",
       "generateForClass": "Generate for Class",
+      "generateForStudent": "Generate for Student",
       "toastBulkGenerated": "Report cards generated for the class!",
       "error": "Something went wrong. Please try again."
     }
