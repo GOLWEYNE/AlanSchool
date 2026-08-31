@@ -415,8 +415,14 @@
       "regenerate": "Қайта жасау",
       "toastGenerated": "Үлгерім табелі жасалды!",
       "bulkTitle": "Сынып үшін жаппай жасау",
+      "studentTitle": "Нақты оқушы үшін жасау",
+      "modeClass": "Барлық сынып",
+      "modeStudent": "Нақты оқушы",
       "class": "Сынып",
+      "student": "Оқушы",
+      "noStudentsInClass": "Бұл сыныпта оқушылар жоқ",
       "generateForClass": "Сынып үшін жасау",
+      "generateForStudent": "Оқушы үшін жасау",
       "toastBulkGenerated": "Сынып үшін үлгерім табельдері жасалды!",
       "error": "Бір нәрсе дұрыс болмады. Қайталап көріңіз."
     }
