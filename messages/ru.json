@@ -415,8 +415,14 @@
       "regenerate": "Пересоздать",
       "toastGenerated": "Табель успеваемости создан!",
       "bulkTitle": "Массовое создание для класса",
+      "studentTitle": "Создать для конкретного ученика",
+      "modeClass": "Весь класс",
+      "modeStudent": "Конкретный ученик",
       "class": "Класс",
+      "student": "Ученик",
+      "noStudentsInClass": "В этом классе нет учеников",
       "generateForClass": "Создать для класса",
+      "generateForStudent": "Создать для ученика",
       "toastBulkGenerated": "Табели успеваемости созданы для класса!",
       "error": "Что-то пошло не так. Попробуйте снова."
     }

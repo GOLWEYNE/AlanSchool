@@ -11,13 +11,17 @@ import Link from "next/link";
 const ReportCardsListPage = async () => {
   const t = await getTranslations("List.reportCards");
 
-  const [reportCards, classes] = await prisma.$transaction([
+  const [reportCards, classes, students] = await prisma.$transaction([
     prisma.reportCard.findMany({
       include: { student: { include: { class: true } } },
       orderBy: [{ generatedAt: "desc" }],
       take: 100,
     }),
     prisma.class.findMany({ orderBy: { name: "asc" } }),
+    prisma.student.findMany({
+      select: { id: true, name: true, surname: true, classId: true },
+      orderBy: { name: "asc" },
+    }),
   ]);
 
   const columns = [
@@ -94,6 +98,11 @@ const ReportCardsListPage = async () => {
 
       <BulkGenerateReportCardsPanel
         classes={classes.map((c) => ({ id: c.id, name: c.name }))}
+        students={students.map((s) => ({
+          id: s.id,
+          name: `${s.name} ${s.surname}`,
+          classId: s.classId,
+        }))}
       />
 
       {reportCards.length === 0 ? (
