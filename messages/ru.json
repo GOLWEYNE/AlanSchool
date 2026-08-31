@@ -30,7 +30,8 @@
     "profile": "Профиль",
     "settings": "Настройки",
     "logout": "Выйти",
-    "reportCards": "Табели успеваемости"
+    "reportCards": "Табели успеваемости",
+    "lostFound": "Бюро находок"
   },
   "Navbar": {
     "searchPlaceholder": "Поиск...",

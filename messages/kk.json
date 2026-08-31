@@ -30,7 +30,8 @@
     "profile": "Профиль",
     "settings": "Параметрлер",
     "logout": "Шығу",
-    "reportCards": "Үлгерім табельдері"
+    "reportCards": "Үлгерім табельдері",
+      "lostFound": "Жоғалған заттар"
   },
   "Navbar": {
     "searchPlaceholder": "Іздеу...",
