@@ -30,7 +30,8 @@
     "profile": "Profile",
     "settings": "Settings",
     "logout": "Logout",
-    "reportCards": "Report Cards"
+    "reportCards": "Report Cards",
+    "lostFound": "Lost & Found"
   },
   "Navbar": {
     "searchPlaceholder": "Search...",
