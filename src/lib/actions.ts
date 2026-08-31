@@ -362,7 +362,19 @@ export const deleteTeacher = async (
     return rejectUnauthorized();
   }
   try {
-    await clerkClient.users.deleteUser(id);
+        try {
+      await clerkClient.users.deleteUser(id);
+    } catch (clerkErr) {
+      // Some teachers are seeded straight into the database (QA/test
+      // records, imports, etc.) and never get a matching Clerk user, so
+      // Clerk's deleteUser call fails for them every time. Don't let a
+      // missing (or already-removed) Clerk account block deleting the
+      // school record itself.
+      console.log(
+        "deleteTeacher: Clerk deleteUser failed, continuing with DB delete:",
+        clerkErr
+      );
+    }
 
     await prisma.teacher.delete({
       where: {
@@ -481,7 +493,16 @@ export const deleteStudent = async (
   if (!isAdmin()) return rejectUnauthorized();
   const id = data.get("id") as string;
   try {
-    await clerkClient.users.deleteUser(id);
+        try {
+      await clerkClient.users.deleteUser(id);
+    } catch (clerkErr) {
+      // See deleteTeacher: some records have no matching Clerk user
+      // (seeded/imported directly), so don't let that block the DB delete.
+      console.log(
+        "deleteStudent: Clerk deleteUser failed, continuing with DB delete:",
+        clerkErr
+      );
+    }
 
     await prisma.student.delete({
       where: {
@@ -681,7 +702,16 @@ export const deleteParent = async (
   const id = data.get("id") as string;
 
   try {
-    await clerkClient.users.deleteUser(id);
+        try {
+      await clerkClient.users.deleteUser(id);
+    } catch (clerkErr) {
+      // See deleteTeacher: some records have no matching Clerk user
+      // (seeded/imported directly), so don't let that block the DB delete.
+      console.log(
+        "deleteParent: Clerk deleteUser failed, continuing with DB delete:",
+        clerkErr
+      );
+    }
 
     await prisma.parent.delete({
       where: { id },
