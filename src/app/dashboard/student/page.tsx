@@ -1,4 +1,5 @@
 import Announcements from "@/components/Announcements";
+import FeaturedVideoPlayer from "@/components/FeaturedVideoPlayer";
 import BirthdayAnnouncements from "@/components/BirthdayAnnouncements";
 import TodaysTimetableStrip from "@/components/TodaysTimetableStrip";
 import WeekAtAGlance from "@/components/WeekAtAGlance";
@@ -76,6 +77,9 @@ const StudentPage = async () => {
             </div>
           )}
         </div>
+
+        {/* FEATURED VIDEO BROADCAST */}
+        <FeaturedVideoPlayer />
       </div>
 
       {/* RIGHT */}
