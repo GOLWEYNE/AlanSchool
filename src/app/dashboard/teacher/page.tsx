@@ -1,4 +1,5 @@
 import Announcements from "@/components/Announcements";
+import FeaturedVideoPlayer from "@/components/FeaturedVideoPlayer";
 import BirthdayAnnouncements from "@/components/BirthdayAnnouncements";
 import TodaysTimetableStrip from "@/components/TodaysTimetableStrip";
 import WeekAtAGlance from "@/components/WeekAtAGlance";
@@ -52,6 +53,11 @@ const TeacherPage = async () => {
         <div className="h-full panel-card p-4 rounded-md">
           <h1 className="text-xl font-semibold text-blue-900">Schedule</h1>
           <BigCalendarContainer type="teacherId" id={userId!} />
+        </div>
+
+        {/* FEATURED VIDEO BROADCAST */}
+        <div className="mt-4">
+          <FeaturedVideoPlayer />
         </div>
       </div>
       {/* RIGHT */}
