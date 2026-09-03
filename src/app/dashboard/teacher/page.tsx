@@ -43,11 +43,12 @@ const TeacherPage = async () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-4">
           <Link href="/dashboard/list/lessons" className="panel-card p-3 text-blue-900 font-semibold text-sm text-center shine-hover">My Lessons</Link>
           <Link href="/dashboard/list/assignments" className="panel-card p-3 text-blue-900 font-semibold text-sm text-center shine-hover">Assignments</Link>
           <Link href="/dashboard/list/exams" className="panel-card p-3 text-blue-900 font-semibold text-sm text-center shine-hover">Exams</Link>
           <Link href="/dashboard/list/results" className="panel-card p-3 text-blue-900 font-semibold text-sm text-center shine-hover">Results</Link>
+          <Link href="/dashboard/list/messages" className="panel-card p-3 text-blue-900 font-semibold text-sm text-center shine-hover">Messages</Link>
         </div>
 
         <div className="h-full panel-card p-4 rounded-md">
