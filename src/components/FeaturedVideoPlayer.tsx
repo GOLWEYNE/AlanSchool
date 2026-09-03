@@ -1,50 +1,19 @@
 import { Clapperboard, PlayCircle } from "lucide-react";
 import prisma from "@/lib/prisma";
+import { getEmbeddableVideoUrl, isDirectVideoFile } from "@/lib/videoEmbed";
 
-// Converts a normal YouTube/Vimeo share link into an embeddable iframe
-// src so Admins can paste whatever link they copied from the browser bar
-// instead of having to know the /embed/ URL format by heart. Anything we
-// don't recognize is passed straight through - it's assumed to already be
-// an embeddable URL (Loom, a direct /embed/ link, etc.).
-export const getEmbeddableVideoUrl = (url: string): string => {
-  try {
-    const parsed = new URL(url);
-    const host = parsed.hostname.replace(/^www\./, "");
-
-    if (host === "youtu.be") {
-      const id = parsed.pathname.slice(1);
-      return id ? `https://www.youtube.com/embed/${id}` : url;
-    }
-
-    if (host === "youtube.com" || host === "m.youtube.com") {
-      if (parsed.pathname === "/watch") {
-        const id = parsed.searchParams.get("v");
-        return id ? `https://www.youtube.com/embed/${id}` : url;
-      }
-      if (parsed.pathname.startsWith("/shorts/")) {
-        const id = parsed.pathname.split("/")[2];
-        return id ? `https://www.youtube.com/embed/${id}` : url;
-      }
-      // Already an /embed/... link.
-      return url;
-    }
-
-    if (host === "vimeo.com") {
-      const id = parsed.pathname.split("/").filter(Boolean)[0];
-      return id ? `https://player.vimeo.com/video/${id}` : url;
-    }
-
-    return url;
-  } catch {
-    return url;
-  }
-};
+// Re-exported so anything already importing this from FeaturedVideoPlayer
+// keeps working; the actual logic now lives in a client-safe shared module
+// so FeaturedVideoForm can use it too.
+export { getEmbeddableVideoUrl };
 
 const FeaturedVideoPlayer = async () => {
   const video = await prisma.announcementVideo.findFirst({
     where: { isActive: true },
     orderBy: { updatedAt: "desc" },
   });
+
+  const isFile = video ? isDirectVideoFile(video.videoUrl) : false;
 
   return (
     <div className="panel-card rounded-2xl p-5 md:p-6 shine-hover">
@@ -65,13 +34,23 @@ const FeaturedVideoPlayer = async () => {
       {video ? (
         <div>
           <div className="relative w-full aspect-video overflow-hidden rounded-xl bg-slate-900 shadow-inner">
-            <iframe
-              src={getEmbeddableVideoUrl(video.videoUrl)}
-              title={video.title}
-              className="absolute inset-0 h-full w-full border-0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              allowFullScreen
-            />
+            {isFile ? (
+              <video
+                src={video.videoUrl}
+                controls
+                playsInline
+                preload="metadata"
+                className="absolute inset-0 h-full w-full object-contain"
+              />
+            ) : (
+              <iframe
+                src={getEmbeddableVideoUrl(video.videoUrl)}
+                title={video.title}
+                className="absolute inset-0 h-full w-full border-0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowFullScreen
+              />
+            )}
           </div>
           <p className="mt-3 text-sm font-semibold text-gray-700 dark:text-slate-200 line-clamp-2">
             {video.title}
