@@ -310,6 +310,7 @@ export const sendMessage = async (
                                     content: data.content,
                         },
               });
+              revalidatePath("/dashboard/list/messages");
               revalidatePath("/dashboard/list/announcements");
               return ok();
       } catch (err) {
