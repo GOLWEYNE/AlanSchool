@@ -631,3 +631,18 @@ model ClubAttendance {
 
   @@unique([clubSessionId, studentId])
 }
+
+// ---- Featured Video Announcement -------------------------------------
+// A dashboard-wide broadcast video (school news, welcome message, event
+// recap, etc.) that Admins can swap out from a settings panel. Every
+// update creates a new row and deactivates the previous one, so the
+// school keeps a lightweight history of past broadcasts while
+// FeaturedVideoPlayer only ever needs to fetch the single row where
+// isActive is true.
+model AnnouncementVideo {
+  id        String   @id @default(cuid())
+  title     String
+  videoUrl  String
+  isActive  Boolean  @default(true)
+  updatedAt DateTime @updatedAt
+}

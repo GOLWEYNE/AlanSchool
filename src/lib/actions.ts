@@ -8,6 +8,7 @@ import {
   ClubSchema,
   ExamSchema,
   EventSchema,
+  FeaturedVideoSchema,
   LessonSchema,
   ParentSchema,
   ResultSchema,
@@ -1160,6 +1161,57 @@ export const updateLesson = async (
   });
 
   return { success: true, error: false };
+  } catch (err) {
+    console.log(err);
+    return { success: false, error: true };
+  }
+};
+
+// Featured Video Announcement: Admin-only. Every save creates a fresh
+// AnnouncementVideo row and deactivates whatever was active before, so
+// FeaturedVideoPlayer can always just fetch the single isActive row while
+// the school keeps a lightweight history of past broadcasts.
+export const createFeaturedVideo = async (
+  currentState: CurrentState,
+  data: FeaturedVideoSchema
+) => {
+  if (!isAdmin()) return rejectUnauthorized();
+  try {
+    await prisma.announcementVideo.updateMany({
+      where: { isActive: true },
+      data: { isActive: false },
+    });
+
+    await prisma.announcementVideo.create({
+      data: {
+        title: data.title,
+        videoUrl: data.videoUrl,
+        isActive: true,
+      },
+    });
+
+    revalidatePath("/dashboard");
+    return { success: true, error: false };
+  } catch (err) {
+    console.log(err);
+    return { success: false, error: true };
+  }
+};
+
+export const deactivateFeaturedVideo = async (
+  currentState: CurrentState,
+  data: FormData
+) => {
+  if (!isAdmin()) return rejectUnauthorized();
+  const id = data.get("id") as string;
+  try {
+    await prisma.announcementVideo.update({
+      where: { id },
+      data: { isActive: false },
+    });
+
+    revalidatePath("/dashboard");
+    return { success: true, error: false };
   } catch (err) {
     console.log(err);
     return { success: false, error: true };

@@ -206,3 +206,13 @@ export const clubSchema = z.object({
 });
 
 export type ClubSchema = z.infer<typeof clubSchema>;
+
+export const featuredVideoSchema = z.object({
+  title: z.string().min(1, { message: "Title is required!" }),
+  videoUrl: z
+    .string()
+    .min(1, { message: "Video URL is required!" })
+    .url({ message: "Enter a valid video URL!" }),
+});
+
+export type FeaturedVideoSchema = z.infer<typeof featuredVideoSchema>;

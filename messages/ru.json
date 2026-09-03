@@ -31,7 +31,8 @@
     "settings": "Настройки",
     "logout": "Выйти",
     "reportCards": "Табели успеваемости",
-    "lostFound": "Бюро находок"
+    "lostFound": "Бюро находок",
+    "featuredVideo": "Видео дня"
   },
   "Navbar": {
     "searchPlaceholder": "Поиск...",

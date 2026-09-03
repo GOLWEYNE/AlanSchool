@@ -109,6 +109,12 @@ const getMenuItems = (t: Awaited<ReturnType<typeof getTranslations>>) => [
         href: "/dashboard/list/tickets",
         visible: ["admin", "teacher", "student", "parent"],
       },
+      {
+        icon: "/announcement.png",
+        label: t("featuredVideo"),
+        href: "/dashboard/list/featured-video",
+        visible: ["admin"],
+      },
     ],
   },
   {

@@ -31,7 +31,8 @@
     "settings": "Settings",
     "logout": "Logout",
     "reportCards": "Report Cards",
-    "lostFound": "Lost & Found"
+    "lostFound": "Lost & Found",
+    "featuredVideo": "Featured Video"
   },
   "Navbar": {
     "searchPlaceholder": "Search...",

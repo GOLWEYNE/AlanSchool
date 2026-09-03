@@ -1,4 +1,5 @@
 import Announcements from "@/components/Announcements";
+import FeaturedVideoPlayer from "@/components/FeaturedVideoPlayer";
 import BirthdayAnnouncements from "@/components/BirthdayAnnouncements";
 import TodaysTimetableStrip from "@/components/TodaysTimetableStrip";
 import WeekAtAGlance from "@/components/WeekAtAGlance";
@@ -86,6 +87,10 @@ const AdminPage = async ({
         {/* CLUB ACTIVITY */}
         <div className="w-full">
           <ClubActivity />
+        </div>
+        {/* FEATURED VIDEO BROADCAST */}
+        <div className="w-full">
+          <FeaturedVideoPlayer />
         </div>
       </div>
       {/* RIGHT */}
