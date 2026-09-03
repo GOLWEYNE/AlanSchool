@@ -271,6 +271,7 @@
         "generatedAt": "Создан",
         "actions": "Действия"
       },
+      "viewLabel": "Открыть табель",
       "downloadLabel": "Скачать PDF",
       "regenerateLabel": "Пересоздать",
       "empty": "Табели успеваемости ещё не созданы."

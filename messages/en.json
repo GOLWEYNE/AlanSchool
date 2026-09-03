@@ -271,6 +271,7 @@
         "generatedAt": "Generated",
         "actions": "Actions"
       },
+      "viewLabel": "View Report Card",
       "downloadLabel": "Download PDF",
       "regenerateLabel": "Regenerate",
       "empty": "No report cards generated yet."

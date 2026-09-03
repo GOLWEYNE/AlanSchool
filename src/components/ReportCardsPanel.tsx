@@ -41,13 +41,21 @@ const ReportCardsPanel = async ({
               <span className="font-medium text-gray-700 dark:text-slate-200">
                 {TERM_LABELS[card.term] ?? card.term} · {card.schoolYear}
               </span>
-              <Link
-                href={card.pdfUrl ?? `/api/report-cards/${card.id}/pdf`}
-                target="_blank"
-                className="text-blue-600 dark:text-blue-300 font-semibold hover:underline"
-              >
-                Download PDF
-              </Link>
+              <span className="flex items-center gap-3">
+                <Link
+                  href={`/dashboard/list/report-cards/${card.id}`}
+                  className="text-blue-600 dark:text-blue-300 font-semibold hover:underline"
+                >
+                  View
+                </Link>
+                <Link
+                  href={card.pdfUrl ?? `/api/report-cards/${card.id}/pdf`}
+                  target="_blank"
+                  className="text-blue-600 dark:text-blue-300 font-semibold hover:underline"
+                >
+                  Download PDF
+                </Link>
+              </span>
             </li>
           ))}
         </ul>
