@@ -31,7 +31,8 @@
     "settings": "Параметрлер",
     "logout": "Шығу",
     "reportCards": "Үлгерім табельдері",
-      "lostFound": "Жоғалған заттар"
+      "lostFound": "Жоғалған заттар",
+      "featuredVideo": "Күн видеосы"
   },
   "Navbar": {
     "searchPlaceholder": "Іздеу...",
