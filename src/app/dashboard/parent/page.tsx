@@ -1,4 +1,5 @@
 import Announcements from "@/components/Announcements";
+import FeaturedVideoPlayer from "@/components/FeaturedVideoPlayer";
 import BirthdayAnnouncements from "@/components/BirthdayAnnouncements";
 import TodaysTimetableStrip from "@/components/TodaysTimetableStrip";
 import WeekAtAGlance from "@/components/WeekAtAGlance";
@@ -128,6 +129,11 @@ const Parentpage = async () => {
             todayOnly
             defaultView="day"
           />
+        </div>
+
+        {/* FEATURED VIDEO BROADCAST */}
+        <div className="mt-4">
+          <FeaturedVideoPlayer />
         </div>
       </div>
 
