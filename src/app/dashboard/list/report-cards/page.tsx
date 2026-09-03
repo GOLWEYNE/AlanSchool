@@ -67,12 +67,20 @@ const ReportCardsListPage = async () => {
       <td>
         <div className="flex items-center gap-2">
           <Link
+            href={`/dashboard/list/report-cards/${item.id}`}
+            title={t("viewLabel")}
+          >
+            <button className="circle-icon-btn">
+              <Image src="/view.png" alt="" width={16} height={16} />
+            </button>
+          </Link>
+          <Link
             href={item.pdfUrl ?? `/api/report-cards/${item.id}/pdf`}
             target="_blank"
             title={t("downloadLabel")}
           >
             <button className="circle-icon-btn">
-              <Image src="/view.png" alt="" width={16} height={16} />
+              <Image src="/result.png" alt="" width={16} height={16} />
             </button>
           </Link>
           <ReportCardGenerateButton
