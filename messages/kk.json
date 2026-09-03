@@ -271,6 +271,7 @@
         "generatedAt": "Жасалған күні",
         "actions": "Әрекеттер"
       },
+      "viewLabel": "Табельді қарау",
       "downloadLabel": "PDF жүктеу",
       "regenerateLabel": "Қайта жасау",
       "empty": "Әзірге үлгерім табельдері жасалмаған."
