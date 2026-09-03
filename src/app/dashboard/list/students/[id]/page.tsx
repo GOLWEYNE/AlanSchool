@@ -10,7 +10,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
+import { MessageSquare } from "lucide-react";
 import { Class, Student } from "@/generated/prisma/client";
+
+type MessageableTeacher = { id: string; name: string; surname: string };
 
 const SingleStudentPage = async ({
   params: { id },
@@ -22,18 +25,37 @@ const SingleStudentPage = async ({
 
   const student:
     | (Student & {
-        class: Class & { _count: { lessons: number } };
+        class: Class & {
+          _count: { lessons: number };
+          supervisor: MessageableTeacher | null;
+          lessons: { teacher: MessageableTeacher }[];
+        };
       })
     | null = await prisma.student.findUnique({
     where: { id },
     include: {
-      class: { include: { _count: { select: { lessons: true } } } },
+      class: {
+        include: {
+          _count: { select: { lessons: true } },
+          supervisor: { select: { id: true, name: true, surname: true } },
+          lessons: {
+            take: 1,
+            select: { teacher: { select: { id: true, name: true, surname: true } } },
+          },
+        },
+      },
     },
   });
 
   if (!student) {
     return notFound();
   }
+
+  // Homeroom teacher first, otherwise whoever teaches this class - either
+  // way, the parent gets a one-click way to reach a real teacher rather
+  // than having to know who to ask for.
+  const messageableTeacher: MessageableTeacher | null =
+    student.class.supervisor ?? student.class.lessons[0]?.teacher ?? null;
 
   return (
     <div className="flex-1 p-4 flex flex-col gap-4 xl:flex-row">
@@ -161,6 +183,15 @@ const SingleStudentPage = async ({
         <div className="bg-white p-4 rounded-md">
           <h1 className="text-xl font-semibold">Shortcuts</h1>
           <div className="mt-4 flex gap-4 flex-wrap text-xs text-gray-500">
+            {role === "parent" && messageableTeacher && (
+              <Link
+                className="p-3 rounded-md bg-blue-600 text-white flex items-center gap-1.5 font-semibold"
+                href={`/dashboard/list/messages?peer=${messageableTeacher.id}&role=teacher&student=${student.id}`}
+              >
+                <MessageSquare size={14} />
+                Message {messageableTeacher.name} {messageableTeacher.surname}
+              </Link>
+            )}
             <Link
               className="p-3 rounded-md bg-lamaSkyLight"
               href={`/dashboard/list/lessons?classId=${student.class.id}`}
