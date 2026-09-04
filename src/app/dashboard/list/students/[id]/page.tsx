@@ -58,7 +58,8 @@ const SingleStudentPage = async ({
     student.class.supervisor ?? student.class.lessons[0]?.teacher ?? null;
 
   return (
-    <div className="flex-1 p-4 flex flex-col gap-4 xl:flex-row">
+    <div className="flex-1 p-4 flex flex-col gap-4">
+      <div className="flex flex-col gap-4 xl:flex-row">
       {/* LEFT */}
       <div className="w-full xl:w-2/3">
         {/* TOP */}
@@ -171,12 +172,6 @@ const SingleStudentPage = async ({
             </div>
           </div>
         </div>
-        {/* BOTTOM */}
-        <div className="mt-4 bg-white rounded-md p-4 h-[800px]">
-          <h1>Student&apos;s Schedule</h1>
-          {/* @ts-ignore */}
-          <BigCalendarContainer type="classId" id={student.class.id} />
-        </div>
       </div>
       {/* RIGHT */}
       <div className="w-full xl:w-1/3 flex flex-col gap-4">
@@ -226,6 +221,16 @@ const SingleStudentPage = async ({
         </div>
         <Performance />
         <Announcements />
+      </div>
+      </div>
+
+      {/* SCHEDULE - full page width so the whole week is easy to read at a glance */}
+      <div className="bg-white dark:bg-slate-900 rounded-md p-4 min-h-[700px] flex flex-col">
+        <h1 className="text-blue-900 dark:text-blue-100">Student&apos;s Schedule</h1>
+        <div className="flex-1 mt-2">
+          {/* @ts-ignore */}
+          <BigCalendarContainer type="classId" id={student.class.id} />
+        </div>
       </div>
     </div>
   );
