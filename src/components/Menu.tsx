@@ -56,18 +56,58 @@ const getMenuItems = (t: Awaited<ReturnType<typeof getTranslations>>, role: stri
           href: "/dashboard/list/lessons",
           visible: ["admin", "teacher"],
         },
+      ],
+    },
+    {
+      title: "Assessments",
+      items: [
+        {
+          icon: "/exam.png",
+          label: "Assessment Hub",
+          href: "/dashboard/list/assessment-hub",
+          visible: ["teacher"],
+        },
+        {
+          icon: "/exam.png",
+          label: "Quizzes",
+          href: "/dashboard/list/quizzes",
+          visible: ["teacher"],
+        },
+        {
+          icon: "/exam.png",
+          label: "Exams",
+          href: "/dashboard/list/exam-management",
+          visible: ["teacher"],
+        },
+        {
+          icon: "/assignment.png",
+          label: "Assignments",
+          href: "/dashboard/list/assignment-management",
+          visible: ["teacher"],
+        },
+        {
+          icon: "/assignment.png",
+          label: "Submissions",
+          href: "/dashboard/list/student-work",
+          visible: ["teacher"],
+        },
         {
           icon: "/exam.png",
           label: t("exams"),
           href: "/dashboard/list/exams",
-          visible: ["admin", "teacher", "student", "parent"],
+          visible: ["admin", "student", "parent"],
         },
         {
           icon: "/assignment.png",
           label: t("assignments"),
           href: "/dashboard/list/assignments",
-          visible: ["admin", "teacher", "student"],
+          visible: ["admin", "student"],
         },
+      ],
+    },
+    {
+      title: "Academics",
+      items: [
         {
           icon: "/result.png",
           label: t("results"),
@@ -80,6 +120,17 @@ const getMenuItems = (t: Awaited<ReturnType<typeof getTranslations>>, role: stri
           href: "/dashboard/list/students",
           visible: ["admin", "teacher", "student"],
         },
+        {
+          icon: "/result.png",
+          label: t("reportCards"),
+          href: "/dashboard/list/report-cards",
+          visible: ["admin", "teacher"],
+        },
+      ],
+    },
+    {
+      title: "Communications",
+      items: [
         {
           icon: "/calendar.png",
           label: t("events"),
@@ -98,12 +149,11 @@ const getMenuItems = (t: Awaited<ReturnType<typeof getTranslations>>, role: stri
           href: "/dashboard/list/announcements",
           visible: ["admin", "teacher", "student"],
         },
-        {
-          icon: "/result.png",
-          label: t("reportCards"),
-          href: "/dashboard/list/report-cards",
-          visible: ["admin", "teacher"],
-        },
+      ],
+    },
+    {
+      title: "Resources",
+      items: [
         {
           icon: "/search.png",
           label: t("lostFound"),
@@ -120,10 +170,12 @@ const getMenuItems = (t: Awaited<ReturnType<typeof getTranslations>>, role: stri
     },
   ];
 
-  return baseItems.map((section) => ({
-    ...section,
-    items: section.items.filter((item) => item.visible.includes(role)),
-  }));
+  return baseItems
+    .map((section) => ({
+      ...section,
+      items: section.items.filter((item) => item.visible.includes(role)),
+    }))
+    .filter((section) => section.items.length > 0);
 };
 
 const Menu = async () => {
