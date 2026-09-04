@@ -8,6 +8,7 @@ import ClassLeaderboard from "@/components/ClassLeaderboard";
 import BigCalendarContainer from "@/components/BigCalendarContainer";
 import ParentChildAttendanceCard from "@/components/ParentChildAttendanceCard";
 import ReportCardsPanel from "@/components/ReportCardsPanel";
+import TeacherWebcamPreview from "@/components/TeacherWebcamPreview";
 import prisma from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 import Link from "next/link";
@@ -139,6 +140,7 @@ const Parentpage = async () => {
 
       {/* RIGHT */}
       <div className="w-full xl:w-1/3 flex flex-col gap-8">
+        <TeacherWebcamPreview />
         <BirthdayAnnouncements />
         <TodaysTimetableStrip role="parent" classIds={childClassIds} />
         <WeekAtAGlance role="parent" classIds={childClassIds} />
