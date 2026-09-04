@@ -112,24 +112,38 @@ const FormContainer = async ({ table, type, data, id }: FormContainerProps) => {
       case "parent":
         relatedData = {};
         break;
-      case "exam":
+      case "exam": {
         const examLessons = await prisma.lesson.findMany({
           where: {
             ...(role === "teacher" ? { teacherId: currentUserId! } : {}),
           },
-          select: { id: true, name: true },
+          select: { id: true, name: true, classId: true },
         });
-        relatedData = { lessons: examLessons };
+        // Every student across every class the lessons above belong to, so
+        // the "specific students" picker can filter client-side as the
+        // teacher switches which lesson (and therefore which class) the
+        // exam is for, with no extra round trip.
+        const examStudents = await prisma.student.findMany({
+          where: { classId: { in: examLessons.map((l) => l.classId) } },
+          select: { id: true, name: true, surname: true, classId: true },
+        });
+        relatedData = { lessons: examLessons, students: examStudents };
         break;
-      case "assignment":
+      }
+      case "assignment": {
         const assignmentLessons = await prisma.lesson.findMany({
           where: {
             ...(role === "teacher" ? { teacherId: currentUserId! } : {}),
           },
-          select: { id: true, name: true },
+          select: { id: true, name: true, classId: true },
         });
-        relatedData = { lessons: assignmentLessons };
+        const assignmentStudents = await prisma.student.findMany({
+          where: { classId: { in: assignmentLessons.map((l) => l.classId) } },
+          select: { id: true, name: true, surname: true, classId: true },
+        });
+        relatedData = { lessons: assignmentLessons, students: assignmentStudents };
         break;
+      }
       case "result":
         const resultStudents = await prisma.student.findMany({
           select: { id: true, name: true, surname: true },

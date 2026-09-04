@@ -7,6 +7,7 @@ import prisma from "@/lib/prisma";
 import { ITEM_PER_PAGE } from "@/lib/settings";
 import { Class, Exam, Prisma, Subject, Teacher } from "@/generated/prisma/client";
 import Image from "next/image";
+import Link from "next/link";
 import { auth } from "@clerk/nextjs/server";
 import { getUserRole } from "@/lib/auth";
 import { getTranslations } from "next-intl/server";
@@ -65,7 +66,11 @@ const renderRow = (item: ExamList) => (
     key={item.id}
     className="border-b border-gray-200 dark:border-slate-800 even:bg-slate-50 dark:even:bg-slate-900/40 text-sm hover:bg-lamaPurpleLight dark:hover:bg-blue-950/40"
   >
-    <td className="flex items-center gap-4 p-4">{item.lesson.subject.name}</td>
+    <td className="flex items-center gap-4 p-4">
+      <Link href={`/dashboard/list/exams/${item.id}`} className="hover:underline">
+        {item.lesson.subject.name}
+      </Link>
+    </td>
     <td>{item.lesson.class.name}</td>
     <td className="hidden md:table-cell">
       {item.lesson.teacher.name + " " + item.lesson.teacher.surname}
@@ -75,6 +80,12 @@ const renderRow = (item: ExamList) => (
     </td>
     <td>
       <div className="flex items-center gap-2">
+        <Link
+          href={`/dashboard/list/exams/${item.id}`}
+          className="text-xs font-semibold text-blue-500 hover:underline"
+        >
+          {role === "student" ? "View / Submit" : "View"}
+        </Link>
         {(role === "admin" || role === "teacher") && (
           <>
             <FormContainer table="exam" type="update" data={item} />

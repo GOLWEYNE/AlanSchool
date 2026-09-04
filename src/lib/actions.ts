@@ -9,14 +9,18 @@ import {
   ExamSchema,
   EventSchema,
   FeaturedVideoSchema,
+  GradeSubmissionSchema,
   LessonSchema,
   ParentSchema,
+  QuizQuestion,
   ResultSchema,
   StudentSchema,
   SubjectSchema,
+  SubmissionSchema,
   TeacherSchema,
 } from "./formValidationSchemas";
 import prisma from "./prisma";
+import { Prisma } from "@/generated/prisma/client";
 import { clerkClient } from "@clerk/nextjs/server";
 import { auth } from "@clerk/nextjs/server";
 import { getUserRole } from "./auth";
@@ -548,8 +552,15 @@ export const createExam = async (
     await prisma.exam.create({
       data: {
         title: data.title,
+        description: data.description || null,
         startTime: data.startTime,
         endTime: data.endTime,
+        totalMarks: data.totalMarks ?? null,
+        durationMinutes: data.durationMinutes ?? null,
+        instructionsFileUrl: data.instructionsFileUrl || null,
+        instructionsFileName: data.instructionsFileName || null,
+        questions: data.questions ?? Prisma.DbNull,
+        targetStudentIds: data.targetStudentIds ?? [],
         lessonId: data.lessonId,
       },
     });
@@ -591,8 +602,15 @@ export const updateExam = async (
       },
       data: {
         title: data.title,
+        description: data.description || null,
         startTime: data.startTime,
         endTime: data.endTime,
+        totalMarks: data.totalMarks ?? null,
+        durationMinutes: data.durationMinutes ?? null,
+        instructionsFileUrl: data.instructionsFileUrl || null,
+        instructionsFileName: data.instructionsFileName || null,
+        questions: data.questions ?? Prisma.DbNull,
+        targetStudentIds: data.targetStudentIds ?? [],
         lessonId: data.lessonId,
       },
     });
@@ -766,8 +784,14 @@ export const createAssignment = async (
     await prisma.assignment.create({
       data: {
         title: data.title,
+        description: data.description || null,
         startDate: data.startDate,
         dueDate: data.dueDate,
+        totalMarks: data.totalMarks ?? null,
+        instructionsFileUrl: data.instructionsFileUrl || null,
+        instructionsFileName: data.instructionsFileName || null,
+        questions: data.questions ?? Prisma.DbNull,
+        targetStudentIds: data.targetStudentIds ?? [],
         lessonId: data.lessonId,
       },
     });
@@ -812,8 +836,14 @@ export const updateAssignment = async (
       where: { id: data.id },
       data: {
         title: data.title,
+        description: data.description || null,
         startDate: data.startDate,
         dueDate: data.dueDate,
+        totalMarks: data.totalMarks ?? null,
+        instructionsFileUrl: data.instructionsFileUrl || null,
+        instructionsFileName: data.instructionsFileName || null,
+        questions: data.questions ?? Prisma.DbNull,
+        targetStudentIds: data.targetStudentIds ?? [],
         lessonId: data.lessonId,
       },
     });
@@ -1270,6 +1300,231 @@ export const deleteLesson = async (
     });
 
   return { success: true, error: false };
+  } catch (err) {
+    console.log(err);
+    return { success: false, error: true };
+  }
+};
+
+// ---- Online exam & assignment submission portal ------------------------
+
+export type SubmissionActionState = {
+  success: boolean;
+  error: boolean;
+  message?: string;
+  autoScore?: number;
+  autoTotal?: number;
+};
+
+// Keeps the shared gradebook (Result) in sync whenever a submission gets a
+// grade, whether from a teacher typing a score or a quiz auto-grading
+// itself. There's no DB-level uniqueness on Result (a teacher could
+// already have hand-entered one via the classic Result form), so this
+// looks the row up first rather than relying on upsert.
+const syncResultScore = async (
+  studentId: string,
+  examId: number | null,
+  assignmentId: number | null,
+  score: number
+) => {
+  const existing = await prisma.result.findFirst({
+    where: examId ? { examId, studentId } : { assignmentId: assignmentId!, studentId },
+  });
+
+  if (existing) {
+    await prisma.result.update({ where: { id: existing.id }, data: { score } });
+  } else {
+    await prisma.result.create({
+      data: {
+        score,
+        studentId,
+        examId: examId ?? undefined,
+        assignmentId: assignmentId ?? undefined,
+      },
+    });
+  }
+};
+
+// A student uploading their completed file, and/or answering an
+// auto-graded quiz, for one exam or assignment. Enforces that the work is
+// actually assigned to them and that the deadline hasn't passed - once
+// startTime/endTime (exam) or dueDate (assignment) is behind "now", the
+// submission is refused outright rather than merely marked late.
+export const submitStudentWork = async (
+  currentState: SubmissionActionState,
+  data: SubmissionSchema
+): Promise<SubmissionActionState> => {
+  const { userId, sessionClaims } = auth();
+  const role = getUserRole(sessionClaims);
+
+  if (role !== "student" || !userId) {
+    return { success: false, error: true, message: "Only students can submit work." };
+  }
+
+  if (!data.examId && !data.assignmentId) {
+    return { success: false, error: true, message: "Missing exam or assignment." };
+  }
+
+  if (!data.fileUrl && (!data.answers || data.answers.length === 0)) {
+    return {
+      success: false,
+      error: true,
+      message: "Attach a file or answer the questions before submitting.",
+    };
+  }
+
+  try {
+    const work = data.examId
+      ? await prisma.exam.findUnique({
+          where: { id: data.examId },
+          include: { lesson: { select: { classId: true } } },
+        })
+      : await prisma.assignment.findUnique({
+          where: { id: data.assignmentId },
+          include: { lesson: { select: { classId: true } } },
+        });
+
+    if (!work) {
+      return { success: false, error: true, message: "This exam or assignment no longer exists." };
+    }
+
+    const student = await prisma.student.findUnique({
+      where: { id: userId },
+      select: { classId: true },
+    });
+    if (!student) {
+      return { success: false, error: true, message: "Student record not found." };
+    }
+
+    const targeted =
+      work.targetStudentIds.length === 0
+        ? student.classId === work.lesson.classId
+        : work.targetStudentIds.includes(userId);
+
+    if (!targeted) {
+      return { success: false, error: true, message: "This isn't assigned to you." };
+    }
+
+    const deadline = data.examId ? (work as { endTime: Date }).endTime : (work as { dueDate: Date }).dueDate;
+    if (new Date() > new Date(deadline)) {
+      return {
+        success: false,
+        error: true,
+        message: "The deadline has passed - submissions are closed for this one.",
+      };
+    }
+
+    const questions = (work.questions as unknown as QuizQuestion[] | null) ?? null;
+    let grade: number | null = null;
+    let status: "SUBMITTED" | "GRADED" = "SUBMITTED";
+    let autoScore: number | undefined;
+    let autoTotal: number | undefined;
+
+    if (questions && questions.length > 0 && data.answers) {
+      let score = 0;
+      let total = 0;
+      questions.forEach((q, i) => {
+        const points = q.points ?? 1;
+        total += points;
+        if (data.answers?.[i] === q.correctIndex) score += points;
+      });
+      grade = score;
+      status = "GRADED";
+      autoScore = score;
+      autoTotal = total;
+    }
+
+    const now = new Date();
+    const submissionData = {
+      fileUrl: data.fileUrl || null,
+      fileName: data.fileName || null,
+      answers: data.answers ?? undefined,
+      submittedAt: now,
+      status,
+      grade,
+      gradedAt: status === "GRADED" ? now : null,
+      feedback: status === "GRADED" ? "Auto-graded by the system." : null,
+    };
+
+    await prisma.studentSubmission.upsert({
+      where: data.examId
+        ? { examId_studentId: { examId: data.examId, studentId: userId } }
+        : { assignmentId_studentId: { assignmentId: data.assignmentId!, studentId: userId } },
+      create: {
+        examId: data.examId ?? null,
+        assignmentId: data.assignmentId ?? null,
+        studentId: userId,
+        ...submissionData,
+      },
+      update: submissionData,
+    });
+
+    if (status === "GRADED" && grade !== null) {
+      await syncResultScore(userId, data.examId ?? null, data.assignmentId ?? null, grade);
+    }
+
+    revalidatePath("/dashboard/list/exams");
+    revalidatePath("/dashboard/list/assignments");
+    revalidatePath("/dashboard/list/results");
+
+    return { success: true, error: false, autoScore, autoTotal };
+  } catch (err) {
+    console.log(err);
+    return { success: false, error: true, message: "Something went wrong - please try again." };
+  }
+};
+
+// A teacher/admin hand-grading one student's file submission (work that
+// isn't an auto-graded quiz). Mirrors the score into Result so it shows
+// up wherever the rest of the app already reads grades from.
+export const gradeSubmission = async (
+  currentState: CurrentState,
+  data: GradeSubmissionSchema
+) => {
+  if (!isAdminOrTeacher()) return rejectUnauthorized();
+  const { userId } = auth();
+  const role = getCurrentRole();
+
+  try {
+    const submission = await prisma.studentSubmission.findUnique({
+      where: { id: data.submissionId },
+      include: {
+        exam: { select: { lesson: { select: { teacherId: true } } } },
+        assignment: { select: { lesson: { select: { teacherId: true } } } },
+      },
+    });
+
+    if (!submission) return rejectUnauthorized();
+
+    if (role === "teacher") {
+      const teacherId =
+        submission.exam?.lesson.teacherId ?? submission.assignment?.lesson.teacherId;
+      if (teacherId !== userId) return rejectUnauthorized();
+    }
+
+    await prisma.studentSubmission.update({
+      where: { id: data.submissionId },
+      data: {
+        grade: data.grade,
+        feedback: data.feedback || null,
+        status: "GRADED",
+        gradedAt: new Date(),
+        gradedById: userId!,
+      },
+    });
+
+    await syncResultScore(
+      submission.studentId,
+      submission.examId,
+      submission.assignmentId,
+      data.grade
+    );
+
+    revalidatePath("/dashboard/list/exams");
+    revalidatePath("/dashboard/list/assignments");
+    revalidatePath("/dashboard/list/results");
+
+    return { success: true, error: false };
   } catch (err) {
     console.log(err);
     return { success: false, error: true };
