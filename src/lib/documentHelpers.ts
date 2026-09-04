@@ -113,7 +113,7 @@ export const createExamDocument = async (exam: ExamDocument): Promise<Blob> => {
     ...(exam.questions?.map(
       (q) =>
         new Paragraph({
-          text: `${q.number}. ${q.question} [${q.marks} marks]",
+          text: `${q.number}. ${q.question} [${q.marks} marks]`,
           spacing: { after: 200, before: 100 },
         })
     ) || []),
