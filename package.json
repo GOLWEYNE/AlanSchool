@@ -13,6 +13,7 @@
     "@clerk/localizations": "^3.9.6",
     "@clerk/nextjs": "^5.4.1",
     "@hookform/resolvers": "^3.10.0",
+    "docx": "^9.7.1",
     "@prisma/adapter-pg": "^7.9.0",
     "@prisma/client": "^7.9.0",
     "@react-pdf/renderer": "^4.8.1",
