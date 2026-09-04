@@ -6,7 +6,7 @@ import InputField from "../InputField";
 import { assignmentSchema, AssignmentSchema } from "@/lib/formValidationSchemas";
 import { createAssignment, updateAssignment } from "@/lib/actions";
 import { useFormState } from "react-dom";
-import { Dispatch, SetStateAction, useEffect } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
@@ -68,8 +68,39 @@ const AssignmentForm = ({
     }
   }, [state, router, type, setOpen]);
 
-  const { lessons, students = [] } = relatedData;
+  const { lessons, students = [], classes = [] } = relatedData;
+
+  // The "Class" picker below isn't a form field of its own - it's a
+  // client-side filter that narrows which lessons show up in the Lesson
+  // dropdown, since a school can have far more lessons than fit in one
+  // unfiltered list. Initialize it from the lesson being edited, if any.
+  const [selectedClassId, setSelectedClassId] = useState<string>(() => {
+    const initialLesson = lessons.find(
+      (l: { id: number; classId: number }) => l.id === data?.lessonId
+    );
+    return initialLesson ? String(initialLesson.classId) : "";
+  });
+
+  const filteredLessons = selectedClassId
+    ? lessons.filter(
+        (l: { classId: number }) => String(l.classId) === selectedClassId
+      )
+    : lessons;
+
   const selectedLessonId = watch("lessonId") ?? data?.lessonId;
+
+  // Keep the selected lesson in sync with the class filter: if the class
+  // changes and the currently-picked lesson no longer belongs to it, fall
+  // back to the first lesson the new class actually has.
+  useEffect(() => {
+    const stillValid = filteredLessons.some(
+      (l: { id: number }) => String(l.id) === String(selectedLessonId)
+    );
+    if (!stillValid && filteredLessons.length > 0) {
+      setValue("lessonId", filteredLessons[0].id, { shouldValidate: true });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedClassId]);
 
   return (
     <form className="flex flex-col gap-8" onSubmit={onSubmit}>
@@ -120,13 +151,28 @@ const AssignmentForm = ({
           />
         )}
         <div className="flex flex-col gap-2 w-full md:w-1/4">
+          <label className="text-xs text-gray-500 dark:text-slate-400">Class</label>
+          <select
+            className="ring-[1.5px] ring-gray-300 dark:ring-slate-700 dark:bg-slate-800 dark:text-slate-100 p-2 rounded-md text-sm w-full"
+            value={selectedClassId}
+            onChange={(e) => setSelectedClassId(e.target.value)}
+          >
+            <option value="">All classes</option>
+            {classes.map((c: { id: number; name: string }) => (
+              <option value={c.id} key={c.id}>
+                {c.name}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="flex flex-col gap-2 w-full md:w-1/4">
           <label className="text-xs text-gray-500 dark:text-slate-400">{t("assignment.lesson")}</label>
           <select
             className="ring-[1.5px] ring-gray-300 dark:ring-slate-700 dark:bg-slate-800 dark:text-slate-100 p-2 rounded-md text-sm w-full"
             {...register("lessonId")}
             defaultValue={data?.lessonId}
           >
-            {lessons.map((lesson: { id: number; name: string }) => (
+            {filteredLessons.map((lesson: { id: number; name: string }) => (
               <option value={lesson.id} key={lesson.id}>
                 {lesson.name}
               </option>

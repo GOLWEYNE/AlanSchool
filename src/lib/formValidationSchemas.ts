@@ -145,8 +145,14 @@ export const examSchema = z.object({
   description: z.string().optional(),
   startTime: z.coerce.date({ message: "Start time is required!" }),
   endTime: z.coerce.date({ message: "End time is required!" }),
-  totalMarks: z.coerce.number().int().min(1).optional(),
-  durationMinutes: z.coerce.number().int().min(1).optional(),
+  totalMarks: z.preprocess(
+    (value) => (value === "" ? undefined : value),
+    z.coerce.number().int().min(1).optional()
+  ),
+  durationMinutes: z.preprocess(
+    (value) => (value === "" ? undefined : value),
+    z.coerce.number().int().min(1).optional()
+  ),
   instructionsFileUrl: z.string().optional(),
   instructionsFileName: z.string().optional(),
   questions: questionsField,
@@ -162,7 +168,10 @@ export const assignmentSchema = z.object({
   description: z.string().optional(),
   startDate: z.coerce.date({ message: "Start date is required!" }),
   dueDate: z.coerce.date({ message: "Due date is required!" }),
-  totalMarks: z.coerce.number().int().min(1).optional(),
+  totalMarks: z.preprocess(
+    (value) => (value === "" ? undefined : value),
+    z.coerce.number().int().min(1).optional()
+  ),
   instructionsFileUrl: z.string().optional(),
   instructionsFileName: z.string().optional(),
   questions: questionsField,

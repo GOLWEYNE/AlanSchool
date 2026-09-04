@@ -127,7 +127,14 @@ const FormContainer = async ({ table, type, data, id }: FormContainerProps) => {
           where: { classId: { in: examLessons.map((l) => l.classId) } },
           select: { id: true, name: true, surname: true, classId: true },
         });
-        relatedData = { lessons: examLessons, students: examStudents };
+        // Only the classes that actually have a lesson available above, so
+        // the "Class" picker (used purely to filter the Lesson dropdown)
+        // never offers a class with nothing to select underneath it.
+        const examClasses = await prisma.class.findMany({
+          where: { id: { in: examLessons.map((l) => l.classId) } },
+          select: { id: true, name: true },
+        });
+        relatedData = { lessons: examLessons, students: examStudents, classes: examClasses };
         break;
       }
       case "assignment": {
@@ -141,7 +148,15 @@ const FormContainer = async ({ table, type, data, id }: FormContainerProps) => {
           where: { classId: { in: assignmentLessons.map((l) => l.classId) } },
           select: { id: true, name: true, surname: true, classId: true },
         });
-        relatedData = { lessons: assignmentLessons, students: assignmentStudents };
+        const assignmentClasses = await prisma.class.findMany({
+          where: { id: { in: assignmentLessons.map((l) => l.classId) } },
+          select: { id: true, name: true },
+        });
+        relatedData = {
+          lessons: assignmentLessons,
+          students: assignmentStudents,
+          classes: assignmentClasses,
+        };
         break;
       }
       case "result":
