@@ -80,11 +80,16 @@ const ExamForm = ({
     return initialLesson ? String(initialLesson.classId) : "";
   });
 
-  const filteredLessons = selectedClassId
+  // If the picked class has no lessons yet (e.g. one just created, or one
+  // that hasn't been scheduled), fall back to the full lesson list instead
+  // of leaving the dropdown empty - the class list intentionally includes
+  // every class in the school, not just ones that already have a lesson.
+  const classLessons = selectedClassId
     ? lessons.filter(
         (l: { classId: number }) => String(l.classId) === selectedClassId
       )
     : lessons;
+  const filteredLessons = classLessons.length > 0 ? classLessons : lessons;
 
   const selectedLessonId = watch("lessonId") ?? data?.lessonId;
 
@@ -179,6 +184,11 @@ const ExamForm = ({
           </select>
           {errors.lessonId?.message && (
             <p className="text-xs text-red-400">{errors.lessonId.message.toString()}</p>
+          )}
+          {selectedClassId && classLessons.length === 0 && (
+            <p className="text-xs text-amber-500">
+              This class has no lessons yet - showing every lesson instead.
+            </p>
           )}
         </div>
         <div className="flex flex-col gap-2 w-full md:w-[47%]">

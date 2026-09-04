@@ -127,11 +127,10 @@ const FormContainer = async ({ table, type, data, id }: FormContainerProps) => {
           where: { classId: { in: examLessons.map((l) => l.classId) } },
           select: { id: true, name: true, surname: true, classId: true },
         });
-        // Only the classes that actually have a lesson available above, so
-        // the "Class" picker (used purely to filter the Lesson dropdown)
-        // never offers a class with nothing to select underneath it.
+        // Every class in the school, so the "Class" picker (used to filter
+        // the Lesson dropdown) always shows the full list - not just the
+        // classes that happen to already have a lesson scheduled.
         const examClasses = await prisma.class.findMany({
-          where: { id: { in: examLessons.map((l) => l.classId) } },
           select: { id: true, name: true },
         });
         relatedData = { lessons: examLessons, students: examStudents, classes: examClasses };
@@ -148,8 +147,8 @@ const FormContainer = async ({ table, type, data, id }: FormContainerProps) => {
           where: { classId: { in: assignmentLessons.map((l) => l.classId) } },
           select: { id: true, name: true, surname: true, classId: true },
         });
+        // Every class in the school - same reasoning as examClasses above.
         const assignmentClasses = await prisma.class.findMany({
-          where: { id: { in: assignmentLessons.map((l) => l.classId) } },
           select: { id: true, name: true },
         });
         relatedData = {
