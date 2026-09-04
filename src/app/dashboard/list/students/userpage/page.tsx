@@ -80,7 +80,7 @@ const StudentUserPage = async () => {
       {/* Quick Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
         <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
-          <p className="text-sm text-gray-600 dark:text-gray-400">Today's Lessons</p>
+          <p className="text-sm text-gray-600 dark:text-gray-400">Today&apos;s Lessons</p>
           <p className="text-3xl font-bold text-blue-600">
             {student.class?.lessons?.filter(l => new Date(l.startTime).toDateString() === new Date().toDateString()).length || 0}
           </p>
