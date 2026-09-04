@@ -13,6 +13,7 @@ import ClubActivity from "@/components/ClubActivity";
 import UserCard from "@/components/UserCard";
 import FormContainer from "@/components/FormContainer";
 import TeacherWebcamPreview from "@/components/TeacherWebcamPreview";
+import ProtectedRoute from "@/components/ProtectedRoute";
 import { getUserRole } from "@/lib/auth";
 import { auth } from "@clerk/nextjs/server";
 import { getTranslations } from "next-intl/server";
@@ -28,6 +29,7 @@ const AdminPage = async ({
   const t = await getTranslations("AdminPage");
 
   return (
+    <ProtectedRoute allowedRoles={["admin"]}>
     <div className="p-4 flex gap-4 flex-col md:flex-row">
       {/* LEFT */}
       <div className="w-full lg:w-2/3 flex flex-col gap-8">
@@ -106,6 +108,7 @@ const AdminPage = async ({
         <Announcements />
       </div>
     </div>
+    </ProtectedRoute>
   );
 };
 
