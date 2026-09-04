@@ -17,7 +17,6 @@ const WorkTargetPicker = ({
   lessons: LessonLite[];
   students: StudentLite[];
   selectedLessonId: number | string | undefined;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   register: any;
   defaultTargetIds?: string[];
 }) => {
