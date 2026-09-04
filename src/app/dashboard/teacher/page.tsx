@@ -6,6 +6,7 @@ import WeekAtAGlance from "@/components/WeekAtAGlance";
 import AttendancePulse from "@/components/AttendancePulse";
 import ClassLeaderboard from "@/components/ClassLeaderboard";
 import BigCalendarContainer from "@/components/BigCalendarContainer";
+import TeacherWebcamPreview from "@/components/TeacherWebcamPreview";
 import prisma from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 import Link from "next/link";
@@ -63,6 +64,7 @@ const TeacherPage = async () => {
       </div>
       {/* RIGHT */}
       <div className="w-full xl:w-1/3 flex flex-col gap-8">
+        <TeacherWebcamPreview />
         <BirthdayAnnouncements />
         <TodaysTimetableStrip role="teacher" teacherId={userId!} />
         <WeekAtAGlance role="teacher" teacherId={userId!} />
