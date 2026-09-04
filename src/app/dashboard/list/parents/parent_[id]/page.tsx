@@ -74,7 +74,7 @@ const ParentDashboard = async ({ params }: { params: { id: string } }) => {
         <h1 className="text-4xl font-bold text-gray-800 dark:text-white mb-2">
           Welcome, {parent.name}!
         </h1>
-        <p className="text-lg text-gray-600 dark:text-gray-400">Parent Dashboard - Monitor Your Children's Progress</p>
+        <p className="text-lg text-gray-600 dark:text-gray-400">Parent Dashboard - Monitor Your Children&apos;s Progress</p>
       </div>
 
       {/* Students Overview */}
@@ -143,7 +143,7 @@ const ParentDashboard = async ({ params }: { params: { id: string } }) => {
             <div className="flex items-center gap-2 mb-4">
               <Calendar className="text-blue-600" size={28} />
               <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
-                {student.name}'s Schedule
+                {student.name}&apos;s Schedule
               </h2>
             </div>
             {student.class?.lessons && student.class.lessons.length > 0 ? (
@@ -269,7 +269,7 @@ const ParentDashboard = async ({ params }: { params: { id: string } }) => {
               Stay Connected
             </h2>
             <p className="text-gray-600 dark:text-gray-400 mb-6">
-              Communicate directly with teachers about your child's progress, ask questions, and stay informed about school activities.
+              Communicate directly with teachers about your child&apos;s progress, ask questions, and stay informed about school activities.
             </p>
             <div className="flex gap-4">
               <Link href="/dashboard/list/messages">
