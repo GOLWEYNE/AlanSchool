@@ -9,6 +9,7 @@ import BigCalendarContainer from "@/components/BigCalendarContainer";
 import EventCalendar from "@/components/EventCalendar";
 import ReportCardsPanel from "@/components/ReportCardsPanel";
 import TeacherWebcamPreview from "@/components/TeacherWebcamPreview";
+import ProtectedRoute from "@/components/ProtectedRoute";
 import prisma from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 import Link from "next/link";
@@ -38,6 +39,7 @@ const StudentPage = async () => {
     : [0, 0, 0];
 
   return (
+    <ProtectedRoute allowedRoles={["student"]}>
     <div className="p-4 flex gap-4 flex-col xl:flex-row">
       {/* LEFT */}
       <div className="w-full xl:w-2/3 flex flex-col gap-4">
@@ -116,6 +118,7 @@ const StudentPage = async () => {
         </div>
       </div>
     </div>
+    </ProtectedRoute>
   );
 };
 

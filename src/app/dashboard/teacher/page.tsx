@@ -7,6 +7,7 @@ import AttendancePulse from "@/components/AttendancePulse";
 import ClassLeaderboard from "@/components/ClassLeaderboard";
 import BigCalendarContainer from "@/components/BigCalendarContainer";
 import TeacherWebcamPreview from "@/components/TeacherWebcamPreview";
+import ProtectedRoute from "@/components/ProtectedRoute";
 import prisma from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 import Link from "next/link";
@@ -30,6 +31,7 @@ const TeacherPage = async () => {
     ]);
 
   return (
+    <ProtectedRoute allowedRoles={["teacher"]}>
     <div className="flex-1 p-4 flex gap-4 flex-col xl:flex-row">
       {/* LEFT */}
       <div className="w-full xl:w-2/3">
@@ -73,6 +75,7 @@ const TeacherPage = async () => {
         <Announcements />
       </div>
     </div>
+    </ProtectedRoute>
   );
 };
 

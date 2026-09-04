@@ -40,13 +40,19 @@ const FormContainer = async ({ table, type, data, id }: FormContainerProps) => {
   }
 
   if (role === "teacher") {
-    const teacherEditableTables = ["exam", "assignment", "result", "subject", "lesson"];
-    const teacherAllowedTypes = ["create", "update"];
+    // Per the permission matrix, a teacher's create/update/delete rights
+    // are restricted strictly to exams, assignments, results, and lesson
+    // scheduling for their own classes — never subjects, classes, or user
+    // accounts (those stay admin-only).
+    const teacherFullCrudTables = ["exam", "assignment", "result"];
+    const teacherCreateUpdateOnlyTables = ["lesson"];
 
-    if (
-      !teacherEditableTables.includes(table) ||
-      !teacherAllowedTypes.includes(type)
-    ) {
+    const allowed =
+      teacherFullCrudTables.includes(table) ||
+      (teacherCreateUpdateOnlyTables.includes(table) &&
+        (type === "create" || type === "update"));
+
+    if (!allowed) {
       return null;
     }
   }

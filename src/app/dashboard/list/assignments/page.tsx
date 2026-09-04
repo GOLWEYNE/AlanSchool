@@ -78,7 +78,7 @@ const AssignmentListPage = async ({
           {(role === "admin" || role === "teacher") && (
             <>
               <FormContainer table="assignment" type="update" data={item} />
-              {role === "admin" && (
+              {(role === "admin" || role === "teacher") && (
                 <FormContainer table="assignment" type="delete" id={item.id} />
               )}
             </>

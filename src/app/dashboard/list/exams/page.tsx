@@ -78,7 +78,7 @@ const renderRow = (item: ExamList) => (
         {(role === "admin" || role === "teacher") && (
           <>
             <FormContainer table="exam" type="update" data={item} />
-            {role === "admin" && (
+            {(role === "admin" || role === "teacher") && (
               <FormContainer table="exam" type="delete" id={item.id} />
             )}
           </>

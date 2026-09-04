@@ -49,7 +49,9 @@ export const createSubject = async (
   currentState: CurrentState,
   data: SubjectSchema
 ) => {
-  if (!isAdminOrTeacher()) return rejectUnauthorized();
+  // Subjects are an admin-only concern — teachers get read access to
+  // subjects via their assigned lessons/classes, but cannot create them.
+  if (!isAdmin()) return rejectUnauthorized();
   try {
     await prisma.subject.create({
       data: {
@@ -72,7 +74,7 @@ export const updateSubject = async (
   currentState: CurrentState,
   data: SubjectSchema
 ) => {
-  if (!isAdminOrTeacher()) return rejectUnauthorized();
+  if (!isAdmin()) return rejectUnauthorized();
   try {
     await prisma.subject.update({
       where: {
@@ -395,7 +397,8 @@ export const createStudent = async (
   currentState: CurrentState,
   data: StudentSchema
 ) => {
-  if (!isAdminOrTeacher()) return rejectUnauthorized();
+  // Creating student accounts is an admin-only user-management action.
+  if (!isAdmin()) return rejectUnauthorized();
   console.log(data);
   try {
     const classItem = await prisma.class.findUnique({
@@ -524,22 +527,23 @@ export const createExam = async (
   data: ExamSchema
 ) => {
   if (!isAdminOrTeacher()) return rejectUnauthorized();
-  // const { userId, sessionClaims } = auth();
-  // const role = (sessionClaims?.metadata as { role?: string })?.role;
+  const { userId } = auth();
+  const role = getCurrentRole();
 
   try {
-    // if (role === "teacher") {
-    //   const teacherLesson = await prisma.lesson.findFirst({
-    //     where: {
-    //       teacherId: userId!,
-    //       id: data.lessonId,
-    //     },
-    //   });
+    // A teacher may only create exams on lessons they actually teach.
+    if (role === "teacher") {
+      const teacherLesson = await prisma.lesson.findFirst({
+        where: {
+          teacherId: userId!,
+          id: data.lessonId,
+        },
+      });
 
-    //   if (!teacherLesson) {
-    //     return { success: false, error: true };
-    //   }
-    // }
+      if (!teacherLesson) {
+        return rejectUnauthorized();
+      }
+    }
 
     await prisma.exam.create({
       data: {
@@ -563,22 +567,23 @@ export const updateExam = async (
   data: ExamSchema
 ) => {
   if (!isAdminOrTeacher()) return rejectUnauthorized();
-  // const { userId, sessionClaims } = auth();
-  // const role = (sessionClaims?.metadata as { role?: string })?.role;
+  const { userId } = auth();
+  const role = getCurrentRole();
 
   try {
-    // if (role === "teacher") {
-    //   const teacherLesson = await prisma.lesson.findFirst({
-    //     where: {
-    //       teacherId: userId!,
-    //       id: data.lessonId,
-    //     },
-    //   });
+    // A teacher may only update exams on lessons they actually teach.
+    if (role === "teacher") {
+      const teacherLesson = await prisma.lesson.findFirst({
+        where: {
+          teacherId: userId!,
+          id: data.lessonId,
+        },
+      });
 
-    //   if (!teacherLesson) {
-    //     return { success: false, error: true };
-    //   }
-    // }
+      if (!teacherLesson) {
+        return rejectUnauthorized();
+      }
+    }
 
     await prisma.exam.update({
       where: {
@@ -604,19 +609,26 @@ export const deleteExam = async (
   currentState: CurrentState,
   data: FormData
 ) => {
-  if (!isAdmin()) return rejectUnauthorized();
+  // Teachers have full CRUD on exams, but strictly scoped to their own
+  // lessons; admins can delete any exam.
+  if (!isAdminOrTeacher()) return rejectUnauthorized();
   const id = data.get("id") as string;
 
-  // const { userId, sessionClaims } = auth();
-  // const role = (sessionClaims?.metadata as { role?: string })?.role;
+  const { userId } = auth();
+  const role = getCurrentRole();
 
   try {
-    await prisma.exam.delete({
+    // Prisma's delete() only accepts a unique where-clause, so ownership
+    // scoping for teachers is done via deleteMany + a relation filter; if
+    // the exam isn't theirs, the filter matches nothing and count is 0.
+    const { count } = await prisma.exam.deleteMany({
       where: {
         id: parseInt(id),
-        // ...(role === "teacher" ? { lesson: { teacherId: userId! } } : {}),
+        ...(role === "teacher" ? { lesson: { teacherId: userId! } } : {}),
       },
     });
+
+    if (count === 0) return rejectUnauthorized();
 
     // revalidatePath("/list/subjects");
     return { success: true, error: false };
@@ -630,7 +642,8 @@ export const createParent = async (
   currentState: CurrentState,
   data: ParentSchema
 ) => {
-  if (!isAdminOrTeacher()) return rejectUnauthorized();
+  // Creating parent accounts is an admin-only user-management action.
+  if (!isAdmin()) return rejectUnauthorized();
   try {
     const user = await clerkClient.users.createUser({
       username: data.username,
@@ -816,13 +829,21 @@ export const deleteAssignment = async (
   currentState: CurrentState,
   data: FormData
 ) => {
-  if (!isAdmin()) return rejectUnauthorized();
+  // Teachers have full CRUD on assignments, scoped to their own lessons.
+  if (!isAdminOrTeacher()) return rejectUnauthorized();
   const id = data.get("id") as string;
+  const { userId } = auth();
+  const role = getCurrentRole();
 
   try {
-    await prisma.assignment.delete({
-      where: { id: parseInt(id) },
+    const { count } = await prisma.assignment.deleteMany({
+      where: {
+        id: parseInt(id),
+        ...(role === "teacher" ? { lesson: { teacherId: userId! } } : {}),
+      },
     });
+
+    if (count === 0) return rejectUnauthorized();
 
     return { success: true, error: false };
   } catch (err) {
@@ -936,13 +957,29 @@ export const deleteResult = async (
   currentState: CurrentState,
   data: FormData
 ) => {
-  if (!isAdmin()) return rejectUnauthorized();
+  // Teachers have full CRUD on results, scoped to exams/assignments on
+  // lessons they teach.
+  if (!isAdminOrTeacher()) return rejectUnauthorized();
   const id = data.get("id") as string;
+  const { userId } = auth();
+  const role = getCurrentRole();
 
   try {
-    await prisma.result.delete({
-      where: { id: parseInt(id) },
+    const { count } = await prisma.result.deleteMany({
+      where: {
+        id: parseInt(id),
+        ...(role === "teacher"
+          ? {
+              OR: [
+                { exam: { lesson: { teacherId: userId! } } },
+                { assignment: { lesson: { teacherId: userId! } } },
+              ],
+            }
+          : {}),
+      },
     });
+
+    if (count === 0) return rejectUnauthorized();
 
     return { success: true, error: false };
   } catch (err) {
