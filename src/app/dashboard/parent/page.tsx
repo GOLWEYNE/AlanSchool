@@ -9,6 +9,7 @@ import BigCalendarContainer from "@/components/BigCalendarContainer";
 import ParentChildAttendanceCard from "@/components/ParentChildAttendanceCard";
 import ReportCardsPanel from "@/components/ReportCardsPanel";
 import TeacherWebcamPreview from "@/components/TeacherWebcamPreview";
+import ProtectedRoute from "@/components/ProtectedRoute";
 import prisma from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 import Link from "next/link";
@@ -101,6 +102,7 @@ const Parentpage = async () => {
   });
 
   return (
+    <ProtectedRoute allowedRoles={["parent"]}>
     <div className="flex-1 p-4 flex gap-4 flex-col xl:flex-row">
       {/* LEFT */}
       <div className="w-full xl:w-2/3">
@@ -176,6 +178,7 @@ const Parentpage = async () => {
         <Announcements />
       </div>
     </div>
+    </ProtectedRoute>
   );
 };
 
