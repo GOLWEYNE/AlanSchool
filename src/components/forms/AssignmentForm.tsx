@@ -10,6 +10,9 @@ import { Dispatch, SetStateAction, useEffect } from "react";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
+import WorkFileUpload from "./WorkFileUpload";
+import WorkTargetPicker from "./WorkTargetPicker";
+import WorkQuizBuilder, { QuizQuestionDraft } from "./WorkQuizBuilder";
 
 const AssignmentForm = ({
   type,
@@ -26,9 +29,19 @@ const AssignmentForm = ({
   const {
     register,
     handleSubmit,
+    setValue,
+    watch,
     formState: { errors },
   } = useForm<AssignmentSchema>({
     resolver: zodResolver(assignmentSchema),
+    defaultValues: {
+      description: data?.description ?? "",
+      totalMarks: data?.totalMarks ?? undefined,
+      instructionsFileUrl: data?.instructionsFileUrl ?? "",
+      instructionsFileName: data?.instructionsFileName ?? "",
+      questions: (data?.questions as QuizQuestionDraft[] | undefined) ?? [],
+      targetStudentIds: data?.targetStudentIds ?? [],
+    },
   });
 
   const [state, formAction] = useFormState(
@@ -55,7 +68,8 @@ const AssignmentForm = ({
     }
   }, [state, router, type, setOpen]);
 
-  const { lessons } = relatedData;
+  const { lessons, students = [] } = relatedData;
+  const selectedLessonId = watch("lessonId") ?? data?.lessonId;
 
   return (
     <form className="flex flex-col gap-8" onSubmit={onSubmit}>
@@ -122,6 +136,51 @@ const AssignmentForm = ({
             <p className="text-xs text-red-400">{errors.lessonId.message.toString()}</p>
           )}
         </div>
+        <div className="flex flex-col gap-2 w-full md:w-[47%]">
+          <label className="text-xs text-gray-500 dark:text-slate-400">
+            Description / instructions (optional)
+          </label>
+          <textarea
+            {...register("description")}
+            rows={3}
+            placeholder="What the assignment covers, how it's marked, anything students should know..."
+            className="ring-[1.5px] ring-gray-300 dark:ring-slate-700 dark:bg-slate-800 dark:text-slate-100 p-2 rounded-md text-sm w-full"
+          />
+        </div>
+        <div className="flex flex-col gap-2 w-full md:w-[22%]">
+          <label className="text-xs text-gray-500 dark:text-slate-400">Total marks (optional)</label>
+          <input
+            type="number"
+            min={1}
+            {...register("totalMarks")}
+            className="ring-[1.5px] ring-gray-300 dark:ring-slate-700 dark:bg-slate-800 dark:text-slate-100 p-2 rounded-md text-sm w-full"
+          />
+        </div>
+
+        <input type="hidden" {...register("instructionsFileUrl")} />
+        <input type="hidden" {...register("instructionsFileName")} />
+        <input type="hidden" {...register("questions")} />
+        <WorkFileUpload
+          defaultFileUrl={data?.instructionsFileUrl}
+          defaultFileName={data?.instructionsFileName}
+          onChange={(url, name) => {
+            setValue("instructionsFileUrl", url, { shouldValidate: true });
+            setValue("instructionsFileName", name);
+          }}
+        />
+
+        <WorkTargetPicker
+          lessons={lessons}
+          students={students}
+          selectedLessonId={selectedLessonId}
+          register={register}
+          defaultTargetIds={data?.targetStudentIds}
+        />
+
+        <WorkQuizBuilder
+          defaultQuestions={data?.questions}
+          onChange={(questions) => setValue("questions", questions as any)}
+        />
       </div>
 
       {state.error && <span className="text-red-500">{t("common.somethingWrong")}</span>}
