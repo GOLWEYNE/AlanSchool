@@ -22,11 +22,27 @@ export default clerkMiddleware((auth, req) => {
 
   if (publicRoutes(req)) {
     if (userId && req.nextUrl.pathname === "/") {
+      if (role === "teacher") {
+        return NextResponse.redirect(
+          new URL(`/dashboard/list/teachers/userpage`, req.url)
+        );
+      } else if (role === "student") {
+        return NextResponse.redirect(
+          new URL(`/dashboard/list/students/userpage`, req.url)
+        );
+      } else if (role === "parent") {
+        return NextResponse.redirect(
+          new URL(`/dashboard/list/parents/parent_${userId}`, req.url)
+        );
+      } else if (role === "admin") {
+        return NextResponse.redirect(
+          new URL(`/dashboard/admin`, req.url)
+        );
+      }
       return NextResponse.redirect(
         new URL(role ? `/dashboard/${role}` : "/dashboard", req.url)
       );
     }
-
     return NextResponse.next();
   }
 
@@ -36,6 +52,19 @@ export default clerkMiddleware((auth, req) => {
 
   for (const { matcher, allowedRoles } of matchers) {
     if (matcher(req) && !allowedRoles.includes(role ?? "")) {
+      if (role === "teacher") {
+        return NextResponse.redirect(
+          new URL(`/dashboard/list/teachers/userpage`, req.url)
+        );
+      } else if (role === "student") {
+        return NextResponse.redirect(
+          new URL(`/dashboard/list/students/userpage`, req.url)
+        );
+      } else if (role === "parent") {
+        return NextResponse.redirect(
+          new URL(`/dashboard/list/parents/parent_${userId}`, req.url)
+        );
+      }
       return NextResponse.redirect(
         new URL(role ? `/dashboard/${role}` : "/dashboard", req.url)
       );
