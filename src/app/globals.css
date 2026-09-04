@@ -122,6 +122,9 @@ body {
   .circle-icon-btn {
     width: 2rem;
     height: 2rem;
+    min-width: 2rem;
+    min-height: 2rem;
+    flex-shrink: 0;
     border-radius: 9999px;
     border: 1px solid rgba(147, 197, 253, 0.9);
     background: linear-gradient(140deg, #dbeafe, #fef9c3);
@@ -143,6 +146,18 @@ body {
 
   .dark .circle-icon-btn:hover {
     box-shadow: 0 6px 14px rgba(0, 0, 0, 0.45);
+  }
+
+  /* Lets the navbar's icon row scroll sideways instead of squishing its
+     buttons together on very narrow phones - the scrollbar itself is
+     hidden so it doesn't look like a strange bare bar. */
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
   }
 
   .data-table-shell {
