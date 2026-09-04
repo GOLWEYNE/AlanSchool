@@ -156,6 +156,16 @@ model Exam {
   totalMarks   Int?
   durationMinutes Int?
   instructionsFileUrl String?
+  // Original filename of the uploaded exam paper, for display (e.g. "Living_and_NonLiving_Things_Exam.docx")
+  instructionsFileName String?
+  // Optional structured multiple-choice quiz for automatic grading. JSON array of
+  // { text: string, options: string[], correctIndex: number, points: number }.
+  // When present, students answer in-app and the system grades instantly;
+  // when absent, the exam is file-only and a teacher grades submissions manually.
+  questions Json?
+  // Who this exam is assigned to: empty = every student in the lesson's class;
+  // non-empty = only these specific student ids.
+  targetStudentIds String[] @default([])
 
   lessonId Int
   lesson   Lesson   @relation(fields: [lessonId], references: [id])
@@ -174,6 +184,13 @@ model Assignment {
   description  String?
   totalMarks   Int?
   instructionsFileUrl String?
+  // Original filename of the uploaded assignment paper, for display
+  instructionsFileName String?
+  // Optional structured multiple-choice quiz for automatic grading — same shape as Exam.questions.
+  questions Json?
+  // Who this assignment is assigned to: empty = every student in the lesson's class;
+  // non-empty = only these specific student ids.
+  targetStudentIds String[] @default([])
 
   lessonId Int
   lesson   Lesson   @relation(fields: [lessonId], references: [id])
@@ -260,7 +277,12 @@ enum SubmissionStatus {
 model StudentSubmission {
   id     Int @id @default(autoincrement())
   fileUrl   String?
+  fileName  String?
   content   String?
+  // Student's selected answers for an auto-graded quiz (Exam.questions /
+  // Assignment.questions). JSON array of selected option indexes, same
+  // order as the question list.
+  answers   Json?
   submittedAt DateTime?
   status      SubmissionStatus @default(PENDING)
   grade       Int?
@@ -277,6 +299,8 @@ model StudentSubmission {
   studentId    String
   student      Student     @relation(fields: [studentId], references: [id])
 
+  @@unique([examId, studentId])
+  @@unique([assignmentId, studentId])
   @@index([studentId])
   @@index([examId])
   @@index([assignmentId])
