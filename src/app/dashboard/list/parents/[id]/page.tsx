@@ -77,49 +77,55 @@ const SingleParentPage = async ({
   });
 
   return (
-    <div className="flex-1 p-4 flex gap-4 flex-col xl:flex-row">
-      <div className="w-full xl:w-2/3">
-        <div className="bg-white rounded-md p-4 h-[800px]">
-          <h1 className="text-xl font-semibold">Parent Schedule View</h1>
-          <BigCalendarContainer type="parentId" id={parent.id} />
+    <div className="flex-1 p-4 flex flex-col gap-4">
+      <div className="flex gap-4 flex-col xl:flex-row">
+        <div className="w-full xl:w-2/3">
+          <div className="bg-white p-4 rounded-md">
+            <h1 className="text-xl font-semibold">
+              {parent.name} {parent.surname}
+            </h1>
+            <p className="text-sm text-gray-500 mt-1">{parent.email || "No email"}</p>
+            <p className="text-sm text-gray-500">{parent.phone}</p>
+            <p className="text-sm text-gray-500">{parent.address}</p>
+            <div className="mt-4 flex gap-2 flex-wrap text-xs text-gray-600">
+              <Link className="p-2 rounded-md bg-lamaSkyLight" href="/dashboard/list/exams">
+                Children Exams
+              </Link>
+              <Link className="p-2 rounded-md bg-lamaPurpleLight" href="/dashboard/list/results">
+                Children Results
+              </Link>
+              <Link className="p-2 rounded-md bg-lamaYellowLight" href="/dashboard/list/events">
+                Children Events
+              </Link>
+            </div>
+          </div>
+        </div>
+        <div className="w-full xl:w-1/3 flex flex-col gap-4">
+          <div className="bg-white p-4 rounded-md">
+            <h1 className="text-xl font-semibold">Children Attendance</h1>
+            <div className="mt-4 grid gap-4">
+              {childAttendanceSummaries.map((summary) => (
+                <ParentChildAttendanceCard
+                  key={summary.id}
+                  studentName={summary.studentName}
+                  className={summary.className}
+                  overallPercent={summary.overallPercent}
+                  todayPresent={summary.todayPresent}
+                  todayTotal={summary.todayTotal}
+                />
+              ))}
+            </div>
+          </div>
+          <Announcements />
         </div>
       </div>
-      <div className="w-full xl:w-1/3 flex flex-col gap-4">
-        <div className="bg-white p-4 rounded-md">
-          <h1 className="text-xl font-semibold">
-            {parent.name} {parent.surname}
-          </h1>
-          <p className="text-sm text-gray-500 mt-1">{parent.email || "No email"}</p>
-          <p className="text-sm text-gray-500">{parent.phone}</p>
-          <p className="text-sm text-gray-500">{parent.address}</p>
-          <div className="mt-4 flex gap-2 flex-wrap text-xs text-gray-600">
-            <Link className="p-2 rounded-md bg-lamaSkyLight" href="/dashboard/list/exams">
-              Children Exams
-            </Link>
-            <Link className="p-2 rounded-md bg-lamaPurpleLight" href="/dashboard/list/results">
-              Children Results
-            </Link>
-            <Link className="p-2 rounded-md bg-lamaYellowLight" href="/dashboard/list/events">
-              Children Events
-            </Link>
-          </div>
+
+      {/* SCHEDULE - full page width so the whole week is easy to read at a glance */}
+      <div className="bg-white dark:bg-slate-900 rounded-md p-4 min-h-[700px] flex flex-col">
+        <h1 className="text-xl font-semibold text-blue-900 dark:text-blue-100">Parent Schedule View</h1>
+        <div className="flex-1 mt-2">
+          <BigCalendarContainer type="parentId" id={parent.id} />
         </div>
-        <div className="bg-white p-4 rounded-md">
-          <h1 className="text-xl font-semibold">Children Attendance</h1>
-          <div className="mt-4 grid gap-4">
-            {childAttendanceSummaries.map((summary) => (
-              <ParentChildAttendanceCard
-                key={summary.id}
-                studentName={summary.studentName}
-                className={summary.className}
-                overallPercent={summary.overallPercent}
-                todayPresent={summary.todayPresent}
-                todayTotal={summary.todayTotal}
-              />
-            ))}
-          </div>
-        </div>
-        <Announcements />
       </div>
     </div>
   );
