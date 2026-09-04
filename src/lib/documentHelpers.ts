@@ -39,7 +39,7 @@ export const createExamDocument = async (exam: ExamDocument): Promise<Blob> => {
           new Table({
                   rows: [
                             new TableRow({
-                                        cells: [
+                                        children: [
                                                       new TableCell({
                                                                       children: [new Paragraph({ children: [new TextRun({ text: "Subject:", bold: true })] })],
                                                       }),
@@ -49,7 +49,7 @@ export const createExamDocument = async (exam: ExamDocument): Promise<Blob> => {
                                                     ],
                             }),
                             new TableRow({
-                                        cells: [
+                                        children: [
                                                       new TableCell({
                                                                       children: [new Paragraph({ children: [new TextRun({ text: "Class:", bold: true })] })],
                                                       }),
@@ -59,7 +59,7 @@ export const createExamDocument = async (exam: ExamDocument): Promise<Blob> => {
                                                     ],
                             }),
                             new TableRow({
-                                        cells: [
+                                        children: [
                                                       new TableCell({
                                                                       children: [new Paragraph({ children: [new TextRun({ text: "Duration:", bold: true })] })],
                                                       }),
@@ -69,7 +69,7 @@ export const createExamDocument = async (exam: ExamDocument): Promise<Blob> => {
                                                     ],
                             }),
                             new TableRow({
-                                        cells: [
+                                        children: [
                                                       new TableCell({
                                                                       children: [new Paragraph({ children: [new TextRun({ text: "Due Date:", bold: true })] })],
                                                       }),
@@ -79,7 +79,7 @@ export const createExamDocument = async (exam: ExamDocument): Promise<Blob> => {
                                                     ],
                             }),
                             new TableRow({
-                                        cells: [
+                                        children: [
                                                       new TableCell({
                                                                       children: [new Paragraph({ children: [new TextRun({ text: "Total Marks:", bold: true })] })],
                                                       }),
