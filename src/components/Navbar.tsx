@@ -17,13 +17,15 @@ const Navbar = async () => {
   // roles that have browsable student/ticket detail pages today.
   const canSearch = role === "admin" || role === "teacher";
   return (
-    <div className="mx-4 mt-4 panel-card px-4 py-3 flex items-center justify-between">
-      <MobileMenuButton />
+    <div className="mx-4 mt-4 panel-card px-4 py-3 flex items-center justify-between gap-2">
+      <div className="shrink-0">
+        <MobileMenuButton />
+      </div>
       {/* SEARCH BAR */}
       {canSearch && <SearchTrigger />}
       {/* ICONS AND USER */}
-        <div className="flex items-center gap-6 justify-end flex-1 min-w-0">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-6 justify-end flex-1 min-w-0 overflow-x-auto no-scrollbar">
+        <div className="flex items-center gap-2 shrink-0">
           {canSearch && <MobileSearchTrigger />}
           <Link
             href="/dashboard/settings"
@@ -59,15 +61,19 @@ const Navbar = async () => {
           <ThemeToggle />
           <LanguageSwitcher />
         </div>
-        <NotificationBell />
-        <div className="flex flex-col items-end">
+        <div className="shrink-0">
+          <NotificationBell />
+        </div>
+        <div className="hidden sm:flex flex-col items-end shrink-0">
           <span className="text-xs leading-3 font-semibold text-blue-900 dark:text-blue-100">AIS</span>
           <span className="text-[10px] text-blue-700 text-right bg-blue-50 border border-blue-100 rounded-full px-2 py-0.5 mt-1 capitalize dark:text-blue-300 dark:bg-blue-950/50 dark:border-blue-900">
             {user?.publicMetadata?.role as string}
           </span>
         </div>
         {/* <Image src="/avatar.png" alt="" width={36} height={36} className="rounded-full"/> */}
-        <UserButton />
+        <div className="shrink-0">
+          <UserButton />
+        </div>
       </div>
     </div>
   );
