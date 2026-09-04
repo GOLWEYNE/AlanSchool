@@ -184,7 +184,7 @@ const Menu = async () => {
   const t = await getTranslations();
   const menuItems = getMenuItems(t, role);
 
-  return <MenuContent items={menuItems} />;
+  return <MenuContent items={menuItems} role={role} />;
 };
 
 export default Menu;
