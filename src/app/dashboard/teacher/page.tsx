@@ -52,11 +52,18 @@ const TeacherPage = async () => {
         <Link href="/dashboard/list/messages" className="panel-card p-3 text-blue-900 font-semibold text-sm text-center shine-hover">Messages</Link>
       </div>
 
-      {/* SCHEDULE - full page width so the whole week is easy to read at a glance */}
+      {/* SCHEDULE - full page width so the whole week is easy to read at a glance.
+          The camera preview lives here, next to the lessons it's actually for,
+          rather than as a generic sidebar widget unrelated to going live. */}
       <div className="w-full panel-card p-4 rounded-md min-h-[640px] flex flex-col">
         <h1 className="text-xl font-semibold text-blue-900 dark:text-blue-100">Schedule</h1>
-        <div className="flex-1 mt-2">
-          <BigCalendarContainer type="teacherId" id={userId!} />
+        <div className="flex-1 mt-2 flex flex-col lg:flex-row gap-4">
+          <div className="w-full lg:w-2/3 flex-1 min-h-[420px] lg:min-h-0">
+            <BigCalendarContainer type="teacherId" id={userId!} />
+          </div>
+          <div className="w-full lg:w-1/3">
+            <TeacherWebcamPreview />
+          </div>
         </div>
       </div>
 
@@ -68,7 +75,6 @@ const TeacherPage = async () => {
         </div>
         {/* RIGHT */}
         <div className="w-full xl:w-1/3 flex flex-col gap-8">
-          <TeacherWebcamPreview />
           <BirthdayAnnouncements />
           <TodaysTimetableStrip role="teacher" teacherId={userId!} />
           <WeekAtAGlance role="teacher" teacherId={userId!} />
