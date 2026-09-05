@@ -8,6 +8,7 @@ import LanguageSwitcher from "./LanguageSwitcher";
 import ThemeToggle from "./ThemeToggle";
 import { SearchTrigger, MobileSearchTrigger } from "./SearchTrigger";
 import NotificationBell from "./NotificationBell";
+import DailyRoutineButton from "./DailyRoutineButton";
 
 const Navbar = async () => {
   const user = await currentUser();
@@ -60,6 +61,9 @@ const Navbar = async () => {
           </div>
           <ThemeToggle />
           <LanguageSwitcher />
+        </div>
+        <div className="shrink-0">
+          <DailyRoutineButton />
         </div>
         <div className="shrink-0">
           <NotificationBell />
