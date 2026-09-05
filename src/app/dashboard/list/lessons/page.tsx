@@ -1,19 +1,67 @@
 import FormContainer from "@/components/FormContainer";
-import Pagination from "@/components/Pagination";
-import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
+import TimetableGrid, { TimetableLessonItem } from "@/components/TimetableGrid";
 import prisma from "@/lib/prisma";
-import { ITEM_PER_PAGE } from "@/lib/settings";
 import { Class, Lesson, Prisma, Subject, Teacher } from "@/generated/prisma/client";
-import Image from "next/image";
 import { auth } from "@clerk/nextjs/server";
 import { getUserRole } from "@/lib/auth";
 import { getTranslations } from "next-intl/server";
+import type { ReactNode } from "react";
 
 type LessonList = Lesson & {
   subject: Subject;
   class: Class;
   teacher: Teacher;
+};
+
+// Every stored lesson time only carries a meaningful day-of-week + time-of-day
+// (see adjustScheduleToCurrentWeek in src/lib/utils.ts, which the read-only
+// class/teacher/parent schedule views already rely on) - this re-projects
+// each lesson onto the current real week so the grid's Mon-Fri columns line
+// up with real, human-readable dates.
+const projectOntoCurrentWeek = (lessons: LessonList[]): TimetableLessonItem[] => {
+  const now = new Date();
+  const dayOfWeek = now.getDay();
+  const diffToMonday = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+  const monday = new Date(now);
+  monday.setDate(now.getDate() + diffToMonday);
+  monday.setHours(0, 0, 0, 0);
+
+  return lessons.map((lesson) => {
+    const lessonDayOfWeek = lesson.startTime.getDay();
+    const daysFromMonday = lessonDayOfWeek === 0 ? 6 : lessonDayOfWeek - 1;
+
+    const start = new Date(monday);
+    start.setDate(monday.getDate() + daysFromMonday);
+    start.setHours(
+      lesson.startTime.getHours(),
+      lesson.startTime.getMinutes(),
+      lesson.startTime.getSeconds(),
+      0
+    );
+
+    const end = new Date(start);
+    end.setHours(
+      lesson.endTime.getHours(),
+      lesson.endTime.getMinutes(),
+      lesson.endTime.getSeconds(),
+      0
+    );
+
+    return {
+      id: lesson.id,
+      name: lesson.name,
+      room: lesson.room ?? null,
+      subjectId: lesson.subjectId,
+      subjectName: lesson.subject.name,
+      classId: lesson.classId,
+      className: lesson.class.name,
+      teacherId: lesson.teacherId,
+      teacherName: `${lesson.teacher.name} ${lesson.teacher.surname}`,
+      start,
+      end,
+    };
+  });
 };
 
 const LessonsListPage = async ({
@@ -26,83 +74,19 @@ const LessonsListPage = async ({
   const currentUserId = userId;
   const t = await getTranslations("List.lessons");
 
-  const columns = [
-    {
-      header: t("columns.lesson"),
-      accessor: "lesson",
-    },
-    {
-      header: t("columns.subject"),
-      accessor: "subject",
-    },
-    {
-      header: t("columns.class"),
-      accessor: "class",
-      className: "hidden md:table-cell",
-    },
-    {
-      header: t("columns.teacher"),
-      accessor: "teacher",
-      className: "hidden md:table-cell",
-    },
-    {
-      header: t("columns.time"),
-      accessor: "time",
-      className: "hidden md:table-cell",
-    },
-    ...(role === "admin" || role === "teacher"
-      ? [
-          {
-            header: t("columns.actions"),
-            accessor: "action",
-          },
-        ]
-      : []),
-  ];
-
-  const renderRow = (item: LessonList) => (
-    <tr
-      key={item.id}
-      className="border-b border-gray-200 dark:border-slate-800 even:bg-slate-50 dark:even:bg-slate-900/40 text-sm hover:bg-lamaPurpleLight dark:hover:bg-blue-950/40"
-    >
-      <td className="flex items-center gap-4 p-4">{item.name}</td>
-      <td>{item.subject.name}</td>
-      <td className="hidden md:table-cell">{item.class.name}</td>
-      <td className="hidden md:table-cell">
-        {item.teacher.name} {item.teacher.surname}
-      </td>
-      <td className="hidden md:table-cell">
-        {item.day} {item.startTime.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: false })}
-      </td>
-      <td>
-        <div className="flex items-center gap-2">
-          {(role === "admin" || role === "teacher") && (
-            <>
-              <FormContainer table="lesson" type="update" data={item} />
-              {role === "admin" && (
-                <FormContainer table="lesson" type="delete" id={item.id} />
-              )}
-            </>
-          )}
-        </div>
-      </td>
-    </tr>
-  );
-
-  const { page, ...queryParams } = searchParams;
-  const p = page ? parseInt(page) : 1;
-
   const query: Prisma.LessonWhereInput = {};
+  let selectedClassId: number | undefined;
+  let selectedTeacherId: string | undefined;
 
-  if (queryParams) {
-    for (const [key, value] of Object.entries(queryParams)) {
+  if (searchParams) {
+    for (const [key, value] of Object.entries(searchParams)) {
       if (value !== undefined) {
         switch (key) {
           case "classId":
-            query.classId = parseInt(value);
+            selectedClassId = parseInt(value);
             break;
           case "teacherId":
-            query.teacherId = value;
+            selectedTeacherId = value;
             break;
           case "search":
             query.OR = [
@@ -117,24 +101,59 @@ const LessonsListPage = async ({
     }
   }
 
+  // Classes/teachers pickers are an admin-only convenience - a school-wide
+  // grid with every lesson from every class superimposed on one Mon-Fri
+  // week would be unreadable, so admins pick a scope like the attendance
+  // screen does. Teachers always see just their own lessons - a manageable
+  // number - so they skip the picker entirely.
+  let classOptions: { id: number; name: string }[] = [];
+  let teacherOptions: { id: string; name: string; surname: string }[] = [];
+
+  if (role === "admin") {
+    classOptions = await prisma.class.findMany({
+      select: { id: true, name: true },
+      orderBy: { name: "asc" },
+    });
+    teacherOptions = await prisma.teacher.findMany({
+      select: { id: true, name: true, surname: true },
+      orderBy: { name: "asc" },
+    });
+
+    if (!selectedClassId && !selectedTeacherId) {
+      selectedClassId = classOptions[0]?.id;
+    }
+    if (selectedClassId) query.classId = selectedClassId;
+    if (selectedTeacherId) query.teacherId = selectedTeacherId;
+  }
+
   if (role === "teacher") {
     query.teacherId = currentUserId!;
   }
 
-  const [data, count] = await prisma.$transaction([
-    prisma.lesson.findMany({
-      where: query,
-      include: {
-        subject: true,
-        class: true,
-        teacher: true,
-      },
-      take: ITEM_PER_PAGE,
-      skip: ITEM_PER_PAGE * (p - 1),
-      orderBy: { day: "asc" },
-    }),
-    prisma.lesson.count({ where: query }),
-  ]);
+  const data: LessonList[] = await prisma.lesson.findMany({
+    where: query,
+    include: {
+      subject: true,
+      class: true,
+      teacher: true,
+    },
+    orderBy: { startTime: "asc" },
+  });
+
+  const timetableLessons = projectOntoCurrentWeek(data);
+
+  const canEdit = role === "admin" || role === "teacher";
+  const actionsByLessonId: Record<number, ReactNode> = {};
+  if (canEdit) {
+    for (const item of data) {
+      actionsByLessonId[item.id] = (
+        <>
+          <FormContainer table="lesson" type="update" data={item} />
+          {role === "admin" && <FormContainer table="lesson" type="delete" id={item.id} />}
+        </>
+      );
+    }
+  }
 
   return (
     <div className="panel-card p-4 md:p-5 rounded-md flex-1 m-4 mt-0 shine-hover">
@@ -143,20 +162,53 @@ const LessonsListPage = async ({
         <div className="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
           <TableSearch />
           <div className="flex items-center gap-4 self-end">
-            <button className="circle-icon-btn">
-              <Image src="/filter.png" alt="" width={14} height={14} />
-            </button>
-            <button className="circle-icon-btn">
-              <Image src="/sort.png" alt="" width={14} height={14} />
-            </button>
-            {(role === "admin" || role === "teacher") && (
-              <FormContainer table="lesson" type="create" />
-            )}
+            {canEdit && <FormContainer table="lesson" type="create" />}
           </div>
         </div>
       </div>
-      <Table columns={columns} renderRow={renderRow} data={data} />
-      <Pagination page={p} count={count} />
+
+      {role === "admin" && (
+        <form
+          className="panel-card p-4 rounded-md mt-4 shine-hover flex flex-wrap items-end gap-4"
+          method="GET"
+        >
+          <div className="flex flex-col gap-1">
+            <label className="text-xs text-gray-500 dark:text-slate-400">Class</label>
+            <select
+              name="classId"
+              defaultValue={selectedTeacherId ? "" : selectedClassId}
+              className="ring-[1.5px] ring-gray-300 dark:ring-slate-700 dark:bg-slate-800 dark:text-slate-100 p-2 rounded-md text-sm min-w-[10rem]"
+            >
+              <option value="">All classes</option>
+              {classOptions.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.name}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="flex flex-col gap-1">
+            <label className="text-xs text-gray-500 dark:text-slate-400">Teacher</label>
+            <select
+              name="teacherId"
+              defaultValue={selectedTeacherId ?? ""}
+              className="ring-[1.5px] ring-gray-300 dark:ring-slate-700 dark:bg-slate-800 dark:text-slate-100 p-2 rounded-md text-sm min-w-[12rem]"
+            >
+              <option value="">Any teacher</option>
+              {teacherOptions.map((tOpt) => (
+                <option key={tOpt.id} value={tOpt.id}>
+                  {tOpt.name} {tOpt.surname}
+                </option>
+              ))}
+            </select>
+          </div>
+          <button className="bg-blue-500 text-white px-4 py-2 rounded-md text-sm font-semibold">
+            Load timetable
+          </button>
+        </form>
+      )}
+
+      <TimetableGrid lessons={timetableLessons} canEdit={canEdit} actionsByLessonId={actionsByLessonId} />
     </div>
   );
 };
