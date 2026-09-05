@@ -20,7 +20,7 @@ import {
   TeacherSchema,
 } from "./formValidationSchemas";
 import prisma from "./prisma";
-import { Prisma } from "@/generated/prisma/client";
+import { Day, Prisma } from "@/generated/prisma/client";
 import { clerkClient } from "@clerk/nextjs/server";
 import { auth } from "@clerk/nextjs/server";
 import { getUserRole } from "./auth";
@@ -1034,6 +1034,7 @@ export const createEvent = async (
       },
     });
 
+    revalidatePath("/dashboard/list/events");
     return { success: true, error: false };
   } catch (err) {
     console.log(err);
@@ -1062,6 +1063,8 @@ export const updateEvent = async (
       },
     });
 
+    revalidatePath("/dashboard/list/events");
+
     return { success: true, error: false };
   } catch (err) {
     console.log(err);
@@ -1081,6 +1084,7 @@ export const deleteEvent = async (
       where: { id: parseInt(id) },
     });
 
+    revalidatePath("/dashboard/list/events");
     return { success: true, error: false };
   } catch (err) {
     console.log(err);
@@ -1228,6 +1232,108 @@ export const updateLesson = async (
   });
 
   return { success: true, error: false };
+  } catch (err) {
+    console.log(err);
+    return { success: false, error: true };
+  }
+};
+
+export type RescheduleLessonState = { success: boolean; error: boolean; message?: string };
+
+// Backs the weekly timetable grid's drag-and-drop rescheduling: moving or
+// resizing a lesson block re-derives its `day` from the dropped date and
+// re-checks for a double-booked teacher or class before saving, so a drag
+// can never silently create a scheduling conflict the old flat table had
+// no way to catch.
+export const rescheduleLesson = async (payload: {
+  id: number;
+  start: Date;
+  end: Date;
+}): Promise<RescheduleLessonState> => {
+  const { userId, sessionClaims } = auth();
+  const role = getUserRole(sessionClaims);
+  if (isReadOnlyRole(role) || (role !== "admin" && role !== "teacher")) {
+    return rejectUnauthorized();
+  }
+
+  const DAY_BY_INDEX: Partial<Record<number, Day>> = {
+    1: Day.MONDAY,
+    2: Day.TUESDAY,
+    3: Day.WEDNESDAY,
+    4: Day.THURSDAY,
+    5: Day.FRIDAY,
+  };
+  const newDay = DAY_BY_INDEX[payload.start.getDay()];
+  if (!newDay) {
+    return {
+      success: false,
+      error: true,
+      message: "Lessons can only be scheduled Monday through Friday.",
+    };
+  }
+
+  try {
+    const lesson = await prisma.lesson.findUnique({ where: { id: payload.id } });
+    if (!lesson) return { success: false, error: true };
+    if (role === "teacher" && lesson.teacherId !== userId) {
+      return rejectUnauthorized();
+    }
+
+    // Only other lessons sharing this lesson's teacher or class can
+    // possibly conflict with it - narrow the candidates before checking
+    // for a time overlap.
+    const candidates = await prisma.lesson.findMany({
+      where: {
+        id: { not: payload.id },
+        OR: [{ teacherId: lesson.teacherId }, { classId: lesson.classId }],
+      },
+      select: {
+        id: true,
+        name: true,
+        teacherId: true,
+        classId: true,
+        startTime: true,
+        endTime: true,
+      },
+    });
+
+    const overlaps = (aStart: Date, aEnd: Date, bStart: Date, bEnd: Date) =>
+      aStart < bEnd && bStart < aEnd;
+
+    const conflict = candidates.find((c) => {
+      if (c.startTime.getDay() !== payload.start.getDay()) return false;
+      // Stored lesson times only carry a meaningful day-of-week + time-of-day
+      // (the calendar re-projects them onto the current real week for
+      // display) - re-anchor the candidate's time onto the dropped date so
+      // an unrelated stored date component never throws the comparison off.
+      const cStart = new Date(payload.start);
+      cStart.setHours(
+        c.startTime.getHours(),
+        c.startTime.getMinutes(),
+        c.startTime.getSeconds(),
+        0
+      );
+      const cEnd = new Date(payload.start);
+      cEnd.setHours(c.endTime.getHours(), c.endTime.getMinutes(), c.endTime.getSeconds(), 0);
+      return overlaps(payload.start, payload.end, cStart, cEnd);
+    });
+
+    if (conflict) {
+      const reason = conflict.teacherId === lesson.teacherId ? "the teacher" : "the class";
+      return {
+        success: false,
+        error: true,
+        message: `Conflicts with "${conflict.name}" - ${reason} already has a lesson at that time.`,
+      };
+    }
+
+    await prisma.lesson.update({
+      where: { id: payload.id },
+      data: { day: newDay, startTime: payload.start, endTime: payload.end },
+    });
+
+    revalidatePath("/dashboard/list/lessons");
+    return { success: true, error: false };
   } catch (err) {
     console.log(err);
     return { success: false, error: true };
