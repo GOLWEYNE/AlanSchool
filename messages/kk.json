@@ -31,8 +31,8 @@
     "settings": "Параметрлер",
     "logout": "Шығу",
     "reportCards": "Үлгерім табельдері",
-      "lostFound": "Жоғалған заттар",
-      "featuredVideo": "Күн видеосы"
+    "lostFound": "Жоғалған заттар",
+    "featuredVideo": "Күн видеосы"
   },
   "Navbar": {
     "searchPlaceholder": "Іздеу...",
@@ -40,6 +40,8 @@
     "logout": "Шығу",
     "openSettings": "Параметрлерді ашу",
     "logOut": "Жүйеден шығу",
+    "dailyRoutine": "Күн тәртібі",
+    "close": "Жабу",
     "notifications": "Хабарландырулар",
     "loading": "Жүктелуде…",
     "noNotifications": "Жаңа хабарландыру жоқ",
