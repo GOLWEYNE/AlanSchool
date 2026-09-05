@@ -843,7 +843,7 @@ export const createClub = async (currentState: CurrentState, data: ClubSchema) =
                                     instructorId: data.instructorId || null,
                         },
               });
-              revalidatePath("/dashboard/list/classes");
+              revalidatePath("/dashboard/list/clubs");
               return ok();
       } catch (err) {
               console.log(err);
@@ -866,7 +866,7 @@ export const updateClub = async (currentState: CurrentState, data: ClubSchema) =
                                     instructorId: data.instructorId || null,
                         },
               });
-              revalidatePath("/dashboard/list/classes");
+              revalidatePath("/dashboard/list/clubs");
               return ok();
       } catch (err) {
               console.log(err);
@@ -879,7 +879,7 @@ export const deleteClub = async (currentState: CurrentState, formData: FormData)
       const id = formData.get("id") as string;
       try {
               await prisma.club.delete({ where: { id: parseInt(id) } });
-              revalidatePath("/dashboard/list/classes");
+              revalidatePath("/dashboard/list/clubs");
               return ok();
       } catch (err) {
               console.log(err);
@@ -903,18 +903,37 @@ export const enrollInClub = async (
       }
 
       try {
+              // (clubId, studentId) is a unique constraint, so a student who
+              // previously withdrew already has a row — reuse it instead of
+              // trying to create a duplicate, which would always fail.
+              const existing = await prisma.clubEnrollment.findUnique({
+                        where: { clubId_studentId: { clubId: data.clubId, studentId: data.studentId } },
+              });
+              if (existing && existing.status !== "WITHDRAWN") {
+                        return fail("Already enrolled in this club.");
+              }
+
+              // Only ACTIVE seats count against capacity — a WAITLISTED or
+              // WITHDRAWN row must never block a new join.
               const club = await prisma.club.findUnique({
                         where: { id: data.clubId },
-                        include: { _count: { select: { enrollments: true } } },
+                        include: { _count: { select: { enrollments: { where: { status: "ACTIVE" } } } } },
               });
               if (!club) return fail("Club not found.");
 
         const status = club._count.enrollments >= club.capacity ? "WAITLISTED" : "ACTIVE";
 
-        await prisma.clubEnrollment.create({
-                  data: { clubId: data.clubId, studentId: data.studentId, status },
-        });
-              revalidatePath("/dashboard/list/classes");
+        if (existing) {
+                  await prisma.clubEnrollment.update({
+                            where: { id: existing.id },
+                            data: { status, enrolledAt: new Date() },
+                  });
+        } else {
+                  await prisma.clubEnrollment.create({
+                            data: { clubId: data.clubId, studentId: data.studentId, status },
+                  });
+        }
+              revalidatePath("/dashboard/list/clubs");
               return ok();
       } catch (err) {
               console.log(err);
@@ -941,11 +960,30 @@ export const withdrawFromClub = async (
                       ) {
                         return rejectUnauthorized();
               }
-              await prisma.clubEnrollment.update({
-                        where: { id: parseInt(id) },
-                        data: { status: "WITHDRAWN" },
+
+              await prisma.$transaction(async (tx) => {
+                        await tx.clubEnrollment.update({
+                                    where: { id: parseInt(id) },
+                                    data: { status: "WITHDRAWN" },
+                        });
+
+                        // Freeing an ACTIVE seat promotes whoever has waited longest,
+                        // so a withdrawal never leaves an open seat with a waitlist.
+                        if (enrollment.status === "ACTIVE") {
+                                    const nextInLine = await tx.clubEnrollment.findFirst({
+                                                where: { clubId: enrollment.clubId, status: "WAITLISTED" },
+                                                orderBy: { enrolledAt: "asc" },
+                                    });
+                                    if (nextInLine) {
+                                                await tx.clubEnrollment.update({
+                                                            where: { id: nextInLine.id },
+                                                            data: { status: "ACTIVE" },
+                                                });
+                                    }
+                        }
               });
-              revalidatePath("/dashboard/list/classes");
+
+              revalidatePath("/dashboard/list/clubs");
               return ok();
       } catch (err) {
               console.log(err);
