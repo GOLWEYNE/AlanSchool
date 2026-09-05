@@ -16,32 +16,20 @@ const getRole = (sessionClaims: any) => {
   return String(directRole ?? metadataRole ?? publicMetadataRole ?? "").trim().toLowerCase();
 };
 
+// Every role has a purpose-built home dashboard at /dashboard/<role>
+// (admin, teacher, student, parent all live under src/app/dashboard/<role>).
+// Sending everyone there — instead of a generic page or a profile "userpage" —
+// is what makes a parent land on their child's schedule/results and a
+// student land on their own day, rather than everyone seeing the same view.
+const homeFor = (role: string) => (role ? `/dashboard/${role}` : "/dashboard");
+
 export default clerkMiddleware((auth, req) => {
   const { userId, sessionClaims } = auth();
   const role = getRole(sessionClaims);
 
   if (publicRoutes(req)) {
     if (userId && req.nextUrl.pathname === "/") {
-      if (role === "teacher") {
-        return NextResponse.redirect(
-          new URL(`/dashboard/list/teachers/userpage`, req.url)
-        );
-      } else if (role === "student") {
-        return NextResponse.redirect(
-          new URL(`/dashboard/list/students/userpage`, req.url)
-        );
-      } else if (role === "parent") {
-        return NextResponse.redirect(
-          new URL(`/dashboard/list/parents/parent_${userId}`, req.url)
-        );
-      } else if (role === "admin") {
-        return NextResponse.redirect(
-          new URL(`/dashboard/admin`, req.url)
-        );
-      }
-      return NextResponse.redirect(
-        new URL(role ? `/dashboard/${role}` : "/dashboard", req.url)
-      );
+      return NextResponse.redirect(new URL(homeFor(role), req.url));
     }
     return NextResponse.next();
   }
@@ -52,22 +40,7 @@ export default clerkMiddleware((auth, req) => {
 
   for (const { matcher, allowedRoles } of matchers) {
     if (matcher(req) && !allowedRoles.includes(role ?? "")) {
-      if (role === "teacher") {
-        return NextResponse.redirect(
-          new URL(`/dashboard/list/teachers/userpage`, req.url)
-        );
-      } else if (role === "student") {
-        return NextResponse.redirect(
-          new URL(`/dashboard/list/students/userpage`, req.url)
-        );
-      } else if (role === "parent") {
-        return NextResponse.redirect(
-          new URL(`/dashboard/list/parents/parent_${userId}`, req.url)
-        );
-      }
-      return NextResponse.redirect(
-        new URL(role ? `/dashboard/${role}` : "/dashboard", req.url)
-      );
+      return NextResponse.redirect(new URL(homeFor(role), req.url));
     }
   }
 
