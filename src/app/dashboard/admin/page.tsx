@@ -12,7 +12,6 @@ import FinanceChart from "@/components/FinanceChart";
 import ClubActivity from "@/components/ClubActivity";
 import UserCard from "@/components/UserCard";
 import FormContainer from "@/components/FormContainer";
-import TeacherWebcamPreview from "@/components/TeacherWebcamPreview";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { getUserRole } from "@/lib/auth";
 import { auth } from "@clerk/nextjs/server";
@@ -98,7 +97,6 @@ const AdminPage = async ({
       </div>
       {/* RIGHT */}
       <div className="w-full lg:w-1/3 flex flex-col gap-8">
-        <TeacherWebcamPreview />
         <BirthdayAnnouncements />
         <TodaysTimetableStrip role="admin" />
         <WeekAtAGlance role="admin" />
