@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { markMessageRead } from "@/lib/masterModuleActions";
+import DropdownPortal from "./DropdownPortal";
 
 type MessageItem = {
   id: number;
@@ -56,7 +57,7 @@ const NotificationBell = () => {
   const [data, setData] = useState<NotificationsResponse>(EMPTY);
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(true);
-  const wrapperRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
 
   const load = useCallback(async () => {
     try {
@@ -77,16 +78,6 @@ const NotificationBell = () => {
     return () => clearInterval(interval);
   }, [load]);
 
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (wrapperRef.current && !wrapperRef.current.contains(e.target as Node)) {
-        setOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
   const total = data.counts.messages + data.counts.tickets + data.counts.slips;
 
   const dismissMessage = async (id: number) => {
@@ -105,8 +96,9 @@ const NotificationBell = () => {
   };
 
   return (
-    <div className="relative" ref={wrapperRef}>
+    <div>
       <button
+        ref={triggerRef}
         type="button"
         onClick={() => setOpen((prev) => !prev)}
         className="circle-icon-btn cursor-pointer relative"
@@ -121,92 +113,95 @@ const NotificationBell = () => {
         )}
       </button>
 
-      {open && (
-        <div className="absolute right-0 mt-2 w-80 max-h-96 overflow-y-auto bg-white border border-blue-200 rounded-md shadow-lg py-2 z-50 dark:bg-slate-900 dark:border-slate-700">
-          <div className="px-3 pb-2 mb-1 border-b border-blue-100 dark:border-slate-700 flex items-center justify-between">
-            <span className="text-xs font-semibold text-blue-900 dark:text-blue-100">
-              {t("notifications")}
-            </span>
-            {loading && (
-              <span className="text-[10px] text-blue-400 dark:text-blue-500">{t("loading")}</span>
-            )}
-          </div>
-
-          {total === 0 && !loading && (
-            <p className="px-3 py-4 text-xs text-center text-blue-400 dark:text-blue-300">
-              {t("noNotifications")}
-            </p>
-          )}
-
-          {data.messages.length > 0 && (
-            <div className="mb-1">
-              <p className="px-3 py-1 text-[10px] font-semibold uppercase text-blue-400 dark:text-blue-500">
-                {t("newMessages")}
-              </p>
-              {data.messages.map((m) => (
-                <button
-                  key={`msg-${m.id}`}
-                  type="button"
-                  onClick={() => dismissMessage(m.id)}
-                  className="w-full text-left px-3 py-2 hover:bg-blue-50 dark:hover:bg-blue-950/60"
-                >
-                  <p className="text-xs text-blue-900 dark:text-blue-100 truncate">{m.content}</p>
-                  <p className="text-[10px] text-blue-400 dark:text-blue-500">
-                    {new Date(m.createdAt).toLocaleString()}
-                  </p>
-                </button>
-              ))}
-            </div>
-          )}
-
-          {data.tickets.length > 0 && (
-            <div className="mb-1">
-              <p className="px-3 py-1 text-[10px] font-semibold uppercase text-blue-400 dark:text-blue-500">
-                {t("ticketUpdates")}
-              </p>
-              {data.tickets.map((tk) => (
-                <Link
-                  key={`ticket-${tk.id}`}
-                  href={`/dashboard/list/tickets/${tk.id}`}
-                  onClick={() => setOpen(false)}
-                  className="block px-3 py-2 hover:bg-blue-50 dark:hover:bg-blue-950/60"
-                >
-                  <p className="text-xs text-blue-900 dark:text-blue-100 truncate">{tk.title}</p>
-                  <p className="text-[10px] text-blue-400 dark:text-blue-500 capitalize">
-                    {tk.status.toLowerCase().replace("_", " ")} · {tk.priority.toLowerCase()}
-                  </p>
-                </Link>
-              ))}
-            </div>
-          )}
-
-          {data.slips.length > 0 && (
-            <div>
-              <p className="px-3 py-1 text-[10px] font-semibold uppercase text-blue-400 dark:text-blue-500">
-                {t("slipUpdates")}
-              </p>
-              {data.slips.map((s) => (
-                <Link
-                  key={`slip-${s.id}`}
-                  href="/dashboard/parent"
-                  onClick={() => setOpen(false)}
-                  className="block px-3 py-2 hover:bg-blue-50 dark:hover:bg-blue-950/60"
-                >
-                  <p className="text-xs text-blue-900 dark:text-blue-100 truncate">{s.title}</p>
-                  <p className="text-[10px] text-blue-400 dark:text-blue-500">
-                    {s.pendingCount != null
-                      ? t("pendingResponses", { count: s.pendingCount })
-                      : t("awaitingYourResponse")}
-                  </p>
-                </Link>
-              ))}
-            </div>
+      <DropdownPortal
+        open={open}
+        onClose={() => setOpen(false)}
+        anchorRef={triggerRef}
+        align="right"
+        className="w-80 max-h-96 overflow-y-auto bg-white border border-blue-200 rounded-md shadow-lg py-2 dark:bg-slate-900 dark:border-slate-700"
+      >
+        <div className="px-3 pb-2 mb-1 border-b border-blue-100 dark:border-slate-700 flex items-center justify-between">
+          <span className="text-xs font-semibold text-blue-900 dark:text-blue-100">
+            {t("notifications")}
+          </span>
+          {loading && (
+            <span className="text-[10px] text-blue-400 dark:text-blue-500">{t("loading")}</span>
           )}
         </div>
-      )}
+
+        {total === 0 && !loading && (
+          <p className="px-3 py-4 text-xs text-center text-blue-400 dark:text-blue-300">
+            {t("noNotifications")}
+          </p>
+        )}
+
+        {data.messages.length > 0 && (
+          <div className="mb-1">
+            <p className="px-3 py-1 text-[10px] font-semibold uppercase text-blue-400 dark:text-blue-500">
+              {t("newMessages")}
+            </p>
+            {data.messages.map((m) => (
+              <button
+                key={`msg-${m.id}`}
+                type="button"
+                onClick={() => dismissMessage(m.id)}
+                className="w-full text-left px-3 py-2 hover:bg-blue-50 dark:hover:bg-blue-950/60"
+              >
+                <p className="text-xs text-blue-900 dark:text-blue-100 truncate">{m.content}</p>
+                <p className="text-[10px] text-blue-400 dark:text-blue-500">
+                  {new Date(m.createdAt).toLocaleString()}
+                </p>
+              </button>
+            ))}
+          </div>
+        )}
+
+        {data.tickets.length > 0 && (
+          <div className="mb-1">
+            <p className="px-3 py-1 text-[10px] font-semibold uppercase text-blue-400 dark:text-blue-500">
+              {t("ticketUpdates")}
+            </p>
+            {data.tickets.map((tk) => (
+              <Link
+                key={`ticket-${tk.id}`}
+                href={`/dashboard/list/tickets/${tk.id}`}
+                onClick={() => setOpen(false)}
+                className="block px-3 py-2 hover:bg-blue-50 dark:hover:bg-blue-950/60"
+              >
+                <p className="text-xs text-blue-900 dark:text-blue-100 truncate">{tk.title}</p>
+                <p className="text-[10px] text-blue-400 dark:text-blue-500 capitalize">
+                  {tk.status.toLowerCase().replace("_", " ")} · {tk.priority.toLowerCase()}
+                </p>
+              </Link>
+            ))}
+          </div>
+        )}
+
+        {data.slips.length > 0 && (
+          <div>
+            <p className="px-3 py-1 text-[10px] font-semibold uppercase text-blue-400 dark:text-blue-500">
+              {t("slipUpdates")}
+            </p>
+            {data.slips.map((s) => (
+              <Link
+                key={`slip-${s.id}`}
+                href="/dashboard/parent"
+                onClick={() => setOpen(false)}
+                className="block px-3 py-2 hover:bg-blue-50 dark:hover:bg-blue-950/60"
+              >
+                <p className="text-xs text-blue-900 dark:text-blue-100 truncate">{s.title}</p>
+                <p className="text-[10px] text-blue-400 dark:text-blue-500">
+                  {s.pendingCount != null
+                    ? t("pendingResponses", { count: s.pendingCount })
+                    : t("awaitingYourResponse")}
+                </p>
+              </Link>
+            ))}
+          </div>
+        )}
+      </DropdownPortal>
     </div>
   );
 };
 
 export default NotificationBell;
-
