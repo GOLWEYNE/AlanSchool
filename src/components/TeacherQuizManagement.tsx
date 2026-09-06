@@ -20,13 +20,20 @@ type QuizRow = {
   title: string;
   dueDate: Date;
   totalMarks: number | null;
-  questions: QuizQuestion[];
+  // Prisma's Json? field types as JsonValue | null, not our narrower
+  // QuizQuestion[] shape - kept as unknown here (same pattern as
+  // TeacherExamManagement/TeacherAssignmentManagement) and narrowed with
+  // Array.isArray at each use site below.
+  questions: unknown;
   lesson: {
     subject: { name: string };
     class: { name: string };
   };
   actions: ReactNode;
 };
+
+const getQuestions = (questions: unknown): QuizQuestion[] =>
+  Array.isArray(questions) ? (questions as QuizQuestion[]) : [];
 
 const TeacherQuizManagement = ({
   quizzes,
@@ -36,12 +43,13 @@ const TeacherQuizManagement = ({
   createButton: ReactNode;
 }) => {
   const downloadQuizAsWord = (quiz: QuizRow) => {
+    const questions = getQuestions(quiz.questions);
     const content = `
 ALAN INTERNATIONAL SCHOOL
 ${quiz.lesson.subject.name} - ${quiz.title}
 
 Class: ${quiz.lesson.class.name}
-Total Questions: ${quiz.questions.length}
+Total Questions: ${questions.length}
 ${quiz.totalMarks ? `Total Marks: ${quiz.totalMarks}` : ""}
 Due Date: ${new Date(quiz.dueDate).toLocaleDateString()}
 
@@ -75,33 +83,36 @@ Instructions:
             No quizzes yet - create an assignment and turn on the quiz builder to add questions.
           </p>
         ) : (
-          quizzes.map((quiz) => (
-            <div
-              key={quiz.id}
-              className="flex items-center justify-between bg-gray-50 dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700 hover:shadow-md transition"
-            >
-              <div className="flex-1">
-                <h3 className="font-semibold text-gray-800 dark:text-white">{quiz.title}</h3>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  {quiz.lesson.subject.name} • {quiz.lesson.class.name} • {quiz.questions.length} Questions
-                  {quiz.totalMarks ? ` • ${quiz.totalMarks} Marks` : ""}
-                </p>
-                <p className="text-xs text-gray-500 dark:text-gray-500">
-                  Due: {new Date(quiz.dueDate).toLocaleDateString()}
-                </p>
+          quizzes.map((quiz) => {
+            const questions = getQuestions(quiz.questions);
+            return (
+              <div
+                key={quiz.id}
+                className="flex items-center justify-between bg-gray-50 dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700 hover:shadow-md transition"
+              >
+                <div className="flex-1">
+                  <h3 className="font-semibold text-gray-800 dark:text-white">{quiz.title}</h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    {quiz.lesson.subject.name} • {quiz.lesson.class.name} • {questions.length} Questions
+                    {quiz.totalMarks ? ` • ${quiz.totalMarks} Marks` : ""}
+                  </p>
+                  <p className="text-xs text-gray-500 dark:text-gray-500">
+                    Due: {new Date(quiz.dueDate).toLocaleDateString()}
+                  </p>
+                </div>
+                <div className="flex items-center gap-2 ml-4">
+                  <button
+                    onClick={() => downloadQuizAsWord(quiz)}
+                    className="bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded flex items-center gap-1 text-sm"
+                  >
+                    <FileDown size={16} />
+                    Download
+                  </button>
+                  {quiz.actions}
+                </div>
               </div>
-              <div className="flex items-center gap-2 ml-4">
-                <button
-                  onClick={() => downloadQuizAsWord(quiz)}
-                  className="bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded flex items-center gap-1 text-sm"
-                >
-                  <FileDown size={16} />
-                  Download
-                </button>
-                {quiz.actions}
-              </div>
-            </div>
-          ))
+            );
+          })
         )}
       </div>
     </div>
