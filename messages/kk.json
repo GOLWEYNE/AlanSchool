@@ -69,7 +69,8 @@
   },
   "Pagination": {
     "previous": "Артқа",
-    "next": "Келесі"
+    "next": "Келесі",
+    "rowsPerPage": "Бір бетте жолдар саны"
   },
   "TableSearch": {
     "placeholder": "Жазбаларды іздеу..."
