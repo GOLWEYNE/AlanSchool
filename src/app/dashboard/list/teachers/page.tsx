@@ -7,7 +7,7 @@ import prisma from "@/lib/prisma";
 import { Class, Prisma, Subject, Teacher } from "@/generated/prisma/client";
 import Image from "next/image";
 import Link from "next/link";
-import { ITEM_PER_PAGE } from "@/lib/settings";
+import { resolvePageSize } from "@/lib/settings";
 import { auth } from "@clerk/nextjs/server";
 import { getUserRole } from "@/lib/auth";
 import { getTranslations } from "next-intl/server";
@@ -106,9 +106,10 @@ const TeacherListPage = async ({
       </td>
     </tr>
   );
-  const { page, ...queryParams } = searchParams;
+  const { page, pageSize, ...queryParams } = searchParams;
 
   const p = page ? parseInt(page) : 1;
+  const size = resolvePageSize(pageSize);
 
   // URL PARAMS CONDITION
 
@@ -142,8 +143,8 @@ const TeacherListPage = async ({
         subjects: true,
         classes: true,
       },
-      take: ITEM_PER_PAGE,
-      skip: ITEM_PER_PAGE * (p - 1),
+      take: size,
+      skip: size * (p - 1),
     }),
     prisma.teacher.count({ where: query }),
   ]);
@@ -181,7 +182,7 @@ const TeacherListPage = async ({
       {/* LIST */}
       <Table columns={columns} renderRow={renderRow} data={data} />
       {/* PAGINATION */}
-      <Pagination page={p} count={count} />
+      <Pagination page={p} count={count} pageSize={size} />
     </div>
   );
 };
