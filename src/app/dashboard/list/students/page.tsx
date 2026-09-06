@@ -6,7 +6,7 @@ import PageHero from "@/components/PageHero";
 import ReportCardGenerateButton from "@/components/ReportCardGenerateButton";
 
 import prisma from "@/lib/prisma";
-import { ITEM_PER_PAGE } from "@/lib/settings";
+import { resolvePageSize } from "@/lib/settings";
 import { Class, Prisma, Student } from "@/generated/prisma/client";
 import Image from "next/image";
 import Link from "next/link";
@@ -107,9 +107,10 @@ const StudentListPage = async ({
     </tr>
   );
 
-  const { page, ...queryParams } = searchParams;
+  const { page, pageSize, ...queryParams } = searchParams;
 
   const p = page ? parseInt(page) : 1;
+  const size = resolvePageSize(pageSize);
 
   // URL PARAMS CONDITION
 
@@ -144,8 +145,8 @@ const StudentListPage = async ({
       include: {
         class: true,
       },
-      take: ITEM_PER_PAGE,
-      skip: ITEM_PER_PAGE * (p - 1),
+      take: size,
+      skip: size * (p - 1),
     }),
     prisma.student.count({ where: query }),
   ]);
@@ -186,7 +187,7 @@ const StudentListPage = async ({
       {/* LIST */}
       <Table columns={columns} renderRow={renderRow} data={data} />
       {/* PAGINATION */}
-      <Pagination page={p} count={count} />
+      <Pagination page={p} count={count} pageSize={size} />
     </div>
   );
 };
