@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import prisma from "@/lib/prisma";
 import { getUserRole } from "@/lib/auth";
 import MyCamera from "@/components/MyCamera";
+import FormContainer from "@/components/FormContainer";
 import TeacherQuizManagement from "@/components/TeacherQuizManagement";
 import TeacherExamManagement from "@/components/TeacherExamManagement";
 import TeacherAssignmentManagement from "@/components/TeacherAssignmentManagement";
@@ -39,6 +40,74 @@ const TeacherUserPage = async () => {
   if (!teacher) {
     return notFound();
   }
+
+  // Same DB-backed reads that power the dedicated Quiz/Exam/Assignment
+  // Management pages - this profile page just embeds the same widgets
+  // inline, so it needs the same real data and action buttons rather than
+  // the placeholder local-state lists these used to render.
+  const [teacherExams, teacherAssignments] = await Promise.all([
+    prisma.exam.findMany({
+      where: { lesson: { teacherId: userId } },
+      include: {
+        lesson: {
+          select: {
+            subject: { select: { name: true } },
+            class: { select: { name: true } },
+          },
+        },
+      },
+      orderBy: { startTime: "desc" },
+    }),
+    prisma.assignment.findMany({
+      where: { lesson: { teacherId: userId } },
+      include: {
+        lesson: {
+          select: {
+            subject: { select: { name: true } },
+            class: { select: { name: true } },
+          },
+        },
+      },
+      orderBy: { dueDate: "desc" },
+    }),
+  ]);
+
+  const examRows = teacherExams.map((exam: (typeof teacherExams)[number]) => ({
+    ...exam,
+    actions: (
+      <>
+        <FormContainer table="exam" type="update" data={exam} />
+        <FormContainer table="exam" type="delete" id={exam.id} />
+      </>
+    ),
+  }));
+
+  const assignmentRows = teacherAssignments.map(
+    (assignment: (typeof teacherAssignments)[number]) => ({
+      ...assignment,
+      actions: (
+        <>
+          <FormContainer table="assignment" type="update" data={assignment} />
+          <FormContainer table="assignment" type="delete" id={assignment.id} />
+        </>
+      ),
+    })
+  );
+
+  const quizRows = teacherAssignments
+    .filter(
+      (a: (typeof teacherAssignments)[number]) =>
+        Array.isArray(a.questions) && (a.questions as unknown[]).length > 0
+    )
+    .map((quiz: (typeof teacherAssignments)[number]) => ({
+      ...quiz,
+      actions: (
+        <>
+          <FormContainer table="assignment" type="update" data={quiz} />
+          <FormContainer table="assignment" type="delete" id={quiz.id} />
+        </>
+      ),
+    }));
 
   return (
     <div className="flex-1 p-4 md:p-8 bg-gray-50 dark:bg-gray-900">
@@ -186,7 +255,10 @@ const TeacherUserPage = async () => {
             Quiz Management
           </h2>
         </div>
-        <TeacherQuizManagement />
+        <TeacherQuizManagement
+          quizzes={quizRows}
+          createButton={<FormContainer table="assignment" type="create" />}
+        />
       </div>
 
       {/* Exam Management */}
@@ -197,7 +269,10 @@ const TeacherUserPage = async () => {
             Exam Management
           </h2>
         </div>
-        <TeacherExamManagement />
+        <TeacherExamManagement
+          exams={examRows}
+          createButton={<FormContainer table="exam" type="create" />}
+        />
       </div>
 
       {/* Assignment Management */}
@@ -208,7 +283,10 @@ const TeacherUserPage = async () => {
             Assignment Management
           </h2>
         </div>
-        <TeacherAssignmentManagement />
+        <TeacherAssignmentManagement
+          assignments={assignmentRows}
+          createButton={<FormContainer table="assignment" type="create" />}
+        />
       </div>
 
       {/* Student Work Management */}
