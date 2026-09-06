@@ -4,7 +4,7 @@ import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
 import PageHero from "@/components/PageHero";
 import prisma from "@/lib/prisma";
-import { ITEM_PER_PAGE } from "@/lib/settings";
+import { resolvePageSize } from "@/lib/settings";
 import { Class, Prisma, Teacher } from "@/generated/prisma/client";
 import Image from "next/image";
 import { auth } from "@clerk/nextjs/server";
@@ -78,9 +78,10 @@ const renderRow = (item: ClassList) => (
   </tr>
 );
 
-  const { page, ...queryParams } = searchParams;
+  const { page, pageSize, ...queryParams } = searchParams;
 
   const p = page ? parseInt(page) : 1;
+  const size = resolvePageSize(pageSize);
 
   // URL PARAMS CONDITION
 
@@ -109,8 +110,8 @@ const renderRow = (item: ClassList) => (
       include: {
         supervisor: true,
       },
-      take: ITEM_PER_PAGE,
-      skip: ITEM_PER_PAGE * (p - 1),
+      take: size,
+      skip: size * (p - 1),
     }),
     prisma.class.count({ where: query }),
   ]);
@@ -146,7 +147,7 @@ const renderRow = (item: ClassList) => (
       {/* LIST */}
       <Table columns={columns} renderRow={renderRow} data={data} />
       {/* PAGINATION */}
-      <Pagination page={p} count={count} />
+      <Pagination page={p} count={count} pageSize={size} />
     </div>
   );
 };

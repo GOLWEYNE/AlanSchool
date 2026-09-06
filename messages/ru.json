@@ -69,7 +69,8 @@
   },
   "Pagination": {
     "previous": "Назад",
-    "next": "Далее"
+    "next": "Далее",
+    "rowsPerPage": "Строк на странице"
   },
   "TableSearch": {
     "placeholder": "Поиск записей..."

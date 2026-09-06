@@ -69,7 +69,8 @@
   },
   "Pagination": {
     "previous": "Previous",
-    "next": "Next"
+    "next": "Next",
+    "rowsPerPage": "Rows per page"
   },
   "TableSearch": {
     "placeholder": "Search records..."

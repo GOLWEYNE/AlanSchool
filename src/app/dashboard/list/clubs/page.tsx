@@ -5,7 +5,7 @@ import TableSearch from "@/components/TableSearch";
 import PageHero from "@/components/PageHero";
 import ClubEnrollControls, { ClubEnrollStudent } from "@/components/ClubEnrollControls";
 import prisma from "@/lib/prisma";
-import { ITEM_PER_PAGE } from "@/lib/settings";
+import { resolvePageSize } from "@/lib/settings";
 import { Club, ClubEnrollment, Prisma, Teacher } from "@/generated/prisma/client";
 import { auth } from "@clerk/nextjs/server";
 import { getUserRole } from "@/lib/auth";
@@ -114,8 +114,9 @@ const ClubListPage = async ({
     );
   };
 
-  const { page, ...queryParams } = searchParams;
+  const { page, pageSize, ...queryParams } = searchParams;
   const p = page ? parseInt(page) : 1;
+  const size = resolvePageSize(pageSize);
   const query: Prisma.ClubWhereInput = {};
   if (queryParams) {
     for (const [key, value] of Object.entries(queryParams)) {
@@ -143,8 +144,8 @@ const ClubListPage = async ({
         enrollments: { where: { studentId: { in: relevantStudents.map((s) => s.id) } } },
       },
       orderBy: { name: "asc" },
-      take: ITEM_PER_PAGE,
-      skip: ITEM_PER_PAGE * (p - 1),
+      take: size,
+      skip: size * (p - 1),
     }),
     prisma.club.count({ where: query }),
   ]);
@@ -196,7 +197,7 @@ const ClubListPage = async ({
         renderRow={(item: ClubList) => renderRow(item, waitlistPositions)}
         data={data}
       />
-      <Pagination page={p} count={count} />
+      <Pagination page={p} count={count} pageSize={size} />
     </div>
   );
 };
