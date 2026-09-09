@@ -158,7 +158,7 @@ const AttendancePage = async ({
       />
 
       <form
-        className="panel-card p-4 rounded-md mb-4 list-page-shell flex flex-wrap items-end gap-4"
+        className="panel-card p-4 rounded-md mb-4 shine-hover flex flex-wrap items-end gap-4"
         method="GET"
       >
         <div className="flex flex-col gap-1">
