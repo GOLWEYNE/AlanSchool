@@ -168,7 +168,7 @@ const FormContainer = async ({ table, type, data, id }: FormContainerProps) => {
               ? { lesson: { teacherId: currentUserId! } }
               : {}),
           },
-          select: { id: true, title: true },
+          select: { id: true, title: true, totalMarks: true },
         });
         const resultAssignments = await prisma.assignment.findMany({
           where: {
@@ -176,7 +176,7 @@ const FormContainer = async ({ table, type, data, id }: FormContainerProps) => {
               ? { lesson: { teacherId: currentUserId! } }
               : {}),
           },
-          select: { id: true, title: true },
+          select: { id: true, title: true, totalMarks: true },
         });
         relatedData = {
           students: resultStudents,
