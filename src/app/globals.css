@@ -177,6 +177,24 @@ body {
     overflow: hidden;
   }
 
+  /*
+   * Same positioning context as .shine-hover, minus `overflow: hidden`.
+   * Used on the big flex-1 list-page containers (students, teachers,
+   * results, etc.) that live inside the app shell's scrollable right
+   * column. A flex item with `overflow` set to anything but `visible`
+   * gets an automatic minimum size of 0 (CSS Flexbox spec), so
+   * `.shine-hover`'s overflow:hidden let those containers shrink to
+   * the flex slot's height and silently clip any table taller than
+   * one screen instead of growing - the ancestor's overflow-scroll
+   * never saw the real content height, so it never got a scrollbar.
+   * Dropping the clip restores normal content-based sizing so the
+   * ancestor can scroll; the shine sweep just isn't needed on data
+   * tables that scroll anyway.
+   */
+  .list-page-shell {
+    position: relative;
+  }
+
   .shine-hover::after {
     content: "";
     position: absolute;
@@ -520,23 +538,19 @@ body {
   background: linear-gradient(135deg, #3a1230 0%, #4a1a3d 100%) !important;
   border-left: 4px solid #ec4899 !important;
   color: #fbcfe8 !important;
-}
-.dark .rbc-event:nth-child(5) {
+}.dark .rbc-event:nth-child(5) {
   background: linear-gradient(135deg, #0a3630 0%, #0f4a41 100%) !important;
   border-left: 4px solid #2dd4bf !important;
   color: #99f6e4 !important;
-}
-.dark .rbc-event:nth-child(6) {
+}.dark .rbc-event:nth-child(6) {
   background: linear-gradient(135deg, #0f3a1f 0%, #144a28 100%) !important;
   border-left: 4px solid #22c55e !important;
   color: #bbf7d0 !important;
-}
-.dark .rbc-event:nth-child(7) {
+}.dark .rbc-event:nth-child(7) {
   background: linear-gradient(135deg, #3a1212 0%, #4a1717 100%) !important;
   border-left: 4px solid #ef4444 !important;
   color: #fecaca !important;
-}
-.dark .rbc-event:nth-child(8) {
+}.dark .rbc-event:nth-child(8) {
   background-color: #2a1a28 !important;
 }
 
