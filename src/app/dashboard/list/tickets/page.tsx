@@ -101,7 +101,7 @@ const TicketsBoardPage = async ({
   }
 
   return (
-    <div className="panel-card p-4 md:p-5 flex-1 m-4 mt-0 shine-hover">
+    <div className="panel-card p-4 md:p-5 flex-1 m-4 mt-0 list-page-shell">
       <PageHero
         title="Lost & Found Board"
         subtitle="Report a lost item, post something you found, and track it through to being claimed."

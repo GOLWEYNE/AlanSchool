@@ -172,7 +172,7 @@ const ClubListPage = async ({
   }
 
   return (
-    <div className="panel-card p-4 md:p-5 flex-1 m-4 mt-0 shine-hover">
+    <div className="panel-card p-4 md:p-5 flex-1 m-4 mt-0 list-page-shell">
       <PageHero
         title="Clubs"
         subtitle="Manage after-school clubs, capacity, and instructors."

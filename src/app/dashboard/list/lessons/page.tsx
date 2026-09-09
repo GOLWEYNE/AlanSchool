@@ -156,7 +156,7 @@ const LessonsListPage = async ({
   }
 
   return (
-    <div className="panel-card p-4 md:p-5 rounded-md flex-1 m-4 mt-0 shine-hover">
+    <div className="panel-card p-4 md:p-5 rounded-md flex-1 m-4 mt-0 list-page-shell">
       <div className="flex items-center justify-between">
         <h1 className="hidden md:block text-lg font-semibold text-blue-900">{t("heading")}</h1>
         <div className="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">

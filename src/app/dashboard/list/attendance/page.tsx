@@ -49,7 +49,7 @@ const AttendancePage = async ({
     const rate = total > 0 ? Math.round((presentCount / total) * 1000) / 10 : null;
 
     return (
-      <div className="panel-card p-4 md:p-5 flex-1 m-4 mt-0 shine-hover">
+      <div className="panel-card p-4 md:p-5 flex-1 m-4 mt-0 list-page-shell">
         <PageHero
           title="My Attendance"
           subtitle="Your day-by-day attendance record."
@@ -144,7 +144,7 @@ const AttendancePage = async ({
   const presentToday = existingRecords.filter((r) => r.status === "PRESENT").length;
 
   return (
-    <div className="panel-card p-4 md:p-5 flex-1 m-4 mt-0 shine-hover">
+    <div className="panel-card p-4 md:p-5 flex-1 m-4 mt-0 list-page-shell">
       <PageHero
         title="Attendance"
         subtitle="Take and monitor daily attendance by class, in real time."
