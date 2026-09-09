@@ -74,7 +74,7 @@ const TicketsBoardPage = async ({
     title: t.title,
     description: t.description,
     category: t.category,
-     status: t.status,
+    status: t.status,
     priority: t.priority,
     createdAt: t.createdAt.toISOString(),
     resolvedAt: t.resolvedAt ? t.resolvedAt.toISOString() : null,
