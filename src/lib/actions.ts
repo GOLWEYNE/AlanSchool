@@ -898,20 +898,36 @@ export const createResult = async (
       return { success: false, error: true };
     }
 
-    if (role === "teacher") {
-      if (data.examId) {
-        const exam = await prisma.exam.findFirst({
-          where: { id: data.examId, lesson: { teacherId: userId! } },
-        });
-        if (!exam) return { success: false, error: true };
-      }
+    // Always look up the linked exam/assignment - scoped to the teacher's
+    // own lessons when role === "teacher" (authorization), unscoped for
+    // admins - and use its totalMarks (if set) as the authoritative cap on
+    // the submitted score. This is the same check updateResult performs.
+    let totalMarks: number | null | undefined;
 
-      if (data.assignmentId) {
-        const assignment = await prisma.assignment.findFirst({
-          where: { id: data.assignmentId, lesson: { teacherId: userId! } },
-        });
-        if (!assignment) return { success: false, error: true };
-      }
+    if (data.examId) {
+      const exam = await prisma.exam.findFirst({
+        where: {
+          id: data.examId,
+          ...(role === "teacher" ? { lesson: { teacherId: userId! } } : {}),
+        },
+      });
+      if (!exam) return { success: false, error: true };
+      totalMarks = exam.totalMarks;
+    }
+
+    if (data.assignmentId) {
+      const assignment = await prisma.assignment.findFirst({
+        where: {
+          id: data.assignmentId,
+          ...(role === "teacher" ? { lesson: { teacherId: userId! } } : {}),
+        },
+      });
+      if (!assignment) return { success: false, error: true };
+      totalMarks = assignment.totalMarks;
+    }
+
+    if (totalMarks != null && data.score > totalMarks) {
+      return { success: false, error: true };
     }
 
     await prisma.result.create({
@@ -950,20 +966,34 @@ export const updateResult = async (
       return { success: false, error: true };
     }
 
-    if (role === "teacher") {
-      if (data.examId) {
-        const exam = await prisma.exam.findFirst({
-          where: { id: data.examId, lesson: { teacherId: userId! } },
-        });
-        if (!exam) return { success: false, error: true };
-      }
+    // Same authoritative totalMarks cap as createResult - see the comment
+    // there.
+    let totalMarks: number | null | undefined;
 
-      if (data.assignmentId) {
-        const assignment = await prisma.assignment.findFirst({
-          where: { id: data.assignmentId, lesson: { teacherId: userId! } },
-        });
-        if (!assignment) return { success: false, error: true };
-      }
+    if (data.examId) {
+      const exam = await prisma.exam.findFirst({
+        where: {
+          id: data.examId,
+          ...(role === "teacher" ? { lesson: { teacherId: userId! } } : {}),
+        },
+      });
+      if (!exam) return { success: false, error: true };
+      totalMarks = exam.totalMarks;
+    }
+
+    if (data.assignmentId) {
+      const assignment = await prisma.assignment.findFirst({
+        where: {
+          id: data.assignmentId,
+          ...(role === "teacher" ? { lesson: { teacherId: userId! } } : {}),
+        },
+      });
+      if (!assignment) return { success: false, error: true };
+      totalMarks = assignment.totalMarks;
+    }
+
+    if (totalMarks != null && data.score > totalMarks) {
+      return { success: false, error: true };
     }
 
     await prisma.result.update({
