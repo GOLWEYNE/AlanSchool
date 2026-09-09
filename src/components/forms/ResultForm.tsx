@@ -23,10 +23,13 @@ const ResultForm = ({
   relatedData?: any;
 }) => {
   const t = useTranslations("Forms");
+  const { students, exams, assignments } = relatedData;
+
   const {
     register,
     handleSubmit,
     setValue,
+    setError,
     formState: { errors },
   } = useForm<ResultSchema>({
     resolver: zodResolver(resultSchema),
@@ -35,6 +38,30 @@ const ResultForm = ({
   const [assessmentType, setAssessmentType] = useState<"exam" | "assignment">(
     data?.examId ? "exam" : "assignment"
   );
+
+  // The linked exam/assignment's totalMarks (if it has one set), used to
+  // cap the score input both visually (max attribute) and on submit. The
+  // server action re-validates this independently - this is just for
+  // immediate feedback.
+  const [selectedMax, setSelectedMax] = useState<number | undefined>(() => {
+    if (data?.examId) {
+      return (
+        exams.find((e: { id: number; totalMarks?: number | null }) => e.id === data.examId)
+          ?.totalMarks ?? undefined
+      );
+    }
+    if (data?.assignmentId) {
+      return (
+        assignments.find(
+          (a: { id: number; totalMarks?: number | null }) => a.id === data.assignmentId
+        )?.totalMarks ?? undefined
+      );
+    }
+    return undefined;
+  });
+
+  const examIdField = register("examId");
+  const assignmentIdField = register("assignmentId");
 
   const [state, formAction] = useFormState(
     type === "create" ? createResult : updateResult,
@@ -53,6 +80,14 @@ const ResultForm = ({
       values.examId = undefined;
     }
 
+    if (selectedMax != null && values.score > selectedMax) {
+      setError("score", {
+        type: "manual",
+        message: t("result.scoreExceedsMax", { max: selectedMax }),
+      });
+      return;
+    }
+
     formAction(values);
   });
 
@@ -65,8 +100,6 @@ const ResultForm = ({
       router.refresh();
     }
   }, [state, router, type, setOpen]);
-
-  const { students, exams, assignments } = relatedData;
 
   return (
     <form className="flex flex-col gap-8" onSubmit={onSubmit}>
@@ -82,7 +115,7 @@ const ResultForm = ({
           register={register}
           error={errors?.score}
           type="number"
-          inputProps={{ min: 0 }}
+          inputProps={{ min: 0, max: selectedMax }}
         />
         {data && (
           <InputField
@@ -124,6 +157,10 @@ const ResultForm = ({
                 setAssessmentType("assignment");
                 setValue("examId", undefined);
               }
+              // Switching type invalidates whatever cap was picked up from
+              // the other list - it's recomputed once a specific exam or
+              // assignment is chosen below.
+              setSelectedMax(undefined);
             }}
           >
             <option value="exam">{t("result.exam")}</option>
@@ -135,8 +172,16 @@ const ResultForm = ({
             <label className="text-xs text-gray-500 dark:text-slate-400">{t("result.exam")}</label>
             <select
               className="ring-[1.5px] ring-gray-300 dark:ring-slate-700 dark:bg-slate-800 dark:text-slate-100 p-2 rounded-md text-sm w-full"
-              {...register("examId")}
+              {...examIdField}
               defaultValue={data?.examId}
+              onChange={(e) => {
+                examIdField.onChange(e);
+                const id = parseInt(e.target.value, 10);
+                setSelectedMax(
+                  exams.find((ex: { id: number; totalMarks?: number | null }) => ex.id === id)
+                    ?.totalMarks ?? undefined
+                );
+              }}
             >
               {exams.map((exam: { id: number; title: string }) => (
                 <option value={exam.id} key={exam.id}>
@@ -150,8 +195,17 @@ const ResultForm = ({
             <label className="text-xs text-gray-500 dark:text-slate-400">{t("result.assignment")}</label>
             <select
               className="ring-[1.5px] ring-gray-300 dark:ring-slate-700 dark:bg-slate-800 dark:text-slate-100 p-2 rounded-md text-sm w-full"
-              {...register("assignmentId")}
+              {...assignmentIdField}
               defaultValue={data?.assignmentId}
+              onChange={(e) => {
+                assignmentIdField.onChange(e);
+                const id = parseInt(e.target.value, 10);
+                setSelectedMax(
+                  assignments.find(
+                    (a: { id: number; totalMarks?: number | null }) => a.id === id
+                  )?.totalMarks ?? undefined
+                );
+              }}
             >
               {assignments.map((assignment: { id: number; title: string }) => (
                 <option value={assignment.id} key={assignment.id}>
