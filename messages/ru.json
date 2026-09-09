@@ -388,6 +388,22 @@
       "toastCreated": "Результат создан!",
       "toastUpdated": "Результат обновлён!"
     },
+    "quiz": {
+      "enableLabel": "Добавить тест с автоматической проверкой",
+      "helpText": "Ученики отвечают прямо в приложении и сразу получают результат - ручная проверка не требуется. Вы всё ещё можете прикрепить PDF/Word файл выше для контекста.",
+      "questionLabel": "Вопрос {number}",
+      "questionPlaceholder": "Текст вопроса",
+      "pointsLabel": "Баллы",
+      "typeLabel": "Тип",
+      "typeMultipleChoice": "Несколько вариантов",
+      "typeTrueFalse": "Верно / Неверно",
+      "optionPlaceholder": "Вариант {number}",
+      "correctAnswerLabel": "Правильный ответ",
+      "true": "Верно",
+      "false": "Неверно",
+      "addOption": "+ Добавить вариант",
+      "addQuestion": "Добавить вопрос"
+    },
     "student": {
       "createTitle": "Создать нового ученика",
       "updateTitle": "Обновить ученика",

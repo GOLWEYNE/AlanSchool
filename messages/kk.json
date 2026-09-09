@@ -388,6 +388,22 @@
       "toastCreated": "Нәтиже құрылды!",
       "toastUpdated": "Нәтиже жаңартылды!"
     },
+    "quiz": {
+      "enableLabel": "Автоматты бағаланатын тест қосу",
+      "helpText": "Оқушылар қосымшада жауап береді және тапсырған сәтте бағасын бірден алады - қолмен тексеру қажет емес. Контекст үшін жоғарыда PDF/Word файлын да тіркей аласыз.",
+      "questionLabel": "Сұрақ {number}",
+      "questionPlaceholder": "Сұрақ мәтіні",
+      "pointsLabel": "Балл",
+      "typeLabel": "Түрі",
+      "typeMultipleChoice": "Көп таңдау",
+      "typeTrueFalse": "Дұрыс / Бұрыс",
+      "optionPlaceholder": "Нұсқа {number}",
+      "correctAnswerLabel": "Дұрыс жауап",
+      "true": "Дұрыс",
+      "false": "Бұрыс",
+      "addOption": "+ Нұсқа қосу",
+      "addQuestion": "Сұрақ қосу"
+    },
     "student": {
       "createTitle": "Жаңа оқушы құру",
       "updateTitle": "Оқушыны жаңарту",

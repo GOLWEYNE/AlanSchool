@@ -388,6 +388,22 @@
       "toastCreated": "Result has been created!",
       "toastUpdated": "Result has been updated!"
     },
+    "quiz": {
+      "enableLabel": "Add an auto-graded quiz",
+      "helpText": "Students answer these in-app and get their score the moment they submit - no manual grading needed. You can still attach a PDF/Word paper above for context.",
+      "questionLabel": "Q{number}",
+      "questionPlaceholder": "Question text",
+      "pointsLabel": "Points",
+      "typeLabel": "Type",
+      "typeMultipleChoice": "Multiple Choice",
+      "typeTrueFalse": "True / False",
+      "optionPlaceholder": "Option {number}",
+      "correctAnswerLabel": "Correct answer",
+      "true": "True",
+      "false": "False",
+      "addOption": "+ Add option",
+      "addQuestion": "Add question"
+    },
     "student": {
       "createTitle": "Create a new student",
       "updateTitle": "Update the student",
