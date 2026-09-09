@@ -150,7 +150,7 @@ const TeacherListPage = async ({
   ]);
 
   return (
-    <div className="panel-card p-4 md:p-5 rounded-md flex-1 m-4 mt-0 shine-hover">
+    <div className="panel-card p-4 md:p-5 rounded-md flex-1 m-4 mt-0 list-page-shell">
       <PageHero
         title={t("title")}
         subtitle={t("subtitle")}
