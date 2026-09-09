@@ -102,18 +102,33 @@ export const parentSchema = z.object({
 
 export type ParentSchema = z.infer<typeof parentSchema>;
 
-// A single auto-graded multiple-choice question attached to an exam or
-// assignment. Stored as JSON on Exam.questions / Assignment.questions.
-export const quizQuestionSchema = z.object({
-  text: z.string().min(1, { message: "Question text is required!" }),
-  options: z
-    .array(z.string().min(1, { message: "Option text is required!" }))
-    .min(2, { message: "Add at least 2 options!" }),
-  correctIndex: z.coerce.number().int().min(0, { message: "Pick the correct option!" }),
-  points: z.coerce.number().int().min(1).default(1),
-});
+// A single auto-graded question attached to an exam or assignment. Stored
+// as JSON on Exam.questions / Assignment.questions - there's no separate
+// Question table, so `type` is just a discriminator the builder/grading UI
+// use to decide how to render the question, not a distinct persisted shape.
+// TRUE_FALSE is really a 2-option multiple choice question under the hood
+// (options always ["True", "False"]) - grading (correctIndex === answer)
+// and existing stored data (which predates this field and has no `type`)
+// both work unchanged either way.
+export const quizQuestionSchema = z
+  .object({
+    type: z.enum(["MULTIPLE_CHOICE", "TRUE_FALSE"]).default("MULTIPLE_CHOICE"),
+    text: z.string().min(1, { message: "Question text is required!" }),
+    options: z
+      .array(z.string().min(1, { message: "Option text is required!" }))
+      .min(2, { message: "Add at least 2 options!" }),
+    correctIndex: z.coerce.number().int().min(0, { message: "Pick the correct option!" }),
+    points: z.coerce.number().int().min(1).default(1),
+  })
+  .refine(
+    (q) =>
+      q.type !== "TRUE_FALSE" ||
+      (q.options.length === 2 && q.correctIndex <= 1),
+    { message: "A True/False question must have exactly two options.", path: ["options"] }
+  );
 
 export type QuizQuestion = z.infer<typeof quizQuestionSchema>;
+export type QuizQuestionType = QuizQuestion["type"];
 
 // The quiz builder in the form serializes its question list to a JSON
 // string in a hidden input; this preprocesses that string back into a
