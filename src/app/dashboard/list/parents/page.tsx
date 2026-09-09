@@ -125,7 +125,7 @@ const renderRow = (item: ParentList) => (
   ]);
 
   return (
-    <div className="panel-card p-4 md:p-5 rounded-md flex-1 m-4 mt-0 shine-hover">
+    <div className="panel-card p-4 md:p-5 rounded-md flex-1 m-4 mt-0 list-page-shell">
       {/* TOP */}
       <div className="flex items-center justify-between">
         <h1 className="hidden md:block text-lg font-semibold text-blue-900">{t("heading")}</h1>
