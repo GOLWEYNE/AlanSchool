@@ -187,7 +187,7 @@ const AssignmentListPage = async ({
         emoji={t("emoji")}
         stats={[
           { label: t("totalLabel"), value: count },
-          { label: t("currentPageLabel"), value: data.length },
+          { label: t("currentPageLabel"), value: p },
           { label: t("teacherToolsLabel"), value: role === "teacher" || role === "admin" ? t("on") : t("off") },
         ]}
       />
