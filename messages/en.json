@@ -380,6 +380,7 @@
       "createTitle": "Create a new result",
       "updateTitle": "Update the result",
       "score": "Score",
+      "scoreExceedsMax": "Score cannot exceed {max} (the assessment's total marks).",
       "student": "Student",
       "assessmentType": "Assessment Type",
       "exam": "Exam",
