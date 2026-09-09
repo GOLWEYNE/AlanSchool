@@ -216,7 +216,7 @@ const renderRow = (item: ResultList) => (
       examId: item.examId || undefined,
       assignmentId: item.assignmentId || undefined,
     };
-  });
+  }).filter((item): item is NonNullable<typeof item> => item !== null);
 
   return (
     <div className="panel-card p-4 md:p-5 rounded-md flex-1 m-4 mt-0 list-page-shell">
