@@ -188,6 +188,13 @@ model Assignment {
   instructionsFileName String?
   // Optional structured multiple-choice quiz for automatic grading — same shape as Exam.questions.
   questions Json?
+  // Optional rubric for project/essay-style grading: JSON array of
+  // { name, description?, maxPoints }. When set, a teacher grades a
+  // submission criterion-by-criterion instead of typing one flat number;
+  // the per-criterion scores are stored on the submission (rubricScores)
+  // and summed into the usual grade field, so nothing downstream (Result,
+  // report cards, gradebook) needs to know rubrics exist.
+  rubric Json?
   // Who this assignment is assigned to: empty = every student in the lesson's class;
   // non-empty = only these specific student ids.
   targetStudentIds String[] @default([])
@@ -287,6 +294,10 @@ model StudentSubmission {
   status      SubmissionStatus @default(PENDING)
   grade       Int?
   feedback    String?
+  // Per-criterion scores when this was graded against an Assignment.rubric:
+  // JSON array of { name, maxPoints, points }. Null for auto-graded quizzes
+  // and for assignments/exams with no rubric.
+  rubricScores Json?
   gradedAt    DateTime?
   gradedById  String?
   createdAt   DateTime @default(now())
