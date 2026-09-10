@@ -482,6 +482,16 @@
       "addOption": "+ Add option",
       "addQuestion": "Add question"
     },
+    "rubric": {
+      "enableLabel": "Add a grading rubric",
+      "helpText": "For project- and essay-style work a single number doesn't do justice to. Define weighted criteria here; when you grade a submission you'll score each one and the total is added up for you.",
+      "criterionLabel": "C{number}",
+      "namePlaceholder": "Criterion name",
+      "descriptionPlaceholder": "What this criterion looks for (optional)",
+      "maxPointsLabel": "Max points",
+      "addCriterion": "+ Add criterion",
+      "totalPoints": "Total: {total} pts"
+    },
     "student": {
       "createTitle": "Create a new student",
       "updateTitle": "Update the student",
