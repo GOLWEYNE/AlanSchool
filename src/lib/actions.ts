@@ -1481,6 +1481,91 @@ const syncResultScore = async (
   }
 };
 
+export type GradebookScoreState = { success: boolean; error: boolean; message?: string };
+
+// Inline cell-save for the gradebook grid (one student x one exam/assignment
+// cell). Plain async, not CurrentState-shaped, because GradebookGrid calls
+// it directly per cell - optimistic local update, await, revert + toast on
+// failure - the same pattern rescheduleLesson uses for TimetableGrid, rather
+// than routing through useFormState. Shares createResult/updateResult's
+// teacher-scoping and totalMarks cap, and syncResultScore's findFirst-then-
+// create/update (Result has no unique constraint to upsert on). A null
+// score clears the cell by deleting any existing Result row, so a grade
+// entered by mistake can be blanked back out.
+export const saveGradebookScore = async (payload: {
+  studentId: string;
+  examId?: number;
+  assignmentId?: number;
+  score: number | null;
+}): Promise<GradebookScoreState> => {
+  const { userId, sessionClaims } = auth();
+  const role = getUserRole(sessionClaims);
+
+  if (isReadOnlyRole(role) || (role !== "admin" && role !== "teacher")) {
+    return rejectUnauthorized();
+  }
+
+  if (!payload.examId && !payload.assignmentId) {
+    return { success: false, error: true };
+  }
+
+  try {
+    let totalMarks: number | null | undefined;
+
+    if (payload.examId) {
+      const exam = await prisma.exam.findFirst({
+        where: {
+          id: payload.examId,
+          ...(role === "teacher" ? { lesson: { teacherId: userId! } } : {}),
+        },
+      });
+      if (!exam) return rejectUnauthorized();
+      totalMarks = exam.totalMarks;
+    }
+
+    if (payload.assignmentId) {
+      const assignment = await prisma.assignment.findFirst({
+        where: {
+          id: payload.assignmentId,
+          ...(role === "teacher" ? { lesson: { teacherId: userId! } } : {}),
+        },
+      });
+      if (!assignment) return rejectUnauthorized();
+      totalMarks = assignment.totalMarks;
+    }
+
+    if (payload.score == null) {
+      await prisma.result.deleteMany({
+        where: payload.examId
+          ? { examId: payload.examId, studentId: payload.studentId }
+          : { assignmentId: payload.assignmentId!, studentId: payload.studentId },
+      });
+      revalidatePath("/dashboard/list/gradebook");
+      return { success: true, error: false };
+    }
+
+    if (payload.score < 0) {
+      return { success: false, error: true, message: "Score can't be negative." };
+    }
+    if (totalMarks != null && payload.score > totalMarks) {
+      return { success: false, error: true, message: `Score can't exceed ${totalMarks}.` };
+    }
+
+    await syncResultScore(
+      payload.studentId,
+      payload.examId ?? null,
+      payload.assignmentId ?? null,
+      payload.score
+    );
+
+    revalidatePath("/dashboard/list/gradebook");
+    return { success: true, error: false };
+  } catch (err) {
+    console.log(err);
+    return { success: false, error: true };
+  }
+};
+
 // A student uploading their completed file, and/or answering an
 // auto-graded quiz, for one exam or assignment. Enforces that the work is
 // actually assigned to them and that the deadline hasn't passed - once
