@@ -13,6 +13,7 @@ import { useTranslations } from "next-intl";
 import WorkFileUpload from "./WorkFileUpload";
 import WorkTargetPicker from "./WorkTargetPicker";
 import WorkQuizBuilder, { QuizQuestionDraft } from "./WorkQuizBuilder";
+import WorkRubricBuilder, { RubricCriterionDraft } from "./WorkRubricBuilder";
 
 const AssignmentForm = ({
   type,
@@ -40,6 +41,7 @@ const AssignmentForm = ({
       instructionsFileUrl: data?.instructionsFileUrl ?? "",
       instructionsFileName: data?.instructionsFileName ?? "",
       questions: (data?.questions as QuizQuestionDraft[] | undefined) ?? [],
+      rubric: (data?.rubric as RubricCriterionDraft[] | undefined) ?? [],
       targetStudentIds: data?.targetStudentIds ?? [],
     },
   });
@@ -216,6 +218,7 @@ const AssignmentForm = ({
         <input type="hidden" {...register("instructionsFileUrl")} />
         <input type="hidden" {...register("instructionsFileName")} />
         <input type="hidden" {...register("questions")} />
+        <input type="hidden" {...register("rubric")} />
         <WorkFileUpload
           defaultFileUrl={data?.instructionsFileUrl}
           defaultFileName={data?.instructionsFileName}
@@ -236,6 +239,11 @@ const AssignmentForm = ({
         <WorkQuizBuilder
           defaultQuestions={data?.questions}
           onChange={(questions) => setValue("questions", questions as any)}
+        />
+
+        <WorkRubricBuilder
+          defaultCriteria={data?.rubric}
+          onChange={(rubric) => setValue("rubric", rubric as any)}
         />
       </div>
 
