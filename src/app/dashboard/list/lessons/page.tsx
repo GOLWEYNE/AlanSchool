@@ -13,6 +13,7 @@ type LessonList = Lesson & {
   subject: Subject;
   class: Class;
   teacher: Teacher;
+  objectives: { id: number }[];
 };
 
 // Every stored lesson time only carries a meaningful day-of-week + time-of-day
@@ -137,6 +138,9 @@ const LessonsListPage = async ({
       subject: true,
       class: true,
       teacher: true,
+      // Just ids - LessonForm only needs this to pre-check the objective
+      // tag picker's boxes when editing.
+      objectives: { select: { id: true } },
     },
     orderBy: { startTime: "asc" },
   });
