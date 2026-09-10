@@ -18,12 +18,14 @@
     "students": "Students",
     "parents": "Parents",
     "subjects": "Subjects",
+    "objectives": "Objectives",
     "classes": "Classes",
     "lessons": "Lessons",
     "exams": "Exams",
     "assignments": "Assignments",
     "results": "Results",
     "gradebook": "Gradebook",
+    "curriculumCoverage": "Curriculum Coverage",
     "attendance": "Attendance",
     "events": "Events",
     "messages": "Messages",
@@ -141,6 +143,19 @@
       "columns": {
         "subjectName": "Subject Name",
         "teachers": "Teachers",
+        "actions": "Actions"
+      }
+    },
+    "objectives": {
+      "heading": "Curriculum Objectives",
+      "subheading": "The curriculum's learning objectives, by subject - tag them onto lessons and exams to track coverage.",
+      "allGrades": "All grades",
+      "columns": {
+        "title": "Objective",
+        "code": "Code",
+        "subject": "Subject",
+        "grade": "Grade",
+        "strand": "Strand",
         "actions": "Actions"
       }
     },
@@ -301,6 +316,35 @@
       "cleared": "Score cleared.",
       "scoreExceedsMax": "Score can't exceed {max}.",
       "scoreNegative": "Score can't be negative."
+    },
+    "curriculumCoverage": {
+      "title": "Curriculum Coverage",
+      "subtitle": "See which curriculum objectives a class has actually been taught or assessed against for a subject, and where the gaps are.",
+      "emoji": "🧭",
+      "classLabel": "Class",
+      "subjectLabel": "Subject",
+      "fromLabel": "From",
+      "toLabel": "To",
+      "loadButton": "Load report",
+      "dateRangeHint": "The date range only filters exams - tagged lessons always count, since a lesson is a standing weekly slot with no date of its own.",
+      "objectivesLabel": "Objectives",
+      "coveredLabel": "Covered",
+      "gapsLabel": "Gaps",
+      "coverageLabel": "Coverage",
+      "noClasses": "No classes are assigned to you yet.",
+      "selectPrompt": "Pick a class and subject to load the report.",
+      "noObjectives": "No curriculum objectives are defined for this subject yet.",
+      "restricted": "The curriculum coverage report is for teachers and admins.",
+      "columns": {
+        "objective": "Objective",
+        "strand": "Strand",
+        "status": "Status",
+        "coveredBy": "Covered by"
+      },
+      "covered": "Covered",
+      "gap": "Not yet covered",
+      "lessonBadge": "Lesson",
+      "examBadge": "Exam"
     },
     "events": {
       "title": "Events",
@@ -506,6 +550,25 @@
       "teachers": "Teachers",
       "toastCreated": "Subject has been created!",
       "toastUpdated": "Subject has been updated!"
+    },
+    "objective": {
+      "createTitle": "Create a new curriculum objective",
+      "updateTitle": "Update the curriculum objective",
+      "code": "Code (optional)",
+      "title": "Objective",
+      "strand": "Strand (optional)",
+      "description": "Description (optional)",
+      "subject": "Subject",
+      "grade": "Grade",
+      "allGrades": "All grades",
+      "toastCreated": "Curriculum objective has been created!",
+      "toastUpdated": "Curriculum objective has been updated!"
+    },
+    "objectiveTags": {
+      "label": "Curriculum objectives",
+      "helpText": "Tag the objectives this covers, so the Curriculum Coverage report can track it.",
+      "noneForSubject": "No objectives defined yet for this subject.",
+      "pickSubject": "Pick a subject above to see its objectives."
     },
     "teacher": {
       "createTitle": "Create a new teacher",
