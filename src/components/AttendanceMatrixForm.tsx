@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useFormState } from "react-dom";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { toast } from "react-toastify";
 import { recordAttendanceBulk } from "@/lib/masterModuleActions";
 
@@ -14,13 +15,6 @@ type StudentRow = {
   surname: string;
   status: Status;
 };
-
-const STATUS_OPTIONS: { value: Status; label: string }[] = [
-  { value: "PRESENT", label: "Present" },
-  { value: "ABSENT", label: "Absent" },
-  { value: "LATE", label: "Late" },
-  { value: "EXCUSED", label: "Excused" },
-];
 
 const STATUS_STYLES: Record<Status, string> = {
   PRESENT: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300",
@@ -42,6 +36,14 @@ const AttendanceMatrixForm = ({
   students: { id: string; name: string; surname: string; existingStatus?: Status }[];
 }) => {
   const router = useRouter();
+  const t = useTranslations("List.attendance");
+
+  const STATUS_OPTIONS: { value: Status; label: string }[] = [
+    { value: "PRESENT", label: t("statusPresent") },
+    { value: "ABSENT", label: t("statusAbsent") },
+    { value: "LATE", label: t("statusLate") },
+    { value: "EXCUSED", label: t("statusExcused") },
+  ];
 
   const buildRows = (): StudentRow[] =>
     students.map((s) => ({
@@ -67,7 +69,7 @@ const AttendanceMatrixForm = ({
 
   useEffect(() => {
     if (state.success) {
-      toast("Attendance saved.");
+      toast(t("attendanceSaved"));
       router.refresh();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -93,7 +95,7 @@ const AttendanceMatrixForm = ({
     <div className="panel-card p-4 rounded-md mb-4 shine-hover">
       <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
         <h2 className="text-lg font-semibold text-blue-900 dark:text-blue-100">
-          Mark attendance
+          {t("markAttendance")}
         </h2>
         <div className="flex flex-wrap gap-2 text-xs">
           {STATUS_OPTIONS.map((opt) => (
@@ -109,7 +111,7 @@ const AttendanceMatrixForm = ({
 
       {rows.length > 0 && (
         <div className="flex flex-wrap items-center gap-2 mb-3">
-          <span className="text-xs text-gray-500 dark:text-slate-400 mr-1">Quick fill:</span>
+          <span className="text-xs text-gray-500 dark:text-slate-400 mr-1">{t("quickFill")}</span>
           {STATUS_OPTIONS.map((opt) => (
             <button
               key={opt.value}
@@ -117,7 +119,7 @@ const AttendanceMatrixForm = ({
               onClick={() => markAll(opt.value)}
               className="text-xs font-semibold px-2.5 py-1 rounded-md ring-1 ring-gray-300 dark:ring-slate-700 hover:bg-gray-50 dark:hover:bg-slate-800"
             >
-              All {opt.label}
+              {t("allStatus", { status: opt.label })}
             </button>
           ))}
         </div>
@@ -125,7 +127,7 @@ const AttendanceMatrixForm = ({
 
       {rows.length === 0 ? (
         <p className="text-sm text-gray-500 dark:text-slate-400">
-          No students in this class.
+          {t("noStudents")}
         </p>
       ) : (
         <div className="flex flex-col divide-y divide-gray-100 dark:divide-slate-800">
@@ -152,7 +154,7 @@ const AttendanceMatrixForm = ({
 
       {state.error && (
         <span className="text-red-500 text-sm block mt-2">
-          {state.message || "Something went wrong."}
+          {state.message || t("somethingWrong")}
         </span>
       )}
 
@@ -168,7 +170,7 @@ const AttendanceMatrixForm = ({
           }
           className="bg-blue-500 text-white px-4 py-2 rounded-md text-sm font-semibold mt-4"
         >
-          Save attendance
+          {t("saveAttendance")}
         </button>
       )}
     </div>

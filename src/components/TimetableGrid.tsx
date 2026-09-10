@@ -9,6 +9,7 @@ import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import "react-big-calendar/lib/addons/dragAndDrop/styles.css";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { toast } from "react-toastify";
 import { rescheduleLesson } from "@/lib/actions";
 
@@ -86,6 +87,7 @@ const TimetableGrid = ({
   actionsByLessonId?: Record<number, ReactNode>;
 }) => {
   const router = useRouter();
+  const t = useTranslations("List.lessons");
   const [items, setItems] = useState<TimetableLessonItem[]>(lessons);
   const [selected, setSelected] = useState<TimetableLessonItem | null>(null);
   const [weekAnchor] = useState<Date>(getWeekAnchor);
@@ -141,10 +143,10 @@ const TimetableGrid = ({
     const result = await rescheduleLesson({ id: args.event.id, start, end });
     if (!result.success) {
       setItems(previous);
-      toast.error(result.message || "Couldn't reschedule that lesson.");
+      toast.error(result.message || t("rescheduleError"));
       return;
     }
-    toast("Lesson rescheduled.");
+    toast(t("rescheduled"));
     router.refresh();
   };
 
@@ -181,17 +183,17 @@ const TimetableGrid = ({
     <div className="mt-4">
       <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
         <h2 className="text-sm font-semibold text-blue-900 dark:text-blue-100">
-          This Week&apos;s Timetable (Mon–Fri)
+          {t("timetableHeading")}
         </h2>
         {conflictIds.size > 0 && (
           <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-red-600 dark:text-red-400">
             <span className="w-2.5 h-2.5 rounded-full inline-block" style={{ backgroundColor: CONFLICT_COLOR }} />
-            {conflictIds.size} lesson{conflictIds.size === 1 ? "" : "s"} in conflict
+            {t("conflictCount", { count: conflictIds.size })}
           </span>
         )}
         {canEdit && (
           <span className="text-xs text-gray-500 dark:text-slate-400">
-            Drag a lesson to reschedule it, or drag its edge to resize it.
+            {t("dragHint")}
           </span>
         )}
       </div>
@@ -238,17 +240,19 @@ const TimetableGrid = ({
             </span>
             {conflictIds.has(selected.id) && (
               <p className="text-xs font-semibold text-red-600 dark:text-red-400 mb-2">
-                This lesson conflicts with another one for the same teacher or class.
+                {t("conflictWarning")}
               </p>
             )}
             <p className="text-sm text-gray-600 dark:text-slate-300 mb-1">
-              Class: {selected.className}
+              {t("classField", { value: selected.className })}
             </p>
             <p className="text-sm text-gray-600 dark:text-slate-300 mb-1">
-              Teacher: {selected.teacherName}
+              {t("teacherField", { value: selected.teacherName })}
             </p>
             {selected.room && (
-              <p className="text-sm text-gray-600 dark:text-slate-300 mb-1">Room: {selected.room}</p>
+              <p className="text-sm text-gray-600 dark:text-slate-300 mb-1">
+                {t("roomField", { value: selected.room })}
+              </p>
             )}
             <p className="text-xs text-gray-500 dark:text-slate-400 mb-4">
               {selected.start.toLocaleDateString(undefined, { weekday: "long" })}{" "}
