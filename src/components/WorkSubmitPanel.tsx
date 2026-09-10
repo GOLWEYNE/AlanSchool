@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { CldUploadWidget } from "next-cloudinary";
 import { UploadCloud, CheckCircle2, Lock } from "lucide-react";
 import { submitStudentWork } from "@/lib/actions";
+import type { RubricCriterion, RubricScore } from "@/lib/formValidationSchemas";
 
 type QuestionForStudent = { text: string; options: string[]; points: number };
 
@@ -18,6 +19,7 @@ type ExistingSubmission = {
   grade: number | null;
   feedback: string | null;
   answers: number[] | null;
+  rubricScores?: RubricScore[] | null;
 } | null;
 
 // The student-facing half of an exam/assignment: read the attached paper,
@@ -32,12 +34,14 @@ const WorkSubmitPanel = ({
   deadline,
   questions,
   existingSubmission,
+  rubric,
 }: {
   workType: "exam" | "assignment";
   workId: number;
   deadline: string;
   questions?: QuestionForStudent[] | null;
   existingSubmission?: ExistingSubmission;
+  rubric?: RubricCriterion[] | null;
 }) => {
   const router = useRouter();
   const [state, formAction] = useFormState(submitStudentWork, {
@@ -98,16 +102,49 @@ const WorkSubmitPanel = ({
             .
           </p>
           {existingSubmission.status === "GRADED" && (
-            <p className="mt-1 text-gray-700 dark:text-slate-300">
-              Grade: <span className="font-semibold">{existingSubmission.grade}</span>
-              {existingSubmission.feedback ? ` - ${existingSubmission.feedback}` : ""}
-            </p>
+            <>
+              <p className="mt-1 text-gray-700 dark:text-slate-300">
+                Grade: <span className="font-semibold">{existingSubmission.grade}</span>
+                {existingSubmission.feedback ? ` - ${existingSubmission.feedback}` : ""}
+              </p>
+              {existingSubmission.rubricScores && existingSubmission.rubricScores.length > 0 && (
+                <ul className="mt-1.5 flex flex-col gap-0.5 text-xs text-gray-600 dark:text-slate-400">
+                  {existingSubmission.rubricScores.map((s) => (
+                    <li key={s.name} className="flex justify-between gap-2">
+                      <span>{s.name}</span>
+                      <span className="font-medium shrink-0">
+                        {s.points}/{s.maxPoints}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </>
           )}
           {!isPast && (
             <p className="mt-1 text-xs text-gray-500 dark:text-slate-400">
               You can resubmit until the deadline to replace this.
             </p>
           )}
+        </div>
+      )}
+
+      {!!rubric?.length && !alreadyGraded && (
+        <div className="rounded-lg border border-gray-200 dark:border-slate-700 p-3 text-sm">
+          <p className="font-semibold text-gray-700 dark:text-slate-200 mb-1.5">
+            This will be graded on:
+          </p>
+          <ul className="flex flex-col gap-1">
+            {rubric.map((c) => (
+              <li key={c.name} className="flex justify-between gap-2 text-xs text-gray-600 dark:text-slate-400">
+                <span>
+                  {c.name}
+                  {c.description ? ` - ${c.description}` : ""}
+                </span>
+                <span className="font-medium shrink-0">{c.maxPoints} pts</span>
+              </li>
+            ))}
+          </ul>
         </div>
       )}
 

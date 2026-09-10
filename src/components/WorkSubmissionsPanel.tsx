@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useFormState } from "react-dom";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import { FileText } from "lucide-react";
 import { gradeSubmission } from "@/lib/actions";
+import type { RubricCriterion, RubricScore } from "@/lib/formValidationSchemas";
 
 type Row = {
   studentId: string;
@@ -20,6 +21,7 @@ type Row = {
     grade: number | null;
     feedback: string | null;
     autoGraded: boolean;
+    rubricScores?: RubricScore[] | null;
   } | null;
 };
 
@@ -33,16 +35,25 @@ const statusBadge: Record<string, string> = {
 
 // One row: a student's submission status, their file (if any), and either
 // their auto-graded quiz score (read-only) or a small inline form for a
-// teacher/admin to type a grade + feedback for a file-based submission.
-const GradeRow = ({ row }: { row: Row }) => {
+// teacher/admin to grade a file-based submission - a flat number + feedback
+// by default, or, when the assignment has a rubric, one score per criterion
+// that sums into the grade automatically instead of being typed free-hand.
+const GradeRow = ({ row, rubric }: { row: Row; rubric?: RubricCriterion[] | null }) => {
   const router = useRouter();
   const [state, formAction] = useFormState(gradeSubmission, {
     success: false,
     error: false,
   });
+  const hasRubric = !!rubric?.length;
   const [grade, setGrade] = useState(row.submission?.grade ?? 0);
   const [feedback, setFeedback] = useState(row.submission?.feedback ?? "");
   const [editing, setEditing] = useState(false);
+  const [rubricPoints, setRubricPoints] = useState<number[]>(() =>
+    (rubric ?? []).map((c) => {
+      const existing = row.submission?.rubricScores?.find((s) => s.name === c.name);
+      return existing ? existing.points : 0;
+    })
+  );
 
   useEffect(() => {
     if (state.success) {
@@ -50,9 +61,19 @@ const GradeRow = ({ row }: { row: Row }) => {
       setEditing(false);
       router.refresh();
     } else if (state.error) {
-      toast.error("Couldn't save the grade.");
+      toast.error(("message" in state && state.message) || "Couldn't save the grade.");
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state, router]);
+
+  const rubricTotal = useMemo(
+    () => rubricPoints.reduce((sum, p) => sum + (p || 0), 0),
+    [rubricPoints]
+  );
+
+  const rubricBreakdown = row.submission?.rubricScores?.length
+    ? row.submission.rubricScores.map((s) => `${s.name}: ${s.points}/${s.maxPoints}`).join(", ")
+    : undefined;
 
   const status = row.submission?.status ?? "MISSING";
 
@@ -94,6 +115,63 @@ const GradeRow = ({ row }: { row: Row }) => {
           <span className="text-xs text-gray-400">Not submitted</span>
         ) : row.submission.autoGraded ? (
           <span className="text-sm font-semibold">{row.submission.grade} (auto)</span>
+        ) : editing && hasRubric ? (
+          <form
+            className="flex flex-col gap-2 min-w-[16rem]"
+            onSubmit={(e) => {
+              e.preventDefault();
+              const rubricScores = rubric!.map((c, i) => ({
+                name: c.name,
+                maxPoints: c.maxPoints,
+                points: Math.max(0, Math.min(rubricPoints[i] || 0, c.maxPoints)),
+              }));
+              formAction({
+                submissionId: row.submission!.id,
+                grade: rubricTotal,
+                feedback,
+                rubricScores,
+              });
+            }}
+          >
+            {rubric!.map((c, i) => (
+              <div key={c.name} className="flex items-center gap-2">
+                <span className="flex-1 min-w-0 truncate text-xs text-gray-600 dark:text-slate-300" title={c.description}>
+                  {c.name}
+                </span>
+                <input
+                  type="number"
+                  min={0}
+                  max={c.maxPoints}
+                  value={rubricPoints[i] ?? 0}
+                  onChange={(e) =>
+                    setRubricPoints((pts) =>
+                      pts.map((p, idx) => (idx === i ? parseInt(e.target.value) || 0 : p))
+                    )
+                  }
+                  className="w-14 ring-[1.5px] ring-gray-300 dark:ring-slate-700 dark:bg-slate-800 dark:text-slate-100 p-1 rounded text-sm shrink-0"
+                />
+                <span className="text-xs text-gray-400 shrink-0">/ {c.maxPoints}</span>
+              </div>
+            ))}
+            <input
+              type="text"
+              placeholder="Feedback (optional)"
+              value={feedback}
+              onChange={(e) => setFeedback(e.target.value)}
+              className="ring-[1.5px] ring-gray-300 dark:ring-slate-700 dark:bg-slate-800 dark:text-slate-100 p-1 rounded text-sm"
+            />
+            <div className="flex items-center justify-between gap-2">
+              <span className="text-xs font-semibold text-gray-600 dark:text-slate-300">
+                Total: {rubricTotal}
+              </span>
+              <button
+                type="submit"
+                className="text-xs bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded shrink-0"
+              >
+                Save
+              </button>
+            </div>
+          </form>
         ) : editing ? (
           <form
             className="flex items-center gap-2"
@@ -124,8 +202,16 @@ const GradeRow = ({ row }: { row: Row }) => {
             </button>
           </form>
         ) : (
-          <button onClick={() => setEditing(true)} className="text-xs text-blue-500 hover:underline">
-            {row.submission.grade !== null ? `${row.submission.grade} - edit` : "Grade"}
+          <button
+            onClick={() => setEditing(true)}
+            className="text-xs text-blue-500 hover:underline"
+            title={rubricBreakdown}
+          >
+            {row.submission.grade !== null
+              ? `${row.submission.grade}${rubricBreakdown ? " (rubric)" : ""} - edit`
+              : hasRubric
+              ? "Grade with rubric"
+              : "Grade"}
           </button>
         )}
       </td>
@@ -133,7 +219,13 @@ const GradeRow = ({ row }: { row: Row }) => {
   );
 };
 
-const WorkSubmissionsPanel = ({ rows }: { rows: Row[] }) => {
+const WorkSubmissionsPanel = ({
+  rows,
+  rubric,
+}: {
+  rows: Row[];
+  rubric?: RubricCriterion[] | null;
+}) => {
   if (rows.length === 0) {
     return <p className="text-sm text-gray-400">No students are assigned this yet.</p>;
   }
@@ -147,12 +239,12 @@ const WorkSubmissionsPanel = ({ rows }: { rows: Row[] }) => {
             <th className="p-3">Status</th>
             <th className="p-3">Submitted</th>
             <th className="p-3">File</th>
-            <th className="p-3">Grade</th>
+            <th className="p-3">Grade{rubric?.length ? " (rubric)" : ""}</th>
           </tr>
         </thead>
         <tbody>
           {rows.map((row) => (
-            <GradeRow key={row.studentId} row={row} />
+            <GradeRow key={row.studentId} row={row} rubric={rubric} />
           ))}
         </tbody>
       </table>
