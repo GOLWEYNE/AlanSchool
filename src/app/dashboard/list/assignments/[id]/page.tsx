@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import { FileText, Clock } from "lucide-react";
 import WorkSubmitPanel from "@/components/WorkSubmitPanel";
 import WorkSubmissionsPanel from "@/components/WorkSubmissionsPanel";
+import type { RubricCriterion, RubricScore } from "@/lib/formValidationSchemas";
 
 type QuizQuestion = { text: string; options: string[]; correctIndex: number; points: number };
 
@@ -62,6 +63,7 @@ const SingleAssignmentPage = async ({ params: { id } }: { params: { id: string }
   const questions = (assignment.questions as unknown as QuizQuestion[] | null) ?? null;
   const studentQuestions =
     questions?.map((q) => ({ text: q.text, options: q.options, points: q.points })) ?? null;
+  const rubric = (assignment.rubric as unknown as RubricCriterion[] | null) ?? null;
 
   let mySubmission = null;
   if (role === "student" && student) {
@@ -77,6 +79,7 @@ const SingleAssignmentPage = async ({ params: { id } }: { params: { id: string }
         grade: sub.grade,
         feedback: sub.feedback,
         answers: (sub.answers as unknown as number[] | null) ?? null,
+        rubricScores: (sub.rubricScores as unknown as RubricScore[] | null) ?? null,
       };
     }
   }
@@ -94,6 +97,7 @@ const SingleAssignmentPage = async ({ params: { id } }: { params: { id: string }
       grade: number | null;
       feedback: string | null;
       autoGraded: boolean;
+      rubricScores: RubricScore[] | null;
     } | null;
   }[] = [];
 
@@ -130,6 +134,7 @@ const SingleAssignmentPage = async ({ params: { id } }: { params: { id: string }
               grade: sub.grade,
               feedback: sub.feedback,
               autoGraded: !!questions?.length,
+              rubricScores: (sub.rubricScores as unknown as RubricScore[] | null) ?? null,
             }
           : null,
       };
@@ -195,6 +200,7 @@ const SingleAssignmentPage = async ({ params: { id } }: { params: { id: string }
             deadline={assignment.dueDate.toISOString()}
             questions={studentQuestions}
             existingSubmission={mySubmission}
+            rubric={rubric}
           />
         </div>
       )}
@@ -204,7 +210,7 @@ const SingleAssignmentPage = async ({ params: { id } }: { params: { id: string }
           <h2 className="text-sm font-semibold text-blue-900 dark:text-blue-100 mb-3">
             Submissions ({submissionRows.filter((r) => r.submission).length}/{submissionRows.length})
           </h2>
-          <WorkSubmissionsPanel rows={submissionRows} />
+          <WorkSubmissionsPanel rows={submissionRows} rubric={rubric} />
         </div>
       )}
     </div>
