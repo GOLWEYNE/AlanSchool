@@ -18,6 +18,7 @@ type ExamList = Exam & {
     class: Class;
     teacher: Teacher;
   };
+  objectives: { id: number }[];
 };
 
 const ExamListPage = async ({
@@ -173,6 +174,9 @@ const renderRow = (item: ExamList) => (
             class: { select: { name: true } },
           },
         },
+        // Just ids - ExamForm only needs this to pre-check the objective
+        // tag picker's boxes when editing.
+        objectives: { select: { id: true } },
       },
       take: size,
       skip: size * (p - 1),
