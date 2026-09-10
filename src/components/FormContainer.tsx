@@ -17,7 +17,8 @@ export type FormContainerProps = {
     | "attendance"
     | "event"
     | "announcement"
-    | "club";
+    | "club"
+    | "objective";
   type: "create" | "update" | "delete";
   data?: any;
   id?: number | string;
@@ -79,12 +80,30 @@ const FormContainer = async ({ table, type, data, id }: FormContainerProps) => {
         const lessonTeachers = await prisma.teacher.findMany({
           select: { id: true, name: true, surname: true },
         });
+        // Every objective in the school, so the tag picker can filter
+        // client-side as the teacher switches the Subject dropdown, with
+        // no extra round trip - same reasoning as examStudents below.
+        const lessonObjectives = await prisma.curriculumObjective.findMany({
+          select: { id: true, title: true, code: true, subjectId: true },
+        });
         relatedData = {
           subjects: lessonSubjects,
           classes: lessonClasses,
           teachers: lessonTeachers,
+          objectives: lessonObjectives,
         };
         break;
+      case "objective": {
+        const objectiveSubjects = await prisma.subject.findMany({
+          select: { id: true, name: true },
+        });
+        const objectiveGrades = await prisma.grade.findMany({
+          select: { id: true, level: true },
+          orderBy: { level: "asc" },
+        });
+        relatedData = { subjects: objectiveSubjects, grades: objectiveGrades };
+        break;
+      }
       case "class":
         const classGrades = await prisma.grade.findMany({
           select: { id: true, level: true },
@@ -117,7 +136,7 @@ const FormContainer = async ({ table, type, data, id }: FormContainerProps) => {
           where: {
             ...(role === "teacher" ? { teacherId: currentUserId! } : {}),
           },
-          select: { id: true, name: true, classId: true },
+          select: { id: true, name: true, classId: true, subjectId: true },
         });
         // Every student across every class the lessons above belong to, so
         // the "specific students" picker can filter client-side as the
@@ -133,7 +152,17 @@ const FormContainer = async ({ table, type, data, id }: FormContainerProps) => {
         const examClasses = await prisma.class.findMany({
           select: { id: true, name: true },
         });
-        relatedData = { lessons: examLessons, students: examStudents, classes: examClasses };
+        // Every objective, so the tag picker can filter client-side by the
+        // selected lesson's subject, same reasoning as lessonObjectives.
+        const examObjectives = await prisma.curriculumObjective.findMany({
+          select: { id: true, title: true, code: true, subjectId: true },
+        });
+        relatedData = {
+          lessons: examLessons,
+          students: examStudents,
+          classes: examClasses,
+          objectives: examObjectives,
+        };
         break;
       }
       case "assignment": {

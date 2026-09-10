@@ -39,6 +39,12 @@ const getMenuItems = (t: Awaited<ReturnType<typeof getTranslations>>, role: stri
           visible: ["admin"],
         },
         {
+          icon: "/subject.png",
+          label: t("objectives"),
+          href: "/dashboard/list/objectives",
+          visible: ["admin"],
+        },
+        {
           icon: "/class.png",
           label: t("classes"),
           href: "/dashboard/list/classes",
@@ -118,6 +124,12 @@ const getMenuItems = (t: Awaited<ReturnType<typeof getTranslations>>, role: stri
           icon: "/result.png",
           label: t("gradebook"),
           href: "/dashboard/list/gradebook",
+          visible: ["admin", "teacher"],
+        },
+        {
+          icon: "/result.png",
+          label: t("curriculumCoverage"),
+          href: "/dashboard/list/curriculum-coverage",
           visible: ["admin", "teacher"],
         },
         {
