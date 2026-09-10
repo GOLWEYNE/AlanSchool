@@ -143,6 +143,41 @@ const questionsField = z.preprocess((val) => {
   }
 }, z.array(quizQuestionSchema).optional());
 
+// A single rubric criterion for project/essay-style grading. Stored as
+// JSON on Assignment.rubric - same "no separate table" approach as
+// quizQuestionSchema above. When a teacher grades against a rubric, each
+// criterion's awarded points are stored on the submission (rubricScores)
+// and summed into the flat `grade` field everything else already reads.
+export const rubricCriterionSchema = z.object({
+  name: z.string().min(1, { message: "Criterion name is required!" }),
+  description: z.string().optional(),
+  maxPoints: z.coerce.number().int().min(1).default(10),
+});
+
+export type RubricCriterion = z.infer<typeof rubricCriterionSchema>;
+
+// Same string-or-array preprocessing as questionsField, for the rubric
+// builder's hidden input.
+const rubricField = z.preprocess((val) => {
+  if (typeof val !== "string") return val;
+  if (!val.trim()) return undefined;
+  try {
+    return JSON.parse(val);
+  } catch {
+    return val;
+  }
+}, z.array(rubricCriterionSchema).optional());
+
+// One criterion's awarded score when grading against a rubric - what a
+// teacher actually submits per-row, echoed back into rubricScores.
+export const rubricScoreSchema = z.object({
+  name: z.string().min(1),
+  maxPoints: z.coerce.number().int().min(1),
+  points: z.coerce.number().min(0),
+});
+
+export type RubricScore = z.infer<typeof rubricScoreSchema>;
+
 // Checkbox groups (a single input name reused per option) come back from
 // react-hook-form as a string when only one box is checked, so this
 // normalizes to a string array either way. An empty/omitted list means
@@ -190,6 +225,7 @@ export const assignmentSchema = z.object({
   instructionsFileUrl: z.string().optional(),
   instructionsFileName: z.string().optional(),
   questions: questionsField,
+  rubric: rubricField,
   targetStudentIds: targetStudentIdsField,
   lessonId: z.coerce.number({ message: "Lesson is required!" }),
 });
@@ -231,6 +267,10 @@ export const gradeSubmissionSchema = z.object({
   submissionId: z.coerce.number({ message: "Submission is required!" }),
   grade: z.coerce.number().min(0, { message: "Grade is required!" }),
   feedback: z.string().optional(),
+  // Present only when grading against the assignment's rubric - the
+  // server re-sums and re-validates these against Assignment.rubric
+  // rather than trusting the client's `grade` total.
+  rubricScores: z.array(rubricScoreSchema).optional(),
 });
 
 export type GradeSubmissionSchema = z.infer<typeof gradeSubmissionSchema>;

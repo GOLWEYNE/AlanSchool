@@ -14,6 +14,8 @@ import {
   ParentSchema,
   QuizQuestion,
   ResultSchema,
+  RubricCriterion,
+  RubricScore,
   StudentSchema,
   SubjectSchema,
   SubmissionSchema,
@@ -791,6 +793,7 @@ export const createAssignment = async (
         instructionsFileUrl: data.instructionsFileUrl || null,
         instructionsFileName: data.instructionsFileName || null,
         questions: data.questions ?? Prisma.DbNull,
+        rubric: data.rubric ?? Prisma.DbNull,
         targetStudentIds: data.targetStudentIds ?? [],
         lessonId: data.lessonId,
       },
@@ -843,6 +846,7 @@ export const updateAssignment = async (
         instructionsFileUrl: data.instructionsFileUrl || null,
         instructionsFileName: data.instructionsFileName || null,
         questions: data.questions ?? Prisma.DbNull,
+        rubric: data.rubric ?? Prisma.DbNull,
         targetStudentIds: data.targetStudentIds ?? [],
         lessonId: data.lessonId,
       },
@@ -1711,7 +1715,9 @@ export const gradeSubmission = async (
       where: { id: data.submissionId },
       include: {
         exam: { select: { lesson: { select: { teacherId: true } } } },
-        assignment: { select: { lesson: { select: { teacherId: true } } } },
+        assignment: {
+          select: { lesson: { select: { teacherId: true } }, rubric: true },
+        },
       },
     });
 
@@ -1723,14 +1729,48 @@ export const gradeSubmission = async (
       if (teacherId !== userId) return rejectUnauthorized();
     }
 
+    // When grading against a rubric, never trust the client's total - re-sum
+    // and re-validate each criterion's score against the assignment's own
+    // stored rubric (not the client's copy of it) before persisting.
+    let grade = data.grade;
+    let rubricScores: RubricScore[] | undefined;
+
+    if (data.rubricScores && data.rubricScores.length > 0) {
+      const rubric =
+        (submission.assignment?.rubric as unknown as RubricCriterion[] | null) ?? null;
+      if (!rubric || rubric.length === 0) {
+        return { success: false, error: true, message: "This assignment has no rubric." };
+      }
+
+      const byName = new Map(rubric.map((c) => [c.name, c]));
+      let total = 0;
+      const validated: RubricScore[] = [];
+      for (const entry of data.rubricScores) {
+        const criterion = byName.get(entry.name);
+        if (!criterion) {
+          return {
+            success: false,
+            error: true,
+            message: "The rubric has changed - please reload and try again.",
+          };
+        }
+        const points = Math.max(0, Math.min(entry.points, criterion.maxPoints));
+        total += points;
+        validated.push({ name: criterion.name, maxPoints: criterion.maxPoints, points });
+      }
+      grade = total;
+      rubricScores = validated;
+    }
+
     await prisma.studentSubmission.update({
       where: { id: data.submissionId },
       data: {
-        grade: data.grade,
+        grade,
         feedback: data.feedback || null,
         status: "GRADED",
         gradedAt: new Date(),
         gradedById: userId!,
+        ...(rubricScores ? { rubricScores } : {}),
       },
     });
 
@@ -1738,7 +1778,7 @@ export const gradeSubmission = async (
       submission.studentId,
       submission.examId,
       submission.assignmentId,
-      data.grade
+      grade
     );
 
     revalidatePath("/dashboard/list/exams");
