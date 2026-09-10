@@ -6,6 +6,7 @@ import {
   AssignmentSchema,
   ClassSchema,
   ClubSchema,
+  CurriculumObjectiveSchema,
   ExamSchema,
   EventSchema,
   FeaturedVideoSchema,
@@ -116,6 +117,78 @@ export const deleteSubject = async (
     });
 
     // revalidatePath("/list/subjects");
+    return { success: true, error: false };
+  } catch (err) {
+    console.log(err);
+    return { success: false, error: true };
+  }
+};
+
+// A subject's curriculum-objective bank (e.g. the Grade 1-2 science
+// curriculum's objectives) is admin-managed, same as the subjects list
+// itself - teachers tag lessons/exams against existing objectives, but
+// don't add to or edit the master list.
+export const createCurriculumObjective = async (
+  currentState: CurrentState,
+  data: CurriculumObjectiveSchema
+) => {
+  if (!isAdmin()) return rejectUnauthorized();
+  try {
+    await prisma.curriculumObjective.create({
+      data: {
+        code: data.code || null,
+        title: data.title,
+        description: data.description || null,
+        strand: data.strand || null,
+        subjectId: data.subjectId,
+        gradeId: data.gradeId ?? null,
+      },
+    });
+
+    return { success: true, error: false };
+  } catch (err) {
+    console.log(err);
+    return { success: false, error: true };
+  }
+};
+
+export const updateCurriculumObjective = async (
+  currentState: CurrentState,
+  data: CurriculumObjectiveSchema
+) => {
+  if (!isAdmin()) return rejectUnauthorized();
+  if (!data.id) return { success: false, error: true };
+  try {
+    await prisma.curriculumObjective.update({
+      where: { id: data.id },
+      data: {
+        code: data.code || null,
+        title: data.title,
+        description: data.description || null,
+        strand: data.strand || null,
+        subjectId: data.subjectId,
+        gradeId: data.gradeId ?? null,
+      },
+    });
+
+    return { success: true, error: false };
+  } catch (err) {
+    console.log(err);
+    return { success: false, error: true };
+  }
+};
+
+export const deleteCurriculumObjective = async (
+  currentState: CurrentState,
+  data: FormData
+) => {
+  if (!isAdmin()) return rejectUnauthorized();
+  const id = data.get("id") as string;
+  try {
+    await prisma.curriculumObjective.delete({
+      where: { id: parseInt(id) },
+    });
+
     return { success: true, error: false };
   } catch (err) {
     console.log(err);
@@ -564,6 +637,9 @@ export const createExam = async (
         questions: data.questions ?? Prisma.DbNull,
         targetStudentIds: data.targetStudentIds ?? [],
         lessonId: data.lessonId,
+        objectives: {
+          connect: (data.objectiveIds ?? []).map((id) => ({ id })),
+        },
       },
     });
 
@@ -614,6 +690,9 @@ export const updateExam = async (
         questions: data.questions ?? Prisma.DbNull,
         targetStudentIds: data.targetStudentIds ?? [],
         lessonId: data.lessonId,
+        objectives: {
+          set: (data.objectiveIds ?? []).map((id) => ({ id })),
+        },
       },
     });
 
@@ -1218,6 +1297,9 @@ export const createLesson = async (
         subjectId: data.subjectId,
         classId: data.classId,
         teacherId: data.teacherId,
+        objectives: {
+          connect: (data.objectiveIds ?? []).map((id) => ({ id })),
+        },
       },
     });
 
@@ -1262,6 +1344,9 @@ export const updateLesson = async (
       subjectId: data.subjectId,
       classId: data.classId,
       teacherId: data.teacherId,
+      objectives: {
+        set: (data.objectiveIds ?? []).map((id) => ({ id })),
+      },
     },
   });
 

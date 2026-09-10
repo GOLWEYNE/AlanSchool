@@ -8,6 +8,24 @@ export const subjectSchema = z.object({
 
 export type SubjectSchema = z.infer<typeof subjectSchema>;
 
+// One entry in a subject's curriculum-objective bank (e.g. the Grade 1-2
+// science curriculum's objectives), tagged onto Lessons/Exams so coverage
+// can be reported over a term.
+export const curriculumObjectiveSchema = z.object({
+  id: z.coerce.number().optional(),
+  code: z.string().optional(),
+  title: z.string().min(1, { message: "Objective title is required!" }),
+  description: z.string().optional(),
+  strand: z.string().optional(),
+  subjectId: z.coerce.number({ message: "Subject is required!" }),
+  gradeId: z.preprocess(
+    (value) => (value === "" ? undefined : value),
+    z.coerce.number().optional()
+  ),
+});
+
+export type CurriculumObjectiveSchema = z.infer<typeof curriculumObjectiveSchema>;
+
 export const classSchema = z.object({
   id: z.coerce.number().optional(),
   name: z.string().min(1, { message: "Subject name is required!" }),
@@ -189,6 +207,15 @@ const targetStudentIdsField = z
   }, z.array(z.string()))
   .default([]);
 
+// Same checkbox-group normalization as targetStudentIdsField, but for the
+// curriculum objectives a Lesson/Exam is tagged with (numeric ids).
+const objectiveIdsField = z
+  .preprocess((val) => {
+    if (val === undefined || val === null || val === "") return [];
+    return Array.isArray(val) ? val : [val];
+  }, z.array(z.coerce.number()))
+  .default([]);
+
 export const examSchema = z.object({
   id: z.coerce.number().optional(),
   title: z.string().min(1, { message: "Title name is required!" }),
@@ -207,6 +234,7 @@ export const examSchema = z.object({
   instructionsFileName: z.string().optional(),
   questions: questionsField,
   targetStudentIds: targetStudentIdsField,
+  objectiveIds: objectiveIdsField,
   lessonId: z.coerce.number({ message: "Lesson is required!" }),
 });
 
@@ -311,6 +339,7 @@ export const lessonSchema = z.object({
   subjectId: z.coerce.number({ message: "Subject is required!" }),
   classId: z.coerce.number({ message: "Class is required!" }),
   teacherId: z.string().min(1, { message: "Teacher is required!" }),
+  objectiveIds: objectiveIdsField,
 });
 
 export type LessonSchema = z.infer<typeof lessonSchema>;
