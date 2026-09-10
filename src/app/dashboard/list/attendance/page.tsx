@@ -3,15 +3,9 @@ import AttendanceMatrixForm from "@/components/AttendanceMatrixForm";
 import prisma from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 import { getUserRole } from "@/lib/auth";
+import { getTranslations } from "next-intl/server";
 
 type Status = "PRESENT" | "ABSENT" | "LATE" | "EXCUSED";
-
-const STATUS_LABELS: Record<string, string> = {
-  PRESENT: "Present",
-  ABSENT: "Absent",
-  LATE: "Late",
-  EXCUSED: "Excused",
-};
 
 const STATUS_BADGE: Record<string, string> = {
   PRESENT: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300",
@@ -35,6 +29,14 @@ const AttendancePage = async ({
   const { userId, sessionClaims } = auth();
   const role = getUserRole(sessionClaims);
   const date = searchParams.date || todayISO();
+  const t = await getTranslations("List.attendance");
+
+  const STATUS_LABELS: Record<string, string> = {
+    PRESENT: t("statusPresent"),
+    ABSENT: t("statusAbsent"),
+    LATE: t("statusLate"),
+    EXCUSED: t("statusExcused"),
+  };
 
   if (role === "student") {
     const records = await prisma.attendanceRecord.findMany({
@@ -51,17 +53,17 @@ const AttendancePage = async ({
     return (
       <div className="panel-card p-4 md:p-5 flex-1 m-4 mt-0 list-page-shell">
         <PageHero
-          title="My Attendance"
-          subtitle="Your day-by-day attendance record."
-          emoji="🗓️"
+          title={t("studentTitle")}
+          subtitle={t("studentSubtitle")}
+          emoji={t("emoji")}
           stats={[
-            { label: "Records", value: total },
-            { label: "Attendance Rate", value: rate !== null ? `${rate}%` : "—" },
+            { label: t("recordsLabel"), value: total },
+            { label: t("attendanceRateLabel"), value: rate !== null ? `${rate}%` : "—" },
           ]}
         />
         {records.length === 0 ? (
           <p className="text-sm text-gray-500 dark:text-slate-400 p-4">
-            No attendance has been recorded yet.
+            {t("noRecords")}
           </p>
         ) : (
           <div className="data-table-shell mt-4">
@@ -69,16 +71,16 @@ const AttendancePage = async ({
               <thead className="bg-gradient-to-r from-blue-50 via-sky-50 to-yellow-50 dark:from-blue-950/40 dark:via-slate-900/60 dark:to-yellow-950/20 border-b border-blue-100 dark:border-slate-800">
                 <tr className="text-left text-blue-700 dark:text-blue-300 text-sm">
                   <th className="px-4 py-3 font-semibold uppercase tracking-wide text-[11px]">
-                    Date
+                    {t("dateColumn")}
                   </th>
                   <th className="px-4 py-3 font-semibold uppercase tracking-wide text-[11px]">
-                    Class
+                    {t("classColumn")}
                   </th>
                   <th className="px-4 py-3 font-semibold uppercase tracking-wide text-[11px]">
-                    Status
+                    {t("statusColumn")}
                   </th>
                   <th className="px-4 py-3 font-semibold uppercase tracking-wide text-[11px]">
-                    Note
+                    {t("noteColumn")}
                   </th>
                 </tr>
               </thead>
@@ -146,14 +148,14 @@ const AttendancePage = async ({
   return (
     <div className="panel-card p-4 md:p-5 flex-1 m-4 mt-0 list-page-shell">
       <PageHero
-        title="Attendance"
-        subtitle="Take and monitor daily attendance by class, in real time."
-        emoji="🗓️"
+        title={t("adminTitle")}
+        subtitle={t("adminSubtitle")}
+        emoji={t("emoji")}
         stats={[
-          { label: "Classes", value: classes.length },
-          { label: "Roster Size", value: students.length },
-          { label: "Marked Today", value: `${existingRecords.length}/${students.length}` },
-          { label: "Present", value: presentToday },
+          { label: t("classesLabel"), value: classes.length },
+          { label: t("rosterSizeLabel"), value: students.length },
+          { label: t("markedTodayLabel"), value: `${existingRecords.length}/${students.length}` },
+          { label: t("presentLabel"), value: presentToday },
         ]}
       />
 
@@ -162,7 +164,7 @@ const AttendancePage = async ({
         method="GET"
       >
         <div className="flex flex-col gap-1">
-          <label className="text-xs text-gray-500 dark:text-slate-400">Class</label>
+          <label className="text-xs text-gray-500 dark:text-slate-400">{t("classLabel")}</label>
           <select
             name="classId"
             defaultValue={selectedClassId}
@@ -176,7 +178,7 @@ const AttendancePage = async ({
           </select>
         </div>
         <div className="flex flex-col gap-1">
-          <label className="text-xs text-gray-500 dark:text-slate-400">Date</label>
+          <label className="text-xs text-gray-500 dark:text-slate-400">{t("dateLabel")}</label>
           <input
             type="date"
             name="date"
@@ -185,13 +187,13 @@ const AttendancePage = async ({
           />
         </div>
         <button className="bg-blue-500 text-white px-4 py-2 rounded-md text-sm font-semibold">
-          Load roster
+          {t("loadRosterButton")}
         </button>
       </form>
 
       {classes.length === 0 ? (
         <p className="text-sm text-gray-500 dark:text-slate-400 p-4">
-          No classes are assigned to you yet.
+          {t("noClasses")}
         </p>
       ) : selectedClassId ? (
         <AttendanceMatrixForm
