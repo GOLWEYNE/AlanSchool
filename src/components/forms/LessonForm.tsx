@@ -10,6 +10,7 @@ import { Dispatch, SetStateAction, useEffect } from "react";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
+import ObjectiveTagPicker from "./ObjectiveTagPicker";
 
 const LessonForm = ({
   type,
@@ -26,6 +27,7 @@ const LessonForm = ({
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors },
   } = useForm<LessonSchema>({
     resolver: zodResolver(lessonSchema),
@@ -53,7 +55,12 @@ const LessonForm = ({
     }
   }, [state, router, type, setOpen]);
 
-  const { subjects, classes, teachers } = relatedData;
+  const { subjects, classes, teachers, objectives = [] } = relatedData;
+
+  // Narrows the objective tag picker to the currently-selected subject -
+  // watch() keeps it reactive as the teacher changes the Subject dropdown,
+  // falling back to the lesson's existing subject when first opening it.
+  const selectedSubjectId = watch("subjectId") ?? data?.subjectId;
 
   return (
     <form className="flex flex-col gap-8" onSubmit={onSubmit}>
@@ -192,6 +199,13 @@ const LessonForm = ({
             </p>
           )}
         </div>
+
+        <ObjectiveTagPicker
+          objectives={objectives}
+          selectedSubjectId={selectedSubjectId}
+          register={register}
+          defaultObjectiveIds={data?.objectives?.map((o: { id: number }) => o.id)}
+        />
       </div>
 
       {state.error && <span className="text-red-500">{t("common.somethingWrong")}</span>}

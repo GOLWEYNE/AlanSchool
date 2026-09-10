@@ -13,6 +13,7 @@ import { useTranslations } from "next-intl";
 import WorkFileUpload from "./WorkFileUpload";
 import WorkTargetPicker from "./WorkTargetPicker";
 import WorkQuizBuilder, { QuizQuestionDraft } from "./WorkQuizBuilder";
+import ObjectiveTagPicker from "./ObjectiveTagPicker";
 
 const ExamForm = ({
   type,
@@ -42,6 +43,7 @@ const ExamForm = ({
       instructionsFileName: data?.instructionsFileName ?? "",
       questions: (data?.questions as QuizQuestionDraft[] | undefined) ?? [],
       targetStudentIds: data?.targetStudentIds ?? [],
+      objectiveIds: data?.objectives?.map((o: { id: number }) => o.id) ?? [],
     },
   });
 
@@ -67,7 +69,7 @@ const ExamForm = ({
     }
   }, [state, router, type, setOpen]);
 
-  const { lessons, students = [], classes = [] } = relatedData;
+  const { lessons, students = [], classes = [], objectives = [] } = relatedData;
 
   // The "Class" picker below isn't a form field of its own - it's a
   // client-side filter that narrows which lessons show up in the Lesson
@@ -92,6 +94,13 @@ const ExamForm = ({
   const filteredLessons = classLessons.length > 0 ? classLessons : lessons;
 
   const selectedLessonId = watch("lessonId") ?? data?.lessonId;
+
+  // The objective tag picker is scoped to a subject, not a lesson - derive
+  // it from whichever lesson is currently selected, same source the class
+  // filter above reads classId from.
+  const selectedSubjectId = lessons.find(
+    (l: { id: number; subjectId: number }) => String(l.id) === String(selectedLessonId)
+  )?.subjectId;
 
   // Keep the selected lesson in sync with the class filter: if the class
   // changes and the currently-picked lesson no longer belongs to it, fall
@@ -239,6 +248,13 @@ const ExamForm = ({
           selectedLessonId={selectedLessonId}
           register={register}
           defaultTargetIds={data?.targetStudentIds}
+        />
+
+        <ObjectiveTagPicker
+          objectives={objectives}
+          selectedSubjectId={selectedSubjectId}
+          register={register}
+          defaultObjectiveIds={data?.objectives?.map((o: { id: number }) => o.id)}
         />
 
         <WorkQuizBuilder
