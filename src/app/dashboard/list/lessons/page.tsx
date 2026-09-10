@@ -1,4 +1,5 @@
 import FormContainer from "@/components/FormContainer";
+import PageHero from "@/components/PageHero";
 import TableSearch from "@/components/TableSearch";
 import TimetableGrid, { TimetableLessonItem } from "@/components/TimetableGrid";
 import prisma from "@/lib/prisma";
@@ -157,8 +158,22 @@ const LessonsListPage = async ({
 
   return (
     <div className="panel-card p-4 md:p-5 rounded-md flex-1 m-4 mt-0 list-page-shell">
-      <div className="flex items-center justify-between">
-        <h1 className="hidden md:block text-lg font-semibold text-blue-900">{t("heading")}</h1>
+      <PageHero
+        title={t("heading")}
+        subtitle={t("subtitle")}
+        emoji={t("emoji")}
+        stats={[
+          { label: t("lessonsLabel"), value: data.length },
+          ...(role === "admin"
+            ? [
+                { label: t("classesLabel"), value: classOptions.length },
+                { label: t("teachersLabel"), value: teacherOptions.length },
+              ]
+            : []),
+        ]}
+      />
+
+      <div className="flex items-center justify-end">
         <div className="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
           <TableSearch />
           <div className="flex items-center gap-4 self-end">
@@ -173,13 +188,13 @@ const LessonsListPage = async ({
           method="GET"
         >
           <div className="flex flex-col gap-1">
-            <label className="text-xs text-gray-500 dark:text-slate-400">Class</label>
+            <label className="text-xs text-gray-500 dark:text-slate-400">{t("classLabel")}</label>
             <select
               name="classId"
               defaultValue={selectedTeacherId ? "" : selectedClassId}
               className="ring-[1.5px] ring-gray-300 dark:ring-slate-700 dark:bg-slate-800 dark:text-slate-100 p-2 rounded-md text-sm min-w-[10rem]"
             >
-              <option value="">All classes</option>
+              <option value="">{t("allClasses")}</option>
               {classOptions.map((c) => (
                 <option key={c.id} value={c.id}>
                   {c.name}
@@ -188,13 +203,13 @@ const LessonsListPage = async ({
             </select>
           </div>
           <div className="flex flex-col gap-1">
-            <label className="text-xs text-gray-500 dark:text-slate-400">Teacher</label>
+            <label className="text-xs text-gray-500 dark:text-slate-400">{t("teacherLabel")}</label>
             <select
               name="teacherId"
               defaultValue={selectedTeacherId ?? ""}
               className="ring-[1.5px] ring-gray-300 dark:ring-slate-700 dark:bg-slate-800 dark:text-slate-100 p-2 rounded-md text-sm min-w-[12rem]"
             >
-              <option value="">Any teacher</option>
+              <option value="">{t("anyTeacher")}</option>
               {teacherOptions.map((tOpt) => (
                 <option key={tOpt.id} value={tOpt.id}>
                   {tOpt.name} {tOpt.surname}
@@ -203,7 +218,7 @@ const LessonsListPage = async ({
             </select>
           </div>
           <button className="bg-blue-500 text-white px-4 py-2 rounded-md text-sm font-semibold">
-            Load timetable
+            {t("loadButton")}
           </button>
         </form>
       )}
