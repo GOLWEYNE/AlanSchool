@@ -18,7 +18,8 @@ export type FormContainerProps = {
     | "event"
     | "announcement"
     | "club"
-    | "objective";
+    | "objective"
+    | "behaviorLog";
   type: "create" | "update" | "delete";
   data?: any;
   id?: number | string;
@@ -42,10 +43,10 @@ const FormContainer = async ({ table, type, data, id }: FormContainerProps) => {
 
   if (role === "teacher") {
     // Per the permission matrix, a teacher's create/update/delete rights
-    // are restricted strictly to exams, assignments, results, and lesson
-    // scheduling for their own classes — never subjects, classes, or user
-    // accounts (those stay admin-only).
-    const teacherFullCrudTables = ["exam", "assignment", "result"];
+    // are restricted strictly to exams, assignments, results, behavior
+    // logs, and lesson scheduling for their own classes — never subjects,
+    // classes, or user accounts (those stay admin-only).
+    const teacherFullCrudTables = ["exam", "assignment", "result", "behaviorLog"];
     const teacherCreateUpdateOnlyTables = ["lesson"];
 
     const allowed =
@@ -231,6 +232,27 @@ const FormContainer = async ({ table, type, data, id }: FormContainerProps) => {
         });
         relatedData = { teachers: clubTeachers };
         break;
+      case "behaviorLog": {
+        // Admin can log behavior for any student; a teacher only for
+        // students in a class they actually teach or supervise.
+        const behaviorLogStudents = await prisma.student.findMany({
+          where:
+            role === "teacher"
+              ? {
+                  class: {
+                    OR: [
+                      { supervisorId: currentUserId! },
+                      { lessons: { some: { teacherId: currentUserId! } } },
+                    ],
+                  },
+                }
+              : {},
+          select: { id: true, name: true, surname: true },
+          orderBy: { name: "asc" },
+        });
+        relatedData = { students: behaviorLogStudents };
+        break;
+      }
 
       default:
         break;
