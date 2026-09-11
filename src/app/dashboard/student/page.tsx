@@ -8,6 +8,7 @@ import ClassLeaderboard from "@/components/ClassLeaderboard";
 import BigCalendarContainer from "@/components/BigCalendarContainer";
 import EventCalendar from "@/components/EventCalendar";
 import ReportCardsPanel from "@/components/ReportCardsPanel";
+import ReportCardBehaviorTimeline from "@/components/reportCard/ReportCardBehaviorTimeline";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import prisma from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
@@ -36,6 +37,16 @@ const StudentPage = async () => {
         prisma.result.count({ where: { studentId: userId! } }),
       ])
     : [0, 0, 0];
+
+  // Merit/incident notes a teacher marked visible to the student
+  // themselves, same BehaviorLog rows a parent sees on their side.
+  const behaviorLogs = userId
+    ? await prisma.behaviorLog.findMany({
+        where: { studentId: userId, visibleToParent: true },
+        orderBy: { date: "desc" },
+        select: { id: true, type: true, title: true, description: true, date: true },
+      })
+    : [];
 
   return (
     <ProtectedRoute allowedRoles={["student"]}>
@@ -94,6 +105,7 @@ const StudentPage = async () => {
           <AttendancePulse role="student" studentIds={userId ? [userId] : []} />
           <ClassLeaderboard role="student" studentIds={userId ? [userId] : []} />
           {userId && <ReportCardsPanel studentId={userId} />}
+          <ReportCardBehaviorTimeline logs={behaviorLogs} />
           {/* EVENTS CARD */}
           <div className="bg-gradient-to-r from-yellow-400 to-yellow-300 rounded-lg p-4 shadow-md">
             <div className="flex items-center gap-2 mb-3">

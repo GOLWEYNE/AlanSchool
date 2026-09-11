@@ -15,6 +15,7 @@ import {
   deleteSubject,
   deleteTeacher,
 } from "@/lib/actions";
+import { deleteBehaviorLog } from "@/lib/masterModuleActions";
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -46,6 +47,7 @@ const deleteActionMap: Partial<Record<TableName, DeleteAction>> = {
   lesson: deleteLesson,
   club: deleteClub,
   objective: deleteCurriculumObjective,
+  behaviorLog: deleteBehaviorLog,
 };
 
 // USE LAZY LOADING
@@ -90,6 +92,9 @@ const ClubForm = dynamic(() => import("./forms/ClubForm"), {
   loading: () => <h1>Loading...</h1>,
 });
 const ObjectiveForm = dynamic(() => import("./forms/ObjectiveForm"), {
+  loading: () => <h1>Loading...</h1>,
+});
+const BehaviorLogForm = dynamic(() => import("./forms/BehaviorLogForm"), {
   loading: () => <h1>Loading...</h1>,
 });
 
@@ -187,6 +192,14 @@ const forms: Partial<Record<TableName, FormRenderer>> = {
   ),
   objective: (setOpen, type, data, relatedData) => (
     <ObjectiveForm
+      type={type}
+      data={data}
+      setOpen={setOpen}
+      relatedData={relatedData}
+    />
+  ),
+  behaviorLog: (setOpen, type, data, relatedData) => (
+    <BehaviorLogForm
       type={type}
       data={data}
       setOpen={setOpen}

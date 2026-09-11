@@ -8,6 +8,7 @@ import ClassLeaderboard from "@/components/ClassLeaderboard";
 import BigCalendarContainer from "@/components/BigCalendarContainer";
 import ParentChildAttendanceCard from "@/components/ParentChildAttendanceCard";
 import ReportCardsPanel from "@/components/ReportCardsPanel";
+import ReportCardBehaviorTimeline from "@/components/reportCard/ReportCardBehaviorTimeline";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import prisma from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
@@ -84,6 +85,17 @@ const Parentpage = async () => {
       student: { parentId: userId! },
     },
   });
+
+  // Merit/incident notes a teacher has explicitly marked visible to
+  // parents - the BehaviorLog model has existed since the master module
+  // package landed, but nothing surfaced it here until now.
+  const behaviorLogs = studentIds.length
+    ? await prisma.behaviorLog.findMany({
+        where: { studentId: { in: studentIds }, visibleToParent: true },
+        orderBy: { date: "desc" },
+        select: { id: true, studentId: true, type: true, title: true, description: true, date: true },
+      })
+    : [];
 
   const eventsCount = await prisma.event.count({
     where: {
@@ -168,13 +180,20 @@ const Parentpage = async () => {
               )}
             </div>
           </div>
-          {children.map((child) => (
-            <ReportCardsPanel
-              key={child.id}
-              studentId={child.id}
-              studentName={`${child.name} ${child.surname}`}
-            />
-          ))}
+          {children.map((child) => {
+            const childBehaviorLogs = behaviorLogs.filter((log) => log.studentId === child.id);
+            return (
+              <div key={child.id} className="flex flex-col gap-4">
+                <ReportCardsPanel studentId={child.id} studentName={`${child.name} ${child.surname}`} />
+                {children.length > 1 && (
+                  <h2 className="text-sm font-semibold text-gray-500 dark:text-slate-400 -mb-2">
+                    {child.name} {child.surname}&apos;s Behavior &amp; Conduct
+                  </h2>
+                )}
+                <ReportCardBehaviorTimeline logs={childBehaviorLogs} />
+              </div>
+            );
+          })}
           <Announcements />
         </div>
       </div>

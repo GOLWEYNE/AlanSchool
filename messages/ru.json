@@ -35,7 +35,8 @@
     "logout": "Выйти",
     "reportCards": "Табели успеваемости",
     "lostFound": "Бюро находок",
-    "featuredVideo": "Видео дня"
+    "featuredVideo": "Видео дня",
+    "behaviorLog": "Журнал поведения"
   },
   "Navbar": {
     "searchPlaceholder": "Поиск...",
@@ -238,7 +239,15 @@
       "noStudents": "В этом классе нет учеников.",
       "somethingWrong": "Что-то пошло не так.",
       "saveAttendance": "Сохранить посещаемость",
-      "attendanceSaved": "Посещаемость сохранена."
+      "attendanceSaved": "Посещаемость сохранена.",
+      "trendTitle": "Динамика посещаемости",
+      "trendRate": "Присутствие: {rate}%",
+      "trendStudentLabel": "Ученик",
+      "trendAllStudents": "Весь класс",
+      "trendFromLabel": "С",
+      "trendToLabel": "По",
+      "trendLoadButton": "Обновить график",
+      "trendNoData": "За этот период посещаемость ещё не зафиксирована."
     },
     "exams": {
       "title": "Экзамены",
@@ -401,6 +410,26 @@
       "downloadLabel": "Скачать PDF",
       "regenerateLabel": "Пересоздать",
       "empty": "Табели успеваемости ещё не созданы."
+    },
+    "behaviorLog": {
+      "heading": "Журнал поведения",
+      "subheading": "Заметки о поощрениях и замечаниях по ученикам - отметьте запись как видимую родителям, чтобы поделиться ею.",
+      "emoji": "📝",
+      "restricted": "Журнал поведения доступен только учителям и администраторам.",
+      "totalLabel": "Записи",
+      "positiveLabel": "Положительные (на странице)",
+      "typePositive": "Поощрение",
+      "typeConcern": "Замечание",
+      "typeIncident": "Инцидент",
+      "columns": {
+        "date": "Дата",
+        "student": "Ученик",
+        "type": "Тип",
+        "title": "Заголовок",
+        "loggedBy": "Кем внесено",
+        "visibleToParent": "Видно родителю",
+        "actions": "Действия"
+      }
     }
   },
   "Forms": {
@@ -598,6 +627,20 @@
       "generateForStudent": "Создать для ученика",
       "toastBulkGenerated": "Табели успеваемости созданы для класса!",
       "error": "Что-то пошло не так. Попробуйте снова."
+    },
+    "behaviorLog": {
+      "createTitle": "Добавить запись о поведении",
+      "updateTitle": "Изменить запись о поведении",
+      "student": "Ученик",
+      "type": "Тип",
+      "typePositive": "Поощрение",
+      "typeConcern": "Замечание",
+      "typeIncident": "Инцидент",
+      "title": "Заголовок",
+      "description": "Описание",
+      "visibleToParent": "Видно родителю ученика",
+      "toastCreated": "Запись о поведении добавлена!",
+      "toastUpdated": "Запись о поведении обновлена!"
     }
   }
 }

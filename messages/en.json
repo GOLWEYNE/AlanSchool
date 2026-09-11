@@ -35,7 +35,8 @@
     "logout": "Logout",
     "reportCards": "Report Cards",
     "lostFound": "Lost & Found",
-    "featuredVideo": "Featured Video"
+    "featuredVideo": "Featured Video",
+    "behaviorLog": "Behavior Log"
   },
   "Navbar": {
     "searchPlaceholder": "Search...",
@@ -238,7 +239,15 @@
       "noStudents": "No students in this class.",
       "somethingWrong": "Something went wrong.",
       "saveAttendance": "Save attendance",
-      "attendanceSaved": "Attendance saved."
+      "attendanceSaved": "Attendance saved.",
+      "trendTitle": "Attendance Trend",
+      "trendRate": "{rate}% present",
+      "trendStudentLabel": "Student",
+      "trendAllStudents": "Whole class",
+      "trendFromLabel": "From",
+      "trendToLabel": "To",
+      "trendLoadButton": "Update trend",
+      "trendNoData": "No attendance recorded yet for this range."
     },
     "exams": {
       "title": "Exams",
@@ -401,6 +410,26 @@
       "downloadLabel": "Download PDF",
       "regenerateLabel": "Regenerate",
       "empty": "No report cards generated yet."
+    },
+    "behaviorLog": {
+      "heading": "Behavior Log",
+      "subheading": "Merit and incident notes for students - mark an entry visible to parents to share it with them.",
+      "emoji": "📝",
+      "restricted": "The behavior log is for teachers and admins.",
+      "totalLabel": "Entries",
+      "positiveLabel": "Positive (this page)",
+      "typePositive": "Positive",
+      "typeConcern": "Concern",
+      "typeIncident": "Incident",
+      "columns": {
+        "date": "Date",
+        "student": "Student",
+        "type": "Type",
+        "title": "Title",
+        "loggedBy": "Logged by",
+        "visibleToParent": "Visible to parent",
+        "actions": "Actions"
+      }
     }
   },
   "Forms": {
@@ -598,6 +627,20 @@
       "generateForStudent": "Generate for Student",
       "toastBulkGenerated": "Report cards generated for the class!",
       "error": "Something went wrong. Please try again."
+    },
+    "behaviorLog": {
+      "createTitle": "Log a behavior note",
+      "updateTitle": "Update the behavior note",
+      "student": "Student",
+      "type": "Type",
+      "typePositive": "Positive",
+      "typeConcern": "Concern",
+      "typeIncident": "Incident",
+      "title": "Title",
+      "description": "Description",
+      "visibleToParent": "Visible to the student's parent",
+      "toastCreated": "Behavior note has been logged!",
+      "toastUpdated": "Behavior note has been updated!"
     }
   }
 }
