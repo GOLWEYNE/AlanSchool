@@ -152,6 +152,10 @@ export const gradeSubmission = async (
 
 // Prisma's generated WhereUniqueInput for a compound @@unique that
 // includes a nullable field (lessonId here) does not accept `null` —
+// Which statuses are worth interrupting a parent for. EXCUSED is a known,
+// approved absence - not an alert.
+const ALERTABLE_STATUSES = new Set(["ABSENT", "LATE"]);
+
 // Postgres unique indexes don't treat NULLs as equal, so Prisma can't
 // use it as a lookup key. We look the row up manually instead of using
 // upsert's compound-unique shortcut.
@@ -170,27 +174,86 @@ const upsertAttendanceRecord = async (args: {
                         date: args.date,
                         lessonId: args.lessonId ?? null,
               },
-              select: { id: true },
+              select: { id: true, status: true },
       });
 
-      if (existing) {
-              return prisma.attendanceRecord.update({
+      // Only worth a parent alert the moment a record *becomes* Absent/Late -
+      // not on every re-save of an already-alerted status, and never for a
+      // record that was already Absent/Late before this call.
+      const shouldAlert =
+              ALERTABLE_STATUSES.has(args.status) && existing?.status !== args.status;
+
+      const record = existing
+              ? await prisma.attendanceRecord.update({
                         where: { id: existing.id },
                         data: { status: args.status, note: args.note || null },
-              });
-      }
+                })
+              : await prisma.attendanceRecord.create({
+                        data: {
+                                  studentId: args.studentId,
+                                  classId: args.classId,
+                                  lessonId: args.lessonId,
+                                  date: args.date,
+                                  status: args.status,
+                                  note: args.note || null,
+                                  markedById: args.markedById,
+                        },
+                });
 
-      return prisma.attendanceRecord.create({
-              data: {
-                        studentId: args.studentId,
-                        classId: args.classId,
-                        lessonId: args.lessonId,
-                        date: args.date,
-                        status: args.status,
-                        note: args.note || null,
-                        markedById: args.markedById,
-              },
-      });
+      return { record, shouldAlert };
+};
+
+const ATTENDANCE_STATUS_LABEL: Record<string, string> = {
+      ABSENT: "absent",
+      LATE: "late",
+};
+
+// Fires a real Message to the student's parent the moment they're marked
+// Absent/Late - it lands in the parent's existing Messages inbox and the
+// navbar notification bell (which already polls unread Message rows), so
+// this needed no new delivery mechanism, just a new sender of a Message.
+const notifyParentOfAttendance = async (args: {
+      studentId: string;
+      classId: number;
+      status: "ABSENT" | "LATE";
+      date: Date;
+      senderId: string;
+      senderRole: string;
+}) => {
+      try {
+              const [student, cls] = await Promise.all([
+                        prisma.student.findUnique({
+                                  where: { id: args.studentId },
+                                  select: { name: true, surname: true, parentId: true },
+                        }),
+                        prisma.class.findUnique({ where: { id: args.classId }, select: { name: true } }),
+              ]);
+              if (!student) return;
+
+              const statusLabel = ATTENDANCE_STATUS_LABEL[args.status] ?? args.status.toLowerCase();
+              const dateLabel = args.date.toLocaleDateString("en-GB", {
+                      day: "numeric",
+                      month: "long",
+                      year: "numeric",
+              });
+
+              await prisma.message.create({
+                      data: {
+                                senderId: args.senderId,
+                                senderRole: args.senderRole,
+                                receiverId: student.parentId,
+                                receiverRole: "parent",
+                                studentId: args.studentId,
+                                content: `${student.name} ${student.surname} was marked ${statusLabel} for ${
+                                        cls?.name ?? "class"
+                                } on ${dateLabel}.`,
+                      },
+              });
+      } catch (err) {
+              // An alert that fails to send should never block attendance from
+              // being saved - log it and move on.
+              console.log("notifyParentOfAttendance failed:", err);
+      }
 };
 
 export const recordAttendance = async (
@@ -198,8 +261,10 @@ export const recordAttendance = async (
       data: AttendanceRecordSchema
     ) => {
       if (!isAdminOrTeacher()) return rejectUnauthorized();
+      const senderId = getCurrentUserId();
+      const senderRole = getCurrentRole();
       try {
-              await upsertAttendanceRecord({
+              const { shouldAlert } = await upsertAttendanceRecord({
                         studentId: data.studentId,
                         classId: data.classId,
                         lessonId: data.lessonId,
@@ -208,6 +273,16 @@ export const recordAttendance = async (
                         note: data.note,
                         markedById: getCurrentUserId() ?? undefined,
               });
+              if (shouldAlert && senderId) {
+                      await notifyParentOfAttendance({
+                              studentId: data.studentId,
+                              classId: data.classId,
+                              status: data.status as "ABSENT" | "LATE",
+                              date: data.date,
+                              senderId,
+                              senderRole,
+                      });
+              }
               revalidatePath("/dashboard/list/attendance");
               return ok();
       } catch (err) {
@@ -224,9 +299,11 @@ export const recordAttendanceBulk = async (
     ) => {
       if (!isAdminOrTeacher()) return rejectUnauthorized();
       const markedById = getCurrentUserId() ?? undefined;
+      const senderRole = getCurrentRole();
       try {
+              const toAlert: { studentId: string; status: "ABSENT" | "LATE" }[] = [];
               for (const r of data.records) {
-                        await upsertAttendanceRecord({
+                        const { shouldAlert } = await upsertAttendanceRecord({
                                     studentId: r.studentId,
                                     classId: data.classId,
                                     lessonId: data.lessonId,
@@ -235,6 +312,23 @@ export const recordAttendanceBulk = async (
                                     note: r.note,
                                     markedById,
                         });
+                        if (shouldAlert) {
+                                  toAlert.push({ studentId: r.studentId, status: r.status as "ABSENT" | "LATE" });
+                        }
+              }
+              if (markedById && toAlert.length > 0) {
+                      await Promise.all(
+                              toAlert.map((a) =>
+                                      notifyParentOfAttendance({
+                                              studentId: a.studentId,
+                                              classId: data.classId,
+                                              status: a.status,
+                                              date: data.date,
+                                              senderId: markedById,
+                                              senderRole,
+                                      })
+                              )
+                      );
               }
               revalidatePath("/dashboard/list/attendance");
               return ok();
@@ -267,6 +361,33 @@ export const createBehaviorLog = async (
                         },
               });
               revalidatePath("/dashboard/list/students");
+              revalidatePath("/dashboard/list/behavior-log");
+              return ok();
+      } catch (err) {
+              console.log(err);
+              return fail();
+      }
+};
+
+export const updateBehaviorLog = async (
+      currentState: CurrentState,
+      data: BehaviorLogSchema
+    ) => {
+      if (!isAdminOrTeacher()) return rejectUnauthorized();
+      if (!data.id) return fail();
+      try {
+              await prisma.behaviorLog.update({
+                        where: { id: data.id },
+                        data: {
+                                    studentId: data.studentId,
+                                    type: data.type,
+                                    title: data.title,
+                                    description: data.description,
+                                    visibleToParent: data.visibleToParent ?? true,
+                        },
+              });
+              revalidatePath("/dashboard/list/students");
+              revalidatePath("/dashboard/list/behavior-log");
               return ok();
       } catch (err) {
               console.log(err);
@@ -283,6 +404,7 @@ export const deleteBehaviorLog = async (
       try {
               await prisma.behaviorLog.delete({ where: { id: parseInt(id) } });
               revalidatePath("/dashboard/list/students");
+              revalidatePath("/dashboard/list/behavior-log");
               return ok();
       } catch (err) {
               console.log(err);
