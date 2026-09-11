@@ -35,7 +35,8 @@
     "logout": "Шығу",
     "reportCards": "Үлгерім табельдері",
     "lostFound": "Жоғалған заттар",
-    "featuredVideo": "Күн видеосы"
+    "featuredVideo": "Күн видеосы",
+    "behaviorLog": "Мінез-құлық журналы"
   },
   "Navbar": {
     "searchPlaceholder": "Іздеу...",
@@ -238,7 +239,15 @@
       "noStudents": "Бұл сыныпта оқушылар жоқ.",
       "somethingWrong": "Бірдеңе дұрыс болмады.",
       "saveAttendance": "Сабаққа қатысуды сақтау",
-      "attendanceSaved": "Сабаққа қатысу сақталды."
+      "attendanceSaved": "Сабаққа қатысу сақталды.",
+      "trendTitle": "Қатысу серпіні",
+      "trendRate": "Қатысу: {rate}%",
+      "trendStudentLabel": "Оқушы",
+      "trendAllStudents": "Барлық сынып",
+      "trendFromLabel": "Бастап",
+      "trendToLabel": "Дейін",
+      "trendLoadButton": "Графикті жаңарту",
+      "trendNoData": "Бұл кезең үшін сабаққа қатысу әлі тіркелмеген."
     },
     "exams": {
       "title": "Экзамендер",
@@ -401,6 +410,26 @@
       "downloadLabel": "PDF жүктеу",
       "regenerateLabel": "Қайта жасау",
       "empty": "Әзірге үлгерім табельдері жасалмаған."
+    },
+    "behaviorLog": {
+      "heading": "Мінез-құлық журналы",
+      "subheading": "Оқушылар туралы мадақтау және ескерту жазбалары - ата-анаға көрсету үшін жазбаны «ата-анаға көрінеді» деп белгілеңіз.",
+      "emoji": "📝",
+      "restricted": "Мінез-құлық журналы тек мұғалімдер мен әкімшілерге қолжетімді.",
+      "totalLabel": "Жазбалар",
+      "positiveLabel": "Оң жазбалар (осы бетте)",
+      "typePositive": "Мадақтау",
+      "typeConcern": "Ескерту",
+      "typeIncident": "Оқиға",
+      "columns": {
+        "date": "Күні",
+        "student": "Оқушы",
+        "type": "Түрі",
+        "title": "Тақырыбы",
+        "loggedBy": "Тіркеген",
+        "visibleToParent": "Ата-анаға көрінеді",
+        "actions": "Әрекеттер"
+      }
     }
   },
   "Forms": {
@@ -598,6 +627,20 @@
       "generateForStudent": "Оқушы үшін жасау",
       "toastBulkGenerated": "Сынып үшін үлгерім табельдері жасалды!",
       "error": "Бір нәрсе дұрыс болмады. Қайталап көріңіз."
+    },
+    "behaviorLog": {
+      "createTitle": "Мінез-құлық жазбасын қосу",
+      "updateTitle": "Мінез-құлық жазбасын өзгерту",
+      "student": "Оқушы",
+      "type": "Түрі",
+      "typePositive": "Мадақтау",
+      "typeConcern": "Ескерту",
+      "typeIncident": "Оқиға",
+      "title": "Тақырыбы",
+      "description": "Сипаттамасы",
+      "visibleToParent": "Оқушының ата-анасына көрінеді",
+      "toastCreated": "Мінез-құлық жазбасы қосылды!",
+      "toastUpdated": "Мінез-құлық жазбасы жаңартылды!"
     }
   }
 }
