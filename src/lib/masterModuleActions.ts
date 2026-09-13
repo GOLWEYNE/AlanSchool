@@ -263,6 +263,13 @@ export const recordAttendance = async (
       if (!isAdminOrTeacher()) return rejectUnauthorized();
       const senderId = getCurrentUserId();
       const senderRole = getCurrentRole();
+      // AttendanceRecord.markedById is a foreign key into Teacher, not a
+      // generic "whoever is signed in" column - an admin's Clerk id has no
+      // row there, so passing it unconditionally throws a foreign key
+      // violation (P2003) and the whole save fails. Only attribute the
+      // record to a teacher when a teacher actually marked it; leave it
+      // null for an admin (the column is optional).
+      const markedById = senderRole === "teacher" ? senderId ?? undefined : undefined;
       try {
               const { shouldAlert } = await upsertAttendanceRecord({
                         studentId: data.studentId,
@@ -271,7 +278,7 @@ export const recordAttendance = async (
                         date: data.date,
                         status: data.status,
                         note: data.note,
-                        markedById: getCurrentUserId() ?? undefined,
+                        markedById,
               });
               if (shouldAlert && senderId) {
                       await notifyParentOfAttendance({
@@ -298,8 +305,13 @@ export const recordAttendanceBulk = async (
       data: AttendanceBulkSchema
     ) => {
       if (!isAdminOrTeacher()) return rejectUnauthorized();
-      const markedById = getCurrentUserId() ?? undefined;
+      const senderId = getCurrentUserId();
       const senderRole = getCurrentRole();
+      // See recordAttendance above: markedById is a Teacher-only foreign
+      // key, so an admin's id must never be passed as one. The parent
+      // alert must still fire either way, so it's gated on senderId
+      // (anyone authorized to mark attendance), not on markedById.
+      const markedById = senderRole === "teacher" ? senderId ?? undefined : undefined;
       try {
               const toAlert: { studentId: string; status: "ABSENT" | "LATE" }[] = [];
               for (const r of data.records) {
@@ -316,7 +328,7 @@ export const recordAttendanceBulk = async (
                                   toAlert.push({ studentId: r.studentId, status: r.status as "ABSENT" | "LATE" });
                         }
               }
-              if (markedById && toAlert.length > 0) {
+              if (senderId && toAlert.length > 0) {
                       await Promise.all(
                               toAlert.map((a) =>
                                       notifyParentOfAttendance({
@@ -324,7 +336,7 @@ export const recordAttendanceBulk = async (
                                               classId: data.classId,
                                               status: a.status,
                                               date: data.date,
-                                              senderId: markedById,
+                                              senderId,
                                               senderRole,
                                       })
                               )
