@@ -147,10 +147,23 @@ const BehaviorLogPage = async ({
             value: data.filter((d) => d.type === "POSITIVE").length,
           },
         ]}
-        action={<FormContainer table="behaviorLog" type="create" />}
       />
+      {/*
+       * The create button used to be PageHero's `action` slot, but that
+       * slot renders inside .page-top-banner, which is `.shine-hover` -
+       * `position: relative; overflow: hidden` for its corner-shine
+       * effect. FormModal's create dialog is an absolutely-positioned
+       * w-screen/h-screen overlay, so it was being clipped to the banner's
+       * own (much smaller) box and centered off-screen - the modal never
+       * became visible, silently blocking every admin/teacher from
+       * logging a behavior note. Every other list page keeps its create
+       * button in a plain toolbar row below PageHero instead; matching
+       * that here is what actually lets the dialog render on top of the
+       * page like it does everywhere else.
+       */}
       <div className="flex items-center justify-between gap-4">
         <TableSearch />
+        <FormContainer table="behaviorLog" type="create" />
       </div>
       <Table columns={columns} renderRow={renderRow} data={data} />
       <Pagination page={p} count={count} pageSize={size} />
