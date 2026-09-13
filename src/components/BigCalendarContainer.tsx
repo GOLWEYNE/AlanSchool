@@ -53,6 +53,7 @@ const BigCalendarContainer = async ({
     title: lesson.name,
     start: lesson.startTime,
     end: lesson.endTime,
+    day: lesson.day,
   }));
 
   const schedule = adjustScheduleToCurrentWeek(data);
