@@ -632,6 +632,7 @@
       "createTitle": "Мінез-құлық жазбасын қосу",
       "updateTitle": "Мінез-құлық жазбасын өзгерту",
       "student": "Оқушы",
+      "loggedBy": "Кім тіркеді",
       "type": "Түрі",
       "typePositive": "Мадақтау",
       "typeConcern": "Ескерту",

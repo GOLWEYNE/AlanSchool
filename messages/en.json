@@ -632,6 +632,7 @@
       "createTitle": "Log a behavior note",
       "updateTitle": "Update the behavior note",
       "student": "Student",
+      "loggedBy": "Logged by",
       "type": "Type",
       "typePositive": "Positive",
       "typeConcern": "Concern",

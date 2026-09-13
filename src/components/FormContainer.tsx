@@ -250,7 +250,17 @@ const FormContainer = async ({ table, type, data, id }: FormContainerProps) => {
           select: { id: true, name: true, surname: true },
           orderBy: { name: "asc" },
         });
-        relatedData = { students: behaviorLogStudents };
+        // BehaviorLog.teacherId is a hard foreign key into Teacher, so an
+        // admin (who has no Teacher row) needs to pick a real teacher to
+        // attribute the entry to - only fetch the list when it's needed.
+        const behaviorLogTeachers =
+          role === "admin"
+            ? await prisma.teacher.findMany({
+                select: { id: true, name: true, surname: true },
+                orderBy: { name: "asc" },
+              })
+            : [];
+        relatedData = { students: behaviorLogStudents, teachers: behaviorLogTeachers, role };
         break;
       }
 
