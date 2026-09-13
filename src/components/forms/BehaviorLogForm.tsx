@@ -57,7 +57,13 @@ const BehaviorLogForm = ({
     }
   }, [state, router, type, setOpen]);
 
-  const { students } = relatedData;
+  const { students, teachers = [], role } = relatedData;
+  // BehaviorLog.teacherId is a foreign key into Teacher, so an admin (who
+  // has no Teacher row of their own) has to pick a real teacher to
+  // attribute a new entry to; a teacher always logs as themselves and
+  // never sees this field. Only relevant on create - who logged an
+  // existing entry never changes on update.
+  const showTeacherPicker = type === "create" && role === "admin";
 
   const TYPE_OPTIONS: { value: "POSITIVE" | "CONCERN" | "INCIDENT"; label: string }[] = [
     { value: "POSITIVE", label: t("behaviorLog.typePositive") },
@@ -99,6 +105,26 @@ const BehaviorLogForm = ({
             <p className="text-xs text-red-400">{errors.studentId.message.toString()}</p>
           )}
         </div>
+        {showTeacherPicker && (
+          <div className="flex flex-col gap-2 w-full md:w-1/3">
+            <label className="text-xs text-gray-500 dark:text-slate-400">
+              {t("behaviorLog.loggedBy")}
+            </label>
+            <select
+              className="ring-[1.5px] ring-gray-300 dark:ring-slate-700 dark:bg-slate-800 dark:text-slate-100 p-2 rounded-md text-sm w-full"
+              {...register("teacherId")}
+            >
+              {teachers.map((teacher: { id: string; name: string; surname: string }) => (
+                <option value={teacher.id} key={teacher.id}>
+                  {teacher.name} {teacher.surname}
+                </option>
+              ))}
+            </select>
+            {errors.teacherId?.message && (
+              <p className="text-xs text-red-400">{errors.teacherId.message.toString()}</p>
+            )}
+          </div>
+        )}
         <div className="flex flex-col gap-2 w-full md:w-1/3">
           <label className="text-xs text-gray-500 dark:text-slate-400">{t("behaviorLog.type")}</label>
           <select
