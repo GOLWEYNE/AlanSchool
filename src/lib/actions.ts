@@ -1411,6 +1411,7 @@ export const rescheduleLesson = async (payload: {
         name: true,
         teacherId: true,
         classId: true,
+        day: true,
         startTime: true,
         endTime: true,
       },
@@ -1420,11 +1421,18 @@ export const rescheduleLesson = async (payload: {
       aStart < bEnd && bStart < aEnd;
 
     const conflict = candidates.find((c) => {
-      if (c.startTime.getDay() !== payload.start.getDay()) return false;
-      // Stored lesson times only carry a meaningful day-of-week + time-of-day
-      // (the calendar re-projects them onto the current real week for
-      // display) - re-anchor the candidate's time onto the dropped date so
-      // an unrelated stored date component never throws the comparison off.
+      // Compare against the candidate's `day` column, not the date
+      // component of its stored startTime - that date is never kept in
+      // sync with which weekday the lesson actually recurs on (it's just
+      // whatever date happened to be in the datetime picker when it was
+      // last saved), so using it here would treat same-day lessons as
+      // different days, or worse, different-day lessons as the same day
+      // whenever their stored dates coincidentally share a weekday.
+      if (c.day !== newDay) return false;
+      // Stored lesson times only carry a meaningful time-of-day (the
+      // calendar re-projects them onto the current real week for display)
+      // - re-anchor the candidate's time onto the dropped date so an
+      // unrelated stored date component never throws the comparison off.
       const cStart = new Date(payload.start);
       cStart.setHours(
         c.startTime.getHours(),
