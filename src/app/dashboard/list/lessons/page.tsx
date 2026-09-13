@@ -3,7 +3,7 @@ import PageHero from "@/components/PageHero";
 import TableSearch from "@/components/TableSearch";
 import TimetableGrid, { TimetableLessonItem } from "@/components/TimetableGrid";
 import prisma from "@/lib/prisma";
-import { Class, Lesson, Prisma, Subject, Teacher } from "@/generated/prisma/client";
+import { Class, Day, Lesson, Prisma, Subject, Teacher } from "@/generated/prisma/client";
 import { auth } from "@clerk/nextjs/server";
 import { getUserRole } from "@/lib/auth";
 import { getTranslations } from "next-intl/server";
@@ -16,11 +16,27 @@ type LessonList = Lesson & {
   objectives: { id: number }[];
 };
 
-// Every stored lesson time only carries a meaningful day-of-week + time-of-day
-// (see adjustScheduleToCurrentWeek in src/lib/utils.ts, which the read-only
-// class/teacher/parent schedule views already rely on) - this re-projects
-// each lesson onto the current real week so the grid's Mon-Fri columns line
-// up with real, human-readable dates.
+// Stored lesson times (startTime/endTime) only carry a meaningful
+// time-of-day - their date component is whatever date happened to be
+// showing in the admin's datetime picker when the lesson was saved, and
+// is never in sync with which weekday the lesson actually recurs on.
+// That real weekday lives only in the `day` enum column, so re-projecting
+// a lesson onto the current real week (to line the grid's Mon-Fri columns
+// up with human-readable dates) has to derive the offset from `day`, not
+// from startTime.getDay() - using startTime's date here previously made
+// two lessons on different days (e.g. Monday and Tuesday, same time) look
+// identical whenever their stored dates happened to fall on the same
+// real weekday, which threw off both the conflict highlighting below and
+// (see rescheduleLesson in src/lib/actions.ts) the drag-to-reschedule
+// conflict check.
+const DAY_TO_OFFSET: Record<Day, number> = {
+  MONDAY: 0,
+  TUESDAY: 1,
+  WEDNESDAY: 2,
+  THURSDAY: 3,
+  FRIDAY: 4,
+};
+
 const projectOntoCurrentWeek = (lessons: LessonList[]): TimetableLessonItem[] => {
   const now = new Date();
   const dayOfWeek = now.getDay();
@@ -30,8 +46,7 @@ const projectOntoCurrentWeek = (lessons: LessonList[]): TimetableLessonItem[] =>
   monday.setHours(0, 0, 0, 0);
 
   return lessons.map((lesson) => {
-    const lessonDayOfWeek = lesson.startTime.getDay();
-    const daysFromMonday = lessonDayOfWeek === 0 ? 6 : lessonDayOfWeek - 1;
+    const daysFromMonday = DAY_TO_OFFSET[lesson.day];
 
     const start = new Date(monday);
     start.setDate(monday.getDate() + daysFromMonday);
