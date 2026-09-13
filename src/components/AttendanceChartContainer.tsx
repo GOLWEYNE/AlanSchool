@@ -11,7 +11,11 @@ const AttendanceChartContainer = async () => {
 
   lastMonday.setDate(today.getDate() - daysSinceMonday);
 
-  const resData = await prisma.attendance.findMany({
+  // Reads AttendanceRecord (the table the live matrix-grid attendance UI
+  // actually writes to) rather than the old Attendance model, which
+  // nothing in the app has written to since that UI replaced it - querying
+  // it left this widget permanently stuck at 0/0.
+  const resData = await prisma.attendanceRecord.findMany({
     where: {
       date: {
         gte: lastMonday,
@@ -19,7 +23,7 @@ const AttendanceChartContainer = async () => {
     },
     select: {
       date: true,
-      present: true,
+      status: true,
     },
   });
 
@@ -41,11 +45,12 @@ const AttendanceChartContainer = async () => {
     if (dayOfWeek >= 1 && dayOfWeek <= 5) {
       const dayName = daysOfWeek[dayOfWeek - 1];
 
-      if (item.present) {
+      if (item.status === "PRESENT" || item.status === "LATE") {
         attendanceMap[dayName].present += 1;
-      } else {
+      } else if (item.status === "ABSENT") {
         attendanceMap[dayName].absent += 1;
       }
+      // EXCUSED counts toward neither, matching the per-class trend chart.
     }
   });
 

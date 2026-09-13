@@ -10,7 +10,20 @@ type AttendanceScope =
 
 const buildWhere = (scope: AttendanceScope, extra: Record<string, unknown>) => {
   if (scope.kind === "teacher") {
-    return { ...extra, lesson: { teacherId: scope.teacherId } };
+    // The live matrix-grid attendance UI marks a whole class at once and
+    // never sets lessonId, so filtering by a lesson relation would match
+    // almost nothing. Scope by the classes this teacher actually
+    // teaches/supervises instead - same rule used to list their classes
+    // on the attendance page itself.
+    return {
+      ...extra,
+      class: {
+        OR: [
+          { supervisorId: scope.teacherId },
+          { lessons: { some: { teacherId: scope.teacherId } } },
+        ],
+      },
+    };
   }
   if (scope.kind === "students") {
     return { ...extra, studentId: { in: scope.studentIds } };
@@ -57,16 +70,26 @@ const AttendancePulse = async ({
     );
   }
 
-  const records = await prisma.attendance.findMany({
+  // Reads AttendanceRecord (the table the live matrix-grid attendance UI
+  // actually writes to) rather than the old Attendance model, which
+  // nothing writes to anymore - querying it left this widget permanently
+  // showing "no data" regardless of real attendance.
+  const rawRecords = await prisma.attendanceRecord.findMany({
     where: buildWhere(scope, { date: { gte: twoWeeksAgo } }),
     select: {
       date: true,
-      present: true,
+      status: true,
       studentId: true,
       student: { select: { name: true, surname: true, img: true } },
     },
     orderBy: { date: "desc" },
   });
+
+  // EXCUSED counts toward neither a present streak nor an absence tally -
+  // same convention as the per-class trend chart on the attendance page.
+  const records = rawRecords
+    .filter((r) => r.status !== "EXCUSED")
+    .map((r) => ({ ...r, present: r.status === "PRESENT" || r.status === "LATE" }));
 
   const isRoleGroup = role === "admin" || role === "teacher";
 
