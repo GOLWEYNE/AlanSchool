@@ -361,11 +361,20 @@ export const createBehaviorLog = async (
       if (!isAdminOrTeacher()) return rejectUnauthorized();
       const userId = getCurrentUserId();
       if (!userId) return rejectUnauthorized();
+      // BehaviorLog.teacherId is a hard foreign key into Teacher - an
+      // admin's Clerk id has no row there, so passing it unconditionally
+      // (as this used to) throws a foreign key violation (P2003) and the
+      // create silently fails for every admin-authored entry. A teacher
+      // always logs as themselves; an admin must pick a real teacher from
+      // the form instead.
+      const role = getCurrentRole();
+      const teacherId = role === "teacher" ? userId : data.teacherId;
+      if (!teacherId) return fail("Please choose which teacher to log this as.");
       try {
               await prisma.behaviorLog.create({
                         data: {
                                     studentId: data.studentId,
-                                    teacherId: userId,
+                                    teacherId,
                                     type: data.type,
                                     title: data.title,
                                     description: data.description,

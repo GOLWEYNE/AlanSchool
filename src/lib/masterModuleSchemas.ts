@@ -59,6 +59,12 @@ export type AttendanceBulkSchema = z.infer<typeof attendanceBulkSchema>;
 export const behaviorLogSchema = z.object({
     id: z.coerce.number().optional(),
     studentId: z.string().min(1, { message: "Student is required!" }),
+    // Only present (and required) when an admin is creating the entry -
+    // BehaviorLog.teacherId is a foreign key into Teacher, so an admin
+    // must attribute the entry to a real teacher instead of themselves.
+    // A teacher always logs as themselves; the server ignores this field
+    // in that case.
+    teacherId: z.string().optional(),
     type: z.enum(["POSITIVE", "CONCERN", "INCIDENT"]),
     title: z.string().min(1, { message: "Title is required!" }),
     description: z.string().min(1, { message: "Description is required!" }),
