@@ -53,7 +53,11 @@
     "ticketUpdates": "Өтінім жаңартулары",
     "slipUpdates": "Рұқсат парақтары",
     "pendingResponses": "{count} жауап күтуде",
-    "awaitingYourResponse": "Сіздің жауабыңызды күтуде"
+    "awaitingYourResponse": "Сіздің жауабыңызды күтуде",
+    "enablePush": "Хабарландыруларды қосу",
+    "disablePush": "Хабарландыруларды өшіру",
+    "pushEnabled": "Хабарландырулар қосулы",
+    "pushDenied": "Хабарландырулар браузер параметрлерінде бұғатталған"
   },
   "AdminPage": {
     "title": "Әкімші басқару орталығы",
