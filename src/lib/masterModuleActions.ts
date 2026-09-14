@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { auth } from "@clerk/nextjs/server";
 import prisma from "./prisma";
 import { getUserRole } from "./auth";
+import { notifyUser } from "./notify";
 import {
       AttendanceBulkSchema,
       AttendanceRecordSchema,
@@ -529,6 +530,11 @@ export const sendMessage = async (
               });
               revalidatePath("/dashboard/list/messages");
               revalidatePath("/dashboard/list/announcements");
+              await notifyUser(data.receiverId, {
+                        title: "New message",
+                        body: data.content.length > 140 ? `${data.content.slice(0, 140)}…` : data.content,
+                        url: "/dashboard/list/messages",
+              });
               return ok();
       } catch (err) {
               console.log(err);
@@ -879,8 +885,9 @@ export const updateTicketStatus = async (
       data: TicketStatusSchema
     ) => {
       if (!isAdminOrTeacher()) return rejectUnauthorized();
+      const actorId = getCurrentUserId();
       try {
-              await prisma.ticket.update({
+              const updated = await prisma.ticket.update({
                         where: { id: data.id },
                         data: {
                                     status: data.status,
@@ -891,6 +898,19 @@ export const updateTicketStatus = async (
                         },
               });
               revalidatePath("/dashboard/list/announcements");
+
+              const recipients = new Set([updated.createdById, updated.assignedToId].filter(
+                        (id): id is string => Boolean(id) && id !== actorId
+              ));
+              await Promise.all(
+                        Array.from(recipients).map((id) =>
+                                    notifyUser(id, {
+                                                title: `Ticket update: ${updated.title}`,
+                                                body: `Status is now ${updated.status.toLowerCase().replace("_", " ")}.`,
+                                                url: `/dashboard/list/tickets/${updated.id}`,
+                                    })
+                        )
+              );
               return ok();
       } catch (err) {
               console.log(err);
@@ -915,6 +935,25 @@ export const addTicketComment = async (
                         },
               });
               revalidatePath("/dashboard/list/announcements");
+
+              const ticket = await prisma.ticket.findUnique({
+                        where: { id: data.ticketId },
+                        select: { title: true, createdById: true, assignedToId: true },
+              });
+              if (ticket) {
+                        const recipients = new Set([ticket.createdById, ticket.assignedToId].filter(
+                                    (id): id is string => Boolean(id) && id !== userId
+                        ));
+                        await Promise.all(
+                                    Array.from(recipients).map((id) =>
+                                                notifyUser(id, {
+                                                            title: `New comment: ${ticket.title}`,
+                                                            body: data.message.length > 140 ? `${data.message.slice(0, 140)}…` : data.message,
+                                                            url: `/dashboard/list/tickets/${data.ticketId}`,
+                                                })
+                                    )
+                        );
+              }
               return ok();
       } catch (err) {
               console.log(err);
