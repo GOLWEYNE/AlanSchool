@@ -8,6 +8,8 @@ import {
       AttendanceBulkSchema,
       AttendanceRecordSchema,
       BehaviorLogSchema,
+      CheckInScanSchema,
+      checkInScanSchema,
       ClubAttendanceSchema,
       ClubEnrollmentSchema,
       ClubSchema,
@@ -27,6 +29,7 @@ import {
       TicketSchema,
       TicketStatusSchema,
 } from "./masterModuleSchemas";
+import { sanitizeForBadge } from "./barcode39";
 
 type CurrentState = { success: boolean; error: boolean; message?: string };
 
@@ -344,6 +347,77 @@ export const recordAttendanceBulk = async (
               }
               revalidatePath("/dashboard/list/attendance");
               return ok();
+      } catch (err) {
+              console.log(err);
+              return fail();
+      }
+};
+
+// Called directly (not via useFormState) from CheckInScanner every time a
+// badge is scanned, so it needs its own runtime validation - unlike the
+// form-backed actions above, no react-hook-form + zodResolver stands in
+// front of this one. Resolves the scanned Code 39 text to a student by
+// comparing it against sanitizeForBadge(student.id) for the class's roster
+// (see barcode39.ts for why the badge encodes a sanitized id rather than
+// username or a new dedicated field), then marks them Present via the same
+// upsertAttendanceRecord path the matrix form uses - so a scanned check-in
+// and a manual one are always the same underlying record, and a teacher
+// can freely mix both for one class/day.
+export const checkInAttendance = async (
+      input: CheckInScanSchema
+    ): Promise<CurrentState & { studentName?: string; alreadyMarked?: boolean }> => {
+      if (!isAdminOrTeacher()) return rejectUnauthorized();
+      const parsed = checkInScanSchema.safeParse(input);
+      if (!parsed.success) return fail("Invalid check-in request.");
+      const { code, classId, date } = parsed.data;
+
+      const role = getCurrentRole();
+      const senderId = getCurrentUserId();
+
+      const cls = await prisma.class.findUnique({
+              where: { id: classId },
+              select: {
+                        id: true,
+                        supervisorId: true,
+                        lessons: { select: { teacherId: true } },
+              },
+      });
+      if (!cls) return fail("Class not found.");
+      if (role === "teacher") {
+              const allowed =
+                        cls.supervisorId === senderId ||
+                        cls.lessons.some((l) => l.teacherId === senderId);
+              if (!allowed) return rejectUnauthorized();
+      }
+
+      const scanned = sanitizeForBadge(code);
+      const roster = await prisma.student.findMany({
+              where: { classId },
+              select: { id: true, name: true, surname: true },
+      });
+      const match = roster.find((s) => sanitizeForBadge(s.id) === scanned);
+      if (!match) return fail("No student in this class matches that badge.");
+
+      try {
+              const existing = await prisma.attendanceRecord.findFirst({
+                        where: { studentId: match.id, date, lessonId: null },
+                        select: { status: true },
+              });
+              const markedById = role === "teacher" ? senderId ?? undefined : undefined;
+              await upsertAttendanceRecord({
+                        studentId: match.id,
+                        classId,
+                        date,
+                        status: "PRESENT",
+                        markedById,
+              });
+              revalidatePath("/dashboard/list/attendance");
+              return {
+                        success: true,
+                        error: false,
+                        studentName: `${match.name} ${match.surname}`,
+                        alreadyMarked: existing?.status === "PRESENT",
+              };
       } catch (err) {
               console.log(err);
               return fail();

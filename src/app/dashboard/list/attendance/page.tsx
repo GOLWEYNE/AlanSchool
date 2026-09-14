@@ -1,3 +1,4 @@
+import Link from "next/link";
 import PageHero from "@/components/PageHero";
 import AttendanceMatrixForm from "@/components/AttendanceMatrixForm";
 import AttendanceChart from "@/components/AttendanceChart";
@@ -263,6 +264,20 @@ const AttendancePage = async ({
         </p>
       ) : selectedClassId ? (
         <>
+        <div className="flex flex-wrap gap-2 mb-4">
+            <Link
+              href={`/dashboard/list/attendance/checkin?classId=${selectedClassId}&date=${date}`}
+              className="bg-emerald-500 text-white px-4 py-2 rounded-md text-sm font-semibold"
+            >
+              {t("scanCheckInButton")}
+            </Link>
+            <Link
+              href={`/dashboard/list/attendance/badges?classId=${selectedClassId}`}
+              className="bg-white dark:bg-slate-800 ring-1 ring-gray-300 dark:ring-slate-700 px-4 py-2 rounded-md text-sm font-semibold"
+            >
+              {t("printBadgesButton")}
+            </Link>
+          </div>
           <AttendanceMatrixForm
             classId={selectedClassId}
             date={date}

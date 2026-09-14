@@ -54,6 +54,18 @@ export const attendanceBulkSchema = z.object({
 
 export type AttendanceBulkSchema = z.infer<typeof attendanceBulkSchema>;
 
+// Scan/ID-badge check-in - resolves a scanned Code 39 badge (see
+// src/lib/barcode39.ts) to a student and marks them Present in one call, so
+// a teacher can check in a whole class in seconds instead of working
+// through the matrix one student at a time.
+export const checkInScanSchema = z.object({
+    code: z.string().min(1, { message: "Scanned code is required!" }),
+    classId: z.coerce.number(),
+    date: z.coerce.date(),
+});
+
+export type CheckInScanSchema = z.infer<typeof checkInScanSchema>;
+
 // ---- Module 3: Behavior Feedback & Communication Hub -----------------
 
 export const behaviorLogSchema = z.object({
