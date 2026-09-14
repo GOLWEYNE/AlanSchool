@@ -8,6 +8,7 @@ import LanguageSwitcher from "./LanguageSwitcher";
 import ThemeToggle from "./ThemeToggle";
 import { SearchTrigger, MobileSearchTrigger } from "./SearchTrigger";
 import NotificationBell from "./NotificationBell";
+import EnablePushButton from "./EnablePushButton";
 import DailyRoutineButton from "./DailyRoutineButton";
 
 const Navbar = async () => {
@@ -67,6 +68,9 @@ const Navbar = async () => {
         </div>
         <div className="shrink-0">
           <NotificationBell />
+        </div>
+        <div className="shrink-0">
+          <EnablePushButton />
         </div>
         <div className="hidden sm:flex flex-col items-end shrink-0">
           <span className="text-xs leading-3 font-semibold text-blue-900 dark:text-blue-100">AIS</span>
