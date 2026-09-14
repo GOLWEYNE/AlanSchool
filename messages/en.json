@@ -53,7 +53,11 @@
     "ticketUpdates": "Ticket Updates",
     "slipUpdates": "Permission Slips",
     "pendingResponses": "{count} pending response(s)",
-    "awaitingYourResponse": "Awaiting your response"
+    "awaitingYourResponse": "Awaiting your response",
+    "enablePush": "Enable notifications",
+    "disablePush": "Disable notifications",
+    "pushEnabled": "Notifications on",
+    "pushDenied": "Notifications blocked in browser settings"
   },
   "AdminPage": {
     "title": "Admin Command Center",
