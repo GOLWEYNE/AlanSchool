@@ -53,7 +53,11 @@
     "ticketUpdates": "Обновления заявок",
     "slipUpdates": "Разрешения",
     "pendingResponses": "{count} ожидает ответа",
-    "awaitingYourResponse": "Ожидает вашего ответа"
+    "awaitingYourResponse": "Ожидает вашего ответа",
+    "enablePush": "Включить уведомления",
+    "disablePush": "Отключить уведомления",
+    "pushEnabled": "Уведомления включены",
+    "pushDenied": "Уведомления заблокированы в настройках браузера"
   },
   "AdminPage": {
     "title": "Центр управления администратора",
