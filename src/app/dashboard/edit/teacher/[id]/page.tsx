@@ -1,4 +1,4 @@
-import TeacherForm from "@/components/forms/TeacherForm";
+import TeacherEditForm from "@/components/forms/TeacherEditForm";
 import { getUserRole } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
@@ -38,10 +38,9 @@ const TeacherEditPage = async ({
     <div className="p-4">
       <div className="bg-white rounded-md p-6 shadow-sm">
         <h1 className="text-2xl font-semibold mb-4">Edit Teacher</h1>
-        <TeacherForm
-          type="update"
+        <TeacherEditForm
+          teacherId={teacher.id}
           data={teacherData}
-          setOpen={() => {}}
           relatedData={{ subjects: subjectOptions }}
         />
       </div>
