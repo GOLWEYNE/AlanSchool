@@ -407,6 +407,22 @@ model Message {
   @@index([studentId])
 }
 
+// One row per browser/device that has granted push permission. userId is
+// the Clerk id shared across all role tables (same pattern as Message
+// above) - a user can have several rows if they enabled notifications on
+// more than one device/browser. Rows are pruned automatically when the
+// push service reports the subscription as gone (410/404).
+model PushSubscription {
+  id        Int      @id @default(autoincrement())
+  userId    String
+  endpoint  String   @unique
+  p256dh    String
+  auth      String
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}
+
 // ---- Module 4: Remote Parent Master Dashboard ------------------------
 // (digital signature workflow for trip / policy permissions)
 
