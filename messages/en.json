@@ -44,7 +44,8 @@
     "resourcesTitle": "Resources",
     "assessmentHub": "Assessment Hub",
     "quizzes": "Quizzes",
-    "submissions": "Submissions"
+    "submissions": "Submissions",
+    "studyPlanner": "Study Planner"
   },
   "Navbar": {
     "searchPlaceholder": "Search...",
@@ -808,7 +809,8 @@
       "noClass": "No class is assigned yet.",
       "contactAdmin": "Contact your administrator",
       "eventsCard": "Events",
-      "announcementsCard": "Announcements"
+      "announcementsCard": "Announcements",
+      "studyPlanner": "Study Planner"
     },
     "parent": {
       "title": "Family Overview",
@@ -1644,5 +1646,78 @@
     "alreadyEnrolled": "Already enrolled in this club.",
     "clubNotFound": "Club not found.",
     "enrollUnavailable": "Already enrolled, or this club is unavailable."
+  },
+  "StudyPlanner": {
+    "title": "Study Planner",
+    "subtitle": "Plan your week, keep your deadlines in your own calendar and track your personal study goals.",
+    "classLabel": "Class",
+    "noClass": "No class is assigned yet, so there is no timetable to export.",
+    "export": {
+      "title": "Add my timetable to my calendar",
+      "description": "Download an .ics file and import it into Google Calendar, Apple Calendar or Outlook. Your weekly lessons repeat until the end of the school year; exams, assignment deadlines and goal dates are added with reminders.",
+      "button": "Download calendar (.ics)",
+      "hint": "Times are school time ({zone}); your calendar converts them to your own time zone. Download the file again later to pick up new exams and assignments.",
+      "howTo": "In Google Calendar: Settings → Import & export → Import. On a phone, open the downloaded file and choose your calendar app."
+    },
+    "upcoming": {
+      "title": "Coming up",
+      "subtitle": "Exams and assignment deadlines in the next {days} days.",
+      "empty": "Nothing is due in the next 30 days.",
+      "exam": "Exam",
+      "assignment": "Assignment due",
+      "inDays": "{count, plural, =0 {today} =1 {tomorrow} other {in # days}}"
+    },
+    "goals": {
+      "title": "My study goals",
+      "subtitle": "Small, clear goals work best. Update your progress as you go.",
+      "stats": {
+        "total": "Goals",
+        "done": "Completed",
+        "average": "Average progress"
+      },
+      "form": {
+        "titleLabel": "New goal",
+        "titlePlaceholder": "e.g. Learn the 6 and 7 times tables",
+        "subjectLabel": "Subject (optional)",
+        "noSubject": "Any subject",
+        "dateLabel": "Target date (optional)",
+        "add": "Add goal",
+        "adding": "Adding…",
+        "limit": "Up to {max} goals."
+      },
+      "active": "In progress",
+      "completed": "Completed",
+      "empty": "No goals yet. Add your first one above.",
+      "progressLabel": "Progress",
+      "markDone": "Done ✓",
+      "delete": "Delete goal",
+      "confirmDelete": "Delete this goal?",
+      "due": "Due {date}",
+      "overdue": "Overdue",
+      "doneOn": "Done {date}",
+      "errors": {
+        "generic": "Something went wrong. Please try again.",
+        "unauthorized": "Please sign in again.",
+        "invalid": "Please enter a goal title and a valid date.",
+        "limit": "You can keep up to {max} goals. Finish or delete one first.",
+        "notFound": "That goal no longer exists.",
+        "unavailable": "The goal tracker could not be reached right now. Please try again in a moment."
+      }
+    },
+    "ics": {
+      "calendarName": "Alan School – {name}",
+      "teacher": "Teacher: {name}",
+      "class": "Class: {name}",
+      "lessonCategory": "Lesson",
+      "examCategory": "Exam",
+      "assignmentCategory": "Assignment",
+      "goalCategory": "Study goal",
+      "examSummary": "Exam: {title}",
+      "examReminder": "Exam coming up: {title}",
+      "dueSummary": "Due: {title}",
+      "dueReminder": "Assignment due soon: {title}",
+      "goalSummary": "Goal: {title}",
+      "goalProgress": "Progress so far: {progress}%"
+    }
   }
 }
