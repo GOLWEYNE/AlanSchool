@@ -627,7 +627,8 @@
       "subject": "Subject",
       "teacher": "Teacher",
       "toastCreated": "Lesson has been created!",
-      "toastUpdated": "Lesson has been updated!"
+      "toastUpdated": "Lesson has been updated!",
+      "timeHint": "Times are school time ({zone}) and are the same for everyone, wherever they view the timetable."
     },
     "parent": {
       "createTitle": "Create a new parent",
