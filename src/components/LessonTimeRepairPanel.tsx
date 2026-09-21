@@ -16,16 +16,30 @@ type Slot = {
   count: number;
 };
 
+type InOrderSlot = { n: number; start: string; end: string; count: number };
+
 type Props = {
   pendingCount: number;
   classCount: number;
   slots: Slot[];
+  inOrderCount: number;
+  inOrderClassCount: number;
+  inOrderSlots: InOrderSlot[];
   appliedCount: number;
   /** ISO instant of the repair, or null. */
   appliedAt: string | null;
 };
 
-const LessonTimeRepairPanel = ({ pendingCount, classCount, slots, appliedCount, appliedAt }: Props) => {
+const LessonTimeRepairPanel = ({
+  pendingCount,
+  classCount,
+  slots,
+  inOrderCount,
+  inOrderClassCount,
+  inOrderSlots,
+  appliedCount,
+  appliedAt,
+}: Props) => {
   const t = useTranslations("LessonTimes.repair");
   const format = useFormatter();
   const [isPending, startTransition] = useTransition();
@@ -48,7 +62,12 @@ const LessonTimeRepairPanel = ({ pendingCount, classCount, slots, appliedCount, 
 
   const onApply = () => {
     if (!window.confirm(t("confirmApply", { count: pendingCount }))) return;
-    run(applyLessonTimeRepairAction, "applied");
+    run(() => applyLessonTimeRepairAction("early"), "applied");
+  };
+
+  const onApplyInOrder = () => {
+    if (!window.confirm(t("inOrder.confirmApply", { count: inOrderCount }))) return;
+    run(() => applyLessonTimeRepairAction("inOrder"), "applied");
   };
 
   const onUndo = () => {
@@ -101,10 +120,51 @@ const LessonTimeRepairPanel = ({ pendingCount, classCount, slots, appliedCount, 
             </button>
           </div>
         </div>
-      ) : (
+      ) : inOrderCount === 0 ? (
         <p className="rounded-xl border border-emerald-200 dark:border-emerald-900/50 bg-emerald-50 dark:bg-emerald-950/20 p-4 text-sm text-emerald-800 dark:text-emerald-300">
           {t("nothingPending")}
         </p>
+      ) : null}
+
+      {inOrderCount > 0 && (
+        <div className="rounded-xl border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/20 p-4 flex flex-col gap-3">
+          <p className="text-sm font-semibold text-amber-900 dark:text-amber-200">
+            {t("inOrder.pending", { count: inOrderCount, classes: inOrderClassCount })}
+          </p>
+          <p className="text-sm text-amber-800 dark:text-amber-300">{t("inOrder.help")}</p>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="text-left text-xs uppercase tracking-wide text-amber-700 dark:text-amber-400">
+                  <th className="py-1 pr-4">{t("colLesson")}</th>
+                  <th className="py-1 pr-4">{t("colAfter")}</th>
+                  <th className="py-1">{t("colCount")}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {inOrderSlots.map((s) => (
+                  <tr key={s.n} className="border-t border-amber-100 dark:border-amber-900/50 text-gray-800 dark:text-slate-200">
+                    <td className="py-1 pr-4">{s.n}</td>
+                    <td className="py-1 pr-4 font-semibold">
+                      {s.start} – {s.end}
+                    </td>
+                    <td className="py-1">{s.count}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <div>
+            <button
+              type="button"
+              onClick={onApplyInOrder}
+              disabled={isPending}
+              className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-50"
+            >
+              {isPending ? t("working") : t("inOrder.apply", { count: inOrderCount })}
+            </button>
+          </div>
+        </div>
       )}
 
       {appliedCount > 0 && (

@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { auth } from "@clerk/nextjs/server";
 import { getUserRole } from "./auth";
-import { applyLessonTimeRepair, undoLessonTimeRepair } from "./lessonTimeRepair";
+import { applyLessonTimeRepair, undoLessonTimeRepair, type RepairKind } from "./lessonTimeRepair";
 
 export type LessonTimeRepairResult =
   | { ok: true; count: number }
@@ -20,10 +20,12 @@ const refresh = () => {
   revalidatePath("/dashboard", "layout");
 };
 
-export async function applyLessonTimeRepairAction(): Promise<LessonTimeRepairResult> {
+export async function applyLessonTimeRepairAction(kind: RepairKind = "early"): Promise<LessonTimeRepairResult> {
   if (!isAdmin()) return { ok: false, error: "unauthorized" };
+  // Server actions take client input: only the two known kinds are accepted.
+  if (kind !== "early" && kind !== "inOrder") return { ok: false, error: "failed" };
   try {
-    const count = await applyLessonTimeRepair();
+    const count = await applyLessonTimeRepair(kind);
     refresh();
     return { ok: true, count };
   } catch (error) {

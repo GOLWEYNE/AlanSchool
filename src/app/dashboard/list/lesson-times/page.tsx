@@ -80,6 +80,9 @@ const LessonTimesPage = async () => {
               pendingCount={status.pending.count}
               classCount={status.pending.classCount}
               slots={status.pending.slots}
+              inOrderCount={status.inOrder.count}
+              inOrderClassCount={status.inOrder.classCount}
+              inOrderSlots={status.inOrder.slots}
               appliedCount={status.applied.count}
               appliedAt={status.applied.savedAt}
             />
