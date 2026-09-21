@@ -15,6 +15,7 @@ import WorkTargetPicker from "./WorkTargetPicker";
 import WorkQuizBuilder, { QuizQuestionDraft } from "./WorkQuizBuilder";
 import ObjectiveTagPicker from "./ObjectiveTagPicker";
 import { useValidationMessage } from "@/hooks/useValidationMessage";
+import { toSchoolInputValue } from "@/lib/schoolTime";
 
 const ExamForm = ({
   type,
@@ -135,9 +136,7 @@ const ExamForm = ({
           label={t("exam.startDate")}
           name="startTime"
           defaultValue={
-            data?.startTime
-              ? new Date(data.startTime).toISOString().slice(0, 16)
-              : undefined
+            toSchoolInputValue(data?.startTime)
           }
           register={register}
           error={errors?.startTime}
@@ -147,9 +146,7 @@ const ExamForm = ({
           label={t("exam.endDate")}
           name="endTime"
           defaultValue={
-            data?.endTime
-              ? new Date(data.endTime).toISOString().slice(0, 16)
-              : undefined
+            toSchoolInputValue(data?.endTime)
           }
           register={register}
           error={errors?.endTime}

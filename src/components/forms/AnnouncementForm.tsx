@@ -14,6 +14,7 @@ import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useValidationMessage } from "@/hooks/useValidationMessage";
+import { toSchoolInputValue } from "@/lib/schoolTime";
 
 const AnnouncementForm = ({
   type,
@@ -89,7 +90,7 @@ const AnnouncementForm = ({
           label={t("common.date")}
           name="date"
           defaultValue={
-            data?.date ? new Date(data.date).toISOString().slice(0, 16) : undefined
+            toSchoolInputValue(data?.date)
           }
           register={register}
           error={errors?.date}

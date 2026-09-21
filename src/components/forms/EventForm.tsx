@@ -11,6 +11,7 @@ import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useValidationMessage } from "@/hooks/useValidationMessage";
+import { toSchoolInputValue } from "@/lib/schoolTime";
 
 const EventForm = ({
   type,
@@ -82,7 +83,7 @@ const EventForm = ({
           label={t("event.startTime")}
           name="startTime"
           defaultValue={
-            data?.startTime ? new Date(data.startTime).toISOString().slice(0, 16) : undefined
+            toSchoolInputValue(data?.startTime)
           }
           register={register}
           error={errors?.startTime}
@@ -92,7 +93,7 @@ const EventForm = ({
           label={t("event.endTime")}
           name="endTime"
           defaultValue={
-            data?.endTime ? new Date(data.endTime).toISOString().slice(0, 16) : undefined
+            toSchoolInputValue(data?.endTime)
           }
           register={register}
           error={errors?.endTime}
