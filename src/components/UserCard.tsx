@@ -1,12 +1,14 @@
 import prisma from "@/lib/prisma";
 import Image from "next/image";
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 
 const UserCard = async ({
   type,
 }: {
   type: "admin" | "teacher" | "student" | "parent";
 }) => {
+  const t = await getTranslations("Widgets.userCard");
   const modelMap: Record<typeof type, any> = {
     admin: prisma.admin,
     teacher: prisma.teacher,
@@ -16,10 +18,10 @@ const UserCard = async ({
 
   const data = await modelMap[type].count();
   const config = {
-    admin: { label: "Admins", href: "/dashboard/admin" },
-    teacher: { label: "Teachers", href: "/dashboard/list/teachers" },
-    student: { label: "Students", href: "/dashboard/list/students" },
-    parent: { label: "Parents", href: "/dashboard/list/parents" },
+    admin: { label: t("admin"), href: "/dashboard/admin" },
+    teacher: { label: t("teacher"), href: "/dashboard/list/teachers" },
+    student: { label: t("student"), href: "/dashboard/list/students" },
+    parent: { label: t("parent"), href: "/dashboard/list/parents" },
   };
 
   const { label, href } = config[type];

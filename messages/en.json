@@ -876,7 +876,8 @@
     "signingOut": "Signing you out...",
     "welcomeTitle": "Welcome to Alan School",
     "noRoleYet": "Your account doesn’t have a role assigned yet. Please contact your school administrator so they can finish setting up your access.",
-    "barcodeLabel": "Barcode {value}"
+    "barcodeLabel": "Barcode {value}",
+    "unknown": "Unknown"
   },
   "Tickets": {
     "page": {
@@ -1576,6 +1577,12 @@
       "title": "Finance",
       "income": "Income",
       "expense": "Expenses"
+    },
+    "userCard": {
+      "admin": "Admins",
+      "teacher": "Teachers",
+      "student": "Students",
+      "parent": "Parents"
     }
   },
   "Calendar": {
@@ -1606,5 +1613,35 @@
     "logoAlt": "Alan International School logo",
     "heading": "Sign in to your account",
     "subheading": "Use your school account credentials."
+  },
+  "ServerMessages": {
+    "notAuthorized": "You are not authorized to perform this action.",
+    "lessonWeekdays": "Lessons can only be scheduled Monday through Friday.",
+    "conflictTeacher": "Conflicts with “{name}” - the teacher already has a lesson at that time.",
+    "conflictClass": "Conflicts with “{name}” - the class already has a lesson at that time.",
+    "scoreNegative": "Score can’t be negative.",
+    "scoreExceeds": "Score can’t exceed {max}.",
+    "onlyStudents": "Only students can submit work.",
+    "missingWork": "Missing exam or assignment.",
+    "attachOrAnswer": "Attach a file or answer the questions before submitting.",
+    "workGone": "This exam or assignment no longer exists.",
+    "studentNotFound": "Student record not found.",
+    "notAssigned": "This isn’t assigned to you.",
+    "deadlinePassed": "The deadline has passed - submissions are closed for this one.",
+    "somethingWrongRetry": "Something went wrong - please try again.",
+    "noRubric": "This assignment has no rubric.",
+    "rubricChanged": "The rubric has changed - please reload and try again.",
+    "selectWork": "Select an exam or assignment to submit for.",
+    "examNotFound": "Exam not found.",
+    "assignmentNotFound": "Assignment not found.",
+    "invalidCheckin": "Invalid check-in request.",
+    "classNotFound": "Class not found.",
+    "noBadgeMatch": "No student in this class matches that badge.",
+    "chooseTeacher": "Please choose which teacher to log this as.",
+    "notFound": "Not found.",
+    "noStudentsInClass": "No students found in this class.",
+    "alreadyEnrolled": "Already enrolled in this club.",
+    "clubNotFound": "Club not found.",
+    "enrollUnavailable": "Already enrolled, or this club is unavailable."
   }
 }

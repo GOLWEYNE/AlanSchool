@@ -1,4 +1,5 @@
 import prisma from "@/lib/prisma";
+import { getTranslations } from "next-intl/server";
 
 // Shared server-side helpers for the Direct Messaging inbox
 // (/dashboard/list/messages). The `Message` model only stores plain
@@ -132,13 +133,14 @@ export const getThreadsForUser = async (userId: string): Promise<ThreadSummary[]
   }
 
   const labels = await resolveLabels(idsByRole);
+  const unknown = (await getTranslations("Common"))("unknown");
 
   return bucketList
     .map((b) => ({
       peerId: b.peerId,
       peerRole: b.peerRole,
       studentId: b.studentId,
-      peerLabel: labels.get(`${b.peerRole}:${b.peerId}`) ?? "Unknown",
+      peerLabel: labels.get(`${b.peerRole}:${b.peerId}`) ?? unknown,
       studentLabel: b.studentId ? labels.get(`student:${b.studentId}`) ?? null : null,
       lastMessage: b.lastMessage,
       lastAt: b.lastAt,
@@ -204,23 +206,24 @@ export const markThreadRead = async (
 // the thread header when a brand-new conversation has no messages yet
 // (so it isn't already covered by getThreadsForUser's batch resolve).
 export const resolveContactLabel = async (id: string, role: string): Promise<string> => {
+  const unknown = (await getTranslations("Common"))("unknown");
   if (role === "teacher") {
     const t = await prisma.teacher.findUnique({ where: { id }, select: { name: true, surname: true } });
-    return t ? `${t.name} ${t.surname}` : "Unknown";
+    return t ? `${t.name} ${t.surname}` : unknown;
   }
   if (role === "parent") {
     const p = await prisma.parent.findUnique({ where: { id }, select: { name: true, surname: true } });
-    return p ? `${p.name} ${p.surname}` : "Unknown";
+    return p ? `${p.name} ${p.surname}` : unknown;
   }
   if (role === "student") {
     const s = await prisma.student.findUnique({ where: { id }, select: { name: true, surname: true } });
-    return s ? `${s.name} ${s.surname}` : "Unknown";
+    return s ? `${s.name} ${s.surname}` : unknown;
   }
   if (role === "admin") {
     const a = await prisma.admin.findUnique({ where: { id }, select: { username: true } });
-    return a ? a.username : "Unknown";
+    return a ? a.username : unknown;
   }
-  return "Unknown";
+  return unknown;
 };
 
 // The "about which student" options offered when composing a new
