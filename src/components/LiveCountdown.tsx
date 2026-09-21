@@ -1,28 +1,18 @@
 "use client";
 
 import { useEffect, useState } from "react";
-
-const formatDuration = (ms: number) => {
-  if (ms <= 0) return "0s";
-  const totalSeconds = Math.floor(ms / 1000);
-  const hours = Math.floor(totalSeconds / 3600);
-  const minutes = Math.floor((totalSeconds % 3600) / 60);
-  const seconds = totalSeconds % 60;
-
-  if (hours > 0) return `${hours}h ${minutes}m`;
-  if (minutes > 0) return `${minutes}m ${seconds}s`;
-  return `${seconds}s`;
-};
+import { useTranslations } from "next-intl";
 
 // Ticks every second on the client so the "starts in / ends in" badge on
 // TodaysTimetableStrip stays live without re-fetching from the server.
 const LiveCountdown = ({
   target,
-  prefix,
+  kind,
 }: {
   target: string; // ISO timestamp
-  prefix: string;
+  kind: "ends" | "starts";
 }) => {
+  const t = useTranslations("Widgets.countdown");
   const targetTime = new Date(target).getTime();
   const [remaining, setRemaining] = useState(() => targetTime - Date.now());
 
@@ -34,9 +24,21 @@ const LiveCountdown = ({
     return () => clearInterval(id);
   }, [targetTime]);
 
+  const formatDuration = (ms: number) => {
+    if (ms <= 0) return t("duration.zero");
+    const totalSeconds = Math.floor(ms / 1000);
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+
+    if (hours > 0) return t("duration.hm", { h: hours, m: minutes });
+    if (minutes > 0) return t("duration.ms", { m: minutes, s: seconds });
+    return t("duration.s", { s: seconds });
+  };
+
   return (
     <span className="text-xs font-semibold whitespace-nowrap">
-      {prefix} {formatDuration(remaining)}
+      {t(kind, { time: formatDuration(remaining) })}
     </span>
   );
 };

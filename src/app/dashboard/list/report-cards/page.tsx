@@ -3,13 +3,14 @@ import PageHero from "@/components/PageHero";
 import BulkGenerateReportCardsPanel from "@/components/BulkGenerateReportCardsPanel";
 import ReportCardGenerateButton from "@/components/ReportCardGenerateButton";
 import prisma from "@/lib/prisma";
-import { getTranslations } from "next-intl/server";
+import { getFormatter, getTranslations } from "next-intl/server";
 import Image from "next/image";
 import Link from "next/link";
 
 const ReportCardsListPage = async () => {
   const t = await getTranslations("List.reportCards");
   const tc = await getTranslations("Common");
+  const format = await getFormatter();
 
   const [reportCards, classes, students] = await prisma.$transaction([
     prisma.reportCard.findMany({
@@ -62,7 +63,7 @@ const ReportCardsListPage = async () => {
           : "—"}
       </td>
       <td className="hidden lg:table-cell">
-        {new Date(item.generatedAt).toLocaleDateString()}
+        {format.dateTime(new Date(item.generatedAt), { year: "numeric", month: "numeric", day: "numeric" })}
       </td>
       <td>
         <div className="flex items-center gap-2">

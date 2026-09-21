@@ -5,7 +5,8 @@ import AttendanceChart from "@/components/AttendanceChart";
 import prisma from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 import { getUserRole } from "@/lib/auth";
-import { getTranslations } from "next-intl/server";
+import { getFormatter, getLocale, getTranslations } from "next-intl/server";
+import { dateLocale } from "@/lib/dateLocale";
 
 type Status = "PRESENT" | "ABSENT" | "LATE" | "EXCUSED";
 
@@ -38,6 +39,8 @@ const AttendancePage = async ({
   const role = getUserRole(sessionClaims);
   const date = searchParams.date || todayISO();
   const t = await getTranslations("List.attendance");
+  const format = await getFormatter();
+  const locale = await getLocale();
 
   const STATUS_LABELS: Record<string, string> = {
     PRESENT: t("statusPresent"),
@@ -98,7 +101,7 @@ const AttendancePage = async ({
                     key={r.id}
                     className="border-b border-gray-200 dark:border-slate-800 even:bg-slate-50 dark:even:bg-slate-900/40 text-sm"
                   >
-                    <td className="px-4 py-3">{new Date(r.date).toLocaleDateString()}</td>
+                    <td className="px-4 py-3">{format.dateTime(new Date(r.date), { year: "numeric", month: "numeric", day: "numeric" })}</td>
                     <td className="px-4 py-3">{r.class.name}</td>
                     <td className="px-4 py-3">
                       <span
@@ -200,7 +203,7 @@ const AttendancePage = async ({
   const trendData = Array.from(trendBuckets.values())
     .sort((a, b) => a.weekStart.getTime() - b.weekStart.getTime())
     .map((b) => ({
-      name: b.weekStart.toLocaleDateString("en-GB", { day: "numeric", month: "short" }),
+      name: new Intl.DateTimeFormat(dateLocale(locale), { day: "numeric", month: "short" }).format(b.weekStart),
       present: b.present,
       absent: b.absent,
     }));

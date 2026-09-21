@@ -1,8 +1,11 @@
 import Image from "next/image";
 import AttendanceChart from "./AttendanceChart";
 import prisma from "@/lib/prisma";
+import { getTranslations } from "next-intl/server";
 
 const AttendanceChartContainer = async () => {
+  const t = await getTranslations("Widgets.attendance");
+  const tc = await getTranslations("Common.daysShort");
   const today = new Date();
   const dayOfWeek = today.getDay();
   const daysSinceMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
@@ -55,7 +58,7 @@ const AttendanceChartContainer = async () => {
   });
 
   const data = daysOfWeek.map((day) => ({
-    name: day,
+    name: tc(day.toLowerCase()),
     present: attendanceMap[day].present,
     absent: attendanceMap[day].absent,
   }));
@@ -79,14 +82,14 @@ const AttendanceChartContainer = async () => {
             <Image src="/attendance.png" alt="" width={20} height={20} />
           </div>
           <div>
-            <h1 className="text-lg font-bold text-blue-900 dark:text-blue-100">Weekly Attendance</h1>
-            <p className="text-xs text-blue-500 dark:text-slate-400">Monday – Friday overview</p>
+            <h1 className="text-lg font-bold text-blue-900 dark:text-blue-100">{t("title")}</h1>
+            <p className="text-xs text-blue-500 dark:text-slate-400">{t("subtitle")}</p>
           </div>
         </div>
         {avgRate !== null && (
           <div className="toolbar-chip px-3 py-1.5 flex flex-col items-center leading-tight">
             <span className="text-sm font-extrabold">{avgRate}%</span>
-            <span className="text-[10px] font-medium opacity-80 -mt-0.5">avg present</span>
+            <span className="text-[10px] font-medium opacity-80 -mt-0.5">{t("avgPresent")}</span>
           </div>
         )}
       </div>
@@ -101,18 +104,18 @@ const AttendanceChartContainer = async () => {
         <div className="flex items-center gap-1.5 text-xs">
           <span className="w-2 h-2 rounded-full bg-blue-600" />
           <span className="text-gray-500 dark:text-slate-400">
-            <span className="font-semibold text-blue-900 dark:text-blue-100">{totalPresent}</span> present
+            <span className="font-semibold text-blue-900 dark:text-blue-100">{totalPresent}</span> {t("presentLabel")}
           </span>
         </div>
         <div className="flex items-center gap-1.5 text-xs">
           <span className="w-2 h-2 rounded-full bg-amber-500" />
           <span className="text-gray-500 dark:text-slate-400">
-            <span className="font-semibold text-blue-900 dark:text-blue-100">{totalAbsent}</span> absent
+            <span className="font-semibold text-blue-900 dark:text-blue-100">{totalAbsent}</span> {t("absentLabel")}
           </span>
         </div>
         {totalRecords > 0 && (
           <span className="ml-auto text-[11px] text-gray-400 dark:text-slate-500">
-            Busiest: <span className="font-medium text-blue-700 dark:text-blue-300">{busiestDay.name}</span>
+            {t("busiest")} <span className="font-medium text-blue-700 dark:text-blue-300">{busiestDay.name}</span>
           </span>
         )}
       </div>

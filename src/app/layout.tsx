@@ -2,17 +2,23 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
+import { kkKZ, ruRU } from "@clerk/localizations";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { NextIntlClientProvider } from "next-intl";
-import { getLocale, getMessages } from "next-intl/server";
+import { getLocale, getMessages, getTranslations } from "next-intl/server";
 import { ThemeProvider } from "@/context/ThemeContext";
 const inter = Inter({ subsets: ["latin"] });
 
-export const metadata: Metadata = {
-  title: "Alan School Management Dashboard",
-  description: "Next.js School Management System",
-};
+type ClerkLocalization = React.ComponentProps<typeof ClerkProvider>["localization"];
+
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("Metadata");
+  return {
+    title: t("title"),
+    description: t("description"),
+  };
+}
 
 // Runs before React hydrates so the correct theme class is on <html> for the
 // very first paint - otherwise a dark-mode visitor would see a flash of the
@@ -41,7 +47,13 @@ export default async function RootLayout({
   const messages = await getMessages();
 
   return (
-    <ClerkProvider>
+    // Clerk's own sign-in form / account menu follow the selected language too.
+    // (Cast: @clerk/localizations is newer than the @clerk/nextjs typings.)
+    <ClerkProvider
+      localization={
+        (locale === "ru" ? ruRU : locale === "kk" ? kkKZ : undefined) as ClerkLocalization
+      }
+    >
       <html lang={locale}>
         <head>
           <script dangerouslySetInnerHTML={{ __html: themeBootstrapScript }} />

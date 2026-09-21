@@ -10,7 +10,7 @@ import Image from "next/image";
 
 import { auth } from "@clerk/nextjs/server";
 import { getUserRole } from "@/lib/auth";
-import { getTranslations } from "next-intl/server";
+import { getFormatter, getTranslations } from "next-intl/server";
 
 type ResultList = {
   id: number;
@@ -38,6 +38,7 @@ const { userId, sessionClaims } = auth();
 const role = getUserRole(sessionClaims);
 const currentUserId = userId;
 const t = await getTranslations("List.results");
+const format = await getFormatter();
 
 
 const columns = [
@@ -92,7 +93,7 @@ const renderRow = (item: ResultList) => (
     </td>
     <td className="hidden md:table-cell">{item.className}</td>
     <td className="hidden md:table-cell">
-      {new Intl.DateTimeFormat("en-US").format(item.startTime)}
+      {format.dateTime(item.startTime, { year: "numeric", month: "numeric", day: "numeric" })}
     </td>
     <td>
       <div className="flex items-center gap-2">

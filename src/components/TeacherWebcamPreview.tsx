@@ -8,6 +8,7 @@ import {
   type PointerEvent as ReactPointerEvent,
 } from "react";
 import { Camera, CameraOff, RefreshCw, RotateCcw, ZoomIn } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 type CameraStatus = "idle" | "requesting" | "active" | "error";
 
@@ -37,6 +38,7 @@ const clampPan = (value: number, max: number) => {
  *   panning once zoomed in.
  */
 const TeacherWebcamPreview = () => {
+  const t = useTranslations("Camera");
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const wrapperRef = useRef<HTMLDivElement | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
@@ -48,7 +50,7 @@ const TeacherWebcamPreview = () => {
   } | null>(null);
 
   const [status, setStatus] = useState<CameraStatus>("idle");
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [errorKey, setErrorKey] = useState<string | null>(null);
   const [zoom, setZoom] = useState(MIN_ZOOM);
   const [pan, setPan] = useState<PanOffset>({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
@@ -71,11 +73,11 @@ const TeacherWebcamPreview = () => {
 
   const startCamera = useCallback(async () => {
     setStatus("requesting");
-    setErrorMessage(null);
+    setErrorKey(null);
 
     if (typeof navigator === "undefined" || !navigator.mediaDevices?.getUserMedia) {
       setStatus("error");
-      setErrorMessage("This browser doesn't support camera access.");
+      setErrorKey("unsupported");
       return;
     }
 
@@ -104,7 +106,7 @@ const TeacherWebcamPreview = () => {
     } catch (err) {
       stopStream();
       setStatus("error");
-      setErrorMessage(getCameraErrorMessage(err));
+      setErrorKey(getCameraErrorKey(err));
     }
   }, [stopStream]);
 
@@ -187,9 +189,9 @@ const TeacherWebcamPreview = () => {
             <Camera size={18} className="text-blue-600 dark:text-blue-300" strokeWidth={2} />
           </div>
           <div>
-            <h2 className="text-base font-bold text-gray-800 dark:text-blue-100">My Camera</h2>
+            <h2 className="text-base font-bold text-gray-800 dark:text-blue-100">{t("preview.title")}</h2>
             <p className="text-xs text-gray-400 dark:text-slate-500">
-              Local preview, only visible to you
+              {t("preview.subtitle")}
             </p>
           </div>
         </div>
@@ -201,7 +203,7 @@ const TeacherWebcamPreview = () => {
             className="inline-flex items-center gap-1.5 rounded-full border border-red-100 dark:border-red-500/20 bg-red-50 dark:bg-red-500/10 px-3 py-1.5 text-xs font-semibold text-red-600 dark:text-red-300 transition hover:bg-red-100 dark:hover:bg-red-500/20"
           >
             <CameraOff size={14} />
-            Stop
+            {t("preview.stop")}
           </button>
         )}
       </div>
@@ -236,7 +238,7 @@ const TeacherWebcamPreview = () => {
             {status === "requesting" && (
               <>
                 <RefreshCw size={22} className="text-blue-300 animate-spin" />
-                <p className="text-sm font-medium text-slate-200">Requesting camera access…</p>
+                <p className="text-sm font-medium text-slate-200">{t("preview.requesting")}</p>
               </>
             )}
 
@@ -245,9 +247,9 @@ const TeacherWebcamPreview = () => {
                 <div className="flex h-14 w-14 items-center justify-center rounded-full bg-blue-500/10 border border-blue-500/20">
                   <Camera size={24} className="text-blue-300" />
                 </div>
-                <p className="text-sm font-semibold text-slate-200">Your camera is off</p>
+                <p className="text-sm font-semibold text-slate-200">{t("preview.off")}</p>
                 <p className="text-xs text-slate-400 max-w-xs">
-                  Start your camera to preview yourself before going live in class.
+                  {t("preview.offHint")}
                 </p>
                 <button
                   type="button"
@@ -255,7 +257,7 @@ const TeacherWebcamPreview = () => {
                   className="mt-1 inline-flex items-center gap-2 rounded-full bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-500"
                 >
                   <Camera size={16} />
-                  Start camera
+                  {t("preview.start")}
                 </button>
               </>
             )}
@@ -265,9 +267,9 @@ const TeacherWebcamPreview = () => {
                 <div className="flex h-14 w-14 items-center justify-center rounded-full bg-red-500/10 border border-red-500/20">
                   <CameraOff size={24} className="text-red-300" />
                 </div>
-                <p className="text-sm font-semibold text-slate-200">Camera unavailable</p>
+                <p className="text-sm font-semibold text-slate-200">{t("preview.unavailable")}</p>
                 <p className="text-xs text-slate-400 max-w-xs">
-                  {errorMessage ?? "Something went wrong while accessing your camera."}
+                  {errorKey ? t(`errors.${errorKey}`) : t("errors.somethingWrong")}
                 </p>
                 <button
                   type="button"
@@ -275,7 +277,7 @@ const TeacherWebcamPreview = () => {
                   className="mt-1 inline-flex items-center gap-2 rounded-full bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-500"
                 >
                   <RefreshCw size={16} />
-                  Retry
+                  {t("preview.retry")}
                 </button>
               </>
             )}
@@ -295,7 +297,7 @@ const TeacherWebcamPreview = () => {
           disabled={status !== "active"}
           onChange={(event) => handleZoomChange(Number(event.target.value))}
           className="flex-1 h-1.5 accent-blue-600 disabled:opacity-40"
-          aria-label="Zoom level"
+          aria-label={t("preview.zoomLevel")}
         />
         <span className="w-10 text-right text-xs font-semibold text-gray-500 dark:text-slate-400">
           {zoom.toFixed(1)}x
@@ -307,40 +309,40 @@ const TeacherWebcamPreview = () => {
           className="inline-flex items-center gap-1 rounded-full border border-gray-200 dark:border-slate-700 px-2.5 py-1 text-xs font-semibold text-gray-600 dark:text-slate-300 transition hover:bg-gray-50 dark:hover:bg-slate-800 disabled:opacity-40 disabled:hover:bg-transparent"
         >
           <RotateCcw size={12} />
-          Reset
+          {t("preview.reset")}
         </button>
       </div>
 
       {canPan && (
         <p className="mt-2 text-[11px] text-gray-400 dark:text-slate-500">
-          Drag the preview to pan around while zoomed in.
+          {t("preview.dragHint")}
         </p>
       )}
     </div>
   );
 };
 
-function getCameraErrorMessage(err: unknown): string {
+function getCameraErrorKey(err: unknown): string {
   if (err instanceof DOMException) {
     switch (err.name) {
       case "NotAllowedError":
       case "PermissionDeniedError":
-        return "Camera access was blocked. Allow camera permissions for this site in your browser settings and try again.";
+        return "blocked";
       case "NotFoundError":
       case "DevicesNotFoundError":
-        return "No camera was found on this device.";
+        return "notFound";
       case "NotReadableError":
       case "TrackStartError":
-        return "The camera is already in use by another application.";
+        return "inUse";
       case "OverconstrainedError":
-        return "No camera matches the requested settings.";
+        return "overconstrained";
       case "SecurityError":
-        return "Camera access requires a secure (HTTPS) connection.";
+        return "insecure";
       default:
-        return "Couldn't access the camera. Please try again.";
+        return "generic";
     }
   }
-  return "Couldn't access the camera. Please try again.";
+  return "generic";
 }
 
 export default TeacherWebcamPreview;

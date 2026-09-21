@@ -9,7 +9,7 @@ import { Announcement, Class, Prisma } from "@/generated/prisma/client";
 import Image from "next/image";
 import { auth } from "@clerk/nextjs/server";
 import { getUserRole } from "@/lib/auth";
-import { getTranslations } from "next-intl/server";
+import { getFormatter, getTranslations } from "next-intl/server";
 
 
 type AnnouncementList = Announcement & { class: Class };
@@ -23,6 +23,7 @@ const AnnouncementListPage = async ({
   const role = getUserRole(sessionClaims);
   const currentUserId = userId;
   const t = await getTranslations("List.announcements");
+  const format = await getFormatter();
   
   const columns = [
     {
@@ -56,7 +57,7 @@ const AnnouncementListPage = async ({
       <td className="flex items-center gap-4 p-4">{item.title}</td>
       <td>{item.class?.name || "-"}</td>
       <td className="hidden md:table-cell">
-        {new Intl.DateTimeFormat("en-US").format(item.date)}
+        {format.dateTime(item.date, { year: "numeric", month: "numeric", day: "numeric" })}
       </td>
       <td>
         <div className="flex items-center gap-2">

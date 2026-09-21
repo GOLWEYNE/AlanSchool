@@ -11,6 +11,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { useTheme } from "@/context/ThemeContext";
+import { useTranslations } from "next-intl";
 
 type AttendanceDatum = { name: string; present: number; absent: number };
 
@@ -22,6 +23,7 @@ type CustomTooltipProps = {
 };
 
 const CustomTooltip = ({ active, payload, label, isDark }: CustomTooltipProps) => {
+  const t = useTranslations("Widgets.attendance");
   if (!active || !payload || !payload.length) return null;
 
   const present = payload.find((p) => p.dataKey === "present")?.value ?? 0;
@@ -41,19 +43,19 @@ const CustomTooltip = ({ active, payload, label, isDark }: CustomTooltipProps) =
         {label}
         {rate !== null && (
           <span className="ml-2 text-xs font-medium" style={{ color: isDark ? "#7dd3fc" : "#1d4ed8" }}>
-            {rate}% present
+            {t("ratePresent", { rate })}
           </span>
         )}
       </p>
       <div className="flex flex-col gap-1">
         <div className="flex items-center gap-2">
           <span className="w-2.5 h-2.5 rounded-full" style={{ background: isDark ? "#60a5fa" : "#2563eb" }} />
-          <span style={{ color: isDark ? "#c3c2b7" : "#52514e" }}>Present</span>
+          <span style={{ color: isDark ? "#c3c2b7" : "#52514e" }}>{t("present")}</span>
           <span className="ml-auto font-semibold" style={{ color: isDark ? "#e5edff" : "#0b0b0b" }}>{present}</span>
         </div>
         <div className="flex items-center gap-2">
           <span className="w-2.5 h-2.5 rounded-full" style={{ background: isDark ? "#fbbf24" : "#f59e0b" }} />
-          <span style={{ color: isDark ? "#c3c2b7" : "#52514e" }}>Absent</span>
+          <span style={{ color: isDark ? "#c3c2b7" : "#52514e" }}>{t("absent")}</span>
           <span className="ml-auto font-semibold" style={{ color: isDark ? "#e5edff" : "#0b0b0b" }}>{absent}</span>
         </div>
       </div>
@@ -61,24 +63,27 @@ const CustomTooltip = ({ active, payload, label, isDark }: CustomTooltipProps) =
   );
 };
 
-const CustomLegend = ({ isDark }: { isDark: boolean }) => (
+const CustomLegend = ({ isDark }: { isDark: boolean }) => {
+  const t = useTranslations("Widgets.attendance");
+  return (
   <div className="flex items-center gap-5 px-1">
     <div className="flex items-center gap-2">
       <span
         className="w-3 h-3 rounded-full shadow-sm"
         style={{ background: `linear-gradient(135deg, ${isDark ? "#93c5fd" : "#60a5fa"}, ${isDark ? "#60a5fa" : "#1d4ed8"})` }}
       />
-      <span className="text-xs font-medium" style={{ color: isDark ? "#c3c2b7" : "#52514e" }}>Present</span>
+      <span className="text-xs font-medium" style={{ color: isDark ? "#c3c2b7" : "#52514e" }}>{t("present")}</span>
     </div>
     <div className="flex items-center gap-2">
       <span
         className="w-3 h-3 rounded-full shadow-sm"
         style={{ background: `linear-gradient(135deg, ${isDark ? "#fde68a" : "#fbbf24"}, ${isDark ? "#fbbf24" : "#f59e0b"})` }}
       />
-      <span className="text-xs font-medium" style={{ color: isDark ? "#c3c2b7" : "#52514e" }}>Absent</span>
+      <span className="text-xs font-medium" style={{ color: isDark ? "#c3c2b7" : "#52514e" }}>{t("absent")}</span>
     </div>
   </div>
-);
+  );
+};
 
 const AttendanceChart = ({ data }: { data: AttendanceDatum[] }) => {
   const { theme } = useTheme();
