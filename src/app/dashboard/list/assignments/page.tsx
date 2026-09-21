@@ -10,7 +10,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { auth } from "@clerk/nextjs/server";
 import { getUserRole } from "@/lib/auth";
-import { getTranslations } from "next-intl/server";
+import { getFormatter, getTranslations } from "next-intl/server";
 
 type AssignmentList = Assignment & {
   lesson: {
@@ -30,6 +30,8 @@ const AssignmentListPage = async ({
   const role = getUserRole(sessionClaims);
   const currentUserId = userId;
   const t = await getTranslations("List.assignments");
+  const tw = await getTranslations("Assessments.work");
+  const format = await getFormatter();
   
   
   const columns = [
@@ -76,7 +78,7 @@ const AssignmentListPage = async ({
         {item.lesson.teacher.name + " " + item.lesson.teacher.surname}
       </td>
       <td className="hidden md:table-cell">
-        {new Intl.DateTimeFormat("en-US").format(item.dueDate)}
+        {format.dateTime(item.dueDate, { year: "numeric", month: "numeric", day: "numeric" })}
       </td>
       <td>
         <div className="flex items-center gap-2">
@@ -84,7 +86,7 @@ const AssignmentListPage = async ({
             href={`/dashboard/list/assignments/${item.id}`}
             className="text-xs font-semibold text-blue-500 hover:underline"
           >
-            {role === "student" ? "View / Submit" : "View"}
+            {role === "student" ? tw("viewSubmit") : tw("view")}
           </Link>
           {(role === "admin" || role === "teacher") && (
             <>

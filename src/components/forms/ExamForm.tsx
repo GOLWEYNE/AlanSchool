@@ -166,13 +166,13 @@ const ExamForm = ({
           />
         )}
         <div className="flex flex-col gap-2 w-full md:w-1/4">
-          <label className="text-xs text-gray-500 dark:text-slate-400">Class</label>
+          <label className="text-xs text-gray-500 dark:text-slate-400">{t("common.class")}</label>
           <select
             className="ring-[1.5px] ring-gray-300 dark:ring-slate-700 dark:bg-slate-800 dark:text-slate-100 p-2 rounded-md text-sm w-full"
             value={selectedClassId}
             onChange={(e) => setSelectedClassId(e.target.value)}
           >
-            <option value="">All classes</option>
+            <option value="">{t("common.allClasses")}</option>
             {classes.map((c: { id: number; name: string }) => (
               <option value={c.id} key={c.id}>
                 {c.name}
@@ -198,23 +198,23 @@ const ExamForm = ({
           )}
           {selectedClassId && classLessons.length === 0 && (
             <p className="text-xs text-amber-500">
-              This class has no lessons yet - showing every lesson instead.
+              {t("common.noLessonsForClass")}
             </p>
           )}
         </div>
         <div className="flex flex-col gap-2 w-full md:w-[47%]">
           <label className="text-xs text-gray-500 dark:text-slate-400">
-            Description / instructions (optional)
+            {t("common.descriptionOptional")}
           </label>
           <textarea
             {...register("description")}
             rows={3}
-            placeholder="What the exam covers, how it's marked, anything students should know..."
+            placeholder={t("exam.descriptionPlaceholder")}
             className="ring-[1.5px] ring-gray-300 dark:ring-slate-700 dark:bg-slate-800 dark:text-slate-100 p-2 rounded-md text-sm w-full"
           />
         </div>
         <div className="flex flex-col gap-2 w-full md:w-[22%]">
-          <label className="text-xs text-gray-500 dark:text-slate-400">Total marks (optional)</label>
+          <label className="text-xs text-gray-500 dark:text-slate-400">{t("common.totalMarksOptional")}</label>
           <input
             type="number"
             min={1}
@@ -223,7 +223,7 @@ const ExamForm = ({
           />
         </div>
         <div className="flex flex-col gap-2 w-full md:w-[22%]">
-          <label className="text-xs text-gray-500 dark:text-slate-400">Duration, minutes (optional)</label>
+          <label className="text-xs text-gray-500 dark:text-slate-400">{t("exam.durationOptional")}</label>
           <input
             type="number"
             min={1}

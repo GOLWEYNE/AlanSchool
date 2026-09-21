@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Eye, EyeOff, Download, Trash2 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 interface StudentSubmission {
   id: number;
@@ -16,6 +17,7 @@ interface StudentSubmission {
 }
 
 const TeacherStudentWork = () => {
+  const t = useTranslations('Assessments.work');
   const [submissions, setSubmissions] = useState<StudentSubmission[]>([
     {
       id: 1,
@@ -60,11 +62,11 @@ const TeacherStudentWork = () => {
 
   return (
     <div className="w-full max-w-6xl mx-auto p-6 bg-white dark:bg-gray-900 rounded-lg shadow-lg">
-      <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-6">Student Work Submissions</h2>
+      <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-6">{t('title')}</h2>
 
       <div className="space-y-4">
         {submissions.length === 0 ? (
-          <p className="text-gray-600 dark:text-gray-400 text-center py-8">No submissions yet</p>
+          <p className="text-gray-600 dark:text-gray-400 text-center py-8">{t('noSubmissions')}</p>
         ) : (
           submissions.map((submission) => (
             <div
@@ -83,10 +85,10 @@ const TeacherStudentWork = () => {
                     {submission.assignmentTitle}
                   </p>
                   <div className="flex items-center gap-2 mt-2">
-                    <span className={`text-xs px-2 py-1 rounded font-semibold ${getStatusColor(submission.status)}`}>
-                      {submission.status.toUpperCase()}
+                    <span className={`text-xs uppercase px-2 py-1 rounded font-semibold ${getStatusColor(submission.status)}`}>
+                      {t(`status.${submission.status.toUpperCase()}`)}
                     </span>
-                    <span className="text-xs text-gray-500 dark:text-gray-400">Submitted: {submission.submittedAt}</span>
+                    <span className="text-xs text-gray-500 dark:text-gray-400">{t('submittedOn', { date: submission.submittedAt })}</span>
                   </div>
                 </div>
                 <button className="ml-4 text-gray-600 dark:text-gray-400">
@@ -101,7 +103,7 @@ const TeacherStudentWork = () => {
                     {/* Marks Section */}
                     <div>
                       <label className="block text-sm font-semibold text-gray-800 dark:text-white mb-2">
-                        Marks ({submission.marks || 0}/25)
+                        {t('marks', { marks: submission.marks || 0 })}
                       </label>
                       <input
                         type="number"
@@ -115,27 +117,27 @@ const TeacherStudentWork = () => {
                     {/* Feedback Section */}
                     <div>
                       <label className="block text-sm font-semibold text-gray-800 dark:text-white mb-2">
-                        Feedback
+                        {t('feedback')}
                       </label>
                       <textarea
                         defaultValue={submission.feedback || ''}
                         className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white"
                         rows={4}
-                        placeholder="Provide feedback to the student..."
+                        placeholder={t('feedbackPlaceholder')}
                       />
                     </div>
 
                     {/* Action Buttons */}
                     <div className="flex gap-2 justify-end">
                       <button className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded font-semibold">
-                        Save Feedback
+                        {t('saveFeedback')}
                       </button>
                       <button
                         onClick={() => handleDeleteSubmission(submission.id)}
                         className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded font-semibold flex items-center gap-2"
                       >
                         <Trash2 size={16} />
-                        Delete
+                        {t('delete')}
                       </button>
                     </div>
                   </div>

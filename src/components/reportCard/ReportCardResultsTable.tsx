@@ -1,4 +1,5 @@
 import { ClipboardList, PenLine, FileQuestion } from "lucide-react";
+import { useTranslations } from "next-intl";
 import MilestoneBadge from "./MilestoneBadge";
 import { getSubjectIcon } from "./subjectIcons";
 import { getMilestone, ReportCardResultRow } from "./types";
@@ -10,16 +11,17 @@ const scoreBarColor = (score: number) => {
 };
 
 const ReportCardResultsTable = ({ results }: { results: ReportCardResultRow[] }) => {
+  const t = useTranslations("ReportCards.results");
   return (
     <div className="panel-card rounded-2xl p-5 md:p-6 shine-hover print:shadow-none print:ring-1 print:ring-slate-200">
       <div className="flex items-center gap-2 mb-4">
         <ClipboardList size={18} className="text-blue-600 dark:text-blue-300" />
         <h2 className="text-base font-bold text-gray-800 dark:text-blue-100">
-          Results Breakdown
+          {t("title")}
         </h2>
         {results.length > 0 && (
           <span className="ml-auto text-[11px] font-semibold text-gray-400 dark:text-slate-500">
-            {results.length} assessment{results.length === 1 ? "" : "s"}
+            {t("count", { count: results.length })}
           </span>
         )}
       </div>
@@ -30,11 +32,10 @@ const ReportCardResultsTable = ({ results }: { results: ReportCardResultRow[] })
             <FileQuestion size={24} className="text-slate-400 dark:text-slate-500" />
           </div>
           <p className="text-sm font-semibold text-gray-600 dark:text-slate-300">
-            No recorded exam or assignment results yet
+            {t("noResultsTitle")}
           </p>
           <p className="text-xs text-gray-400 dark:text-slate-500 max-w-xs">
-            Results will appear here automatically as soon as this student&apos;s exams and
-            assignments are graded.
+            {t("noResultsDesc")}
           </p>
         </div>
       ) : (
@@ -57,7 +58,7 @@ const ReportCardResultsTable = ({ results }: { results: ReportCardResultRow[] })
                   </p>
                   <p className="flex items-center gap-1 text-xs text-gray-400 dark:text-slate-500 truncate">
                     <PenLine size={11} />
-                    {row.type}: {row.assessment}
+                    {row.type === "Exam" ? t("typeExam") : t("typeAssignment")}: {row.assessment}
                   </p>
                 </div>
 

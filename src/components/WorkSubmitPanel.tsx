@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useFormState } from "react-dom";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
+import { useFormatter, useTranslations } from "next-intl";
 import { CldUploadWidget } from "next-cloudinary";
 import { UploadCloud, CheckCircle2, Lock } from "lucide-react";
 import { submitStudentWork } from "@/lib/actions";
@@ -44,6 +45,8 @@ const WorkSubmitPanel = ({
   rubric?: RubricCriterion[] | null;
 }) => {
   const router = useRouter();
+  const t = useTranslations("Assessments.work");
+  const format = useFormatter();
   const [state, formAction] = useFormState(submitStudentWork, {
     success: false,
     error: false,
@@ -66,14 +69,15 @@ const WorkSubmitPanel = ({
   useEffect(() => {
     if (state.success) {
       if (typeof state.autoScore === "number") {
-        toast(`Submitted! You scored ${state.autoScore}/${state.autoTotal}.`);
+        toast(t("submittedScored", { score: state.autoScore, total: state.autoTotal ?? 0 }));
       } else {
-        toast("Submitted!");
+        toast(t("submitted"));
       }
       router.refresh();
     } else if (state.error && state.message) {
       toast.error(state.message);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state, router]);
 
   const handleSubmit = () => {
@@ -95,16 +99,19 @@ const WorkSubmitPanel = ({
         <div className="rounded-lg border border-emerald-200 dark:border-emerald-900 bg-emerald-50 dark:bg-emerald-950/30 p-3 text-sm">
           <p className="font-semibold text-emerald-700 dark:text-emerald-300 flex items-center gap-1.5">
             <CheckCircle2 size={14} />
-            You submitted this
             {existingSubmission.submittedAt
-              ? ` on ${new Date(existingSubmission.submittedAt).toLocaleString()}`
-              : ""}
-            .
+              ? t("youSubmittedOn", {
+                  date: format.dateTime(new Date(existingSubmission.submittedAt), {
+                    dateStyle: "medium",
+                    timeStyle: "short",
+                  }),
+                })
+              : t("youSubmitted")}
           </p>
           {existingSubmission.status === "GRADED" && (
             <>
               <p className="mt-1 text-gray-700 dark:text-slate-300">
-                Grade: <span className="font-semibold">{existingSubmission.grade}</span>
+                {t("gradeLabel")} <span className="font-semibold">{existingSubmission.grade}</span>
                 {existingSubmission.feedback ? ` - ${existingSubmission.feedback}` : ""}
               </p>
               {existingSubmission.rubricScores && existingSubmission.rubricScores.length > 0 && (
@@ -123,7 +130,7 @@ const WorkSubmitPanel = ({
           )}
           {!isPast && (
             <p className="mt-1 text-xs text-gray-500 dark:text-slate-400">
-              You can resubmit until the deadline to replace this.
+              {t("canResubmit")}
             </p>
           )}
         </div>
@@ -132,7 +139,7 @@ const WorkSubmitPanel = ({
       {!!rubric?.length && !alreadyGraded && (
         <div className="rounded-lg border border-gray-200 dark:border-slate-700 p-3 text-sm">
           <p className="font-semibold text-gray-700 dark:text-slate-200 mb-1.5">
-            This will be graded on:
+            {t("gradedOn")}
           </p>
           <ul className="flex flex-col gap-1">
             {rubric.map((c) => (
@@ -141,7 +148,7 @@ const WorkSubmitPanel = ({
                   {c.name}
                   {c.description ? ` - ${c.description}` : ""}
                 </span>
-                <span className="font-medium shrink-0">{c.maxPoints} pts</span>
+                <span className="font-medium shrink-0">{t("pts", { count: c.maxPoints })}</span>
               </li>
             ))}
           </ul>
@@ -150,7 +157,7 @@ const WorkSubmitPanel = ({
 
       {isPast ? (
         <div className="flex items-center gap-2 text-sm text-red-500 bg-red-50 dark:bg-red-950/30 rounded-lg p-3">
-          <Lock size={16} /> The deadline has passed - submissions are closed.
+          <Lock size={16} /> {t("deadlinePassed")}
         </div>
       ) : (
         <>
@@ -164,7 +171,7 @@ const WorkSubmitPanel = ({
                   <p className="text-sm font-semibold text-gray-800 dark:text-slate-100 mb-2">
                     {qi + 1}. {q.text}{" "}
                     <span className="text-xs text-gray-400 font-normal">
-                      ({q.points} pt{q.points === 1 ? "" : "s"})
+                      {t("points", { count: q.points })}
                     </span>
                   </p>
                   <div className="flex flex-col gap-1.5">
@@ -192,7 +199,7 @@ const WorkSubmitPanel = ({
           ) : (
             <div className="flex flex-col gap-2">
               <label className="text-xs text-gray-500 dark:text-slate-400">
-                Upload your completed work (PDF or Word)
+                {t("uploadCompleted")}
               </label>
               <CldUploadWidget
                 uploadPreset="school"
@@ -227,10 +234,10 @@ const WorkSubmitPanel = ({
                     </div>
                     <div className="min-w-0">
                       <p className="text-sm font-semibold text-gray-700 dark:text-slate-200">
-                        {uploadName ? "File ready" : "Choose your completed file"}
+                        {uploadName ? t("fileReady") : t("chooseCompleted")}
                       </p>
                       <p className="text-xs text-gray-400 dark:text-slate-500 truncate">
-                        {uploadName ?? "PDF, DOC, or DOCX - up to 20MB"}
+                        {uploadName ?? t("fileHint")}
                       </p>
                     </div>
                     {uploadName && (
@@ -247,7 +254,7 @@ const WorkSubmitPanel = ({
             disabled={hasQuiz ? answers.some((a) => a === -1) : !uploadUrl}
             className="bg-blue-500 hover:bg-blue-600 disabled:opacity-40 disabled:cursor-not-allowed transition-colors text-white px-4 py-2.5 rounded-lg text-sm font-semibold w-fit"
           >
-            {existingSubmission ? "Resubmit" : "Submit"}
+            {existingSubmission ? t("resubmit") : t("submit")}
           </button>
         </>
       )}

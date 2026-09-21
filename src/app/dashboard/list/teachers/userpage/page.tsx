@@ -9,6 +9,7 @@ import TeacherExamManagement from "@/components/TeacherExamManagement";
 import TeacherAssignmentManagement from "@/components/TeacherAssignmentManagement";
 import TeacherStudentWork from "@/components/TeacherStudentWork";
 import Link from "next/link";
+import { getFormatter, getTranslations } from "next-intl/server";
 import { Calendar, BookOpen, Award, FileText, Video, Users } from "lucide-react";
 
 const TeacherUserPage = async () => {
@@ -109,34 +110,40 @@ const TeacherUserPage = async () => {
       ),
     }));
 
+  const t = await getTranslations("Profiles.home");
+  const tt = await getTranslations("Profiles.teacherHome");
+  const tm = await getTranslations("Menu");
+  const tc = await getTranslations("Common");
+  const format = await getFormatter();
+
   return (
     <div className="flex-1 p-4 md:p-8 bg-gray-50 dark:bg-gray-900">
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-4xl font-bold text-gray-800 dark:text-white mb-2">
-          Welcome, {teacher.name}!
+          {t("welcome", { name: teacher.name })}
         </h1>
-        <p className="text-lg text-gray-600 dark:text-gray-400">Teacher Dashboard - Manage Your Classes & Assessments</p>
+        <p className="text-lg text-gray-600 dark:text-gray-400">{tt("subtitle")}</p>
       </div>
 
       {/* Quick Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
         <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
-          <p className="text-sm text-gray-600 dark:text-gray-400">Classes Assigned</p>
+          <p className="text-sm text-gray-600 dark:text-gray-400">{tt("classesAssigned")}</p>
           <p className="text-3xl font-bold text-blue-600">{teacher.classes?.length || 0}</p>
         </div>
         <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
-          <p className="text-sm text-gray-600 dark:text-gray-400">Subjects Teaching</p>
+          <p className="text-sm text-gray-600 dark:text-gray-400">{tt("subjectsTeaching")}</p>
           <p className="text-3xl font-bold text-green-600">{teacher.subjects?.length || 0}</p>
         </div>
         <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
-          <p className="text-sm text-gray-600 dark:text-gray-400">Today&apos;s Lessons</p>
+          <p className="text-sm text-gray-600 dark:text-gray-400">{t("todaysLessons")}</p>
           <p className="text-3xl font-bold text-purple-600">
             {teacher.lessons?.filter(l => new Date(l.startTime).toDateString() === new Date().toDateString()).length || 0}
           </p>
         </div>
         <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
-          <p className="text-sm text-gray-600 dark:text-gray-400">Total Lessons</p>
+          <p className="text-sm text-gray-600 dark:text-gray-400">{t("totalLessons")}</p>
           <p className="text-3xl font-bold text-orange-600">{teacher.lessons?.length || 0}</p>
         </div>
       </div>
@@ -146,7 +153,7 @@ const TeacherUserPage = async () => {
         <div className="flex items-center gap-2 mb-4">
           <Calendar className="text-blue-600" size={28} />
           <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
-            My Schedule
+            {t("mySchedule")}
           </h2>
         </div>
         {teacher.lessons && teacher.lessons.length > 0 ? (
@@ -165,19 +172,19 @@ const TeacherUserPage = async () => {
                       {lesson.subject.name}
                     </p>
                     <p className="text-sm text-gray-600 dark:text-gray-400">
-                      Class: {lesson.class.name}
+                      {t("classLine", { name: lesson.class.name })}
                     </p>
                   </div>
                   <div className="text-right text-sm text-gray-600 dark:text-gray-400">
-                    <p className="font-semibold">{new Date(lesson.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
-                    <p>{lesson.day}</p>
+                    <p className="font-semibold">{format.dateTime(new Date(lesson.startTime), { hour: "2-digit", minute: "2-digit" })}</p>
+                    <p>{tc.has(`days.${String(lesson.day).toLowerCase()}`) ? tc(`days.${String(lesson.day).toLowerCase()}`) : lesson.day}</p>
                   </div>
                 </div>
               </div>
             ))}
           </div>
         ) : (
-          <p className="text-gray-600 dark:text-gray-400">No lessons scheduled</p>
+          <p className="text-gray-600 dark:text-gray-400">{t("noLessons")}</p>
         )}
       </div>
 
@@ -186,7 +193,7 @@ const TeacherUserPage = async () => {
         <div className="flex items-center gap-2 mb-4">
           <Video className="text-blue-600" size={28} />
           <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
-            Video Recording Studio
+            {t("videoStudio")}
           </h2>
         </div>
         <MyCamera />
@@ -199,10 +206,10 @@ const TeacherUserPage = async () => {
           <div className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-900/40 rounded-lg shadow-md p-6 cursor-pointer hover:shadow-lg transition h-full">
             <FileText className="text-purple-600 mb-3" size={32} />
             <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-2">
-              Announcements
+              {tm("announcements")}
             </h3>
             <p className="text-sm text-gray-600 dark:text-gray-400">
-              View and manage class announcements
+              {tt("announcementsDesc")}
             </p>
           </div>
         </Link>
@@ -212,10 +219,10 @@ const TeacherUserPage = async () => {
           <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-900/40 rounded-lg shadow-md p-6 cursor-pointer hover:shadow-lg transition h-full">
             <Award className="text-blue-600 mb-3" size={32} />
             <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-2">
-              Report Cards
+              {tm("reportCards")}
             </h3>
             <p className="text-sm text-gray-600 dark:text-gray-400">
-              Generate and manage student report cards
+              {tt("reportCardsDesc")}
             </p>
           </div>
         </Link>
@@ -225,10 +232,10 @@ const TeacherUserPage = async () => {
           <div className="bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-900/40 rounded-lg shadow-md p-6 cursor-pointer hover:shadow-lg transition h-full">
             <FileText className="text-orange-600 mb-3" size={32} />
             <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-2">
-              Lost & Found
+              {tm("lostFound")}
             </h3>
             <p className="text-sm text-gray-600 dark:text-gray-400">
-              Manage lost and found items
+              {tt("lostFoundDesc")}
             </p>
           </div>
         </Link>
@@ -238,10 +245,10 @@ const TeacherUserPage = async () => {
           <div className="bg-gradient-to-br from-red-50 to-red-100 dark:from-red-900/20 dark:to-red-900/40 rounded-lg shadow-md p-6 cursor-pointer hover:shadow-lg transition h-full">
             <Video className="text-red-600 mb-3" size={32} />
             <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-2">
-              Featured Video
+              {tm("featuredVideo")}
             </h3>
             <p className="text-sm text-gray-600 dark:text-gray-400">
-              Watch featured school videos
+              {t("watchFeatured")}
             </p>
           </div>
         </Link>
@@ -252,7 +259,7 @@ const TeacherUserPage = async () => {
         <div className="flex items-center gap-2 mb-6">
           <BookOpen className="text-green-600" size={28} />
           <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
-            Quiz Management
+            {tt("quizManagement")}
           </h2>
         </div>
         <TeacherQuizManagement
@@ -266,7 +273,7 @@ const TeacherUserPage = async () => {
         <div className="flex items-center gap-2 mb-6">
           <BookOpen className="text-indigo-600" size={28} />
           <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
-            Exam Management
+            {tt("examManagement")}
           </h2>
         </div>
         <TeacherExamManagement
@@ -280,7 +287,7 @@ const TeacherUserPage = async () => {
         <div className="flex items-center gap-2 mb-6">
           <FileText className="text-teal-600" size={28} />
           <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
-            Assignment Management
+            {tt("assignmentManagement")}
           </h2>
         </div>
         <TeacherAssignmentManagement
@@ -294,7 +301,7 @@ const TeacherUserPage = async () => {
         <div className="flex items-center gap-2 mb-6">
           <Users className="text-cyan-600" size={28} />
           <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
-            Student Submissions & Grading
+            {tt("submissionsGrading")}
           </h2>
         </div>
         <TeacherStudentWork />

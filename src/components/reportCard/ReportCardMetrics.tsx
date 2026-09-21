@@ -1,4 +1,5 @@
 import { Award, CalendarCheck2, ShieldCheck, AlertTriangle, Sparkles } from "lucide-react";
+import { useTranslations } from "next-intl";
 import ProgressRing from "./ProgressRing";
 import MilestoneBadge from "./MilestoneBadge";
 import { AttendanceBreakdown, getMilestone, ReportCardBehaviorEntry } from "./types";
@@ -31,14 +32,14 @@ const attendanceRing = (rate: number) => {
   return "stroke-amber-500 dark:stroke-amber-400";
 };
 
-const behaviorSummary = (logs: ReportCardBehaviorEntry[]) => {
+const behaviorSummary = (logs: ReportCardBehaviorEntry[], t: (key: string) => string) => {
   const incidents = logs.filter((l) => l.type === "INCIDENT").length;
   const concerns = logs.filter((l) => l.type === "CONCERN").length;
   const positives = logs.filter((l) => l.type === "POSITIVE").length;
 
   if (incidents > 0) {
     return {
-      label: "Needs Attention",
+      label: t("needsAttention"),
       tone: "text-rose-600 dark:text-rose-300",
       ring: "bg-rose-50 dark:bg-rose-500/10 border-rose-200 dark:border-rose-500/30",
       Icon: AlertTriangle,
@@ -46,14 +47,14 @@ const behaviorSummary = (logs: ReportCardBehaviorEntry[]) => {
   }
   if (concerns > 0) {
     return {
-      label: "Monitor",
+      label: t("monitor"),
       tone: "text-amber-600 dark:text-amber-300",
       ring: "bg-amber-50 dark:bg-amber-500/10 border-amber-200 dark:border-amber-500/30",
       Icon: ShieldCheck,
     };
   }
   return {
-    label: positives > 0 ? "Excellent" : "All Clear",
+    label: positives > 0 ? t("excellent") : t("allClear"),
     tone: "text-emerald-600 dark:text-emerald-300",
     ring: "bg-emerald-50 dark:bg-emerald-500/10 border-emerald-200 dark:border-emerald-500/30",
     Icon: ShieldCheck,
@@ -71,8 +72,9 @@ const ReportCardMetrics = ({
   attendanceBreakdown: AttendanceBreakdown;
   behaviorLogs: ReportCardBehaviorEntry[];
 }) => {
+  const t = useTranslations("ReportCards.metrics");
   const milestone = gpa !== null ? getMilestone(gpa) : null;
-  const behavior = behaviorSummary(behaviorLogs);
+  const behavior = behaviorSummary(behaviorLogs, (key) => t(key));
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -90,7 +92,7 @@ const ReportCardMetrics = ({
               <div className="flex items-center gap-1.5 text-gray-400 dark:text-slate-500">
                 <Award size={13} strokeWidth={2.5} />
                 <span className="text-[11px] font-semibold uppercase tracking-wide">
-                  Average Score
+                  {t("averageScore")}
                 </span>
               </div>
               <p className="text-2xl font-bold text-gray-800 dark:text-blue-100 mt-0.5">
@@ -106,8 +108,8 @@ const ReportCardMetrics = ({
         ) : (
           <EmptyMetric
             icon={Award}
-            title="Average Score"
-            message="No recorded exam or assignment results yet."
+            title={t("averageScore")}
+            message={t("noResultsYet")}
           />
         )}
       </div>
@@ -125,23 +127,28 @@ const ReportCardMetrics = ({
               <div className="flex items-center gap-1.5 text-gray-400 dark:text-slate-500">
                 <CalendarCheck2 size={13} strokeWidth={2.5} />
                 <span className="text-[11px] font-semibold uppercase tracking-wide">
-                  Attendance Rate
+                  {t("attendanceRate")}
                 </span>
               </div>
               <p className="text-2xl font-bold text-gray-800 dark:text-blue-100 mt-0.5">
                 {Math.round(attendanceRate * 100) / 100}%
               </p>
               <p className="text-[11px] text-gray-400 dark:text-slate-500 mt-1.5">
-                {attendanceBreakdown.present} present · {attendanceBreakdown.absent} absent
-                {attendanceBreakdown.late ? ` · ${attendanceBreakdown.late} late` : ""}
+                {t("presentAbsent", {
+                  present: attendanceBreakdown.present,
+                  absent: attendanceBreakdown.absent,
+                })}
+                {attendanceBreakdown.late
+                  ? ` · ${t("late", { count: attendanceBreakdown.late })}`
+                  : ""}
               </p>
             </div>
           </div>
         ) : (
           <EmptyMetric
             icon={CalendarCheck2}
-            title="Attendance Rate"
-            message="No attendance has been recorded yet."
+            title={t("attendanceRate")}
+            message={t("noAttendance")}
           />
         )}
       </div>
@@ -158,14 +165,14 @@ const ReportCardMetrics = ({
             <div className="flex items-center gap-1.5 text-gray-400 dark:text-slate-500">
               <ShieldCheck size={13} strokeWidth={2.5} />
               <span className="text-[11px] font-semibold uppercase tracking-wide">
-                Behavior Status
+                {t("behaviorStatus")}
               </span>
             </div>
             <p className={`text-2xl font-bold mt-0.5 ${behavior.tone}`}>{behavior.label}</p>
             <p className="text-[11px] text-gray-400 dark:text-slate-500 mt-1.5">
               {behaviorLogs.length === 0
-                ? "No logs recorded this term"
-                : `${behaviorLogs.length} recent log${behaviorLogs.length === 1 ? "" : "s"}`}
+                ? t("noLogs")
+                : t("recentLogs", { count: behaviorLogs.length })}
             </p>
           </div>
         </div>

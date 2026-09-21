@@ -1,5 +1,6 @@
 import Image from "next/image";
 import prisma from "@/lib/prisma";
+import { getTranslations } from "next-intl/server";
 
 type Role = "admin" | "teacher" | "student" | "parent";
 
@@ -23,16 +24,17 @@ const ClassLeaderboard = async ({
   teacherId?: string;
   studentIds?: string[];
 }) => {
+  const t = await getTranslations("Dashboards.leaderboard");
   const isRoleGroup = role === "admin" || role === "teacher";
 
   if (!isRoleGroup && (!studentIds || studentIds.length === 0)) {
     return (
       <div className="rounded-2xl p-5 text-white shine-hover bg-gradient-to-br from-violet-500 via-fuchsia-500 to-pink-500 shadow-lg">
         <h1 className="text-xl font-semibold flex items-center gap-2">
-          🏆 Recent Highlights
+          🏆 {t("highlights")}
         </h1>
         <p className="mt-4 text-sm text-white/90">
-          No results recorded yet.
+          {t("noResults")}
         </p>
       </div>
     );
@@ -120,7 +122,7 @@ const ClassLeaderboard = async ({
       <div className="relative overflow-hidden rounded-2xl p-5 text-white shine-hover bg-gradient-to-br from-violet-500 via-fuchsia-500 to-pink-500 shadow-lg">
         <div className="relative flex items-center justify-between">
           <h1 className="text-xl font-semibold flex items-center gap-2">
-            🏆 Recent Highlights
+            🏆 {t("highlights")}
           </h1>
         </div>
         {leaderboard.length > 0 ? (
@@ -151,7 +153,7 @@ const ClassLeaderboard = async ({
                     </p>
                   </div>
                   <span className="text-xs bg-white/20 rounded-full px-2 py-1 font-semibold whitespace-nowrap">
-                    {pct !== null ? `${pct}%` : `${r.score} pts`}
+                    {pct !== null ? `${pct}%` : t("pts", { score: r.score })}
                   </span>
                 </div>
               );
@@ -159,7 +161,7 @@ const ClassLeaderboard = async ({
           </div>
         ) : (
           <p className="relative mt-4 text-sm text-white/90">
-            No results recorded yet.
+            {t("noResults")}
           </p>
         )}
       </div>
@@ -180,7 +182,7 @@ const ClassLeaderboard = async ({
     <div className="relative overflow-hidden rounded-2xl p-5 text-white shine-hover bg-gradient-to-br from-violet-500 via-fuchsia-500 to-pink-500 shadow-lg">
       <div className="relative flex items-center justify-between">
         <h1 className="text-xl font-semibold flex items-center gap-2">
-          🏆 Recent Highlights
+          🏆 {t("highlights")}
         </h1>
       </div>
       <div className="relative mt-4 flex flex-col gap-3">
@@ -213,13 +215,13 @@ const ClassLeaderboard = async ({
                 </p>
               </div>
               <span className="text-xs bg-white/20 rounded-full px-2 py-1 font-semibold whitespace-nowrap">
-                {pct !== null ? `${pct}%` : `${best.score} pts`}
+                {pct !== null ? `${pct}%` : t("pts", { score: best.score })}
               </span>
             </div>
           );
         })}
         {!hasAnyResults && (
-          <p className="text-sm text-white/90">No results recorded yet.</p>
+          <p className="text-sm text-white/90">{t("noResults")}</p>
         )}
       </div>
     </div>

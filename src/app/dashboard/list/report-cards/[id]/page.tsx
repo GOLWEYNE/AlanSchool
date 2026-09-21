@@ -1,9 +1,9 @@
 import { auth } from "@clerk/nextjs/server";
 import { notFound } from "next/navigation";
 import { ShieldAlert } from "lucide-react";
+import { getTranslations } from "next-intl/server";
 import prisma from "@/lib/prisma";
 import { getUserRole } from "@/lib/auth";
-import { TERM_LABELS } from "@/lib/reportCardPdf";
 import ReportCardView from "@/components/reportCard/ReportCardView";
 import {
   AttendanceBreakdown,
@@ -44,6 +44,8 @@ const SingleReportCardPage = async ({
   }
 
   const { student } = reportCard;
+  const tr = await getTranslations("ReportCards");
+  const tc = await getTranslations("Common");
 
   const isAdminOrTeacher = role === "admin" || role === "teacher";
   const isSelf = role === "student" && userId === student.id;
@@ -57,10 +59,10 @@ const SingleReportCardPage = async ({
             <ShieldAlert size={26} className="text-rose-500 dark:text-rose-300" />
           </div>
           <h1 className="text-lg font-bold text-gray-800 dark:text-blue-100">
-            Access Restricted
+            {tc("accessRestricted")}
           </h1>
           <p className="text-sm text-gray-500 dark:text-slate-400">
-            You don&apos;t have permission to view this student&apos;s report card.
+            {tr("noPermission")}
           </p>
         </div>
       </div>
@@ -134,7 +136,7 @@ const SingleReportCardPage = async ({
     className: student.class.name,
     gradeLevel: student.grade?.level,
     term: reportCard.term,
-    termLabel: TERM_LABELS[reportCard.term] ?? reportCard.term,
+    termLabel: tc.has(`terms.${reportCard.term}`) ? tc(`terms.${reportCard.term}`) : reportCard.term,
     schoolYear: reportCard.schoolYear,
     gpa: reportCard.gpa,
     attendanceRate: reportCard.attendanceRate,

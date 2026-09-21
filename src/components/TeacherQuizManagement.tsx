@@ -2,6 +2,7 @@
 
 import { FileDown } from 'lucide-react';
 import { ReactNode } from 'react';
+import { useFormatter, useTranslations } from 'next-intl';
 
 type QuizQuestion = {
   text: string;
@@ -42,22 +43,26 @@ const TeacherQuizManagement = ({
   quizzes: QuizRow[];
   createButton: ReactNode;
 }) => {
+  const t = useTranslations('Assessments');
+  const format = useFormatter();
+  const fmtDate = (d: Date | string) =>
+    format.dateTime(new Date(d), { year: 'numeric', month: 'numeric', day: 'numeric' });
   const downloadQuizAsWord = (quiz: QuizRow) => {
     const questions = getQuestions(quiz.questions);
     const content = `
 ALAN INTERNATIONAL SCHOOL
 ${quiz.lesson.subject.name} - ${quiz.title}
 
-Class: ${quiz.lesson.class.name}
-Total Questions: ${questions.length}
-${quiz.totalMarks ? `Total Marks: ${quiz.totalMarks}` : ""}
-Due Date: ${new Date(quiz.dueDate).toLocaleDateString()}
+${t('doc.classLine', { name: quiz.lesson.class.name })}
+${t('doc.totalQuestions', { count: questions.length })}
+${quiz.totalMarks ? t('doc.totalMarks', { count: quiz.totalMarks }) : ""}
+${t('doc.dueDate', { date: fmtDate(quiz.dueDate) })}
 
-Instructions:
-1. Answer all questions
-2. Show your working
-3. Manage your time wisely
-4. Submit before the due date
+${t('doc.instructions')}
+1. ${t('doc.answerAll')}
+2. ${t('doc.showWorking')}
+3. ${t('doc.manageTime')}
+4. ${t('doc.submitBeforeDue')}
     `;
     const blob = new Blob([content], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
@@ -73,14 +78,14 @@ Instructions:
   return (
     <div className="w-full max-w-6xl mx-auto p-6 bg-white dark:bg-gray-900 rounded-lg shadow-lg">
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold text-gray-800 dark:text-white">Quiz Management</h2>
+        <h2 className="text-2xl font-bold text-gray-800 dark:text-white">{t('mgmt.quizTitle')}</h2>
         {createButton}
       </div>
 
       <div className="space-y-3">
         {quizzes.length === 0 ? (
           <p className="text-gray-600 dark:text-gray-400 text-center py-8">
-            No quizzes yet - create an assignment and turn on the quiz builder to add questions.
+            {t('mgmt.noQuizzes')}
           </p>
         ) : (
           quizzes.map((quiz) => {
@@ -93,11 +98,11 @@ Instructions:
                 <div className="flex-1">
                   <h3 className="font-semibold text-gray-800 dark:text-white">{quiz.title}</h3>
                   <p className="text-sm text-gray-600 dark:text-gray-400">
-                    {quiz.lesson.subject.name} • {quiz.lesson.class.name} • {questions.length} Questions
-                    {quiz.totalMarks ? ` • ${quiz.totalMarks} Marks` : ""}
+                    {quiz.lesson.subject.name} • {quiz.lesson.class.name} • {t('mgmt.questions', { count: questions.length })}
+                    {quiz.totalMarks ? ` • ${t('mgmt.marks', { count: quiz.totalMarks })}` : ""}
                   </p>
                   <p className="text-xs text-gray-500 dark:text-gray-500">
-                    Due: {new Date(quiz.dueDate).toLocaleDateString()}
+                    {t('mgmt.due', { date: fmtDate(quiz.dueDate) })}
                   </p>
                 </div>
                 <div className="flex items-center gap-2 ml-4">
@@ -106,7 +111,7 @@ Instructions:
                     className="bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded flex items-center gap-1 text-sm"
                   >
                     <FileDown size={16} />
-                    Download
+                    {t('mgmt.download')}
                   </button>
                   {quiz.actions}
                 </div>

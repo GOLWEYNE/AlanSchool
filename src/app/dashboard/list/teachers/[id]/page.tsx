@@ -11,6 +11,7 @@ import { auth } from "@clerk/nextjs/server";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { getLocale, getTranslations } from "next-intl/server";
 
 type TeacherWithCounts = {
   id: string;
@@ -48,6 +49,12 @@ const SingleTeacherPage = async ({
   if (!teacher) {
     return notFound();
   }
+
+  const t = await getTranslations("Profiles.detail");
+  const locale = await getLocale();
+  // English keeps the day/month/year order it always had; other locales use their own.
+  const dateLocale = locale === "en" ? "en-GB" : locale;
+
   return (
     <div className="flex-1 p-4 flex flex-col gap-4">
       <div className="flex flex-col gap-4 xl:flex-row">
@@ -76,7 +83,7 @@ const SingleTeacherPage = async ({
                     href={`/dashboard/edit/teacher/${teacher.id}`}
                     className="px-3 py-1 text-sm rounded-md bg-lamaPurple hover:bg-purple-700 text-white transition-colors font-semibold"
                   >
-                    ✏️ Edit
+                    ✏️ {t("edit")}
                   </Link>
                 )}
               </div>
@@ -91,7 +98,7 @@ const SingleTeacherPage = async ({
                 <div className="w-full md:w-1/3 lg:w-full 2xl:w-1/3 flex items-center gap-2">
                   <Image src="/date.png" alt="" width={14} height={14} />
                   <span>
-                    {new Intl.DateTimeFormat("en-GB").format(teacher.birthday)}
+                    {new Intl.DateTimeFormat(dateLocale).format(teacher.birthday)}
                   </span>
                 </div>
                 <div className="w-full md:w-1/3 lg:w-full 2xl:w-1/3 flex items-center gap-2">
@@ -118,7 +125,7 @@ const SingleTeacherPage = async ({
               />
               <div className="">
                 <h1 className="text-xl font-semibold">90%</h1>
-                <span className="text-sm text-gray-400">Attendance</span>
+                <span className="text-sm text-gray-400">{t("attendance")}</span>
               </div>
             </div>
             {/* CARD */}
@@ -134,7 +141,7 @@ const SingleTeacherPage = async ({
                 <h1 className="text-xl font-semibold">
                   {teacher._count.subjects}
                 </h1>
-                <span className="text-sm text-gray-400">Branches</span>
+                <span className="text-sm text-gray-400">{t("branches")}</span>
               </div>
             </div>
             {/* CARD */}
@@ -150,7 +157,7 @@ const SingleTeacherPage = async ({
                 <h1 className="text-xl font-semibold">
                   {teacher._count.lessons}
                 </h1>
-                <span className="text-sm text-gray-400">Lessons</span>
+                <span className="text-sm text-gray-400">{t("lessons")}</span>
               </div>
             </div>
             {/* CARD */}
@@ -166,7 +173,7 @@ const SingleTeacherPage = async ({
                 <h1 className="text-xl font-semibold">
                   {teacher._count.classes}
                 </h1>
-                <span className="text-sm text-gray-400">Classes</span>
+                <span className="text-sm text-gray-400">{t("classes")}</span>
               </div>
             </div>
           </div>
@@ -175,37 +182,37 @@ const SingleTeacherPage = async ({
       {/* RIGHT */}
       <div className="w-full xl:w-1/3 flex flex-col gap-4">
         <div className="bg-white p-4 rounded-md">
-          <h1 className="text-xl font-semibold">Shortcuts</h1>
+          <h1 className="text-xl font-semibold">{t("shortcuts")}</h1>
           <div className="mt-4 flex gap-4 flex-wrap text-xs text-gray-500">
            <Link
               className="p-3 rounded-md bg-lamaSkyLight"
               href={`/dashboard/list/classes?supervisorId=${teacher.id}`}
             >
-              Teacher&apos;s Classes
+              {t("teacherClasses")}
             </Link>
             <Link
               className="p-3 rounded-md bg-lamaPurpleLight"
               href={`/dashboard/list/students?teacherId=${teacher.id}`}
             >
-              Teacher&apos;s Students
+              {t("teacherStudents")}
             </Link>
             <Link
               className="p-3 rounded-md bg-lamaYellowLight"
               href={`/dashboard/list/lessons?teacherId=${teacher.id}`}
             >
-              Teacher&apos;s Lessons
+              {t("teacherLessons")}
             </Link>
             <Link
               className="p-3 rounded-md bg-pink-50"
               href={`/dashboard/list/exams?teacherId=${teacher.id}`}
             >
-              Teacher&apos;s Exams
+              {t("teacherExams")}
             </Link>
             <Link
               className="p-3 rounded-md bg-lamaSkyLight"
               href={`/dashboard/list/assignments?teacherId=${teacher.id}`}
             >
-              Teacher&apos;s Assignments
+              {t("teacherAssignments")}
             </Link>
           </div>
         </div>
@@ -216,7 +223,7 @@ const SingleTeacherPage = async ({
 
       {/* SCHEDULE - full page width so the whole week is easy to read at a glance */}
       <div className="bg-white dark:bg-slate-900 rounded-md p-4 min-h-[700px] flex flex-col">
-        <h1 className="text-blue-900 dark:text-blue-100">Teacher&apos;s Schedule</h1>
+        <h1 className="text-blue-900 dark:text-blue-100">{t("teacherSchedule")}</h1>
         <div className="flex-1 mt-2">
           <BigCalendarContainer type="teacherId" id={teacher.id} />
         </div>
