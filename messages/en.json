@@ -22,6 +22,7 @@
     "classes": "Classes",
     "clubs": "Clubs",
     "lessons": "Lessons",
+    "lessonTimes": "Lesson times",
     "exams": "Exams",
     "assignments": "Assignments",
     "results": "Results",
@@ -1725,6 +1726,61 @@
       "goalsTitle": "Study goals",
       "noGoals": "{name} has not set any study goals yet.",
       "readOnly": "Read-only view. Only the student can add or change their own goals."
+    }
+  },
+  "LessonTimes": {
+    "title": "Lesson Times",
+    "subtitle": "The school's daily routine, and a check that every lesson in every timetable follows it. Times are school time ({zone}).",
+    "routine": {
+      "title": "Daily routine 2026–2027",
+      "subtitle": "Each class's timetable is meant to follow one of these two sets of bells.",
+      "lesson": "Lesson {n}",
+      "junior": {
+        "title": "Junior classes",
+        "classes": "0a–0c, 1a–1d (incl. 1a-r, 1b-r), 2a–2e, 3a–3e, 4a–4d"
+      },
+      "upper": {
+        "title": "Upper classes",
+        "classes": "5a–11c"
+      }
+    },
+    "repair": {
+      "title": "Fix lessons stored at the wrong time",
+      "description": "Lessons that were loaded in bulk before lesson times followed the school clock are stored 2 hours early.",
+      "summary": "{onRoutine} of {total} lessons are on the routine.",
+      "pending": "{count} lessons in {classes} classes are 2 hours early (for example, the first lesson shows 06:55 instead of 08:55).",
+      "pendingHelp": "They come from the timetable that was loaded in bulk. Moving them puts every student's and teacher's schedule on the school routine. A backup of the old times is saved first, so this can be undone.",
+      "colLesson": "Lesson",
+      "colNow": "Shows now",
+      "colAfter": "After the fix",
+      "colCount": "Lessons",
+      "apply": "Move {count} lessons to the routine",
+      "working": "Working…",
+      "confirmApply": "Move {count} lessons to their routine times? A backup is saved first and you can undo it here.",
+      "applied": "Done. {count} lessons were moved to the routine.",
+      "nothingPending": "No lessons are stored at the old early times.",
+      "appliedInfo": "{count} lessons were moved to the routine on {date}.",
+      "undoHelp": "Undo puts those lessons back exactly as they were, including any changes made to them since.",
+      "undo": "Undo the move",
+      "confirmUndo": "Put {count} lessons back at their old times?",
+      "undone": "Restored. {count} lessons are back at their old times.",
+      "errors": {
+        "unauthorized": "Only an administrator can do this.",
+        "failed": "Something went wrong and nothing was changed. Please try again.",
+        "unavailable": "The lesson times could not be checked right now. Please try again in a moment."
+      }
+    },
+    "off": {
+      "title": "Lessons that are not on the routine",
+      "subtitle": "Lessons whose start and end do not match a lesson period of their class's routine. Open the class timetable to correct them.",
+      "empty": "Every lesson is on its class's routine.",
+      "count": "{count, plural, one {# lesson} other {# lessons}} not on the routine",
+      "colClass": "Class",
+      "colDay": "Day",
+      "colSubject": "Subject",
+      "colTime": "Time",
+      "open": "Open timetable",
+      "truncated": "Showing the first {shown} of {total}."
     }
   }
 }
