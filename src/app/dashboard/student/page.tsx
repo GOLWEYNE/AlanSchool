@@ -13,8 +13,10 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 import prisma from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 
 const StudentPage = async () => {
+  const t = await getTranslations("Dashboards.student");
   const { userId } = auth();
 
   const classItem = await prisma.class.findFirst({
@@ -53,29 +55,29 @@ const StudentPage = async () => {
     <div className="p-4 flex flex-col gap-4">
       {/* HEADER CARD */}
       <div className="rounded-2xl p-6 text-white shadow-lg shine-hover bg-gradient-to-r from-yellow-400 via-blue-500 to-blue-400">
-        <h1 className="text-3xl font-bold mb-2">Learning Cockpit</h1>
-        <p className="text-blue-50">Stay focused with your classes, tasks, and progress checkpoints.</p>
+        <h1 className="text-3xl font-bold mb-2">{t("title")}</h1>
+        <p className="text-blue-50">{t("subtitle")}</p>
         <div className="mt-3 flex flex-wrap gap-2">
-          <span className="rounded-full bg-white/90 text-blue-900 px-3 py-1 text-xs font-semibold">Class: {classItem?.name || "Unassigned"}</span>
-          <span className="rounded-full bg-white/90 text-blue-900 px-3 py-1 text-xs font-semibold">Due Assignments: {assignmentsDue}</span>
-          <span className="rounded-full bg-white/90 text-blue-900 px-3 py-1 text-xs font-semibold">Upcoming Exams: {upcomingExams}</span>
-          <span className="rounded-full bg-white/90 text-blue-900 px-3 py-1 text-xs font-semibold">Results: {publishedResults}</span>
+          <span className="rounded-full bg-white/90 text-blue-900 px-3 py-1 text-xs font-semibold">{t("classLabel")}: {classItem?.name || t("unassigned")}</span>
+          <span className="rounded-full bg-white/90 text-blue-900 px-3 py-1 text-xs font-semibold">{t("dueAssignments")}: {assignmentsDue}</span>
+          <span className="rounded-full bg-white/90 text-blue-900 px-3 py-1 text-xs font-semibold">{t("upcomingExams")}: {upcomingExams}</span>
+          <span className="rounded-full bg-white/90 text-blue-900 px-3 py-1 text-xs font-semibold">{t("results")}: {publishedResults}</span>
         </div>
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-        <Link href="/dashboard/list/assignments" className="panel-card p-3 text-blue-900 font-semibold text-sm text-center shine-hover">Assignments</Link>
-        <Link href="/dashboard/list/exams" className="panel-card p-3 text-blue-900 font-semibold text-sm text-center shine-hover">Exams</Link>
-        <Link href="/dashboard/list/results" className="panel-card p-3 text-blue-900 font-semibold text-sm text-center shine-hover">Results</Link>
-        <Link href="/dashboard/list/events" className="panel-card p-3 text-blue-900 font-semibold text-sm text-center shine-hover">Events</Link>
-        <Link href="/dashboard/list/messages" className="panel-card p-3 text-blue-900 font-semibold text-sm text-center shine-hover">Messages</Link>
+        <Link href="/dashboard/list/assignments" className="panel-card p-3 text-blue-900 font-semibold text-sm text-center shine-hover">{t("assignments")}</Link>
+        <Link href="/dashboard/list/exams" className="panel-card p-3 text-blue-900 font-semibold text-sm text-center shine-hover">{t("exams")}</Link>
+        <Link href="/dashboard/list/results" className="panel-card p-3 text-blue-900 font-semibold text-sm text-center shine-hover">{t("results")}</Link>
+        <Link href="/dashboard/list/events" className="panel-card p-3 text-blue-900 font-semibold text-sm text-center shine-hover">{t("events")}</Link>
+        <Link href="/dashboard/list/messages" className="panel-card p-3 text-blue-900 font-semibold text-sm text-center shine-hover">{t("messages")}</Link>
       </div>
 
       {/* CALENDAR CARD - full page width so the whole week is easy to read at a glance */}
       <div className="w-full panel-card p-6 rounded-lg shadow-md border-t-4 border-blue-400 hover:shadow-lg transition-shadow min-h-[640px] flex flex-col">
         <div className="mb-4 flex items-center gap-2">
           <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
-          <h2 className="text-xl font-semibold text-gray-800 dark:text-blue-100">Today&apos;s Classes</h2>
+          <h2 className="text-xl font-semibold text-gray-800 dark:text-blue-100">{t("todaysClasses")}</h2>
         </div>
         {classId ? (
           <div className="flex-1 bg-gradient-to-b from-blue-50 to-white dark:from-slate-900 dark:to-slate-950 rounded-lg overflow-hidden">
@@ -84,8 +86,8 @@ const StudentPage = async () => {
         ) : (
           <div className="text-center py-12">
             <div className="text-6xl mb-4">📭</div>
-            <p className="text-gray-500 text-lg">No class is assigned yet.</p>
-            <p className="text-gray-400 text-sm mt-2">Contact your administrator</p>
+            <p className="text-gray-500 text-lg">{t("noClass")}</p>
+            <p className="text-gray-400 text-sm mt-2">{t("contactAdmin")}</p>
           </div>
         )}
       </div>
@@ -110,7 +112,7 @@ const StudentPage = async () => {
           <div className="bg-gradient-to-r from-yellow-400 to-yellow-300 rounded-lg p-4 shadow-md">
             <div className="flex items-center gap-2 mb-3">
               <div className="text-2xl">🗓️</div>
-              <h3 className="text-lg font-bold text-gray-800">Events</h3>
+              <h3 className="text-lg font-bold text-gray-800">{t("eventsCard")}</h3>
             </div>
             <div className="bg-white rounded-lg overflow-hidden">
               <EventCalendar />
@@ -121,7 +123,7 @@ const StudentPage = async () => {
           <div className="bg-gradient-to-r from-blue-400 to-blue-300 rounded-lg p-4 shadow-md">
             <div className="flex items-center gap-2 mb-3">
               <div className="text-2xl">📢</div>
-              <h3 className="text-lg font-bold text-white">Announcements</h3>
+              <h3 className="text-lg font-bold text-white">{t("announcementsCard")}</h3>
             </div>
             <div className="bg-white rounded-lg overflow-hidden">
               <Announcements />

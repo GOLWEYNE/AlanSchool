@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { useTranslations } from "next-intl";
 import { useFormState } from "react-dom";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
@@ -28,13 +29,14 @@ const ClubEnrollRow = ({
   full: boolean;
   showLabel: boolean;
 }) => {
+  const t = useTranslations("List.clubs.enroll");
   const router = useRouter();
   const [enrollState, enrollAction] = useFormState(enrollInClub, initialState);
   const [withdrawState, withdrawAction] = useFormState(withdrawFromClub, initialState);
 
   useEffect(() => {
     if (enrollState.success) {
-      toast("Enrollment updated.");
+      toast(t("updated"));
       router.refresh();
     } else if (enrollState.error && enrollState.message) {
       toast.error(enrollState.message);
@@ -44,7 +46,7 @@ const ClubEnrollRow = ({
 
   useEffect(() => {
     if (withdrawState.success) {
-      toast("Left the club.");
+      toast(t("left"));
       router.refresh();
     } else if (withdrawState.error && withdrawState.message) {
       toast.error(withdrawState.message);
@@ -62,16 +64,16 @@ const ClubEnrollRow = ({
         )}
         {enrollment?.status === "ACTIVE" && (
           <span className="rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300 px-2 py-0.5 text-xs font-semibold">
-            Enrolled
+            {t("enrolled")}
           </span>
         )}
         {enrollment?.status === "WAITLISTED" && (
           <span className="rounded-full bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300 px-2 py-0.5 text-xs font-semibold">
-            Waitlisted{student.waitlistPosition ? ` #${student.waitlistPosition}` : ""}
+            {t("waitlisted")}{student.waitlistPosition ? ` #${student.waitlistPosition}` : ""}
           </span>
         )}
         {!enrollment && (
-          <span className="text-gray-400 dark:text-slate-500 text-xs">Not enrolled</span>
+          <span className="text-gray-400 dark:text-slate-500 text-xs">{t("notEnrolled")}</span>
         )}
       </div>
 
@@ -85,7 +87,7 @@ const ClubEnrollRow = ({
             withdrawAction(fd);
           }}
         >
-          {enrollment.status === "WAITLISTED" ? "Leave waitlist" : "Leave"}
+          {enrollment.status === "WAITLISTED" ? t("leaveWaitlist") : t("leave")}
         </button>
       ) : (
         <button
@@ -93,7 +95,7 @@ const ClubEnrollRow = ({
           className="text-xs font-semibold text-blue-700 dark:text-blue-300 hover:underline whitespace-nowrap"
           onClick={() => enrollAction({ clubId, studentId: student.id })}
         >
-          {full ? "Join waitlist" : "Join"}
+          {full ? t("joinWaitlist") : t("join")}
         </button>
       )}
     </div>

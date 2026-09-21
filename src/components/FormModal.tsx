@@ -21,6 +21,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useFormState } from "react-dom";
+import { useTranslations } from "next-intl";
 import { toast } from "react-toastify";
 import { FormContainerProps } from "./FormContainer";
 
@@ -50,52 +51,59 @@ const deleteActionMap: Partial<Record<TableName, DeleteAction>> = {
   behaviorLog: deleteBehaviorLog,
 };
 
+// Lazy-loaded forms show this while their chunk downloads; it's a component
+// (not an inline string) so it can read the active locale.
+const FormLoading = () => {
+  const t = useTranslations("Modal");
+  return <h1>{t("loading")}</h1>;
+};
+
 // USE LAZY LOADING
 
 // import TeacherForm from "./forms/TeacherForm";
 // import StudentForm from "./forms/StudentForm";
 
 const TeacherForm = dynamic(() => import("./forms/TeacherForm"), {
-  loading: () => <h1>Loading...</h1>,
+  loading: () => <FormLoading />,
 });
 const StudentForm = dynamic(() => import("./forms/StudentForm"), {
-  loading: () => <h1>Loading...</h1>,
+  loading: () => <FormLoading />,
 });
 const SubjectForm = dynamic(() => import("./forms/SubjectForm"), {
-  loading: () => <h1>Loading...</h1>,
+  loading: () => <FormLoading />,
 });
 const ClassForm = dynamic(() => import("./forms/ClassForm"), {
-  loading: () => <h1>Loading...</h1>,
+  loading: () => <FormLoading />,
 });
 const LessonForm = dynamic(() => import("./forms/LessonForm"), {
-  loading: () => <h1>Loading...</h1>,
+  loading: () => <FormLoading />,
 });
 const ExamForm = dynamic(() => import("./forms/ExamForm"), {
-  loading: () => <h1>Loading...</h1>,
+  loading: () => <FormLoading />,
 });
 const ParentForm = dynamic(() => import("./forms/ParentForm"), {
-  loading: () => <h1>Loading...</h1>,
+  loading: () => <FormLoading />,
 });
 const AssignmentForm = dynamic(() => import("./forms/AssignmentForm"), {
-  loading: () => <h1>Loading...</h1>,
+  loading: () => <FormLoading />,
 });
 const ResultForm = dynamic(() => import("./forms/ResultForm"), {
-  loading: () => <h1>Loading...</h1>,
+  loading: () => <FormLoading />,
 });
 const EventForm = dynamic(() => import("./forms/EventForm"), {
-  loading: () => <h1>Loading...</h1>,
+  loading: () => <FormLoading />,
 });
 const AnnouncementForm = dynamic(() => import("./forms/AnnouncementForm"), {
-  loading: () => <h1>Loading...</h1>,
+  loading: () => <FormLoading />,
 });
 const ClubForm = dynamic(() => import("./forms/ClubForm"), {
-  loading: () => <h1>Loading...</h1>,
+  loading: () => <FormLoading />,
 });
 const ObjectiveForm = dynamic(() => import("./forms/ObjectiveForm"), {
-  loading: () => <h1>Loading...</h1>,
+  loading: () => <FormLoading />,
 });
 const BehaviorLogForm = dynamic(() => import("./forms/BehaviorLogForm"), {
-  loading: () => <h1>Loading...</h1>,
+  loading: () => <FormLoading />,
 });
 
 const forms: Partial<Record<TableName, FormRenderer>> = {
@@ -215,7 +223,11 @@ const FormModal = ({
   id,
   relatedData,
 }: FormContainerProps & { relatedData?: any }) => {
+  const t = useTranslations("Modal");
   const [open, setOpen] = useState(false);
+
+  // Falls back to the raw table key for any table without an entity label.
+  const entityName = t.has(`entities.${table}`) ? t(`entities.${table}`) : table;
 
   const size = type === "create" ? "w-8 h-8" : "w-7 h-7";
   const bgColor =
@@ -239,7 +251,7 @@ const FormModal = ({
 
     useEffect(() => {
       if (state.success) {
-        toast(`${table} has been deleted!`);
+        toast(t("deleted", { entity: entityName }));
         setOpen(false);
         router.refresh();
       }
@@ -249,16 +261,16 @@ const FormModal = ({
       <form action={formAction} className="p-4 flex flex-col gap-4">
         <input type="text | number" name="id" value={id} hidden />
         <span className="text-center font-medium">
-          All data will be lost. Are you sure you want to delete this {table}?
+          {t("deleteConfirm", { entity: entityName })}
         </span>
         <button className="bg-red-700 text-white py-2 px-4 rounded-md border-none w-max self-center">
-          Delete
+          {t("delete")}
         </button>
       </form>
     ) : type === "create" || type === "update" ? (
-      selectedForm ? selectedForm(setOpen, type, data, relatedData) : "Form not found!"
+      selectedForm ? selectedForm(setOpen, type, data, relatedData) : t("formNotFound")
     ) : (
-      "Form not found!"
+      t("formNotFound")
     );
   };
 
@@ -268,7 +280,7 @@ const FormModal = ({
         disabled={!hasForm}
         className={`${size} flex items-center justify-center rounded-full ${bgColor} hover:shadow-lg transition-shadow`}
         onClick={() => setOpen(true)}
-        title={`${type.charAt(0).toUpperCase() + type.slice(1)} ${type === "create" ? "new" : ""}`}
+        title={type === "create" ? t("createNew") : type === "update" ? t("update") : t("delete")}
       >
         {type === "create" ? (
           <span className="text-white font-bold text-lg">+</span>

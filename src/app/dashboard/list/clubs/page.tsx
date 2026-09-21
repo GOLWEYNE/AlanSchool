@@ -9,6 +9,7 @@ import { resolvePageSize } from "@/lib/settings";
 import { Club, ClubEnrollment, Prisma, Teacher } from "@/generated/prisma/client";
 import { auth } from "@clerk/nextjs/server";
 import { getUserRole } from "@/lib/auth";
+import { getTranslations } from "next-intl/server";
 
 type ClubList = Club & {
   instructor: Teacher | null;
@@ -16,30 +17,12 @@ type ClubList = Club & {
   enrollments: ClubEnrollment[];
 };
 
-const CATEGORY_LABELS: Record<string, string> = {
-  DANCING: "Dancing",
-  PIANO: "Piano",
-  CHESS: "Chess",
-  HANDICRAFTS: "Handicrafts",
-  FOOTBALL: "Football",
-  VOLLEYBALL: "Volleyball",
-  BASKETBALL: "Basketball",
-  TENNIS: "Tennis",
-  TABLE_TENNIS: "Table Tennis",
-  KARATE: "Karate",
-  JUDO: "Judo",
-  GYMNASTICS: "Gymnastics",
-  ASYQ: "Asyq (traditional game)",
-  DOMBRA: "Dombra",
-  GUITAR: "Guitar",
-  OTHER: "Other",
-};
-
 const ClubListPage = async ({
   searchParams,
 }: {
   searchParams: { [key: string]: string | undefined };
 }) => {
+  const t = await getTranslations("List.clubs");
   const { userId, sessionClaims } = auth();
   const role = getUserRole(sessionClaims);
 
@@ -48,7 +31,7 @@ const ClubListPage = async ({
   // join/leave view.
   let relevantStudents: { id: string; label: string }[] = [];
   if (role === "student" && userId) {
-    relevantStudents = [{ id: userId, label: "You" }];
+    relevantStudents = [{ id: userId, label: t("you") }];
   } else if (role === "parent" && userId) {
     const children = await prisma.student.findMany({
       where: { parentId: userId },
@@ -59,13 +42,13 @@ const ClubListPage = async ({
   const showEnrollColumn = relevantStudents.length > 0;
 
   const columns = [
-    { header: "Club Name", accessor: "name" },
-    { header: "Category", accessor: "category", className: "hidden md:table-cell" },
-    { header: "Capacity", accessor: "capacity", className: "hidden md:table-cell" },
-    { header: "Enrolled", accessor: "enrolled", className: "hidden md:table-cell" },
-    { header: "Instructor", accessor: "instructor", className: "hidden md:table-cell" },
-    ...(showEnrollColumn ? [{ header: "Your Enrollment", accessor: "enroll" }] : []),
-    ...(role === "admin" ? [{ header: "Actions", accessor: "action" }] : []),
+    { header: t("columns.name"), accessor: "name" },
+    { header: t("columns.category"), accessor: "category", className: "hidden md:table-cell" },
+    { header: t("columns.capacity"), accessor: "capacity", className: "hidden md:table-cell" },
+    { header: t("columns.enrolled"), accessor: "enrolled", className: "hidden md:table-cell" },
+    { header: t("columns.instructor"), accessor: "instructor", className: "hidden md:table-cell" },
+    ...(showEnrollColumn ? [{ header: t("columns.yourEnrollment"), accessor: "enroll" }] : []),
+    ...(role === "admin" ? [{ header: t("columns.actions"), accessor: "action" }] : []),
   ];
 
   const renderRow = (item: ClubList, waitlistPositions: Map<string, number>) => {
@@ -89,11 +72,11 @@ const ClubListPage = async ({
         className="border-b border-gray-200 dark:border-slate-800 even:bg-slate-50 dark:even:bg-slate-900/40 text-sm hover:bg-lamaPurpleLight dark:hover:bg-blue-950/40"
       >
         <td className="flex items-center gap-4 p-4">{item.name}</td>
-        <td className="hidden md:table-cell">{CATEGORY_LABELS[item.category] ?? item.category}</td>
+        <td className="hidden md:table-cell">{t.has(`categories.${item.category}`) ? t(`categories.${item.category}`) : item.category}</td>
         <td className="hidden md:table-cell">{item.capacity}</td>
         <td className="hidden md:table-cell">{item._count.enrollments}</td>
         <td className="hidden md:table-cell">
-          {item.instructor ? `${item.instructor.name} ${item.instructor.surname}` : "Unassigned"}
+          {item.instructor ? `${item.instructor.name} ${item.instructor.surname}` : t("unassigned")}
         </td>
         {showEnrollColumn && (
           <td>
@@ -174,17 +157,17 @@ const ClubListPage = async ({
   return (
     <div className="panel-card p-4 md:p-5 flex-1 m-4 mt-0 list-page-shell">
       <PageHero
-        title="Clubs"
-        subtitle="Manage after-school clubs, capacity, and instructors."
-        emoji="🎯"
+        title={t("title")}
+        subtitle={t("subtitle")}
+        emoji={t("emoji")}
         stats={[
-          { label: "Total Clubs", value: count },
-          { label: "Visible Now", value: data.length },
-          { label: "Admin Mode", value: role === "admin" ? "On" : "Off" },
+          { label: t("totalLabel"), value: count },
+          { label: t("visibleNowLabel"), value: data.length },
+          { label: t("adminModeLabel"), value: role === "admin" ? t("on") : t("off") },
         ]}
       />
       <div className="flex items-center justify-between">
-        <h1 className="hidden md:block text-lg font-semibold text-blue-900">All Clubs</h1>
+        <h1 className="hidden md:block text-lg font-semibold text-blue-900">{t("heading")}</h1>
         <div className="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
           <TableSearch />
           <div className="flex items-center gap-4 self-end">

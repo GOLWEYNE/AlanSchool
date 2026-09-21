@@ -9,25 +9,7 @@ import { useFormState } from "react-dom";
 import { Dispatch, SetStateAction, useEffect } from "react";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
-
-const CATEGORY_LABELS: Record<(typeof clubCategories)[number], string> = {
-  DANCING: "Dancing",
-  PIANO: "Piano",
-  CHESS: "Chess",
-  HANDICRAFTS: "Handicrafts",
-  FOOTBALL: "Football",
-  VOLLEYBALL: "Volleyball",
-  BASKETBALL: "Basketball",
-  TENNIS: "Tennis",
-  TABLE_TENNIS: "Table Tennis",
-  KARATE: "Karate",
-  JUDO: "Judo",
-  GYMNASTICS: "Gymnastics",
-  ASYQ: "Asyq (traditional game)",
-  DOMBRA: "Dombra",
-  GUITAR: "Guitar",
-  OTHER: "Other",
-};
+import { useTranslations } from "next-intl";
 
 const ClubForm = ({
   type,
@@ -40,6 +22,9 @@ const ClubForm = ({
   setOpen: Dispatch<SetStateAction<boolean>>;
   relatedData?: any;
 }) => {
+  const t = useTranslations("Forms.club");
+  const tCommon = useTranslations("Forms.common");
+  const tCat = useTranslations("List.clubs.categories");
   const {
     register,
     handleSubmit,
@@ -66,11 +51,11 @@ const ClubForm = ({
 
   useEffect(() => {
     if (state.success) {
-      toast(`Club has been ${type === "create" ? "created" : "updated"}!`);
+      toast(type === "create" ? t("created") : t("updated"));
       setOpen(false);
       router.refresh();
     }
-  }, [state, router, type, setOpen]);
+  }, [state, router, type, setOpen, t]);
 
   const teachers: { id: string; name: string; surname: string }[] =
     relatedData?.teachers ?? [];
@@ -78,40 +63,40 @@ const ClubForm = ({
   return (
     <form className="flex flex-col gap-8" onSubmit={onSubmit}>
       <h1 className="text-xl font-semibold dark:text-blue-100">
-        {type === "create" ? "Create a new club" : "Update the club"}
+        {type === "create" ? t("createTitle") : t("updateTitle")}
       </h1>
 
       <div className="flex justify-between flex-wrap gap-4">
         <InputField
-          label="Club Name"
+          label={t("name")}
           name="name"
           defaultValue={data?.name}
           register={register}
           error={errors?.name}
         />
         <InputField
-          label="Capacity"
+          label={tCommon("capacity")}
           name="capacity"
           defaultValue={data?.capacity}
           register={register}
           error={errors?.capacity}
         />
         <InputField
-          label="Schedule (e.g. Mon & Wed, 4-5pm)"
+          label={t("schedule")}
           name="schedule"
           defaultValue={data?.schedule}
           register={register}
           error={errors?.schedule}
         />
         <InputField
-          label="Location"
+          label={t("location")}
           name="location"
           defaultValue={data?.location}
           register={register}
           error={errors?.location}
         />
         <InputField
-          label="Description"
+          label={tCommon("description")}
           name="description"
           defaultValue={data?.description}
           register={register}
@@ -128,7 +113,7 @@ const ClubForm = ({
           />
         )}
         <div className="flex flex-col gap-2 w-full md:w-1/4">
-          <label className="text-xs text-gray-500 dark:text-slate-400">Category</label>
+          <label className="text-xs text-gray-500 dark:text-slate-400">{t("category")}</label>
           <select
             className="ring-[1.5px] ring-gray-300 dark:ring-slate-700 dark:bg-slate-800 dark:text-slate-100 p-2 rounded-md text-sm w-full"
             {...register("category")}
@@ -136,7 +121,7 @@ const ClubForm = ({
           >
             {clubCategories.map((cat) => (
               <option value={cat} key={cat} selected={data && cat === data.category}>
-                {CATEGORY_LABELS[cat] ?? cat}
+                {tCat.has(cat) ? tCat(cat) : cat}
               </option>
             ))}
           </select>
@@ -145,13 +130,13 @@ const ClubForm = ({
           )}
         </div>
         <div className="flex flex-col gap-2 w-full md:w-1/4">
-          <label className="text-xs text-gray-500 dark:text-slate-400">Instructor (optional)</label>
+          <label className="text-xs text-gray-500 dark:text-slate-400">{t("instructorOptional")}</label>
           <select
             className="ring-[1.5px] ring-gray-300 dark:ring-slate-700 dark:bg-slate-800 dark:text-slate-100 p-2 rounded-md text-sm w-full"
             {...register("instructorId")}
             defaultValue={data?.instructorId ?? ""}
           >
-            <option value="">Unassigned</option>
+            <option value="">{t("unassigned")}</option>
             {teachers.map((teacher) => (
               <option
                 value={teacher.id}
@@ -168,9 +153,9 @@ const ClubForm = ({
         </div>
       </div>
 
-      {state.error && <span className="text-red-500">Something went wrong!</span>}
+      {state.error && <span className="text-red-500">{tCommon("somethingWrong")}</span>}
       <button className="bg-blue-400 text-white p-2 rounded-md">
-        {type === "create" ? "Create" : "Update"}
+        {type === "create" ? tCommon("create") : tCommon("update")}
       </button>
     </form>
   );
