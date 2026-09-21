@@ -19,6 +19,11 @@ import { SCHOOL_UTC_OFFSET_HOURS, toWallClock } from "./schoolTime";
 // on one of the seven early slots, which is what identifies them. The repair moves
 // each one to its proper routine period.
 //
+// Grade 11 (classes 11A-11C) was loaded with a different, non-routine timetable
+// (09:00-09:45, 09:55-10:40 ... up to 19:00). At the school's request those are
+// mapped in order onto the upper routine: on each day the 1st lesson becomes
+// Lesson 1, the 2nd becomes Lesson 2, and so on.
+//
 // Safety: every lesson that is changed is first copied into "LessonTimeBackup"
 // (in the same transaction), a lesson is never shifted twice, and the whole
 // change can be undone from the same page.
@@ -56,6 +61,7 @@ const schoolHHMM = (d: Date) => {
   const w = toWallClock(d);
   return `${pad(w.hour)}:${pad(w.minute)}`;
 };
+const isGradeEleven = (className: string) => /^11(?!\d)/.test(className.trim());
 const sqlTimestamp = (d: Date) => d.toISOString().replace("T", " ").replace("Z", "");
 
 // --- backup table ----------------------------------------------------------
@@ -111,6 +117,15 @@ export type PendingSlot = {
   count: number;
 };
 
+export type InOrderSlot = {
+  n: number;
+  start: string;
+  end: string;
+  count: number;
+};
+
+export type RepairKind = "early" | "inOrder";
+
 export type OffRoutineLesson = {
   id: number;
   classId: number;
@@ -128,9 +143,12 @@ export type LessonTimeStatus = {
   /** Lessons already on a routine period (after the pending repair, if applied). */
   onRoutine: number;
   pending: { count: number; classCount: number; slots: PendingSlot[] };
+  /** Grade 11 lessons that would be mapped in order onto the upper routine. */
+  inOrder: { count: number; classCount: number; slots: InOrderSlot[] };
   applied: { count: number; savedAt: string | null };
   off: OffRoutineLesson[];
   candidates: RepairCandidate[];
+  inOrderCandidates: RepairCandidate[];
 };
 
 export async function getLessonTimeStatus(): Promise<LessonTimeStatus> {
@@ -162,6 +180,11 @@ export async function getLessonTimeStatus(): Promise<LessonTimeStatus> {
   const candidateClasses = new Set<string>();
   const off: OffRoutineLesson[] = [];
   let onRoutine = 0;
+  // Grade 11 lessons per class and day, for the in-order mapping.
+  const gradeEleven = new Map<
+    string,
+    { className: string; off: { id: number; startAt: Date; start: string }[]; others: number }
+  >();
 
   for (const lesson of lessons) {
     const className = lesson.class.name;
@@ -198,7 +221,22 @@ export async function getLessonTimeStatus(): Promise<LessonTimeStatus> {
 
     const start = schoolHHMM(lesson.startTime);
     const end = schoolHHMM(lesson.endTime);
-    if (findPeriod(group, start, end)) {
+    const onPeriod = findPeriod(group, start, end) !== null;
+
+    if (isGradeEleven(className)) {
+      // One entry per class and calendar day (school clock), so lessons of
+      // different weeks are never mixed up.
+      const key = `${lesson.classId}|${utcDate(new Date(lesson.startTime.getTime() + SCHOOL_OFFSET_MINUTES * 60000))}`;
+      const entry = gradeEleven.get(key) ?? { className, off: [], others: 0 };
+      if (onPeriod || alreadyShifted.has(lesson.id)) {
+        entry.others += 1;
+      } else {
+        entry.off.push({ id: lesson.id, startAt: lesson.startTime, start });
+      }
+      gradeEleven.set(key, entry);
+    }
+
+    if (onPeriod) {
       onRoutine += 1;
     } else {
       off.push({
@@ -214,6 +252,38 @@ export async function getLessonTimeStatus(): Promise<LessonTimeStatus> {
     }
   }
 
+  // Map each grade 11 class-day in order onto the upper routine. A day is only
+  // touched when every one of its lessons is off the routine and there are no
+  // more lessons than the routine has periods; anything else is left for a human.
+  const upperPeriods = BELL_SCHEDULE.upper;
+  const inOrderCandidates: RepairCandidate[] = [];
+  const inOrderCounts = new Map<number, number>();
+  const inOrderClasses = new Set<string>();
+  const inOrderIds = new Set<number>();
+  for (const day of Array.from(gradeEleven.values())) {
+    if (day.others > 0 || day.off.length === 0 || day.off.length > upperPeriods.length) continue;
+    const sorted = [...day.off].sort((a, b) => a.start.localeCompare(b.start) || a.id - b.id);
+    sorted.forEach((lesson, i) => {
+      const period = upperPeriods[i];
+      const date = utcDate(lesson.startAt);
+      inOrderCandidates.push({
+        id: lesson.id,
+        newStartAt: new Date(`${date}T${fromMinutes(toMinutes(period.start) - SCHOOL_OFFSET_MINUTES)}:00.000Z`),
+        newEndAt: new Date(`${date}T${fromMinutes(toMinutes(period.end) - SCHOOL_OFFSET_MINUTES)}:00.000Z`),
+      });
+      inOrderCounts.set(period.n, (inOrderCounts.get(period.n) ?? 0) + 1);
+      inOrderClasses.add(day.className);
+      inOrderIds.add(lesson.id);
+    });
+  }
+  const inOrderSlots: InOrderSlot[] = upperPeriods
+    .filter((p) => inOrderCounts.has(p.n))
+    .map((p) => ({ n: p.n, start: p.start, end: p.end, count: inOrderCounts.get(p.n) ?? 0 }));
+
+  // Lessons that will be mapped are no longer "off the routine".
+  const offRemaining = off.filter((l) => !inOrderIds.has(l.id));
+  onRoutine += inOrderIds.size;
+
   const slots: PendingSlot[] = LEGACY_SLOTS.filter((s) => slotCounts.has(s.n)).map((s) => ({
     n: s.n,
     shownStart: s.shownStart,
@@ -227,17 +297,24 @@ export async function getLessonTimeStatus(): Promise<LessonTimeStatus> {
     total: lessons.length,
     onRoutine,
     pending: { count: candidates.length, classCount: candidateClasses.size, slots },
+    inOrder: { count: inOrderCandidates.length, classCount: inOrderClasses.size, slots: inOrderSlots },
     applied: { count: alreadyShifted.size, savedAt },
-    off,
+    off: offRemaining,
     candidates,
+    inOrderCandidates,
   };
 }
 
 // --- apply / undo ----------------------------------------------------------
 
-/** Moves the early-slot lessons to their routine periods. Returns how many moved. */
-export async function applyLessonTimeRepair(): Promise<number> {
-  const { candidates } = await getLessonTimeStatus();
+/**
+ * Moves lessons onto their routine periods: "early" = the bulk-loaded junior
+ * lessons stored 2 hours early, "inOrder" = the grade 11 timetable mapped in
+ * order. Returns how many moved.
+ */
+export async function applyLessonTimeRepair(kind: RepairKind = "early"): Promise<number> {
+  const status = await getLessonTimeStatus();
+  const candidates = kind === "inOrder" ? status.inOrderCandidates : status.candidates;
   if (candidates.length === 0) return 0;
 
   // Only integers and ISO timestamps built above go into the statements.
