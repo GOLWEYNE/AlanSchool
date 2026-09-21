@@ -10,6 +10,7 @@ import { Dispatch, SetStateAction, useEffect } from "react";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { useValidationMessage } from "@/hooks/useValidationMessage";
 
 // A merit/incident entry against a student - admin/teacher log these,
 // parents (and the student themselves) see the ones marked visible to
@@ -27,6 +28,7 @@ const BehaviorLogForm = ({
   relatedData?: any;
 }) => {
   const t = useTranslations("Forms");
+  const tv = useValidationMessage();
   const {
     register,
     handleSubmit,
@@ -102,7 +104,7 @@ const BehaviorLogForm = ({
             ))}
           </select>
           {errors.studentId?.message && (
-            <p className="text-xs text-red-400">{errors.studentId.message.toString()}</p>
+            <p className="text-xs text-red-400">{tv(errors.studentId.message)}</p>
           )}
         </div>
         {showTeacherPicker && (
@@ -121,7 +123,7 @@ const BehaviorLogForm = ({
               ))}
             </select>
             {errors.teacherId?.message && (
-              <p className="text-xs text-red-400">{errors.teacherId.message.toString()}</p>
+              <p className="text-xs text-red-400">{tv(errors.teacherId.message)}</p>
             )}
           </div>
         )}
@@ -139,7 +141,7 @@ const BehaviorLogForm = ({
             ))}
           </select>
           {errors.type?.message && (
-            <p className="text-xs text-red-400">{errors.type.message.toString()}</p>
+            <p className="text-xs text-red-400">{tv(errors.type.message)}</p>
           )}
         </div>
         <InputField
@@ -160,7 +162,7 @@ const BehaviorLogForm = ({
             className="ring-[1.5px] ring-gray-300 dark:ring-slate-700 dark:bg-slate-800 dark:text-slate-100 p-2 rounded-md text-sm w-full"
           />
           {errors.description?.message && (
-            <p className="text-xs text-red-400">{errors.description.message.toString()}</p>
+            <p className="text-xs text-red-400">{tv(errors.description.message)}</p>
           )}
         </div>
         <label className="flex items-center gap-2 text-sm text-gray-600 dark:text-slate-300">

@@ -6,6 +6,7 @@ import { useFormState } from "react-dom";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { CldUploadWidget } from "next-cloudinary";
 import { UploadCloud, Link2, CheckCircle2 } from "lucide-react";
 import {
@@ -14,6 +15,7 @@ import {
 } from "@/lib/formValidationSchemas";
 import { createFeaturedVideo } from "@/lib/actions";
 import { isDirectVideoFile } from "@/lib/videoEmbed";
+import { useValidationMessage } from "@/hooks/useValidationMessage";
 
 const FeaturedVideoForm = ({
   currentTitle,
@@ -22,6 +24,9 @@ const FeaturedVideoForm = ({
   currentTitle?: string;
   currentVideoUrl?: string;
 }) => {
+  const t = useTranslations("FeaturedVideo.form");
+  const tCommon = useTranslations("Common");
+  const tv = useValidationMessage();
   const {
     register,
     handleSubmit,
@@ -49,7 +54,7 @@ const FeaturedVideoForm = ({
     currentVideoUrl && isDirectVideoFile(currentVideoUrl) ? "upload" : "link"
   );
   const [uploadedFileName, setUploadedFileName] = useState<string | null>(
-    currentVideoUrl && isDirectVideoFile(currentVideoUrl) ? "Current video" : null
+    currentVideoUrl && isDirectVideoFile(currentVideoUrl) ? t("currentVideo") : null
   );
 
   const onSubmit = handleSubmit((values) => {
@@ -60,31 +65,31 @@ const FeaturedVideoForm = ({
 
   useEffect(() => {
     if (state.success) {
-      toast("Featured video updated - it's now live on every dashboard.");
+      toast(t("toast"));
       router.refresh();
     }
-  }, [state, router]);
+  }, [state, router, t]);
 
   return (
     <form className="flex flex-col gap-5" onSubmit={onSubmit}>
       <div className="flex flex-col gap-2">
         <label className="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-slate-400">
-          Video Title
+          {t("videoTitle")}
         </label>
         <input
           type="text"
-          placeholder="e.g. Welcome Back to School 2026!"
+          placeholder={t("titlePlaceholder")}
           {...register("title")}
           className="ring-[1.5px] ring-gray-300 dark:ring-slate-700 dark:bg-slate-800 dark:text-slate-100 p-2.5 rounded-lg text-sm w-full"
         />
         {errors.title?.message && (
-          <p className="text-xs text-red-400">{errors.title.message.toString()}</p>
+          <p className="text-xs text-red-400">{tv(errors.title.message)}</p>
         )}
       </div>
 
       <div className="flex flex-col gap-2">
         <label className="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-slate-400">
-          Video Source
+          {t("videoSource")}
         </label>
 
         <div className="flex gap-1 rounded-lg bg-gray-100 dark:bg-slate-800 p-1 w-fit">
@@ -97,7 +102,7 @@ const FeaturedVideoForm = ({
                 : "text-gray-500 dark:text-slate-400"
             }`}
           >
-            <Link2 size={13} /> Paste a Link
+            <Link2 size={13} /> {t("pasteLink")}
           </button>
           <button
             type="button"
@@ -108,7 +113,7 @@ const FeaturedVideoForm = ({
                 : "text-gray-500 dark:text-slate-400"
             }`}
           >
-            <UploadCloud size={13} /> Upload a Video
+            <UploadCloud size={13} /> {t("uploadVideo")}
           </button>
         </div>
 
@@ -116,14 +121,12 @@ const FeaturedVideoForm = ({
           <>
             <input
               type="text"
-              placeholder="YouTube, TikTok, Instagram Reels, or Vimeo link"
+              placeholder={t("linkPlaceholder")}
               {...register("videoUrl")}
               className="ring-[1.5px] ring-gray-300 dark:ring-slate-700 dark:bg-slate-800 dark:text-slate-100 p-2.5 rounded-lg text-sm w-full"
             />
             <p className="text-xs text-gray-400 dark:text-slate-500">
-              Regular share links work fine - they&apos;re converted automatically.
-              For TikTok, use the full video link rather than a shortened
-              vm.tiktok.com link.
+              {t("linkHelp")}
             </p>
           </>
         ) : (
@@ -144,7 +147,7 @@ const FeaturedVideoForm = ({
                 const info = result?.info as { secure_url?: string; original_filename?: string } | undefined;
                 if (info?.secure_url) {
                   setValue("videoUrl", info.secure_url, { shouldValidate: true });
-                  setUploadedFileName(info.original_filename || "video");
+                  setUploadedFileName(info.original_filename || t("fileFallback"));
                 }
                 widget.close();
               }}
@@ -159,10 +162,10 @@ const FeaturedVideoForm = ({
                   </div>
                   <div className="min-w-0">
                     <p className="text-sm font-semibold text-gray-700 dark:text-slate-200">
-                      {uploadedFileName ? "Video ready" : "Choose a video from your computer"}
+                      {uploadedFileName ? t("videoReady") : t("chooseVideo")}
                     </p>
                     <p className="text-xs text-gray-400 dark:text-slate-500 truncate">
-                      {uploadedFileName ?? "MP4, MOV, or WebM - up to 200MB"}
+                      {uploadedFileName ?? t("formats")}
                     </p>
                   </div>
                   {uploadedFileName && (
@@ -175,13 +178,13 @@ const FeaturedVideoForm = ({
         )}
 
         {errors.videoUrl?.message && (
-          <p className="text-xs text-red-400">{errors.videoUrl.message.toString()}</p>
+          <p className="text-xs text-red-400">{tv(errors.videoUrl.message)}</p>
         )}
       </div>
 
       {state.error && (
         <span className="text-sm text-red-500">
-          Something went wrong. Please try again.
+          {tCommon("somethingWrongRetry")}
         </span>
       )}
 
@@ -190,7 +193,7 @@ const FeaturedVideoForm = ({
           type="submit"
           className="bg-blue-600 hover:bg-blue-700 transition-colors text-white px-4 py-2.5 rounded-lg text-sm font-semibold shine-hover"
         >
-          Publish Broadcast
+          {t("publish")}
         </button>
         <button
           type="button"
@@ -201,7 +204,7 @@ const FeaturedVideoForm = ({
           }}
           className="px-4 py-2.5 rounded-lg text-sm font-semibold text-gray-600 dark:text-slate-300 border border-gray-300 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-800"
         >
-          Reset
+          {t("reset")}
         </button>
       </div>
     </form>

@@ -10,6 +10,7 @@ import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { useValidationMessage } from "@/hooks/useValidationMessage";
 
 const ResultForm = ({
   type,
@@ -23,6 +24,7 @@ const ResultForm = ({
   relatedData?: any;
 }) => {
   const t = useTranslations("Forms");
+  const tv = useValidationMessage();
   const { students, exams, assignments } = relatedData;
 
   const {
@@ -141,7 +143,7 @@ const ResultForm = ({
             ))}
           </select>
           {errors.studentId?.message && (
-            <p className="text-xs text-red-400">{errors.studentId.message.toString()}</p>
+            <p className="text-xs text-red-400">{tv(errors.studentId.message)}</p>
           )}
         </div>
         <div className="flex flex-col gap-2 w-full md:w-1/4">

@@ -6,13 +6,14 @@ import { getUserRole } from "@/lib/auth";
 import { Prisma, TicketCategory } from "@/generated/prisma/client";
 import { auth } from "@clerk/nextjs/server";
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 
-const CATEGORY_TABS: { key: TicketCategory | "ALL"; label: string }[] = [
-  { key: "LOST_ITEM", label: "Lost & Found" },
-  { key: "TECHNICAL", label: "Technical" },
-  { key: "ACADEMIC", label: "Academic" },
-  { key: "OTHER", label: "Other" },
-  { key: "ALL", label: "All tickets" },
+const CATEGORY_TAB_KEYS: (TicketCategory | "ALL")[] = [
+  "LOST_ITEM",
+  "TECHNICAL",
+  "ACADEMIC",
+  "OTHER",
+  "ALL",
 ];
 
 const isTicketCategory = (value: string | undefined): value is TicketCategory =>
@@ -23,6 +24,7 @@ const TicketsBoardPage = async ({
 }: {
   searchParams: { [key: string]: string | undefined };
 }) => {
+  const t = await getTranslations("Tickets");
   const { userId, sessionClaims } = auth();
   const role = getUserRole(sessionClaims);
   const canManage = role === "admin" || role === "teacher";
@@ -69,17 +71,17 @@ const TicketsBoardPage = async ({
     prisma.ticket.count({ where: { ...where, status: "RESOLVED" } }),
   ]);
 
-  const boardTickets: BoardTicket[] = tickets.map((t: (typeof tickets)[number]) => ({
-    id: t.id,
-    title: t.title,
-    description: t.description,
-    category: t.category,
-    status: t.status,
-    priority: t.priority,
-    createdAt: t.createdAt.toISOString(),
-    resolvedAt: t.resolvedAt ? t.resolvedAt.toISOString() : null,
-    student: t.student,
-    commentCount: t._count.comments,
+  const boardTickets: BoardTicket[] = tickets.map((ticket: (typeof tickets)[number]) => ({
+    id: ticket.id,
+    title: ticket.title,
+    description: ticket.description,
+    category: ticket.category,
+    status: ticket.status,
+    priority: ticket.priority,
+    createdAt: ticket.createdAt.toISOString(),
+    resolvedAt: ticket.resolvedAt ? ticket.resolvedAt.toISOString() : null,
+    student: ticket.student,
+    commentCount: ticket._count.comments,
   }));
 
   let students: StudentOption[] | undefined;
@@ -103,34 +105,34 @@ const TicketsBoardPage = async ({
   return (
     <div className="panel-card p-4 md:p-5 flex-1 m-4 mt-0 list-page-shell">
       <PageHero
-        title="Lost & Found Board"
-        subtitle="Report a lost item, post something you found, and track it through to being claimed."
+        title={t("page.title")}
+        subtitle={t("page.subtitle")}
         emoji="🧭"
         stats={[
-          { label: "On the board", value: totalCount },
-          { label: "Still searching", value: openCount },
-          { label: "Claimed", value: resolvedCount },
+          { label: t("page.onBoard"), value: totalCount },
+          { label: t("page.stillSearching"), value: openCount },
+          { label: t("page.claimed"), value: resolvedCount },
         ]}
       />
 
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
         {canManage ? (
           <div className="flex flex-wrap gap-2">
-            {CATEGORY_TABS.map((tab) => (
+            {CATEGORY_TAB_KEYS.map((tabKey) => (
               <Link
-                key={tab.key}
-                href={`/dashboard/list/tickets?category=${tab.key}`}
+                key={tabKey}
+                href={`/dashboard/list/tickets?category=${tabKey}`}
                 className={`toolbar-chip text-xs font-semibold px-3 py-1.5 ${
-                  category === tab.key ? "ring-2 ring-blue-400" : ""
+                  category === tabKey ? "ring-2 ring-blue-400" : ""
                 }`}
               >
-                {tab.label}
+                {t(`tabs.${tabKey}`)}
               </Link>
             ))}
           </div>
         ) : (
           <h1 className="text-lg font-semibold text-blue-900 dark:text-blue-100">
-            Lost &amp; Found
+            {t("page.heading")}
           </h1>
         )}
         <TableSearch />

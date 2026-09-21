@@ -1,5 +1,6 @@
 import { auth } from "@clerk/nextjs/server";
 import Link from "next/link";
+import { getFormatter, getTranslations } from "next-intl/server";
 import { Inbox, Plus, ShieldAlert } from "lucide-react";
 import { getUserRole } from "@/lib/auth";
 import PageHero from "@/components/PageHero";
@@ -29,6 +30,10 @@ const MessagesPage = async ({
 }: {
   searchParams: { peer?: string; role?: string; student?: string; new?: string };
 }) => {
+  const t = await getTranslations("Messages");
+  const tRoles = await getTranslations("Roles");
+  const tCommon = await getTranslations("Common");
+  const format = await getFormatter();
   const { userId, sessionClaims } = auth();
   const role = getUserRole(sessionClaims);
 
@@ -39,9 +44,9 @@ const MessagesPage = async ({
           <div className="flex h-14 w-14 items-center justify-center rounded-full bg-rose-50 dark:bg-rose-500/10 border border-rose-100 dark:border-rose-500/20">
             <ShieldAlert size={26} className="text-rose-500 dark:text-rose-300" />
           </div>
-          <h1 className="text-lg font-bold text-gray-800 dark:text-blue-100">Access Restricted</h1>
+          <h1 className="text-lg font-bold text-gray-800 dark:text-blue-100">{tCommon("accessRestricted")}</h1>
           <p className="text-sm text-gray-500 dark:text-slate-400">
-            Please sign in to view your messages.
+            {t("restrictedBody")}
           </p>
         </div>
       </div>
@@ -55,7 +60,7 @@ const MessagesPage = async ({
   const selectedStudent = searchParams.student ?? null;
 
   const activeKey = selectedPeer && selectedRole ? threadKey(selectedPeer, selectedRole, selectedStudent) : null;
-  const unreadTotal = threads.reduce((sum, t) => sum + t.unreadCount, 0);
+  const unreadTotal = threads.reduce((sum, thread) => sum + thread.unreadCount, 0);
 
   let panel: React.ReactNode;
 
@@ -66,7 +71,7 @@ const MessagesPage = async ({
     ]);
     panel = (
       <div className="panel-card p-5 md:p-6 rounded-2xl shine-hover">
-        <h2 className="text-base font-bold text-gray-800 dark:text-blue-100 mb-4">New Message</h2>
+        <h2 className="text-base font-bold text-gray-800 dark:text-blue-100 mb-4">{t("newMessage")}</h2>
         <MessageComposeForm mode="new" contacts={contacts} studentOptions={studentOptions} />
       </div>
     );
@@ -87,8 +92,8 @@ const MessagesPage = async ({
           <div className="min-w-0">
             <p className="text-sm font-bold text-gray-800 dark:text-blue-100 truncate">{peerLabel}</p>
             <p className="text-xs text-gray-400 dark:text-slate-500 capitalize">
-              {selectedRole}
-              {studentLabel ? ` · About ${studentLabel}` : ""}
+              {tRoles.has(selectedRole) ? tRoles(selectedRole) : selectedRole}
+              {studentLabel ? ` · ${t("about", { name: studentLabel })}` : ""}
             </p>
           </div>
         </div>
@@ -96,7 +101,7 @@ const MessagesPage = async ({
         <div className="flex-1 overflow-y-auto p-4 md:p-5 flex flex-col gap-3">
           {messages.length === 0 ? (
             <p className="text-sm text-gray-400 dark:text-slate-500 text-center my-auto">
-              No messages yet - say hello.
+              {t("noMessagesYet")}
             </p>
           ) : (
             messages.map((m) => (
@@ -114,7 +119,7 @@ const MessagesPage = async ({
                       m.fromMe ? "text-blue-100" : "text-gray-400 dark:text-slate-500"
                     }`}
                   >
-                    {m.createdAt.toLocaleString()}
+                    {format.dateTime(m.createdAt, { dateStyle: "medium", timeStyle: "short" })}
                   </p>
                 </div>
               </div>
@@ -142,7 +147,7 @@ const MessagesPage = async ({
     panel = (
       <div className="panel-card rounded-2xl shine-hover h-[70vh] flex items-center justify-center">
         <Link href={`/dashboard/list/messages?${qs}`} className="text-sm text-blue-600 hover:underline">
-          Open your most recent conversation with {first.peerLabel} →
+          {t("openRecent", { name: first.peerLabel })}
         </Link>
       </div>
     );
@@ -152,15 +157,15 @@ const MessagesPage = async ({
         <div className="flex h-14 w-14 items-center justify-center rounded-full bg-blue-50 dark:bg-blue-500/10 border border-blue-100 dark:border-blue-500/20">
           <Inbox size={24} className="text-blue-400 dark:text-blue-300" />
         </div>
-        <p className="text-sm font-semibold text-gray-600 dark:text-slate-300">No conversations yet.</p>
+        <p className="text-sm font-semibold text-gray-600 dark:text-slate-300">{t("noConversations")}</p>
         <p className="text-xs text-gray-400 dark:text-slate-500 max-w-xs">
-          Start a conversation with a teacher, parent, or the front office.
+          {t("startConversation")}
         </p>
         <Link
           href="/dashboard/list/messages?new=1"
           className="mt-1 flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 transition-colors text-white px-4 py-2 rounded-lg text-xs font-semibold shine-hover"
         >
-          <Plus size={14} /> New Message
+          <Plus size={14} /> {t("newMessage")}
         </Link>
       </div>
     );
@@ -169,12 +174,12 @@ const MessagesPage = async ({
   return (
     <div className="p-4 flex flex-col gap-4 max-w-6xl">
       <PageHero
-        title="Messages"
-        subtitle="Direct conversations between staff, parents, and students - scoped to the people you actually work with."
+        title={t("hero.title")}
+        subtitle={t("hero.subtitle")}
         emoji="💬"
         stats={[
-          { label: "Conversations", value: threads.length },
-          { label: "Unread", value: unreadTotal },
+          { label: t("hero.conversations"), value: threads.length },
+          { label: t("hero.unread"), value: unreadTotal },
         ]}
       />
 
@@ -186,19 +191,19 @@ const MessagesPage = async ({
               composingNew ? "ring-2 ring-blue-300" : ""
             }`}
           >
-            <Plus size={14} /> New Message
+            <Plus size={14} /> {t("newMessage")}
           </Link>
 
           {threads.length === 0 && (
             <p className="text-xs text-gray-400 dark:text-slate-500 text-center py-4">
-              Nothing here yet.
+              {t("nothingYet")}
             </p>
           )}
 
-          {threads.map((t) => {
-            const key = threadKey(t.peerId, t.peerRole, t.studentId);
+          {threads.map((thread) => {
+            const key = threadKey(thread.peerId, thread.peerRole, thread.studentId);
             const isActive = key === activeKey;
-            const qs = `peer=${t.peerId}&role=${t.peerRole}${t.studentId ? `&student=${t.studentId}` : ""}`;
+            const qs = `peer=${thread.peerId}&role=${thread.peerRole}${thread.studentId ? `&student=${thread.studentId}` : ""}`;
             return (
               <Link
                 key={key}
@@ -210,27 +215,27 @@ const MessagesPage = async ({
                 }`}
               >
                 <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-200 text-xs font-bold">
-                  {initials(t.peerLabel)}
+                  {initials(thread.peerLabel)}
                 </div>
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center justify-between gap-1">
                     <p className="text-xs font-semibold text-gray-800 dark:text-blue-100 truncate">
-                      {t.peerLabel}
+                      {thread.peerLabel}
                     </p>
-                    {t.unreadCount > 0 && (
+                    {thread.unreadCount > 0 && (
                       <span className="shrink-0 min-w-4 h-4 px-1 flex items-center justify-center bg-blue-600 text-white rounded-full text-[10px]">
-                        {t.unreadCount}
+                        {thread.unreadCount}
                       </span>
                     )}
                   </div>
-                  {t.studentLabel && (
+                  {thread.studentLabel && (
                     <p className="text-[10px] text-blue-400 dark:text-blue-500 truncate">
-                      Re: {t.studentLabel}
+                      {t("re", { name: thread.studentLabel })}
                     </p>
                   )}
                   <p className="text-[11px] text-gray-400 dark:text-slate-500 truncate">
-                    {t.lastFromMe ? "You: " : ""}
-                    {t.lastMessage}
+                    {thread.lastFromMe ? t("you") : ""}
+                    {thread.lastMessage}
                   </p>
                 </div>
               </Link>

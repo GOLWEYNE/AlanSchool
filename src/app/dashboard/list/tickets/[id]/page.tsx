@@ -3,6 +3,7 @@ import { getUserRole } from "@/lib/auth";
 import { auth } from "@clerk/nextjs/server";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { getFormatter, getTranslations } from "next-intl/server";
 
 const statusStyles: Record<string, string> = {
   OPEN: "bg-blue-100 text-blue-800 border-blue-200",
@@ -23,6 +24,10 @@ const SingleTicketPage = async ({
 }: {
   params: { id: string };
 }) => {
+  const t = await getTranslations("Tickets");
+  const tRoles = await getTranslations("Roles");
+  const format = await getFormatter();
+  const dateFmt = (d: Date) => format.dateTime(d, { dateStyle: "medium", timeStyle: "short" });
   const { sessionClaims } = auth();
   const role = getUserRole(sessionClaims);
 
@@ -49,7 +54,7 @@ const SingleTicketPage = async ({
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
             <p className="text-xs uppercase tracking-wide text-blue-500 font-semibold mb-1">
-              Ticket #{ticket.id}
+              {t("detail.ticketNo", { id: ticket.id })}
             </p>
             <h1 className="text-xl md:text-2xl font-bold text-blue-900">{ticket.title}</h1>
             {ticket.student && (
@@ -67,33 +72,33 @@ const SingleTicketPage = async ({
                 statusStyles[ticket.status] ?? statusStyles.OPEN
               }`}
             >
-              {ticket.status.replace("_", " ")}
+              {t.has(`detail.status.${ticket.status}`) ? t(`detail.status.${ticket.status}`) : ticket.status.replace("_", " ")}
             </span>
             <span
               className={`text-xs font-semibold px-3 py-1 rounded-full border ${
                 priorityStyles[ticket.priority] ?? priorityStyles.MEDIUM
               }`}
             >
-              {ticket.priority}
+              {t.has(`board.priorities.${ticket.priority}`) ? t(`board.priorities.${ticket.priority}`) : ticket.priority}
             </span>
             <span className="text-xs font-semibold px-3 py-1 rounded-full border bg-white text-blue-700 border-blue-200">
-              {ticket.category.replace("_", " ")}
+              {t.has(`tabs.${ticket.category}`) ? t(`tabs.${ticket.category}`) : ticket.category.replace("_", " ")}
             </span>
           </div>
         </div>
         <p className="text-sm text-gray-700 mt-4 whitespace-pre-wrap">{ticket.description}</p>
         <p className="text-xs text-gray-400 mt-4">
-          Opened {ticket.createdAt.toLocaleString()}
-          {ticket.resolvedAt ? ` · Resolved ${ticket.resolvedAt.toLocaleString()}` : ""}
+          {t("detail.opened", { date: dateFmt(ticket.createdAt) })}
+          {ticket.resolvedAt ? t("detail.resolved", { date: dateFmt(ticket.resolvedAt) }) : ""}
         </p>
       </div>
 
       <div className="panel-card p-5 md:p-6">
         <h2 className="text-sm font-semibold text-blue-900 mb-3">
-          Comments ({ticket.comments.length})
+          {t("detail.comments", { count: ticket.comments.length })}
         </h2>
         {ticket.comments.length === 0 ? (
-          <p className="text-sm text-gray-400">No comments yet.</p>
+          <p className="text-sm text-gray-400">{t("detail.noComments")}</p>
         ) : (
           <ul className="flex flex-col gap-3">
             {ticket.comments.map((comment) => (
@@ -102,8 +107,8 @@ const SingleTicketPage = async ({
                 className="border border-blue-100 rounded-xl px-4 py-3 bg-blue-50/40"
               >
                 <div className="flex items-center justify-between text-xs text-blue-500 mb-1">
-                  <span className="font-semibold capitalize">{comment.authorRole}</span>
-                  <span>{comment.createdAt.toLocaleString()}</span>
+                  <span className="font-semibold capitalize">{tRoles.has(comment.authorRole) ? tRoles(comment.authorRole) : comment.authorRole}</span>
+                  <span>{dateFmt(comment.createdAt)}</span>
                 </div>
                 <p className="text-sm text-gray-700">{comment.message}</p>
               </li>

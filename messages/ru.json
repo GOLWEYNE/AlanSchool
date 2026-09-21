@@ -817,5 +817,222 @@
       "myLessons": "Мои уроки",
       "schedule": "Расписание"
     }
+  },
+  "Roles": {
+    "admin": "Администратор",
+    "teacher": "Учитель",
+    "parent": "Родитель",
+    "student": "Ученик"
+  },
+  "Common": {
+    "accessRestricted": "Доступ ограничен",
+    "somethingWrongRetry": "Что-то пошло не так. Попробуйте ещё раз."
+  },
+  "Tickets": {
+    "page": {
+      "title": "Доска бюро находок",
+      "subtitle": "Сообщите о потерянной вещи, опубликуйте находку и отслеживайте её, пока владелец не заберёт.",
+      "onBoard": "На доске",
+      "stillSearching": "Ещё ищем",
+      "claimed": "Забрали",
+      "heading": "Бюро находок"
+    },
+    "tabs": {
+      "LOST_ITEM": "Бюро находок",
+      "TECHNICAL": "Технические",
+      "ACADEMIC": "Учебные",
+      "OTHER": "Другое",
+      "ALL": "Все заявки"
+    },
+    "board": {
+      "columns": {
+        "OPEN": {
+          "label": "Заявлено",
+          "hint": "Только что заявлено, ещё не рассмотрено"
+        },
+        "IN_PROGRESS": {
+          "label": "Выясняем",
+          "hint": "Кто-то уже занимается"
+        },
+        "RESOLVED": {
+          "label": "Забрали / Возвращено",
+          "hint": "Возвращено владельцу"
+        },
+        "CLOSED": {
+          "label": "Закрыто",
+          "hint": "Больше не активно"
+        }
+      },
+      "priorities": {
+        "LOW": "Низкий",
+        "MEDIUM": "Средний",
+        "HIGH": "Высокий",
+        "URGENT": "Срочный"
+      },
+      "kind": {
+        "lost": "потеряно",
+        "found": "найдено"
+      },
+      "justNow": "только что",
+      "minutesAgo": "{count} мин. назад",
+      "hoursAgo": "{count} ч. назад",
+      "daysAgo": "{count} дн. назад",
+      "moveTo": "Переместить в: {status}",
+      "nothingHere": "Пока пусто",
+      "reportItem": "Сообщить о вещи",
+      "loadingForm": "Загрузка формы..."
+    },
+    "form": {
+      "title": "Сообщить о вещи",
+      "lostBtn": "🔴 Я потерял(а) вещь",
+      "foundBtn": "🟢 Я нашёл(ла) вещь",
+      "itemLabelLost": "Потерянная вещь",
+      "itemLabelFound": "Найденная вещь",
+      "itemPlaceholder": "напр. синий рюкзак, серебристая бутылка для воды, студенческий билет",
+      "itemRequired": "Укажите название вещи!",
+      "detailsLost": "Подробности — где и когда вы видели её в последний раз",
+      "detailsFound": "Подробности — где вы её нашли и где её можно забрать",
+      "descPlaceholder": "Добавьте детали, которые помогут опознать вещь: место, цвет, особые приметы...",
+      "descRequired": "Нужно краткое описание!",
+      "priority": "Приоритет",
+      "priorityUrgent": "Срочно (напр. документы, ключи, кошелёк)",
+      "studentParent": "Для кого из ваших детей это?",
+      "studentOptional": "Ученик (необязательно)",
+      "selectChild": "Выберите ребёнка...",
+      "notLinked": "Не связано с учеником",
+      "error": "Что-то пошло не так, попробуйте ещё раз.",
+      "submit": "Разместить на доске",
+      "toastFound": "Находка размещена на доске!",
+      "toastLost": "О потере сообщено — мы будем следить!"
+    },
+    "detail": {
+      "ticketNo": "Заявка №{id}",
+      "opened": "Создана {date}",
+      "resolved": " · Решена {date}",
+      "comments": "Комментарии ({count})",
+      "noComments": "Комментариев пока нет.",
+      "status": {
+        "OPEN": "Открыта",
+        "IN_PROGRESS": "В работе",
+        "RESOLVED": "Решена",
+        "CLOSED": "Закрыта"
+      }
+    }
+  },
+  "Messages": {
+    "restrictedBody": "Войдите, чтобы просмотреть сообщения.",
+    "newMessage": "Новое сообщение",
+    "about": "Об ученике: {name}",
+    "re": "Касательно: {name}",
+    "you": "Вы: ",
+    "noMessagesYet": "Сообщений пока нет — поздоровайтесь.",
+    "openRecent": "Открыть последний диалог с {name} →",
+    "noConversations": "Диалогов пока нет.",
+    "startConversation": "Начните диалог с учителем, родителем или администрацией.",
+    "nothingYet": "Пока ничего нет.",
+    "hero": {
+      "title": "Сообщения",
+      "subtitle": "Личные диалоги между сотрудниками, родителями и учениками — только с теми, с кем вы действительно работаете.",
+      "conversations": "Диалоги",
+      "unread": "Непрочитанные"
+    },
+    "form": {
+      "to": "Кому",
+      "chooseRecipient": "Выберите получателя...",
+      "teachers": "Учителя",
+      "parents": "Родители",
+      "frontOffice": "Администрация",
+      "aboutStudent": "О каком ученике? (необязательно)",
+      "general": "Общий вопрос — не о конкретном ученике",
+      "message": "Сообщение",
+      "placeholder": "Введите сообщение...",
+      "sent": "Сообщение отправлено.",
+      "send": "Отправить сообщение",
+      "reply": "Ответить"
+    }
+  },
+  "FeaturedVideo": {
+    "restrictedBody": "Только администраторы могут управлять трансляцией видео дня.",
+    "title": "Трансляция видео дня",
+    "subtitle": "Опубликуйте видео, которое каждый администратор, учитель, родитель и ученик увидит на своей панели сразу после входа.",
+    "publishNew": "Опубликовать новую трансляцию",
+    "previous": "Предыдущие трансляции",
+    "player": {
+      "title": "Видео дня",
+      "live": "Трансляция от вашей школы",
+      "none": "Сейчас нет активной трансляции",
+      "noVideo": "Видео дня пока нет.",
+      "checkBack": "Загляните позже — скоро появится следующая школьная трансляция."
+    },
+    "form": {
+      "videoTitle": "Название видео",
+      "titlePlaceholder": "напр. Добро пожаловать в школу 2026!",
+      "videoSource": "Источник видео",
+      "pasteLink": "Вставить ссылку",
+      "uploadVideo": "Загрузить видео",
+      "linkPlaceholder": "Ссылка на YouTube, TikTok, Instagram Reels или Vimeo",
+      "linkHelp": "Обычные ссылки для отправки подойдут — они конвертируются автоматически. Для TikTok используйте полную ссылку на видео, а не короткую vm.tiktok.com.",
+      "currentVideo": "Текущее видео",
+      "fileFallback": "видео",
+      "videoReady": "Видео готово",
+      "chooseVideo": "Выберите видео на компьютере",
+      "formats": "MP4, MOV или WebM — до 200 МБ",
+      "publish": "Опубликовать трансляцию",
+      "reset": "Сбросить",
+      "toast": "Видео дня обновлено — оно уже отображается на всех панелях."
+    }
+  },
+  "Validation": {
+    "a_true_false_question_must_have_exactly_two_options": "В вопросе «Верно/Неверно» должно быть ровно два варианта.",
+    "add_at_least_2_options": "Добавьте не менее 2 вариантов!",
+    "address_is_required": "Укажите адрес!",
+    "birthday_is_required": "Укажите дату рождения!",
+    "blood_type_is_required": "Укажите группу крови!",
+    "capacity_is_required": "Укажите вместимость!",
+    "capacity_name_is_required": "Укажите вместимость!",
+    "category_is_required": "Выберите категорию!",
+    "class_is_required": "Выберите класс!",
+    "club_name_is_required": "Укажите название кружка!",
+    "comment_cannot_be_empty": "Комментарий не может быть пустым!",
+    "criterion_name_is_required": "Укажите название критерия!",
+    "date_is_required": "Укажите дату!",
+    "day_is_required": "Выберите день!",
+    "description_is_required": "Добавьте описание!",
+    "due_date_is_required": "Укажите срок сдачи!",
+    "end_time_is_required": "Укажите время окончания!",
+    "enter_a_valid_video_url": "Введите корректную ссылку на видео!",
+    "first_name_is_required": "Укажите имя!",
+    "grade_is_required": "Укажите уровень!",
+    "grade_name_is_required": "Укажите уровень!",
+    "invalid_email_address": "Некорректный адрес электронной почты!",
+    "last_name_is_required": "Укажите фамилию!",
+    "lesson_is_required": "Выберите урок!",
+    "lesson_name_is_required": "Укажите название урока!",
+    "message_cannot_be_empty": "Сообщение не может быть пустым!",
+    "objective_title_is_required": "Укажите название цели!",
+    "option_text_is_required": "Введите текст варианта!",
+    "parent_id_is_required": "Укажите ID родителя!",
+    "password_must_be_at_least_8_characters_long": "Пароль должен содержать не менее 8 символов!",
+    "phone_is_required": "Укажите телефон!",
+    "pick_the_correct_option": "Выберите правильный вариант!",
+    "question_text_is_required": "Введите текст вопроса!",
+    "recipient_is_required": "Выберите получателя!",
+    "room_is_required": "Укажите кабинет!",
+    "scanned_code_is_required": "Нужен отсканированный код!",
+    "school_year_is_required": "Укажите учебный год!",
+    "score_is_required": "Укажите балл!",
+    "sex_is_required": "Укажите пол!",
+    "start_date_is_required": "Укажите дату начала!",
+    "start_time_is_required": "Укажите время начала!",
+    "student_is_required": "Выберите ученика!",
+    "subject_is_required": "Выберите предмет!",
+    "subject_name_is_required": "Укажите название предмета!",
+    "submission_is_required": "Выберите работу!",
+    "teacher_is_required": "Выберите учителя!",
+    "title_is_required": "Укажите заголовок!",
+    "title_name_is_required": "Укажите заголовок!",
+    "username_must_be_at_least_3_characters_long": "Имя пользователя должно содержать не менее 3 символов!",
+    "username_must_be_at_most_20_characters_long": "Имя пользователя должно содержать не более 20 символов!",
+    "video_url_is_required": "Укажите ссылку на видео!"
   }
 }

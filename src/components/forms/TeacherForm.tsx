@@ -12,6 +12,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import { CldUploadWidget } from "next-cloudinary";
 import { useTranslations } from "next-intl";
+import { useValidationMessage } from "@/hooks/useValidationMessage";
 
 const TeacherForm = ({
   type,
@@ -25,6 +26,7 @@ const TeacherForm = ({
   relatedData?: any;
 }) => {
   const t = useTranslations("Forms");
+  const tv = useValidationMessage();
   const {
     register,
     handleSubmit,
@@ -161,7 +163,7 @@ const TeacherForm = ({
           </select>
           {errors.sex?.message && (
             <p className="text-xs text-red-400">
-              {errors.sex.message.toString()}
+              {tv(errors.sex.message)}
             </p>
           )}
         </div>
@@ -181,7 +183,7 @@ const TeacherForm = ({
           </select>
           {errors.subjects?.message && (
             <p className="text-xs text-red-400">
-              {errors.subjects.message.toString()}
+              {tv(errors.subjects.message)}
             </p>
           )}
         </div>

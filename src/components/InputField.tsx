@@ -1,4 +1,7 @@
+"use client";
+
 import { FieldError } from "react-hook-form";
+import { useValidationMessage } from "@/hooks/useValidationMessage";
 
 type InputFieldProps = {
   label: string;
@@ -21,6 +24,8 @@ const InputField = ({
   hidden,
   inputProps,
 }: InputFieldProps) => {
+  const tv = useValidationMessage();
+
   return (
     <div className={hidden ? "hidden" : "flex flex-col gap-2 w-full md:w-1/4"}>
       <label className="text-xs text-gray-500 dark:text-slate-400">{label}</label>
@@ -32,7 +37,7 @@ const InputField = ({
         defaultValue={defaultValue}
       />
       {error?.message && (
-        <p className="text-xs text-red-400">{error.message.toString()}</p>
+        <p className="text-xs text-red-400">{tv(error.message)}</p>
       )}
     </div>
   );

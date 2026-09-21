@@ -14,6 +14,7 @@ import WorkFileUpload from "./WorkFileUpload";
 import WorkTargetPicker from "./WorkTargetPicker";
 import WorkQuizBuilder, { QuizQuestionDraft } from "./WorkQuizBuilder";
 import ObjectiveTagPicker from "./ObjectiveTagPicker";
+import { useValidationMessage } from "@/hooks/useValidationMessage";
 
 const ExamForm = ({
   type,
@@ -27,6 +28,7 @@ const ExamForm = ({
   relatedData?: any;
 }) => {
   const t = useTranslations("Forms");
+  const tv = useValidationMessage();
   const {
     register,
     handleSubmit,
@@ -192,7 +194,7 @@ const ExamForm = ({
             ))}
           </select>
           {errors.lessonId?.message && (
-            <p className="text-xs text-red-400">{errors.lessonId.message.toString()}</p>
+            <p className="text-xs text-red-400">{tv(errors.lessonId.message)}</p>
           )}
           {selectedClassId && classLessons.length === 0 && (
             <p className="text-xs text-amber-500">

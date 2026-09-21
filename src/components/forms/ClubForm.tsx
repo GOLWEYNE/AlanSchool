@@ -10,6 +10,7 @@ import { Dispatch, SetStateAction, useEffect } from "react";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { useValidationMessage } from "@/hooks/useValidationMessage";
 
 const ClubForm = ({
   type,
@@ -23,6 +24,7 @@ const ClubForm = ({
   relatedData?: any;
 }) => {
   const t = useTranslations("Forms.club");
+  const tv = useValidationMessage();
   const tCommon = useTranslations("Forms.common");
   const tCat = useTranslations("List.clubs.categories");
   const {
@@ -126,7 +128,7 @@ const ClubForm = ({
             ))}
           </select>
           {errors.category?.message && (
-            <p className="text-xs text-red-400">{errors.category.message.toString()}</p>
+            <p className="text-xs text-red-400">{tv(errors.category.message)}</p>
           )}
         </div>
         <div className="flex flex-col gap-2 w-full md:w-1/4">
@@ -148,7 +150,7 @@ const ClubForm = ({
             ))}
           </select>
           {errors.instructorId?.message && (
-            <p className="text-xs text-red-400">{errors.instructorId.message.toString()}</p>
+            <p className="text-xs text-red-400">{tv(errors.instructorId.message)}</p>
           )}
         </div>
       </div>

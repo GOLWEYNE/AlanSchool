@@ -14,6 +14,7 @@ import WorkFileUpload from "./WorkFileUpload";
 import WorkTargetPicker from "./WorkTargetPicker";
 import WorkQuizBuilder, { QuizQuestionDraft } from "./WorkQuizBuilder";
 import WorkRubricBuilder, { RubricCriterionDraft } from "./WorkRubricBuilder";
+import { useValidationMessage } from "@/hooks/useValidationMessage";
 
 const AssignmentForm = ({
   type,
@@ -27,6 +28,7 @@ const AssignmentForm = ({
   relatedData?: any;
 }) => {
   const t = useTranslations("Forms");
+  const tv = useValidationMessage();
   const {
     register,
     handleSubmit,
@@ -186,7 +188,7 @@ const AssignmentForm = ({
             ))}
           </select>
           {errors.lessonId?.message && (
-            <p className="text-xs text-red-400">{errors.lessonId.message.toString()}</p>
+            <p className="text-xs text-red-400">{tv(errors.lessonId.message)}</p>
           )}
           {selectedClassId && classLessons.length === 0 && (
             <p className="text-xs text-amber-500">
