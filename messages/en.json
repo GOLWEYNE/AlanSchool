@@ -470,6 +470,57 @@
         "visibleToParent": "Visible to parent",
         "actions": "Actions"
       }
+    },
+    "clubs": {
+      "title": "Clubs",
+      "subtitle": "Manage after-school clubs, capacity, and instructors.",
+      "emoji": "🎯",
+      "totalLabel": "Total Clubs",
+      "visibleNowLabel": "Visible Now",
+      "adminModeLabel": "Admin Mode",
+      "on": "On",
+      "off": "Off",
+      "heading": "All Clubs",
+      "unassigned": "Unassigned",
+      "you": "You",
+      "columns": {
+        "name": "Club Name",
+        "category": "Category",
+        "capacity": "Capacity",
+        "enrolled": "Enrolled",
+        "instructor": "Instructor",
+        "yourEnrollment": "Your Enrollment",
+        "actions": "Actions"
+      },
+      "enroll": {
+        "updated": "Enrollment updated.",
+        "left": "Left the club.",
+        "enrolled": "Enrolled",
+        "waitlisted": "Waitlisted",
+        "notEnrolled": "Not enrolled",
+        "leaveWaitlist": "Leave waitlist",
+        "leave": "Leave",
+        "joinWaitlist": "Join waitlist",
+        "join": "Join"
+      },
+      "categories": {
+        "DANCING": "Dancing",
+        "PIANO": "Piano",
+        "CHESS": "Chess",
+        "HANDICRAFTS": "Handicrafts",
+        "FOOTBALL": "Football",
+        "VOLLEYBALL": "Volleyball",
+        "BASKETBALL": "Basketball",
+        "TENNIS": "Tennis",
+        "TABLE_TENNIS": "Table Tennis",
+        "KARATE": "Karate",
+        "JUDO": "Judo",
+        "GYMNASTICS": "Gymnastics",
+        "ASYQ": "Asyq (traditional game)",
+        "DOMBRA": "Dombra",
+        "GUITAR": "Guitar",
+        "OTHER": "Other"
+      }
     }
   },
   "Forms": {
@@ -682,6 +733,88 @@
       "visibleToParent": "Visible to the student's parent",
       "toastCreated": "Behavior note has been logged!",
       "toastUpdated": "Behavior note has been updated!"
+    },
+    "club": {
+      "createTitle": "Create a new club",
+      "updateTitle": "Update the club",
+      "name": "Club Name",
+      "schedule": "Schedule (e.g. Mon & Wed, 4-5pm)",
+      "location": "Location",
+      "category": "Category",
+      "instructorOptional": "Instructor (optional)",
+      "unassigned": "Unassigned",
+      "created": "Club has been created!",
+      "updated": "Club has been updated!"
+    }
+  },
+  "Modal": {
+    "loading": "Loading...",
+    "createNew": "Create new",
+    "update": "Update",
+    "delete": "Delete",
+    "deleteConfirm": "All data will be lost. Are you sure you want to delete this {entity}?",
+    "deleted": "{entity} has been deleted!",
+    "formNotFound": "Form not found!",
+    "entities": {
+      "subject": "subject",
+      "class": "class",
+      "teacher": "teacher",
+      "student": "student",
+      "exam": "exam",
+      "parent": "parent",
+      "assignment": "assignment",
+      "result": "result",
+      "event": "event",
+      "announcement": "announcement",
+      "lesson": "lesson",
+      "club": "club",
+      "objective": "objective",
+      "behaviorLog": "behavior log"
+    }
+  },
+  "Dashboards": {
+    "student": {
+      "title": "Learning Cockpit",
+      "subtitle": "Stay focused with your classes, tasks, and progress checkpoints.",
+      "classLabel": "Class",
+      "unassigned": "Unassigned",
+      "dueAssignments": "Due Assignments",
+      "upcomingExams": "Upcoming Exams",
+      "results": "Results",
+      "assignments": "Assignments",
+      "exams": "Exams",
+      "events": "Events",
+      "messages": "Messages",
+      "todaysClasses": "Today’s Classes",
+      "noClass": "No class is assigned yet.",
+      "contactAdmin": "Contact your administrator",
+      "eventsCard": "Events",
+      "announcementsCard": "Announcements"
+    },
+    "parent": {
+      "title": "Family Overview",
+      "subtitle": "Stay connected with your children’s schedule, attendance, and progress.",
+      "children": "Children",
+      "upcomingExams": "Upcoming Exams",
+      "results": "Results",
+      "events": "Events",
+      "exams": "Exams",
+      "parentProfile": "Parent Profile",
+      "todaysSchedule": "Today’s Schedule",
+      "childrenAttendance": "Children’s Attendance",
+      "noChildren": "No children assigned to this parent.",
+      "behaviorConduct": "{name}’s Behavior & Conduct"
+    },
+    "teacher": {
+      "title": "Teacher Planner",
+      "subtitle": "Plan lessons, evaluate learners, and manage your academic flow.",
+      "lessons": "Lessons",
+      "assignments": "Assignments",
+      "exams": "Exams",
+      "results": "Results",
+      "messages": "Messages",
+      "myLessons": "My Lessons",
+      "schedule": "Schedule"
     }
   }
 }

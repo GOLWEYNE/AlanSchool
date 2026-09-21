@@ -470,6 +470,57 @@
         "visibleToParent": "Видно родителю",
         "actions": "Действия"
       }
+    },
+    "clubs": {
+      "title": "Кружки",
+      "subtitle": "Управляйте внешкольными кружками, вместимостью и руководителями.",
+      "emoji": "🎯",
+      "totalLabel": "Всего кружков",
+      "visibleNowLabel": "Отображается сейчас",
+      "adminModeLabel": "Режим администратора",
+      "on": "Включен",
+      "off": "Выключен",
+      "heading": "Все кружки",
+      "unassigned": "Не назначен",
+      "you": "Вы",
+      "columns": {
+        "name": "Название кружка",
+        "category": "Категория",
+        "capacity": "Вместимость",
+        "enrolled": "Записано",
+        "instructor": "Руководитель",
+        "yourEnrollment": "Ваша запись",
+        "actions": "Действия"
+      },
+      "enroll": {
+        "updated": "Запись обновлена.",
+        "left": "Вы вышли из кружка.",
+        "enrolled": "Записан",
+        "waitlisted": "В списке ожидания",
+        "notEnrolled": "Не записан",
+        "leaveWaitlist": "Покинуть список ожидания",
+        "leave": "Выйти",
+        "joinWaitlist": "Встать в список ожидания",
+        "join": "Записаться"
+      },
+      "categories": {
+        "DANCING": "Танцы",
+        "PIANO": "Фортепиано",
+        "CHESS": "Шахматы",
+        "HANDICRAFTS": "Рукоделие",
+        "FOOTBALL": "Футбол",
+        "VOLLEYBALL": "Волейбол",
+        "BASKETBALL": "Баскетбол",
+        "TENNIS": "Теннис",
+        "TABLE_TENNIS": "Настольный теннис",
+        "KARATE": "Карате",
+        "JUDO": "Дзюдо",
+        "GYMNASTICS": "Гимнастика",
+        "ASYQ": "Асык (традиционная игра)",
+        "DOMBRA": "Домбра",
+        "GUITAR": "Гитара",
+        "OTHER": "Другое"
+      }
     }
   },
   "Forms": {
@@ -682,6 +733,88 @@
       "visibleToParent": "Видно родителю ученика",
       "toastCreated": "Запись о поведении добавлена!",
       "toastUpdated": "Запись о поведении обновлена!"
+    },
+    "club": {
+      "createTitle": "Создать новый кружок",
+      "updateTitle": "Обновить кружок",
+      "name": "Название кружка",
+      "schedule": "Расписание (напр. Пн и Ср, 16:00–17:00)",
+      "location": "Место проведения",
+      "category": "Категория",
+      "instructorOptional": "Руководитель (необязательно)",
+      "unassigned": "Не назначен",
+      "created": "Кружок создан!",
+      "updated": "Кружок обновлён!"
+    }
+  },
+  "Modal": {
+    "loading": "Загрузка...",
+    "createNew": "Создать",
+    "update": "Обновить",
+    "delete": "Удалить",
+    "deleteConfirm": "Все данные будут потеряны. Вы уверены, что хотите удалить запись ({entity})?",
+    "deleted": "Запись удалена: {entity}",
+    "formNotFound": "Форма не найдена!",
+    "entities": {
+      "subject": "предмет",
+      "class": "класс",
+      "teacher": "учитель",
+      "student": "ученик",
+      "exam": "экзамен",
+      "parent": "родитель",
+      "assignment": "задание",
+      "result": "результат",
+      "event": "мероприятие",
+      "announcement": "объявление",
+      "lesson": "урок",
+      "club": "кружок",
+      "objective": "учебная цель",
+      "behaviorLog": "запись о поведении"
+    }
+  },
+  "Dashboards": {
+    "student": {
+      "title": "Учебный центр",
+      "subtitle": "Сосредоточьтесь на занятиях, заданиях и контрольных точках прогресса.",
+      "classLabel": "Класс",
+      "unassigned": "Не назначен",
+      "dueAssignments": "Актуальные задания",
+      "upcomingExams": "Предстоящие экзамены",
+      "results": "Результаты",
+      "assignments": "Задания",
+      "exams": "Экзамены",
+      "events": "Мероприятия",
+      "messages": "Сообщения",
+      "todaysClasses": "Сегодняшние уроки",
+      "noClass": "Класс пока не назначен.",
+      "contactAdmin": "Обратитесь к администратору",
+      "eventsCard": "Мероприятия",
+      "announcementsCard": "Объявления"
+    },
+    "parent": {
+      "title": "Обзор семьи",
+      "subtitle": "Следите за расписанием, посещаемостью и успеваемостью ваших детей.",
+      "children": "Дети",
+      "upcomingExams": "Предстоящие экзамены",
+      "results": "Результаты",
+      "events": "Мероприятия",
+      "exams": "Экзамены",
+      "parentProfile": "Профиль родителя",
+      "todaysSchedule": "Расписание на сегодня",
+      "childrenAttendance": "Посещаемость детей",
+      "noChildren": "За этим родителем не закреплено ни одного ребёнка.",
+      "behaviorConduct": "Поведение: {name}"
+    },
+    "teacher": {
+      "title": "Планировщик учителя",
+      "subtitle": "Планируйте уроки, оценивайте учеников и управляйте учебным процессом.",
+      "lessons": "Уроки",
+      "assignments": "Задания",
+      "exams": "Экзамены",
+      "results": "Результаты",
+      "messages": "Сообщения",
+      "myLessons": "Мои уроки",
+      "schedule": "Расписание"
     }
   }
 }

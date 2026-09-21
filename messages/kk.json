@@ -470,6 +470,57 @@
         "visibleToParent": "Ата-анаға көрінеді",
         "actions": "Әрекеттер"
       }
+    },
+    "clubs": {
+      "title": "Үйірмелер",
+      "subtitle": "Сабақтан тыс үйірмелерді, сыйымдылықты және жетекшілерді басқарыңыз.",
+      "emoji": "🎯",
+      "totalLabel": "Үйірмелер саны",
+      "visibleNowLabel": "Қазір көрінеді",
+      "adminModeLabel": "Әкімші режимі",
+      "on": "Қосулы",
+      "off": "Өшірулі",
+      "heading": "Барлық үйірмелер",
+      "unassigned": "Тағайындалмаған",
+      "you": "Сіз",
+      "columns": {
+        "name": "Үйірме атауы",
+        "category": "Санаты",
+        "capacity": "Сыйымдылығы",
+        "enrolled": "Жазылған",
+        "instructor": "Жетекшісі",
+        "yourEnrollment": "Сіздің жазылуыңыз",
+        "actions": "Әрекеттер"
+      },
+      "enroll": {
+        "updated": "Жазылу жаңартылды.",
+        "left": "Үйірмеден шықтыңыз.",
+        "enrolled": "Жазылған",
+        "waitlisted": "Күту тізімінде",
+        "notEnrolled": "Жазылмаған",
+        "leaveWaitlist": "Күту тізімінен шығу",
+        "leave": "Шығу",
+        "joinWaitlist": "Күту тізіміне тұру",
+        "join": "Жазылу"
+      },
+      "categories": {
+        "DANCING": "Би",
+        "PIANO": "Фортепиано",
+        "CHESS": "Шахмат",
+        "HANDICRAFTS": "Қол өнері",
+        "FOOTBALL": "Футбол",
+        "VOLLEYBALL": "Волейбол",
+        "BASKETBALL": "Баскетбол",
+        "TENNIS": "Теннис",
+        "TABLE_TENNIS": "Үстел теннисі",
+        "KARATE": "Каратэ",
+        "JUDO": "Дзюдо",
+        "GYMNASTICS": "Гимнастика",
+        "ASYQ": "Асық (дәстүрлі ойын)",
+        "DOMBRA": "Домбыра",
+        "GUITAR": "Гитара",
+        "OTHER": "Басқа"
+      }
     }
   },
   "Forms": {
@@ -682,6 +733,88 @@
       "visibleToParent": "Оқушының ата-анасына көрінеді",
       "toastCreated": "Мінез-құлық жазбасы қосылды!",
       "toastUpdated": "Мінез-құлық жазбасы жаңартылды!"
+    },
+    "club": {
+      "createTitle": "Жаңа үйірме құру",
+      "updateTitle": "Үйірмені жаңарту",
+      "name": "Үйірме атауы",
+      "schedule": "Кесте (мыс. Дс және Ср, 16:00–17:00)",
+      "location": "Өтетін орны",
+      "category": "Санаты",
+      "instructorOptional": "Жетекші (міндетті емес)",
+      "unassigned": "Тағайындалмаған",
+      "created": "Үйірме құрылды!",
+      "updated": "Үйірме жаңартылды!"
+    }
+  },
+  "Modal": {
+    "loading": "Жүктелуде...",
+    "createNew": "Жаңасын құру",
+    "update": "Жаңарту",
+    "delete": "Жою",
+    "deleteConfirm": "Барлық деректер жоғалады. Осы жазбаны ({entity}) жойғыңыз келетініне сенімдісіз бе?",
+    "deleted": "Жазба жойылды: {entity}",
+    "formNotFound": "Форма табылмады!",
+    "entities": {
+      "subject": "пән",
+      "class": "сынып",
+      "teacher": "мұғалім",
+      "student": "оқушы",
+      "exam": "экзамен",
+      "parent": "ата-ана",
+      "assignment": "тапсырма",
+      "result": "нәтиже",
+      "event": "іс-шара",
+      "announcement": "хабарландыру",
+      "lesson": "сабақ",
+      "club": "үйірме",
+      "objective": "оқу мақсаты",
+      "behaviorLog": "мінез-құлық жазбасы"
+    }
+  },
+  "Dashboards": {
+    "student": {
+      "title": "Оқу орталығы",
+      "subtitle": "Сабақтарыңызға, тапсырмаларыңызға және үлгерім белестеріне назар аударыңыз.",
+      "classLabel": "Сынып",
+      "unassigned": "Тағайындалмаған",
+      "dueAssignments": "Орындалатын тапсырмалар",
+      "upcomingExams": "Алдағы емтихандар",
+      "results": "Нәтижелер",
+      "assignments": "Тапсырмалар",
+      "exams": "Экзамендер",
+      "events": "Іс-шаралар",
+      "messages": "Хабарлар",
+      "todaysClasses": "Бүгінгі сабақтар",
+      "noClass": "Сынып әлі тағайындалмаған.",
+      "contactAdmin": "Әкімшіге жүгініңіз",
+      "eventsCard": "Іс-шаралар",
+      "announcementsCard": "Хабарландырулар"
+    },
+    "parent": {
+      "title": "Отбасы шолуы",
+      "subtitle": "Балаларыңыздың кестесін, қатысуын және үлгерімін қадағалаңыз.",
+      "children": "Балалар",
+      "upcomingExams": "Алдағы емтихандар",
+      "results": "Нәтижелер",
+      "events": "Іс-шаралар",
+      "exams": "Экзамендер",
+      "parentProfile": "Ата-ана профилі",
+      "todaysSchedule": "Бүгінгі кесте",
+      "childrenAttendance": "Балалардың қатысуы",
+      "noChildren": "Бұл ата-анаға бекітілген бала жоқ.",
+      "behaviorConduct": "Мінез-құлық: {name}"
+    },
+    "teacher": {
+      "title": "Мұғалім жоспарлаушысы",
+      "subtitle": "Сабақтарды жоспарлаңыз, оқушыларды бағалаңыз және оқу үдерісін басқарыңыз.",
+      "lessons": "Сабақтар",
+      "assignments": "Тапсырмалар",
+      "exams": "Экзамендер",
+      "results": "Нәтижелер",
+      "messages": "Хабарлар",
+      "myLessons": "Менің сабақтарым",
+      "schedule": "Кесте"
     }
   }
 }
