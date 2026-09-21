@@ -1,6 +1,7 @@
 import { Clapperboard, PlayCircle } from "lucide-react";
 import prisma from "@/lib/prisma";
 import { getEmbeddableVideoUrl, isDirectVideoFile } from "@/lib/videoEmbed";
+import { getTranslations } from "next-intl/server";
 
 // Re-exported so anything already importing this from FeaturedVideoPlayer
 // keeps working; the actual logic now lives in a client-safe shared module
@@ -8,6 +9,7 @@ import { getEmbeddableVideoUrl, isDirectVideoFile } from "@/lib/videoEmbed";
 export { getEmbeddableVideoUrl };
 
 const FeaturedVideoPlayer = async () => {
+  const t = await getTranslations("FeaturedVideo.player");
   const video = await prisma.announcementVideo.findFirst({
     where: { isActive: true },
     orderBy: { updatedAt: "desc" },
@@ -23,10 +25,10 @@ const FeaturedVideoPlayer = async () => {
         </div>
         <div>
           <h2 className="text-base font-bold text-gray-800 dark:text-blue-100">
-            Featured Video
+            {t("title")}
           </h2>
           <p className="text-xs text-gray-400 dark:text-slate-500">
-            {video ? "Broadcast from your school" : "No broadcast is live right now"}
+            {video ? t("live") : t("none")}
           </p>
         </div>
       </div>
@@ -62,10 +64,10 @@ const FeaturedVideoPlayer = async () => {
             <PlayCircle size={24} className="text-blue-400 dark:text-blue-300" />
           </div>
           <p className="text-sm font-semibold text-gray-600 dark:text-slate-300">
-            No featured video yet.
+            {t("noVideo")}
           </p>
           <p className="text-xs text-gray-400 dark:text-slate-500 max-w-xs">
-            Check back soon for the next school broadcast.
+            {t("checkBack")}
           </p>
         </div>
       )}

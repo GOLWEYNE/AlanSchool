@@ -4,11 +4,15 @@ import { getUserRole } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import FeaturedVideoForm from "@/components/forms/FeaturedVideoForm";
 import FeaturedVideoPlayer from "@/components/FeaturedVideoPlayer";
+import { getFormatter, getTranslations } from "next-intl/server";
 
 // Admin control panel for the dashboard-wide Featured Video broadcast.
 // Publishing a new title/URL here immediately replaces what every Admin,
 // Teacher, Parent, and Student sees on their own dashboard.
 const FeaturedVideoSettingsPage = async () => {
+  const t = await getTranslations("FeaturedVideo");
+  const tCommon = await getTranslations("Common");
+  const format = await getFormatter();
   const { sessionClaims } = auth();
   const role = getUserRole(sessionClaims);
 
@@ -20,10 +24,10 @@ const FeaturedVideoSettingsPage = async () => {
             <ShieldAlert size={26} className="text-rose-500 dark:text-rose-300" />
           </div>
           <h1 className="text-lg font-bold text-gray-800 dark:text-blue-100">
-            Access Restricted
+            {tCommon("accessRestricted")}
           </h1>
           <p className="text-sm text-gray-500 dark:text-slate-400">
-            Only Admins can manage the featured video broadcast.
+            {t("restrictedBody")}
           </p>
         </div>
       </div>
@@ -45,17 +49,16 @@ const FeaturedVideoSettingsPage = async () => {
   return (
     <div className="p-4 flex flex-col gap-6 max-w-5xl">
       <div className="page-top-banner p-6 shine-hover">
-        <h1 className="text-2xl font-bold">Featured Video Broadcast</h1>
+        <h1 className="text-2xl font-bold">{t("title")}</h1>
         <p className="text-blue-50 text-sm mt-1">
-          Publish the video every Admin, Teacher, Parent, and Student sees on
-          their dashboard the moment they log in.
+          {t("subtitle")}
         </p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
         <div className="panel-card p-5 md:p-6 rounded-2xl shine-hover">
           <h2 className="text-base font-bold text-gray-800 dark:text-blue-100 mb-4">
-            Publish a New Broadcast
+            {t("publishNew")}
           </h2>
           <FeaturedVideoForm
             currentTitle={activeVideo?.title}
@@ -71,7 +74,7 @@ const FeaturedVideoSettingsPage = async () => {
               <div className="flex items-center gap-2 mb-3">
                 <History size={16} className="text-blue-600 dark:text-blue-300" />
                 <h3 className="text-sm font-bold text-gray-800 dark:text-blue-100">
-                  Previous Broadcasts
+                  {t("previous")}
                 </h3>
               </div>
               <ul className="flex flex-col gap-2">
@@ -84,7 +87,7 @@ const FeaturedVideoSettingsPage = async () => {
                       {item.title}
                     </span>
                     <span className="shrink-0">
-                      {item.updatedAt.toLocaleDateString("en-US", {
+                      {format.dateTime(item.updatedAt, {
                         month: "short",
                         day: "numeric",
                         year: "numeric",

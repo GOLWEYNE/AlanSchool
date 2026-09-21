@@ -4,10 +4,16 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import dynamic from "next/dynamic";
+import { useFormatter, useTranslations } from "next-intl";
 import { updateTicketStatus } from "@/lib/masterModuleActions";
 
+const FormLoading = () => {
+  const t = useTranslations("Tickets.board");
+  return <p className="p-4 text-sm text-gray-400">{t("loadingForm")}</p>;
+};
+
 const TicketForm = dynamic(() => import("./forms/TicketForm"), {
-  loading: () => <p className="p-4 text-sm text-gray-400">Loading form...</p>,
+  loading: () => <FormLoading />,
 });
 
 export type StudentOption = { id: string; name: string; surname: string };
@@ -25,12 +31,8 @@ export type BoardTicket = {
   commentCount: number;
 };
 
-const COLUMNS: { key: BoardTicket["status"]; label: string; hint: string }[] = [
-  { key: "OPEN", label: "Reported", hint: "Newly reported, not yet looked at" },
-  { key: "IN_PROGRESS", label: "Investigating", hint: "Someone is on the case" },
-  { key: "RESOLVED", label: "Claimed / Returned", hint: "Reunited with its owner" },
-  { key: "CLOSED", label: "Closed", hint: "No longer active" },
-];
+// Labels and hints come from the Tickets.board.columns.* messages.
+const COLUMN_KEYS: BoardTicket["status"][] = ["OPEN", "IN_PROGRESS", "RESOLVED", "CLOSED"];
 
 const COLUMN_ACCENT: Record<BoardTicket["status"], string> = {
   OPEN: "border-t-blue-400",
@@ -46,23 +48,22 @@ const PRIORITY_STYLES: Record<BoardTicket["priority"], string> = {
   URGENT: "bg-red-100 text-red-800 border-red-200",
 };
 
-const CATEGORY_LABELS: Record<string, string> = {
-  TECHNICAL: "Technical",
-  LOST_ITEM: "Lost & Found",
-  ACADEMIC: "Academic",
-  OTHER: "Other",
-};
-
-const timeAgo = (iso: string) => {
-  const diffMs = Date.now() - new Date(iso).getTime();
-  const minutes = Math.round(diffMs / 60000);
-  if (minutes < 1) return "just now";
-  if (minutes < 60) return `${minutes}m ago`;
-  const hours = Math.round(minutes / 60);
-  if (hours < 24) return `${hours}h ago`;
-  const days = Math.round(hours / 24);
-  if (days < 7) return `${days}d ago`;
-  return new Date(iso).toLocaleDateString();
+// Localised "5m ago" style label; falls back to a locale-formatted date
+// after a week.
+const useTimeAgo = () => {
+  const t = useTranslations("Tickets.board");
+  const format = useFormatter();
+  return (iso: string) => {
+    const diffMs = Date.now() - new Date(iso).getTime();
+    const minutes = Math.round(diffMs / 60000);
+    if (minutes < 1) return t("justNow");
+    if (minutes < 60) return t("minutesAgo", { count: minutes });
+    const hours = Math.round(minutes / 60);
+    if (hours < 24) return t("hoursAgo", { count: hours });
+    const days = Math.round(hours / 24);
+    if (days < 7) return t("daysAgo", { count: days });
+    return format.dateTime(new Date(iso), { dateStyle: "medium" });
+  };
 };
 
 // A ticket's title is prefixed "Lost: " / "Found: " by TicketForm so the
@@ -84,6 +85,8 @@ const TicketCard = ({
   canManage: boolean;
   canLinkStudent: boolean;
 }) => {
+  const t = useTranslations("Tickets");
+  const timeAgo = useTimeAgo();
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const kind = reportKind(ticket.title);
@@ -107,18 +110,18 @@ const TicketCard = ({
                   : "bg-red-100 text-red-700"
               }`}
             >
-              {kind}
+              {t(`board.kind.${kind}`)}
             </span>
           )}
           <span
             className={`text-[10px] font-semibold px-2 py-0.5 rounded-full border ${PRIORITY_STYLES[ticket.priority]}`}
           >
-            {ticket.priority}
+            {t(`board.priorities.${ticket.priority}`)}
           </span>
         </div>
         {ticket.category !== "LOST_ITEM" && (
           <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300 whitespace-nowrap">
-            {CATEGORY_LABELS[ticket.category] ?? ticket.category}
+            {t.has(`tabs.${ticket.category}`) ? t(`tabs.${ticket.category}`) : ticket.category}
           </span>
         )}
       </div>
@@ -159,9 +162,9 @@ const TicketCard = ({
           onChange={(e) => handleStatusChange(e.target.value as BoardTicket["status"])}
           className="mt-1 text-xs ring-[1.5px] ring-gray-200 dark:ring-slate-700 dark:bg-slate-800 dark:text-slate-100 rounded-md px-2 py-1 self-start"
         >
-          {COLUMNS.map((col) => (
-            <option key={col.key} value={col.key}>
-              Move to: {col.label}
+          {COLUMN_KEYS.map((key) => (
+            <option key={key} value={key}>
+              {t("board.moveTo", { status: t(`board.columns.${key}.label`) })}
             </option>
           ))}
         </select>
@@ -183,11 +186,14 @@ const TicketBoard = ({
   students?: StudentOption[];
   selfStudentId?: string;
 }) => {
+  const t = useTranslations("Tickets.board");
   const [open, setOpen] = useState(false);
 
-  const grouped = COLUMNS.map((col) => ({
-    ...col,
-    items: tickets.filter((t) => t.status === col.key),
+  const grouped = COLUMN_KEYS.map((key) => ({
+    key,
+    label: t(`columns.${key}.label`),
+    hint: t(`columns.${key}.hint`),
+    items: tickets.filter((ticket) => ticket.status === key),
   }));
 
   return (
@@ -197,7 +203,7 @@ const TicketBoard = ({
           onClick={() => setOpen(true)}
           className="flex items-center gap-2 bg-lamaYellow hover:shadow-lg transition-shadow text-blue-900 font-semibold text-sm px-4 py-2 rounded-full"
         >
-          <span className="text-lg leading-none">＋</span> Report an item
+          <span className="text-lg leading-none">＋</span> {t("reportItem")}
         </button>
       </div>
 
@@ -220,7 +226,7 @@ const TicketBoard = ({
             <div className="flex flex-col gap-3">
               {col.items.length === 0 ? (
                 <p className="text-xs text-gray-400 dark:text-slate-600 italic py-6 text-center">
-                  Nothing here
+                  {t("nothingHere")}
                 </p>
               ) : (
                 col.items.map((ticket) => (

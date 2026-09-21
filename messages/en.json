@@ -817,5 +817,222 @@
       "myLessons": "My Lessons",
       "schedule": "Schedule"
     }
+  },
+  "Roles": {
+    "admin": "Admin",
+    "teacher": "Teacher",
+    "parent": "Parent",
+    "student": "Student"
+  },
+  "Common": {
+    "accessRestricted": "Access Restricted",
+    "somethingWrongRetry": "Something went wrong. Please try again."
+  },
+  "Tickets": {
+    "page": {
+      "title": "Lost & Found Board",
+      "subtitle": "Report a lost item, post something you found, and track it through to being claimed.",
+      "onBoard": "On the board",
+      "stillSearching": "Still searching",
+      "claimed": "Claimed",
+      "heading": "Lost & Found"
+    },
+    "tabs": {
+      "LOST_ITEM": "Lost & Found",
+      "TECHNICAL": "Technical",
+      "ACADEMIC": "Academic",
+      "OTHER": "Other",
+      "ALL": "All tickets"
+    },
+    "board": {
+      "columns": {
+        "OPEN": {
+          "label": "Reported",
+          "hint": "Newly reported, not yet looked at"
+        },
+        "IN_PROGRESS": {
+          "label": "Investigating",
+          "hint": "Someone is on the case"
+        },
+        "RESOLVED": {
+          "label": "Claimed / Returned",
+          "hint": "Reunited with its owner"
+        },
+        "CLOSED": {
+          "label": "Closed",
+          "hint": "No longer active"
+        }
+      },
+      "priorities": {
+        "LOW": "Low",
+        "MEDIUM": "Medium",
+        "HIGH": "High",
+        "URGENT": "Urgent"
+      },
+      "kind": {
+        "lost": "lost",
+        "found": "found"
+      },
+      "justNow": "just now",
+      "minutesAgo": "{count}m ago",
+      "hoursAgo": "{count}h ago",
+      "daysAgo": "{count}d ago",
+      "moveTo": "Move to: {status}",
+      "nothingHere": "Nothing here",
+      "reportItem": "Report an item",
+      "loadingForm": "Loading form..."
+    },
+    "form": {
+      "title": "Report an item",
+      "lostBtn": "🔴 I lost something",
+      "foundBtn": "🟢 I found something",
+      "itemLabelLost": "Item you lost",
+      "itemLabelFound": "Item you found",
+      "itemPlaceholder": "e.g. Blue backpack, silver water bottle, student ID card",
+      "itemRequired": "Item name is required!",
+      "detailsLost": "Details — where and when you last had it",
+      "detailsFound": "Details — where you found it and where it can be claimed",
+      "descPlaceholder": "Add any details that will help match this item, e.g. location, color, distinguishing marks...",
+      "descRequired": "A short description is required!",
+      "priority": "Priority",
+      "priorityUrgent": "Urgent (e.g. ID, keys, wallet)",
+      "studentParent": "Which of your children is this for?",
+      "studentOptional": "Student (optional)",
+      "selectChild": "Select a child...",
+      "notLinked": "Not linked to a student",
+      "error": "Something went wrong, please try again.",
+      "submit": "Post to the board",
+      "toastFound": "Found item posted to the board!",
+      "toastLost": "Lost item reported — we’ll keep an eye out!"
+    },
+    "detail": {
+      "ticketNo": "Ticket #{id}",
+      "opened": "Opened {date}",
+      "resolved": " · Resolved {date}",
+      "comments": "Comments ({count})",
+      "noComments": "No comments yet.",
+      "status": {
+        "OPEN": "Open",
+        "IN_PROGRESS": "In progress",
+        "RESOLVED": "Resolved",
+        "CLOSED": "Closed"
+      }
+    }
+  },
+  "Messages": {
+    "restrictedBody": "Please sign in to view your messages.",
+    "newMessage": "New Message",
+    "about": "About {name}",
+    "re": "Re: {name}",
+    "you": "You: ",
+    "noMessagesYet": "No messages yet - say hello.",
+    "openRecent": "Open your most recent conversation with {name} →",
+    "noConversations": "No conversations yet.",
+    "startConversation": "Start a conversation with a teacher, parent, or the front office.",
+    "nothingYet": "Nothing here yet.",
+    "hero": {
+      "title": "Messages",
+      "subtitle": "Direct conversations between staff, parents, and students - scoped to the people you actually work with.",
+      "conversations": "Conversations",
+      "unread": "Unread"
+    },
+    "form": {
+      "to": "To",
+      "chooseRecipient": "Choose a recipient...",
+      "teachers": "Teachers",
+      "parents": "Parents",
+      "frontOffice": "Front Office",
+      "aboutStudent": "About which student? (optional)",
+      "general": "General - not about a specific student",
+      "message": "Message",
+      "placeholder": "Type your message...",
+      "sent": "Message sent.",
+      "send": "Send Message",
+      "reply": "Reply"
+    }
+  },
+  "FeaturedVideo": {
+    "restrictedBody": "Only Admins can manage the featured video broadcast.",
+    "title": "Featured Video Broadcast",
+    "subtitle": "Publish the video every Admin, Teacher, Parent, and Student sees on their dashboard the moment they log in.",
+    "publishNew": "Publish a New Broadcast",
+    "previous": "Previous Broadcasts",
+    "player": {
+      "title": "Featured Video",
+      "live": "Broadcast from your school",
+      "none": "No broadcast is live right now",
+      "noVideo": "No featured video yet.",
+      "checkBack": "Check back soon for the next school broadcast."
+    },
+    "form": {
+      "videoTitle": "Video Title",
+      "titlePlaceholder": "e.g. Welcome Back to School 2026!",
+      "videoSource": "Video Source",
+      "pasteLink": "Paste a Link",
+      "uploadVideo": "Upload a Video",
+      "linkPlaceholder": "YouTube, TikTok, Instagram Reels, or Vimeo link",
+      "linkHelp": "Regular share links work fine - they’re converted automatically. For TikTok, use the full video link rather than a shortened vm.tiktok.com link.",
+      "currentVideo": "Current video",
+      "fileFallback": "video",
+      "videoReady": "Video ready",
+      "chooseVideo": "Choose a video from your computer",
+      "formats": "MP4, MOV, or WebM - up to 200MB",
+      "publish": "Publish Broadcast",
+      "reset": "Reset",
+      "toast": "Featured video updated - it’s now live on every dashboard."
+    }
+  },
+  "Validation": {
+    "a_true_false_question_must_have_exactly_two_options": "A True/False question must have exactly two options.",
+    "add_at_least_2_options": "Add at least 2 options!",
+    "address_is_required": "Address is required!",
+    "birthday_is_required": "Birthday is required!",
+    "blood_type_is_required": "Blood Type is required!",
+    "capacity_is_required": "Capacity is required!",
+    "capacity_name_is_required": "Capacity name is required!",
+    "category_is_required": "Category is required!",
+    "class_is_required": "Class is required!",
+    "club_name_is_required": "Club name is required!",
+    "comment_cannot_be_empty": "Comment cannot be empty!",
+    "criterion_name_is_required": "Criterion name is required!",
+    "date_is_required": "Date is required!",
+    "day_is_required": "Day is required!",
+    "description_is_required": "Description is required!",
+    "due_date_is_required": "Due date is required!",
+    "end_time_is_required": "End time is required!",
+    "enter_a_valid_video_url": "Enter a valid video URL!",
+    "first_name_is_required": "First name is required!",
+    "grade_is_required": "Grade is required!",
+    "grade_name_is_required": "Grade name is required!",
+    "invalid_email_address": "Invalid email address!",
+    "last_name_is_required": "Last name is required!",
+    "lesson_is_required": "Lesson is required!",
+    "lesson_name_is_required": "Lesson name is required!",
+    "message_cannot_be_empty": "Message cannot be empty!",
+    "objective_title_is_required": "Objective title is required!",
+    "option_text_is_required": "Option text is required!",
+    "parent_id_is_required": "Parent Id is required!",
+    "password_must_be_at_least_8_characters_long": "Password must be at least 8 characters long!",
+    "phone_is_required": "Phone is required!",
+    "pick_the_correct_option": "Pick the correct option!",
+    "question_text_is_required": "Question text is required!",
+    "recipient_is_required": "Recipient is required!",
+    "room_is_required": "Room is required!",
+    "scanned_code_is_required": "Scanned code is required!",
+    "school_year_is_required": "School year is required!",
+    "score_is_required": "Score is required!",
+    "sex_is_required": "Sex is required!",
+    "start_date_is_required": "Start date is required!",
+    "start_time_is_required": "Start time is required!",
+    "student_is_required": "Student is required!",
+    "subject_is_required": "Subject is required!",
+    "subject_name_is_required": "Subject name is required!",
+    "submission_is_required": "Submission is required!",
+    "teacher_is_required": "Teacher is required!",
+    "title_is_required": "Title is required!",
+    "title_name_is_required": "Title name is required!",
+    "username_must_be_at_least_3_characters_long": "Username must be at least 3 characters long!",
+    "username_must_be_at_most_20_characters_long": "Username must be at most 20 characters long!",
+    "video_url_is_required": "Video URL is required!"
   }
 }

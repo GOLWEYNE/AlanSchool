@@ -11,6 +11,7 @@ import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import ObjectiveTagPicker from "./ObjectiveTagPicker";
+import { useValidationMessage } from "@/hooks/useValidationMessage";
 
 const LessonForm = ({
   type,
@@ -24,6 +25,7 @@ const LessonForm = ({
   relatedData?: any;
 }) => {
   const t = useTranslations("Forms");
+  const tv = useValidationMessage();
   const {
     register,
     handleSubmit,
@@ -123,7 +125,7 @@ const LessonForm = ({
           </select>
           {errors.day?.message && (
             <p className="text-xs text-red-400">
-              {errors.day.message.toString()}
+              {tv(errors.day.message)}
             </p>
           )}
         </div>
@@ -145,7 +147,7 @@ const LessonForm = ({
           </select>
           {errors.subjectId?.message && (
             <p className="text-xs text-red-400">
-              {errors.subjectId.message.toString()}
+              {tv(errors.subjectId.message)}
             </p>
           )}
         </div>
@@ -170,7 +172,7 @@ const LessonForm = ({
           </select>
           {errors.classId?.message && (
             <p className="text-xs text-red-400">
-              {errors.classId.message.toString()}
+              {tv(errors.classId.message)}
             </p>
           )}
         </div>
@@ -195,7 +197,7 @@ const LessonForm = ({
           </select>
           {errors.teacherId?.message && (
             <p className="text-xs text-red-400">
-              {errors.teacherId.message.toString()}
+              {tv(errors.teacherId.message)}
             </p>
           )}
         </div>

@@ -817,5 +817,222 @@
       "myLessons": "Менің сабақтарым",
       "schedule": "Кесте"
     }
+  },
+  "Roles": {
+    "admin": "Әкімші",
+    "teacher": "Мұғалім",
+    "parent": "Ата-ана",
+    "student": "Оқушы"
+  },
+  "Common": {
+    "accessRestricted": "Қолжетімділік шектеулі",
+    "somethingWrongRetry": "Бірдеңе дұрыс болмады. Қайталап көріңіз."
+  },
+  "Tickets": {
+    "page": {
+      "title": "Жоғалған заттар тақтасы",
+      "subtitle": "Жоғалған затты хабарлаңыз, тапқан затты жариялаңыз және иесі алғанша қадағалаңыз.",
+      "onBoard": "Тақтада",
+      "stillSearching": "Әлі ізделуде",
+      "claimed": "Алынды",
+      "heading": "Жоғалған заттар"
+    },
+    "tabs": {
+      "LOST_ITEM": "Жоғалған заттар",
+      "TECHNICAL": "Техникалық",
+      "ACADEMIC": "Оқу",
+      "OTHER": "Басқа",
+      "ALL": "Барлық өтініштер"
+    },
+    "board": {
+      "columns": {
+        "OPEN": {
+          "label": "Хабарланды",
+          "hint": "Жаңа хабарланды, әлі қаралмаған"
+        },
+        "IN_PROGRESS": {
+          "label": "Анықталуда",
+          "hint": "Біреу айналысып жатыр"
+        },
+        "RESOLVED": {
+          "label": "Алынды / Қайтарылды",
+          "hint": "Иесіне қайтарылды"
+        },
+        "CLOSED": {
+          "label": "Жабылды",
+          "hint": "Енді белсенді емес"
+        }
+      },
+      "priorities": {
+        "LOW": "Төмен",
+        "MEDIUM": "Орташа",
+        "HIGH": "Жоғары",
+        "URGENT": "Шұғыл"
+      },
+      "kind": {
+        "lost": "жоғалды",
+        "found": "табылды"
+      },
+      "justNow": "жаңа ғана",
+      "minutesAgo": "{count} мин бұрын",
+      "hoursAgo": "{count} сағ бұрын",
+      "daysAgo": "{count} күн бұрын",
+      "moveTo": "Жылжыту: {status}",
+      "nothingHere": "Мұнда ештеңе жоқ",
+      "reportItem": "Зат туралы хабарлау",
+      "loadingForm": "Форма жүктелуде..."
+    },
+    "form": {
+      "title": "Зат туралы хабарлау",
+      "lostBtn": "🔴 Мен бірдеңе жоғалттым",
+      "foundBtn": "🟢 Мен бірдеңе таптым",
+      "itemLabelLost": "Жоғалған зат",
+      "itemLabelFound": "Табылған зат",
+      "itemPlaceholder": "мыс. көк рюкзак, күміс су бөтелкесі, оқушы куәлігі",
+      "itemRequired": "Заттың атауын көрсетіңіз!",
+      "detailsLost": "Мәліметтер — оны соңғы рет қайда және қашан көрдіңіз",
+      "detailsFound": "Мәліметтер — оны қайдан таптыңыз және қайдан алуға болады",
+      "descPlaceholder": "Затты анықтауға көмектесетін мәліметтерді қосыңыз: орны, түсі, ерекше белгілері...",
+      "descRequired": "Қысқаша сипаттама қажет!",
+      "priority": "Басымдық",
+      "priorityUrgent": "Шұғыл (мыс. құжат, кілт, әмиян)",
+      "studentParent": "Бұл балаларыңыздың қайсысына қатысты?",
+      "studentOptional": "Оқушы (міндетті емес)",
+      "selectChild": "Баланы таңдаңыз...",
+      "notLinked": "Оқушымен байланыстырылмаған",
+      "error": "Бірдеңе дұрыс болмады, қайталап көріңіз.",
+      "submit": "Тақтаға жариялау",
+      "toastFound": "Табылған зат тақтада жарияланды!",
+      "toastLost": "Жоғалған зат туралы хабарланды — біз назар аударамыз!"
+    },
+    "detail": {
+      "ticketNo": "Өтініш №{id}",
+      "opened": "Құрылды {date}",
+      "resolved": " · Шешілді {date}",
+      "comments": "Пікірлер ({count})",
+      "noComments": "Пікірлер әлі жоқ.",
+      "status": {
+        "OPEN": "Ашық",
+        "IN_PROGRESS": "Орындалуда",
+        "RESOLVED": "Шешілді",
+        "CLOSED": "Жабық"
+      }
+    }
+  },
+  "Messages": {
+    "restrictedBody": "Хабарларды көру үшін жүйеге кіріңіз.",
+    "newMessage": "Жаңа хабар",
+    "about": "Оқушы туралы: {name}",
+    "re": "Тақырып: {name}",
+    "you": "Сіз: ",
+    "noMessagesYet": "Хабарлар әлі жоқ — сәлем айтыңыз.",
+    "openRecent": "{name} қатысты соңғы әңгімені ашу →",
+    "noConversations": "Әңгімелер әлі жоқ.",
+    "startConversation": "Мұғаліммен, ата-анамен немесе әкімшілікпен әңгіме бастаңыз.",
+    "nothingYet": "Мұнда әлі ештеңе жоқ.",
+    "hero": {
+      "title": "Хабарлар",
+      "subtitle": "Қызметкерлер, ата-аналар және оқушылар арасындағы жеке әңгімелер — тек өзіңіз жұмыс істейтін адамдармен.",
+      "conversations": "Әңгімелер",
+      "unread": "Оқылмаған"
+    },
+    "form": {
+      "to": "Кімге",
+      "chooseRecipient": "Алушыны таңдаңыз...",
+      "teachers": "Мұғалімдер",
+      "parents": "Ата-аналар",
+      "frontOffice": "Әкімшілік",
+      "aboutStudent": "Қай оқушы туралы? (міндетті емес)",
+      "general": "Жалпы — нақты оқушыға қатысты емес",
+      "message": "Хабар",
+      "placeholder": "Хабарыңызды жазыңыз...",
+      "sent": "Хабар жіберілді.",
+      "send": "Хабар жіберу",
+      "reply": "Жауап беру"
+    }
+  },
+  "FeaturedVideo": {
+    "restrictedBody": "Күн видеосының трансляциясын тек әкімшілер басқара алады.",
+    "title": "Күн видеосының трансляциясы",
+    "subtitle": "Әрбір әкімші, мұғалім, ата-ана және оқушы жүйеге кірген бойда өз панелінде көретін бейнені жариялаңыз.",
+    "publishNew": "Жаңа трансляцияны жариялау",
+    "previous": "Алдыңғы трансляциялар",
+    "player": {
+      "title": "Күн видеосы",
+      "live": "Мектебіңіздің трансляциясы",
+      "none": "Қазір белсенді трансляция жоқ",
+      "noVideo": "Күн видеосы әлі жоқ.",
+      "checkBack": "Келесі мектеп трансляциясы үшін жақын арада қайта кіріңіз."
+    },
+    "form": {
+      "videoTitle": "Бейне атауы",
+      "titlePlaceholder": "мыс. 2026 оқу жылына қош келдіңіздер!",
+      "videoSource": "Бейне көзі",
+      "pasteLink": "Сілтеме қою",
+      "uploadVideo": "Бейне жүктеу",
+      "linkPlaceholder": "YouTube, TikTok, Instagram Reels немесе Vimeo сілтемесі",
+      "linkHelp": "Әдеттегі бөлісу сілтемелері жарайды — олар автоматты түрде түрлендіріледі. TikTok үшін vm.tiktok.com қысқа сілтемесін емес, бейненің толық сілтемесін пайдаланыңыз.",
+      "currentVideo": "Ағымдағы бейне",
+      "fileFallback": "бейне",
+      "videoReady": "Бейне дайын",
+      "chooseVideo": "Компьютеріңізден бейне таңдаңыз",
+      "formats": "MP4, MOV немесе WebM — 200 МБ дейін",
+      "publish": "Трансляцияны жариялау",
+      "reset": "Тазалау",
+      "toast": "Күн видеосы жаңартылды — ол енді барлық панельдерде көрінеді."
+    }
+  },
+  "Validation": {
+    "a_true_false_question_must_have_exactly_two_options": "«Дұрыс/Бұрыс» сұрағында дәл екі нұсқа болуы керек.",
+    "add_at_least_2_options": "Кемінде 2 нұсқа қосыңыз!",
+    "address_is_required": "Мекенжайды көрсетіңіз!",
+    "birthday_is_required": "Туған күнін көрсетіңіз!",
+    "blood_type_is_required": "Қан тобын көрсетіңіз!",
+    "capacity_is_required": "Сыйымдылықты көрсетіңіз!",
+    "capacity_name_is_required": "Сыйымдылықты көрсетіңіз!",
+    "category_is_required": "Санатты таңдаңыз!",
+    "class_is_required": "Сыныпты таңдаңыз!",
+    "club_name_is_required": "Үйірме атауын көрсетіңіз!",
+    "comment_cannot_be_empty": "Пікір бос болмауы керек!",
+    "criterion_name_is_required": "Критерий атауын көрсетіңіз!",
+    "date_is_required": "Күнін көрсетіңіз!",
+    "day_is_required": "Күнді таңдаңыз!",
+    "description_is_required": "Сипаттама қосыңыз!",
+    "due_date_is_required": "Тапсыру мерзімін көрсетіңіз!",
+    "end_time_is_required": "Аяқталу уақытын көрсетіңіз!",
+    "enter_a_valid_video_url": "Бейненің дұрыс сілтемесін енгізіңіз!",
+    "first_name_is_required": "Атын көрсетіңіз!",
+    "grade_is_required": "Деңгейді көрсетіңіз!",
+    "grade_name_is_required": "Деңгейді көрсетіңіз!",
+    "invalid_email_address": "Электрондық пошта мекенжайы дұрыс емес!",
+    "last_name_is_required": "Тегін көрсетіңіз!",
+    "lesson_is_required": "Сабақты таңдаңыз!",
+    "lesson_name_is_required": "Сабақ атауын көрсетіңіз!",
+    "message_cannot_be_empty": "Хабар бос болмауы керек!",
+    "objective_title_is_required": "Мақсат атауын көрсетіңіз!",
+    "option_text_is_required": "Нұсқа мәтінін енгізіңіз!",
+    "parent_id_is_required": "Ата-ананың ID нөмірін көрсетіңіз!",
+    "password_must_be_at_least_8_characters_long": "Құпия сөз кемінде 8 таңбадан тұруы керек!",
+    "phone_is_required": "Телефонды көрсетіңіз!",
+    "pick_the_correct_option": "Дұрыс нұсқаны таңдаңыз!",
+    "question_text_is_required": "Сұрақ мәтінін енгізіңіз!",
+    "recipient_is_required": "Алушыны таңдаңыз!",
+    "room_is_required": "Кабинетті көрсетіңіз!",
+    "scanned_code_is_required": "Сканерленген код қажет!",
+    "school_year_is_required": "Оқу жылын көрсетіңіз!",
+    "score_is_required": "Баллды көрсетіңіз!",
+    "sex_is_required": "Жынысын көрсетіңіз!",
+    "start_date_is_required": "Басталу күнін көрсетіңіз!",
+    "start_time_is_required": "Басталу уақытын көрсетіңіз!",
+    "student_is_required": "Оқушыны таңдаңыз!",
+    "subject_is_required": "Пәнді таңдаңыз!",
+    "subject_name_is_required": "Пән атауын көрсетіңіз!",
+    "submission_is_required": "Жұмысты таңдаңыз!",
+    "teacher_is_required": "Мұғалімді таңдаңыз!",
+    "title_is_required": "Тақырыпты көрсетіңіз!",
+    "title_name_is_required": "Тақырыпты көрсетіңіз!",
+    "username_must_be_at_least_3_characters_long": "Пайдаланушы аты кемінде 3 таңбадан тұруы керек!",
+    "username_must_be_at_most_20_characters_long": "Пайдаланушы аты 20 таңбадан аспауы керек!",
+    "video_url_is_required": "Бейне сілтемесін көрсетіңіз!"
   }
 }
