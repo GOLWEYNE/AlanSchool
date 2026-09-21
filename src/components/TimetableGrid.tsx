@@ -12,6 +12,12 @@ import { useFormatter, useTranslations } from "next-intl";
 import { toast } from "react-toastify";
 import { rescheduleLesson } from "@/lib/actions";
 import { useCalendarI18n } from "@/lib/calendarI18n";
+import {
+  localDateToWallClockString,
+  localWallClockToUtcDate,
+  schoolNowAsLocalDate,
+  wallClockToLocalDate,
+} from "@/lib/schoolTime";
 
 export type TimetableLessonItem = {
   id: number;
@@ -23,9 +29,29 @@ export type TimetableLessonItem = {
   className: string;
   teacherId: string;
   teacherName: string;
+  /** Date-only wall-clock reading (see schoolTime.ts) - never a real instant. */
   start: Date;
   end: Date;
 };
+
+// What the server sends: the same lesson with school wall-clock strings
+// ("YYYY-MM-DDTHH:mm:ss") in place of Dates, so nothing depends on the zone
+// the server or the browser runs in.
+export type TimetableLessonInput = Omit<TimetableLessonItem, "start" | "end"> & {
+  start: string;
+  end: string;
+};
+
+// Minutes since midnight from "YYYY-MM-DDTHH:mm:ss".
+const minutesOfDay = (wallClock: string) =>
+  Number(wallClock.slice(11, 13)) * 60 + Number(wallClock.slice(14, 16));
+
+const toItems = (lessons: TimetableLessonInput[]): TimetableLessonItem[] =>
+  lessons.map((l) => ({
+    ...l,
+    start: wallClockToLocalDate(l.start),
+    end: wallClockToLocalDate(l.end),
+  }));
 
 const SUBJECT_PALETTE = [
   "#2563eb",
@@ -42,19 +68,6 @@ const SUBJECT_PALETTE = [
 const CONFLICT_COLOR = "#dc2626";
 
 const colorForSubject = (subjectId: number) => SUBJECT_PALETTE[subjectId % SUBJECT_PALETTE.length];
-
-// Monday 00:00 of "this" week - the recurring weekly grid always shows this
-// single week; there is nothing to navigate to since lessons repeat weekly
-// with no real calendar date of their own.
-const getWeekAnchor = () => {
-  const now = new Date();
-  const dayOfWeek = now.getDay();
-  const diffToMonday = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
-  const monday = new Date(now);
-  monday.setDate(now.getDate() + diffToMonday);
-  monday.setHours(0, 0, 0, 0);
-  return monday;
-};
 
 const overlaps = (aStart: Date, aEnd: Date, bStart: Date, bEnd: Date) =>
   aStart < bEnd && bStart < aEnd;
@@ -77,10 +90,13 @@ const DnDCalendar = withDragAndDrop<TimetableLessonItem>(Calendar);
 // anything.
 const TimetableGrid = ({
   lessons,
+  weekStart,
   canEdit,
   actionsByLessonId,
 }: {
-  lessons: TimetableLessonItem[];
+  lessons: TimetableLessonInput[];
+  /** Monday 00:00 of the school week the lessons were projected onto. */
+  weekStart: string;
   canEdit: boolean;
   actionsByLessonId?: Record<number, ReactNode>;
 }) => {
@@ -89,15 +105,17 @@ const TimetableGrid = ({
   const tc = useTranslations("Calendar");
   const format = useFormatter();
   const { localizer, culture, messages } = useCalendarI18n();
-  const [items, setItems] = useState<TimetableLessonItem[]>(lessons);
+  const [items, setItems] = useState<TimetableLessonItem[]>(() => toItems(lessons));
   const [selected, setSelected] = useState<TimetableLessonItem | null>(null);
-  const [weekAnchor] = useState<Date>(getWeekAnchor);
+  // The recurring weekly grid always shows this single week; there is nothing
+  // to navigate to since lessons repeat weekly with no real calendar date.
+  const weekAnchor = useMemo(() => wallClockToLocalDate(weekStart), [weekStart]);
 
   // The server refetches (and re-sends fresh props) after every successful
   // reschedule and on every filter change - keep local state in lockstep
   // with whatever the server last confirmed.
   useEffect(() => {
-    setItems(lessons);
+    setItems(toItems(lessons));
   }, [lessons]);
 
   const conflictIds = useMemo(() => {
@@ -123,8 +141,8 @@ const TimetableGrid = ({
     let minMinutes = 7 * 60;
     let maxMinutes = 18 * 60;
     if (lessons.length > 0) {
-      minMinutes = Math.min(...lessons.map((l) => l.start.getHours() * 60 + l.start.getMinutes()));
-      maxMinutes = Math.max(...lessons.map((l) => l.end.getHours() * 60 + l.end.getMinutes()));
+      minMinutes = Math.min(...lessons.map((l) => minutesOfDay(l.start)));
+      maxMinutes = Math.max(...lessons.map((l) => minutesOfDay(l.end)));
       minMinutes = Math.max(0, minMinutes - 30);
       maxMinutes = Math.min(24 * 60, maxMinutes + 30);
     }
@@ -141,7 +159,13 @@ const TimetableGrid = ({
     const previous = items;
     setItems((prev) => prev.map((it) => (it.id === args.event.id ? { ...it, start, end } : it)));
 
-    const result = await rescheduleLesson({ id: args.event.id, start, end });
+    // Send the wall-clock reading the grid shows (school time) rather than
+    // the Dates themselves, which the server would re-read in its own zone.
+    const result = await rescheduleLesson({
+      id: args.event.id,
+      start: localDateToWallClockString(start),
+      end: localDateToWallClockString(end),
+    });
     if (!result.success) {
       setItems(previous);
       toast.error(result.message || t("rescheduleError"));
@@ -173,6 +197,7 @@ const TimetableGrid = ({
     views: [Views.WORK_WEEK],
     view: Views.WORK_WEEK,
     date: weekAnchor,
+    getNow: schoolNowAsLocalDate,
     toolbar: false,
     min,
     max,
@@ -259,9 +284,9 @@ const TimetableGrid = ({
               </p>
             )}
             <p className="text-xs text-gray-500 dark:text-slate-400 mb-4">
-              {format.dateTime(selected.start, { weekday: "long" })}{" "}
-              {format.dateTime(selected.start, { hour: "2-digit", minute: "2-digit" })} –{" "}
-              {format.dateTime(selected.end, { hour: "2-digit", minute: "2-digit" })}
+              {format.dateTime(localWallClockToUtcDate(selected.start), { weekday: "long", timeZone: "UTC" })}{" "}
+              {format.dateTime(localWallClockToUtcDate(selected.start), { hour: "2-digit", minute: "2-digit", timeZone: "UTC" })} –{" "}
+              {format.dateTime(localWallClockToUtcDate(selected.end), { hour: "2-digit", minute: "2-digit", timeZone: "UTC" })}
             </p>
             {actionsByLessonId?.[selected.id] && (
               <div className="flex items-center gap-2 pt-3 border-t border-gray-100 dark:border-slate-800">

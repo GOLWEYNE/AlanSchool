@@ -5,6 +5,7 @@ import { auth } from "@clerk/nextjs/server";
 import { getUserRole } from "@/lib/auth";
 import { getLocale, getTranslations } from "next-intl/server";
 import { dateLocale } from "@/lib/dateLocale";
+import { SCHOOL_TIME_ZONE, toWallClock } from "@/lib/schoolTime";
 
 const ACCENTS = [
   {
@@ -29,13 +30,21 @@ const relativeDay = (
   locale: string,
   labels: { today: string; yesterday: string; tomorrow: string }
 ) => {
-  const now = new Date();
-  const diffMs = new Date(date.toDateString()).getTime() - new Date(now.toDateString()).getTime();
-  const diffDays = Math.round(diffMs / (1000 * 60 * 60 * 24));
+  // Whole calendar days apart on the school clock, so "today" flips at school
+  // midnight rather than at the server's (UTC) midnight.
+  const dayNumber = (d: Date) => {
+    const w = toWallClock(d);
+    return Date.UTC(w.year, w.month - 1, w.day) / (1000 * 60 * 60 * 24);
+  };
+  const diffDays = dayNumber(date) - dayNumber(new Date());
   if (diffDays === 0) return labels.today;
   if (diffDays === -1) return labels.yesterday;
   if (diffDays === 1) return labels.tomorrow;
-  return new Intl.DateTimeFormat(dateLocale(locale), { day: "2-digit", month: "short" }).format(date);
+  return new Intl.DateTimeFormat(dateLocale(locale), {
+    day: "2-digit",
+    month: "short",
+    timeZone: SCHOOL_TIME_ZONE,
+  }).format(date);
 };
 
 const Announcements = async () => {

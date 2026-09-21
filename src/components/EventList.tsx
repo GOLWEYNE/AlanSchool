@@ -1,6 +1,7 @@
 import prisma from "@/lib/prisma";
 import { getLocale, getTranslations } from "next-intl/server";
 import { dateLocale } from "@/lib/dateLocale";
+import { SCHOOL_TIME_ZONE, schoolDayRange } from "@/lib/schoolTime";
 
 const ACCENTS = [
   "from-sky-400 to-blue-500",
@@ -12,13 +13,15 @@ const ACCENTS = [
 const EventList = async ({ dateParam }: { dateParam: string | undefined }) => {
   const t = await getTranslations("Widgets.events");
   const locale = await getLocale();
-  const date = dateParam ? new Date(dateParam) : new Date();
+  // dateParam is the "YYYY-MM-DD" the sidebar calendar picked; the day runs
+  // from school midnight to the next, not from the server's (UTC) midnight.
+  const [dayStart, dayEnd] = schoolDayRange(dateParam);
 
   const data = await prisma.event.findMany({
     where: {
       startTime: {
-        gte: new Date(date.setHours(0, 0, 0, 0)),
-        lte: new Date(date.setHours(23, 59, 59, 999)),
+        gte: dayStart,
+        lt: dayEnd,
       },
     },
     orderBy: { startTime: "asc" },
@@ -47,6 +50,7 @@ const EventList = async ({ dateParam }: { dateParam: string | undefined }) => {
                 hour: "2-digit",
                 minute: "2-digit",
                 hour12: false,
+                timeZone: SCHOOL_TIME_ZONE,
               }).format(event.startTime)}
             </span>
           </div>
