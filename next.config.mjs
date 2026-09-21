@@ -13,6 +13,7 @@ const nextConfig = {
                   "/api/**/*": [
                             "./node_modules/pdfkit/js/standard-fonts/**/*",
                             "./node_modules/pdfkit/js/data/**/*",
+                            "./src/assets/fonts/**/*",
                           ],
           },
     },
