@@ -8,6 +8,7 @@ import ClassLeaderboard from "@/components/ClassLeaderboard";
 import BigCalendarContainer from "@/components/BigCalendarContainer";
 import TeacherWebcamPreview from "@/components/TeacherWebcamPreview";
 import ProtectedRoute from "@/components/ProtectedRoute";
+import ScheduleDownloadLink from "@/components/ScheduleDownloadLink";
 import prisma from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 import Link from "next/link";
@@ -58,7 +59,10 @@ const TeacherPage = async () => {
           The camera preview lives here, next to the lessons it's actually for,
           rather than as a generic sidebar widget unrelated to going live. */}
       <div className="w-full panel-card p-4 rounded-md min-h-[640px] flex flex-col">
-        <h1 className="text-xl font-semibold text-blue-900 dark:text-blue-100">{t("schedule")}</h1>
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h1 className="text-xl font-semibold text-blue-900 dark:text-blue-100">{t("schedule")}</h1>
+          <ScheduleDownloadLink />
+        </div>
         <div className="flex-1 mt-2 flex flex-col lg:flex-row gap-4">
           <div className="w-full lg:w-2/3 flex-1 min-h-[420px] lg:min-h-0">
             <BigCalendarContainer type="teacherId" id={userId!} />

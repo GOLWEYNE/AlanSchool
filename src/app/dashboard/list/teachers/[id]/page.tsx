@@ -3,6 +3,7 @@ import BigCalendarContainer from "@/components/BigCalendarContainer";
 import BigCalendar from "@/components/BigCalendar";
 // FormContainer component removed due to import resolution issues
 import Performance from "@/components/Performance";
+import ScheduleDownloadLink from "@/components/ScheduleDownloadLink";
 import prisma from "@/lib/prisma";
 import { getUserRole } from "@/lib/auth";
 import { auth } from "@clerk/nextjs/server";
@@ -223,7 +224,12 @@ const SingleTeacherPage = async ({
 
       {/* SCHEDULE - full page width so the whole week is easy to read at a glance */}
       <div className="bg-white dark:bg-slate-900 rounded-md p-4 min-h-[700px] flex flex-col">
-        <h1 className="text-blue-900 dark:text-blue-100">{t("teacherSchedule")}</h1>
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h1 className="text-blue-900 dark:text-blue-100">{t("teacherSchedule")}</h1>
+          {(role === "admin" || (role === "teacher" && userId === teacher.id)) && (
+            <ScheduleDownloadLink teacherId={teacher.id} />
+          )}
+        </div>
         <div className="flex-1 mt-2">
           <BigCalendarContainer type="teacherId" id={teacher.id} />
         </div>

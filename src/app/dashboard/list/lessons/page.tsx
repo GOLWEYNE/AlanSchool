@@ -1,5 +1,6 @@
 import FormContainer from "@/components/FormContainer";
 import PageHero from "@/components/PageHero";
+import ScheduleDownloadLink from "@/components/ScheduleDownloadLink";
 import TableSearch from "@/components/TableSearch";
 import TimetableGrid, { TimetableLessonInput } from "@/components/TimetableGrid";
 import prisma from "@/lib/prisma";
@@ -171,6 +172,12 @@ const LessonsListPage = async ({
         <div className="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
           <TableSearch />
           <div className="flex items-center gap-4 self-end">
+            {/* Downloads exactly what is loaded: the picked class and/or teacher
+                for an admin, the teacher's own week for a teacher. */}
+            {role === "admin" && (selectedClassId || selectedTeacherId) && (
+              <ScheduleDownloadLink classId={selectedClassId} teacherId={selectedTeacherId} />
+            )}
+            {role === "teacher" && <ScheduleDownloadLink />}
             {canEdit && <FormContainer table="lesson" type="create" />}
           </div>
         </div>
