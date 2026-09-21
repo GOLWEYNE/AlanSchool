@@ -1768,6 +1768,12 @@
         "unauthorized": "Only an administrator can do this.",
         "failed": "Something went wrong and nothing was changed. Please try again.",
         "unavailable": "The lesson times could not be checked right now. Please try again in a moment."
+      },
+      "inOrder": {
+        "pending": "{count} lessons in {classes} classes (grade 11) follow a different timetable from the school routine.",
+        "help": "At the school's request, each day's lessons are mapped in order: the 1st lesson of the day becomes Lesson 1 of the routine, the 2nd becomes Lesson 2, and so on. Only the time changes. A backup of the old times is saved first, so this can be undone.",
+        "apply": "Map {count} lessons to the routine in order",
+        "confirmApply": "Map {count} grade 11 lessons in order onto the routine? A backup is saved first and you can undo it here."
       }
     },
     "off": {
