@@ -47,6 +47,9 @@ model Student {
   conferenceBookings    ConferenceBooking[]
   clubEnrollments       ClubEnrollment[]
   clubAttendances       ClubAttendance[]
+
+  // Personal study goals the student tracks on their Study Planner page.
+  studyGoals            StudyGoal[]
 }
 
 model Teacher {
@@ -129,6 +132,9 @@ model Subject {
   // The curriculum's learning objectives for this subject (e.g. the
   // Grade 1-2 science curriculum's objectives, tagged onto lessons/exams).
   objectives CurriculumObjective[]
+
+  // Study goals a student tagged with this subject.
+  studyGoals StudyGoal[]
 }
 
 model Lesson {
@@ -741,4 +747,23 @@ model CurriculumObjective {
 
   @@index([subjectId])
   @@index([gradeId])
+}
+
+// A student's own study goal (Study Planner). Purely additive: new table,
+// nothing existing is changed. progress is 0-100; completedAt is set when the
+// student marks the goal done. targetDate is stored as school-time midnight.
+model StudyGoal {
+  id          Int       @id @default(autoincrement())
+  studentId   String
+  student     Student   @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  title       String
+  subjectId   Int?
+  subject     Subject?  @relation(fields: [subjectId], references: [id], onDelete: SetNull)
+  targetDate  DateTime?
+  progress    Int       @default(0)
+  completedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([studentId])
 }
