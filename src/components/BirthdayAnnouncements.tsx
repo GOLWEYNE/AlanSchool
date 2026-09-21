@@ -1,5 +1,6 @@
 import prisma from "@/lib/prisma";
 import Image from "next/image";
+import { getFormatter, getLocale, getTranslations } from "next-intl/server";
 
 type BirthdayPerson = {
   id: string;
@@ -10,19 +11,7 @@ type BirthdayPerson = {
   role: "teacher" | "student";
 };
 
-const TEACHER_WISHES = [
-  "Thank you for shaping bright futures every single day — enjoy your special day!",
-  "Wishing you a day as bright and inspiring as the lessons you teach.",
-  "Happy Birthday! Alan International School is lucky to have you.",
-  "Here's to another wonderful year of teaching, growing, and inspiring young minds.",
-];
-
-const STUDENT_WISHES = [
-  "Wishing you a fantastic day filled with fun, cake, and celebration!",
-  "Happy Birthday! Keep shining bright in and out of the classroom.",
-  "Hope your special day is as amazing as you are — enjoy every moment!",
-  "Another year older, another year of amazing achievements ahead. Happy Birthday!",
-];
+const WISH_COUNT = 4;
 
 // Stable pseudo-random pick per id, so the same person gets the same
 // wish across re-renders instead of a jarring flicker between requests.
@@ -58,6 +47,9 @@ const daysUntilNextBirthday = (birthday: Date, today: Date) => {
 };
 
 const BirthdayAnnouncements = async () => {
+  const t = await getTranslations("Birthdays");
+  const format = await getFormatter();
+  const locale = await getLocale();
   const [teachers, students] = await Promise.all([
     prisma.teacher.findMany({
       select: { id: true, name: true, surname: true, img: true, birthday: true },
@@ -85,10 +77,11 @@ const BirthdayAnnouncements = async () => {
     .sort((a, b) => a.daysUntil - b.daysUntil)
     .slice(0, 4);
 
-  const dateLabel = new Intl.DateTimeFormat("en-GB", {
-    day: "numeric",
-    month: "long",
-  }).format(today);
+  // en keeps the existing "21 September" day-first order.
+  const dateLabel =
+    locale === "en"
+      ? new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "long" }).format(today)
+      : format.dateTime(today, { day: "numeric", month: "long" });
 
   return (
     <div className="relative overflow-hidden rounded-2xl p-5 text-white shine-hover bg-gradient-to-br from-fuchsia-500 via-purple-500 to-indigo-600 shadow-lg">
@@ -103,7 +96,7 @@ const BirthdayAnnouncements = async () => {
       />
       <div className="relative flex items-center justify-between">
         <h1 className="text-xl font-semibold flex items-center gap-2">
-          🎉 Birthdays
+          {t("title")}
         </h1>
         <span className="text-xs bg-white/20 rounded-full px-2 py-1">
           {dateLabel}
@@ -113,8 +106,9 @@ const BirthdayAnnouncements = async () => {
       {todayPeople.length > 0 ? (
         <div className="relative mt-4 flex flex-col gap-3">
           {todayPeople.map((p) => {
-            const wishes = p.role === "teacher" ? TEACHER_WISHES : STUDENT_WISHES;
-            const wish = wishes[hashToIndex(p.id, wishes.length)];
+            const wish = t(
+              `${p.role === "teacher" ? "teacherWishes" : "studentWishes"}.${hashToIndex(p.id, WISH_COUNT)}`
+            );
             return (
               <div
                 key={p.id}
@@ -139,7 +133,7 @@ const BirthdayAnnouncements = async () => {
                           : "bg-sky-200 text-sky-900"
                       }`}
                     >
-                      {p.role === "teacher" ? "Teacher" : "Student"}
+                      {p.role === "teacher" ? t("teacher") : t("student")}
                     </span>
                   </div>
                   <p className="text-xs text-white/90 mt-0.5">{wish}</p>
@@ -151,7 +145,7 @@ const BirthdayAnnouncements = async () => {
       ) : (
         <div className="relative mt-4">
           <p className="text-sm text-white/90">
-            No birthdays today — but here&apos;s who&apos;s up next 👀
+            {t("upNext")}
           </p>
           {upcoming.length > 0 ? (
             <div className="mt-3 flex flex-col gap-2">
@@ -172,7 +166,7 @@ const BirthdayAnnouncements = async () => {
                       {p.name} {p.surname}
                     </span>
                     <span className="text-[11px] text-white/80 whitespace-nowrap">
-                      in {p.daysUntil} day{p.daysUntil === 1 ? "" : "s"}
+                      {t("inDays", { count: p.daysUntil })}
                     </span>
                   </div>
                 </div>
@@ -180,7 +174,7 @@ const BirthdayAnnouncements = async () => {
             </div>
           ) : (
             <p className="text-xs text-white/70 mt-2">
-              No birthdays in the next two weeks.
+              {t("none")}
             </p>
           )}
         </div>

@@ -14,15 +14,14 @@ const YOUNGER_GROUP_LABEL =
 const OLDER_GROUP_LABEL =
   "5a,5b,5c,6a,6b,6c,7a,7b,7c,8a,8b,8c,9a,9b,9c,10a,10c,10d,11a,11b,11c";
 
-const CLUBS_ROW_LABEL =
-  "Дополнительные занятия, выполнение домашнего задания, кружки и секции";
-
 const cell = "border border-blue-200 dark:border-slate-700 p-2";
 const labelCell = `${cell} font-medium`;
 const timeCell = `${cell} whitespace-nowrap`;
 
 const DailyRoutineButton = () => {
   const t = useTranslations("Navbar");
+  const r = useTranslations("Routine");
+  const CLUBS_ROW_LABEL = r("clubs");
   const [open, setOpen] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
 
@@ -68,10 +67,10 @@ const DailyRoutineButton = () => {
             <div className="flex items-start justify-between mb-4 gap-4">
               <div>
                 <h1 className="text-lg font-bold text-blue-900 dark:text-blue-100">
-                  РЕЖИМ ДНЯ
+                  {r("title")}
                 </h1>
                 <p className="text-xs text-blue-500 dark:text-blue-400">
-                  2026-2027 учебный год
+                  {r("academicYear")}
                 </p>
               </div>
               <button
@@ -99,69 +98,69 @@ const DailyRoutineButton = () => {
                       colSpan={2}
                       className="border border-blue-200 dark:border-slate-700 bg-blue-50 dark:bg-blue-950/40 text-blue-900 dark:text-blue-100 font-semibold p-2 text-left align-top"
                     >
-                      {YOUNGER_GROUP_LABEL} КЛАССЫ
+                      {r("classesHeading", { groups: YOUNGER_GROUP_LABEL })}
                     </th>
                     <th
                       colSpan={2}
                       className="border border-blue-200 dark:border-slate-700 bg-blue-50 dark:bg-blue-950/40 text-blue-900 dark:text-blue-100 font-semibold p-2 text-left align-top"
                     >
-                      {OLDER_GROUP_LABEL} КЛАССЫ
+                      {r("classesHeading", { groups: OLDER_GROUP_LABEL })}
                     </th>
                   </tr>
                 </thead>
                 <tbody className="text-blue-900 dark:text-blue-100">
                   <tr>
-                    <td className={labelCell}>Завтрак</td>
+                    <td className={labelCell}>{r("breakfast")}</td>
                     <td className={timeCell}>8:30 – 8:55</td>
-                    <td className={labelCell}>1 урок</td>
+                    <td className={labelCell}>{r("lesson", { n: 1 })}</td>
                     <td className={timeCell}>8:30 – 9:10</td>
                   </tr>
                   <tr>
-                    <td className={labelCell}>1 урок</td>
+                    <td className={labelCell}>{r("lesson", { n: 1 })}</td>
                     <td className={timeCell}>8:55 – 9:35</td>
-                    <td className={labelCell}>Завтрак</td>
+                    <td className={labelCell}>{r("breakfast")}</td>
                     <td className={timeCell}>9:10 – 9:40</td>
                   </tr>
                   <tr>
-                    <td className={labelCell}>2 урок</td>
+                    <td className={labelCell}>{r("lesson", { n: 2 })}</td>
                     <td className={timeCell}>9:40 – 10:20</td>
-                    <td className={labelCell}>2 урок</td>
+                    <td className={labelCell}>{r("lesson", { n: 2 })}</td>
                     <td className={timeCell}>9:40 – 10:20</td>
                   </tr>
                   <tr>
-                    <td className={labelCell}>3 урок</td>
+                    <td className={labelCell}>{r("lesson", { n: 3 })}</td>
                     <td className={timeCell}>10:25 – 11:05</td>
-                    <td className={labelCell}>3 урок</td>
+                    <td className={labelCell}>{r("lesson", { n: 3 })}</td>
                     <td className={timeCell}>10:25 – 11:05</td>
                   </tr>
                   <tr>
-                    <td className={labelCell}>4 урок</td>
+                    <td className={labelCell}>{r("lesson", { n: 4 })}</td>
                     <td className={timeCell}>11:10 – 11:50</td>
-                    <td className={labelCell}>4 урок</td>
+                    <td className={labelCell}>{r("lesson", { n: 4 })}</td>
                     <td className={timeCell}>11:10 – 11:50</td>
                   </tr>
                   <tr>
-                    <td className={labelCell}>5 урок</td>
+                    <td className={labelCell}>{r("lesson", { n: 5 })}</td>
                     <td className={timeCell}>11:55 – 12:35</td>
-                    <td className={labelCell}>5 урок</td>
+                    <td className={labelCell}>{r("lesson", { n: 5 })}</td>
                     <td className={timeCell}>11:55 – 12:35</td>
                   </tr>
                   <tr>
-                    <td className={labelCell}>Обед</td>
+                    <td className={labelCell}>{r("lunch")}</td>
                     <td className={timeCell}>12:35 – 13:10</td>
-                    <td className={labelCell}>6 урок</td>
+                    <td className={labelCell}>{r("lesson", { n: 6 })}</td>
                     <td className={timeCell}>12:40 – 13:20</td>
                   </tr>
                   <tr>
-                    <td className={labelCell}>6 урок</td>
+                    <td className={labelCell}>{r("lesson", { n: 6 })}</td>
                     <td className={timeCell}>13:10 – 13:50</td>
-                    <td className={labelCell}>Обед</td>
+                    <td className={labelCell}>{r("lunch")}</td>
                     <td className={timeCell}>13:20 – 13:55</td>
                   </tr>
                   <tr>
-                    <td className={labelCell}>7 урок</td>
+                    <td className={labelCell}>{r("lesson", { n: 7 })}</td>
                     <td className={timeCell}>13:55 – 14:35</td>
-                    <td className={labelCell}>7 урок</td>
+                    <td className={labelCell}>{r("lesson", { n: 7 })}</td>
                     <td className={timeCell}>13:55 – 14:35</td>
                   </tr>
                   <tr>
@@ -171,7 +170,7 @@ const DailyRoutineButton = () => {
                     <td rowSpan={2} className={`${timeCell} align-top`}>
                       14:40 – 16:30
                     </td>
-                    <td className={labelCell}>8 урок</td>
+                    <td className={labelCell}>{r("lesson", { n: 8 })}</td>
                     <td className={timeCell}>14:40 – 15:20</td>
                   </tr>
                   <tr>
@@ -179,15 +178,15 @@ const DailyRoutineButton = () => {
                     <td className={`${timeCell} align-top`}>15:25 – 16:50</td>
                   </tr>
                   <tr>
-                    <td className={labelCell}>Полдник</td>
+                    <td className={labelCell}>{r("snack")}</td>
                     <td className={timeCell}>16:30 – 17:00</td>
-                    <td className={labelCell}>Полдник</td>
+                    <td className={labelCell}>{r("snack")}</td>
                     <td className={timeCell}>16:50 – 17:00</td>
                   </tr>
                   <tr>
-                    <td className={labelCell}>Отъезд</td>
+                    <td className={labelCell}>{r("departure")}</td>
                     <td className={timeCell}>17:00</td>
-                    <td className={labelCell}>Отъезд</td>
+                    <td className={labelCell}>{r("departure")}</td>
                     <td className={timeCell}>17:00</td>
                   </tr>
                 </tbody>

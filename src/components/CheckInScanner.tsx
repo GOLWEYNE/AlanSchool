@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useTranslations } from "next-intl";
+import { useFormatter, useTranslations } from "next-intl";
 import { checkInAttendance } from "@/lib/masterModuleActions";
 
 type Feedback = { kind: "success" | "already" | "error"; text: string } | null;
@@ -23,6 +23,7 @@ const CheckInScanner = ({
   className: string;
 }) => {
   const t = useTranslations("List.checkin");
+  const format = useFormatter();
   const inputRef = useRef<HTMLInputElement>(null);
   const [value, setValue] = useState("");
   const [pending, setPending] = useState(false);
@@ -67,7 +68,7 @@ const CheckInScanner = ({
           {
             key: `${Date.now()}-${name}`,
             name,
-            time: new Date().toLocaleTimeString(),
+            time: format.dateTime(new Date(), { hour: "numeric", minute: "numeric", second: "numeric" }),
             already: !!result.alreadyMarked,
           },
           ...prev,

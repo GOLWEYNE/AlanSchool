@@ -3,6 +3,8 @@ import Link from "next/link";
 import prisma from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 import { getUserRole } from "@/lib/auth";
+import { getLocale, getTranslations } from "next-intl/server";
+import { dateLocale } from "@/lib/dateLocale";
 
 const ACCENTS = [
   {
@@ -22,17 +24,29 @@ const ACCENTS = [
   },
 ];
 
-const relativeDay = (date: Date) => {
+const relativeDay = (
+  date: Date,
+  locale: string,
+  labels: { today: string; yesterday: string; tomorrow: string }
+) => {
   const now = new Date();
   const diffMs = new Date(date.toDateString()).getTime() - new Date(now.toDateString()).getTime();
   const diffDays = Math.round(diffMs / (1000 * 60 * 60 * 24));
-  if (diffDays === 0) return "Today";
-  if (diffDays === -1) return "Yesterday";
-  if (diffDays === 1) return "Tomorrow";
-  return new Intl.DateTimeFormat("en-GB", { day: "2-digit", month: "short" }).format(date);
+  if (diffDays === 0) return labels.today;
+  if (diffDays === -1) return labels.yesterday;
+  if (diffDays === 1) return labels.tomorrow;
+  return new Intl.DateTimeFormat(dateLocale(locale), { day: "2-digit", month: "short" }).format(date);
 };
 
 const Announcements = async () => {
+  const t = await getTranslations("Widgets.announcements");
+  const tw = await getTranslations("Widgets");
+  const locale = await getLocale();
+  const dayLabels = {
+    today: tw("today"),
+    yesterday: tw("yesterday"),
+    tomorrow: tw("tomorrow"),
+  };
   const { userId, sessionClaims } = auth();
   const role = getUserRole(sessionClaims);
 
@@ -68,10 +82,10 @@ const Announcements = async () => {
             <Image src="/announcement.png" alt="" width={20} height={20} />
           </div>
           <div>
-            <h1 className="text-lg font-bold text-blue-900 dark:text-blue-100">Announcements</h1>
+            <h1 className="text-lg font-bold text-blue-900 dark:text-blue-100">{t("title")}</h1>
             {totalCount > 0 && (
               <p className="text-xs text-blue-500 dark:text-slate-400">
-                {totalCount} total announcement{totalCount === 1 ? "" : "s"}
+                {t("total", { count: totalCount })}
               </p>
             )}
           </div>
@@ -80,13 +94,13 @@ const Announcements = async () => {
           href="/dashboard/list/announcements"
           className="toolbar-chip px-3 py-1.5 text-xs font-semibold whitespace-nowrap"
         >
-          View All
+          {t("viewAll")}
         </Link>
       </div>
 
       {data.length === 0 ? (
         <div className="mt-4 rounded-xl border border-dashed border-blue-100 dark:border-slate-800 p-6 text-center">
-          <p className="text-sm text-gray-400 dark:text-slate-500">No announcements yet — check back soon.</p>
+          <p className="text-sm text-gray-400 dark:text-slate-500">{t("empty")}</p>
         </div>
       ) : (
         <div className="flex flex-col gap-3 mt-4">
@@ -104,7 +118,7 @@ const Announcements = async () => {
                     <h2 className="font-semibold text-gray-700 dark:text-blue-100 truncate">{item.title}</h2>
                   </div>
                   <span className={`shrink-0 text-[11px] font-medium rounded-full px-2 py-0.5 ${accent.chip}`}>
-                    {relativeDay(item.date)}
+                    {relativeDay(item.date, locale, dayLabels)}
                   </span>
                 </div>
                 <p className="text-sm text-gray-400 dark:text-slate-400 mt-1.5 line-clamp-2">

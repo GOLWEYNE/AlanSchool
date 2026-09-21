@@ -65,7 +65,9 @@
     "enablePush": "Enable notifications",
     "disablePush": "Disable notifications",
     "pushEnabled": "Notifications on",
-    "pushDenied": "Notifications blocked in browser settings"
+    "pushDenied": "Notifications blocked in browser settings",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu"
   },
   "AdminPage": {
     "title": "Admin Command Center",
@@ -710,7 +712,8 @@
       "updateTitle": "Update the teacher",
       "subjects": "Subjects",
       "toastCreated": "Teacher has been created!",
-      "toastUpdated": "Teacher has been updated!"
+      "toastUpdated": "Teacher has been updated!",
+      "editTitle": "Edit Teacher"
     },
     "reportCard": {
       "generateTitle": "Generate Report Card",
@@ -860,7 +863,20 @@
       "TERM_1": "Term 1",
       "TERM_2": "Term 2",
       "TERM_3": "Term 3"
-    }
+    },
+    "daysShort": {
+      "mon": "Mon",
+      "tue": "Tue",
+      "wed": "Wed",
+      "thu": "Thu",
+      "fri": "Fri",
+      "sat": "Sat",
+      "sun": "Sun"
+    },
+    "signingOut": "Signing you out...",
+    "welcomeTitle": "Welcome to Alan School",
+    "noRoleYet": "Your account doesn’t have a role assigned yet. Please contact your school administrator so they can finish setting up your access.",
+    "barcodeLabel": "Barcode {value}"
   },
   "Tickets": {
     "page": {
@@ -1386,5 +1402,209 @@
       "downloadPdf": "Download PDF"
     },
     "noPermission": "You don’t have permission to view this student’s report card."
+  },
+  "Routine": {
+    "title": "DAILY ROUTINE",
+    "academicYear": "2026-2027 academic year",
+    "classesHeading": "{groups} CLASSES",
+    "breakfast": "Breakfast",
+    "lesson": "Lesson {n}",
+    "lunch": "Lunch",
+    "snack": "Afternoon snack",
+    "departure": "Departure",
+    "clubs": "Additional classes, homework, clubs and sections"
+  },
+  "Camera": {
+    "preview": {
+      "title": "My Camera",
+      "subtitle": "Local preview, only visible to you",
+      "stop": "Stop",
+      "requesting": "Requesting camera access…",
+      "off": "Your camera is off",
+      "offHint": "Start your camera to preview yourself before going live in class.",
+      "start": "Start camera",
+      "unavailable": "Camera unavailable",
+      "retry": "Retry",
+      "zoomLevel": "Zoom level",
+      "reset": "Reset",
+      "dragHint": "Drag the preview to pan around while zoomed in."
+    },
+    "errors": {
+      "unsupported": "This browser doesn’t support camera access.",
+      "blocked": "Camera access was blocked. Allow camera permissions for this site in your browser settings and try again.",
+      "notFound": "No camera was found on this device.",
+      "inUse": "The camera is already in use by another application.",
+      "overconstrained": "No camera matches the requested settings.",
+      "insecure": "Camera access requires a secure (HTTPS) connection.",
+      "generic": "Couldn’t access the camera. Please try again.",
+      "somethingWrong": "Something went wrong while accessing your camera."
+    },
+    "studio": {
+      "title": "MyCamera - Video Recording Studio",
+      "deniedOrUnavailable": "Camera access denied or unavailable",
+      "notInitialized": "Camera not initialized",
+      "recording": "Recording - {time}",
+      "startCamera": "Start Camera",
+      "startRecording": "Start Recording",
+      "stopRecording": "Stop Recording",
+      "maxTime": "Max time: {max} | Recording: {time}",
+      "recordedVideos": "Recorded Videos ({count})",
+      "recordingN": "Recording {n}",
+      "download": "Download",
+      "noteLabel": "Note:",
+      "noteText": "Recordings are saved to your local computer. You can record up to 40 minutes continuously. All videos are stored locally in your browser."
+    }
+  },
+  "Birthdays": {
+    "title": "🎉 Birthdays",
+    "teacher": "Teacher",
+    "student": "Student",
+    "upNext": "No birthdays today — but here’s who’s up next 👀",
+    "inDays": "in {count, plural, one {# day} other {# days}}",
+    "none": "No birthdays in the next two weeks.",
+    "teacherWishes": {
+      "0": "Thank you for shaping bright futures every single day — enjoy your special day!",
+      "1": "Wishing you a day as bright and inspiring as the lessons you teach.",
+      "2": "Happy Birthday! Alan International School is lucky to have you.",
+      "3": "Here’s to another wonderful year of teaching, growing, and inspiring young minds."
+    },
+    "studentWishes": {
+      "0": "Wishing you a fantastic day filled with fun, cake, and celebration!",
+      "1": "Happy Birthday! Keep shining bright in and out of the classroom.",
+      "2": "Hope your special day is as amazing as you are — enjoy every moment!",
+      "3": "Another year older, another year of amazing achievements ahead. Happy Birthday!"
+    }
+  },
+  "Widgets": {
+    "today": "Today",
+    "tomorrow": "Tomorrow",
+    "yesterday": "Yesterday",
+    "countdown": {
+      "ends": "ends in {time}",
+      "starts": "starts in {time}",
+      "duration": {
+        "zero": "0s",
+        "hm": "{h}h {m}m",
+        "ms": "{m}m {s}s",
+        "s": "{s}s"
+      }
+    },
+    "timetable": {
+      "title": "🕒 Today’s Timetable",
+      "weekend": "No classes today — enjoy the weekend!",
+      "noSetup": "No timetable set up yet.",
+      "allDone": "That’s it for today’s classes!",
+      "noneToday": "No classes scheduled today.",
+      "inProgress": "In progress",
+      "nextClass": "Next class",
+      "room": "Room {room}",
+      "roomTbd": "Room TBD"
+    },
+    "pulse": {
+      "title": "📊 Attendance Pulse",
+      "noData": "No attendance data available yet.",
+      "student": "Student",
+      "steady": "Steady vs last week",
+      "up": "▲ {n}pts vs last week",
+      "down": "▼ {n}pts vs last week",
+      "thisWeek": "this week",
+      "needsAttention": "Needs attention",
+      "absences": "{count, plural, one {# absence} other {# absences}}",
+      "noRepeated": "No students with repeated absences in the last two weeks 🎉",
+      "rateThisWeek": "{rate}% this week",
+      "noRecords": "No records yet",
+      "streak": "🔥 {count}d streak"
+    },
+    "clubs": {
+      "title": "Club Activity",
+      "summary": "{clubs, plural, one {# club} other {# clubs}} · {students, plural, one {# student} other {# students}} enrolled",
+      "none": "No clubs set up yet.",
+      "instructorTbd": "Instructor TBD",
+      "upcoming": "Upcoming Sessions",
+      "noSessions": "No sessions scheduled."
+    },
+    "performance": {
+      "title": "Performance",
+      "outOf": "of 10 max LTS",
+      "semesters": "1st Semester - 2nd Semester"
+    },
+    "announcements": {
+      "title": "Announcements",
+      "total": "{count, plural, one {# total announcement} other {# total announcements}}",
+      "viewAll": "View All",
+      "empty": "No announcements yet — check back soon."
+    },
+    "week": {
+      "title": "📅 This Week",
+      "next7": "Next 7 days",
+      "exam": "Exam",
+      "assignment": "Assignment",
+      "event": "Event",
+      "wholeSchool": "Whole school",
+      "inDays": "In {count, plural, one {# day} other {# days}}",
+      "empty": "Nothing on the calendar for the next 7 days. Enjoy the quiet 🌤️"
+    },
+    "childAttendance": {
+      "overall": "Overall attendance",
+      "today": "Today",
+      "presentToday": "{present}/{total} present today",
+      "noRecordToday": "No attendance record today",
+      "attendance": "Attendance"
+    },
+    "attendance": {
+      "title": "Weekly Attendance",
+      "subtitle": "Monday – Friday overview",
+      "avgPresent": "avg present",
+      "present": "Present",
+      "absent": "Absent",
+      "presentLabel": "present",
+      "absentLabel": "absent",
+      "busiest": "Busiest:",
+      "ratePresent": "{rate}% present"
+    },
+    "events": {
+      "title": "Events",
+      "none": "No events scheduled for this day.",
+      "legend": "Days with scheduled events"
+    },
+    "students": {
+      "title": "Students",
+      "boys": "Boys ({percent}%)",
+      "girls": "Girls ({percent}%)"
+    },
+    "finance": {
+      "title": "Finance",
+      "income": "Income",
+      "expense": "Expenses"
+    }
+  },
+  "Calendar": {
+    "allDay": "All Day",
+    "previous": "Back",
+    "next": "Next",
+    "today": "Today",
+    "month": "Month",
+    "week": "Week",
+    "work_week": "Work Week",
+    "day": "Day",
+    "agenda": "Agenda",
+    "date": "Date",
+    "time": "Time",
+    "event": "Event",
+    "noEventsInRange": "There are no events in this range.",
+    "showMore": "+{count} more",
+    "close": "Close",
+    "legend": "Legend:",
+    "general": "General (all classes)",
+    "targeted": "Targeted at a specific class (color varies by class)"
+  },
+  "Metadata": {
+    "title": "Alan School Management Dashboard",
+    "description": "School Management System"
+  },
+  "SignIn": {
+    "logoAlt": "Alan International School logo",
+    "heading": "Sign in to your account",
+    "subheading": "Use your school account credentials."
   }
 }

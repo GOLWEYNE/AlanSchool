@@ -1,3 +1,5 @@
+import { useTranslations } from "next-intl";
+
 type ParentChildAttendanceCardProps = {
   studentName: string;
   className: string;
@@ -13,10 +15,11 @@ const ParentChildAttendanceCard = ({
   todayTotal,
   overallPercent,
 }: ParentChildAttendanceCardProps) => {
+  const t = useTranslations("Widgets.childAttendance");
   const statusText =
     todayTotal > 0
-      ? `${todayPresent}/${todayTotal} present today`
-      : "No attendance record today";
+      ? t("presentToday", { present: todayPresent, total: todayTotal })
+      : t("noRecordToday");
 
   return (
     <div className="bg-white dark:bg-slate-900 rounded-md p-4 shadow-sm">
@@ -26,12 +29,12 @@ const ParentChildAttendanceCard = ({
           <p className="text-sm text-gray-500 dark:text-slate-400">{className}</p>
         </div>
         <div className="text-right">
-          <p className="text-xs text-gray-400 dark:text-slate-500">Overall attendance</p>
+          <p className="text-xs text-gray-400 dark:text-slate-500">{t("overall")}</p>
           <p className="text-xl font-semibold dark:text-blue-100">{overallPercent ? `${overallPercent.toFixed(0)}%` : "-"}</p>
         </div>
       </div>
       <div className="mt-4 rounded-md border border-gray-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/60 p-3">
-        <p className="text-sm text-gray-700 dark:text-slate-300 font-medium">Today</p>
+        <p className="text-sm text-gray-700 dark:text-slate-300 font-medium">{t("today")}</p>
         <p className="mt-1 text-sm text-gray-500 dark:text-slate-400">{statusText}</p>
       </div>
     </div>

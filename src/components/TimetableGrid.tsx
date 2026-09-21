@@ -1,19 +1,17 @@
 "use client";
 
 import { useEffect, useMemo, useState, type ReactNode } from "react";
-import { Calendar, momentLocalizer, Views } from "react-big-calendar";
+import { Calendar, Views } from "react-big-calendar";
 import withDragAndDrop, {
   type EventInteractionArgs,
 } from "react-big-calendar/lib/addons/dragAndDrop";
-import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import "react-big-calendar/lib/addons/dragAndDrop/styles.css";
 import { useRouter } from "next/navigation";
-import { useTranslations } from "next-intl";
+import { useFormatter, useTranslations } from "next-intl";
 import { toast } from "react-toastify";
 import { rescheduleLesson } from "@/lib/actions";
-
-const localizer = momentLocalizer(moment);
+import { useCalendarI18n } from "@/lib/calendarI18n";
 
 export type TimetableLessonItem = {
   id: number;
@@ -88,6 +86,9 @@ const TimetableGrid = ({
 }) => {
   const router = useRouter();
   const t = useTranslations("List.lessons");
+  const tc = useTranslations("Calendar");
+  const format = useFormatter();
+  const { localizer, culture, messages } = useCalendarI18n();
   const [items, setItems] = useState<TimetableLessonItem[]>(lessons);
   const [selected, setSelected] = useState<TimetableLessonItem | null>(null);
   const [weekAnchor] = useState<Date>(getWeekAnchor);
@@ -164,6 +165,8 @@ const TimetableGrid = ({
 
   const sharedProps = {
     localizer,
+    culture,
+    messages,
     events: items,
     startAccessor: "start" as const,
     endAccessor: "end" as const,
@@ -228,6 +231,7 @@ const TimetableGrid = ({
                 type="button"
                 className="text-gray-400 hover:text-gray-600 dark:hover:text-slate-200 text-sm leading-none"
                 onClick={() => setSelected(null)}
+                aria-label={tc("close")}
               >
                 ✕
               </button>
@@ -255,9 +259,9 @@ const TimetableGrid = ({
               </p>
             )}
             <p className="text-xs text-gray-500 dark:text-slate-400 mb-4">
-              {selected.start.toLocaleDateString(undefined, { weekday: "long" })}{" "}
-              {selected.start.toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" })} –{" "}
-              {selected.end.toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" })}
+              {format.dateTime(selected.start, { weekday: "long" })}{" "}
+              {format.dateTime(selected.start, { hour: "2-digit", minute: "2-digit" })} –{" "}
+              {format.dateTime(selected.end, { hour: "2-digit", minute: "2-digit" })}
             </p>
             {actionsByLessonId?.[selected.id] && (
               <div className="flex items-center gap-2 pt-3 border-t border-gray-100 dark:border-slate-800">

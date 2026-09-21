@@ -1,4 +1,5 @@
 import prisma from "@/lib/prisma";
+import { getTranslations } from "next-intl/server";
 
 type Role = "admin" | "teacher" | "student" | "parent";
 
@@ -12,33 +13,21 @@ type AgendaItem = {
 
 const TYPE_META: Record<
   AgendaItem["type"],
-  { icon: string; label: string; chip: string }
+  { icon: string; chip: string }
 > = {
-  exam: { icon: "📝", label: "Exam", chip: "bg-rose-200 text-rose-900" },
+  exam: { icon: "📝", chip: "bg-rose-200 text-rose-900" },
   assignment: {
     icon: "📚",
-    label: "Assignment",
     chip: "bg-indigo-200 text-indigo-900",
   },
   event: {
     icon: "🗓️",
-    label: "Event",
     chip: "bg-emerald-200 text-emerald-900",
   },
 };
 
 const startOfDay = (d: Date) =>
   new Date(d.getFullYear(), d.getMonth(), d.getDate());
-
-const formatRelativeDay = (when: Date, now: Date) => {
-  const diffDays = Math.round(
-    (startOfDay(when).getTime() - startOfDay(now).getTime()) /
-      (1000 * 60 * 60 * 24)
-  );
-  if (diffDays <= 0) return "Today";
-  if (diffDays === 1) return "Tomorrow";
-  return `In ${diffDays} days`;
-};
 
 const WeekAtAGlance = async ({
   role,
@@ -49,6 +38,17 @@ const WeekAtAGlance = async ({
   teacherId?: string;
   classIds?: number[];
 }) => {
+  const t = await getTranslations("Widgets.week");
+  const tw = await getTranslations("Widgets");
+  const formatRelativeDay = (when: Date, now: Date) => {
+    const diffDays = Math.round(
+      (startOfDay(when).getTime() - startOfDay(now).getTime()) /
+        (1000 * 60 * 60 * 24)
+    );
+    if (diffDays <= 0) return tw("today");
+    if (diffDays === 1) return tw("tomorrow");
+    return t("inDays", { count: diffDays });
+  };
   const now = new Date();
   const weekAhead = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
 
@@ -159,7 +159,7 @@ const WeekAtAGlance = async ({
       id: `event-${ev.id}`,
       type: "event" as const,
       title: ev.title,
-      subtitle: ev.class?.name ?? "Whole school",
+      subtitle: ev.class?.name ?? t("wholeSchool"),
       when: ev.startTime,
     })),
   ]
@@ -170,10 +170,10 @@ const WeekAtAGlance = async ({
     <div className="relative overflow-hidden rounded-2xl p-5 text-white shine-hover bg-gradient-to-br from-amber-500 via-orange-500 to-red-500 shadow-lg">
       <div className="relative flex items-center justify-between">
         <h1 className="text-xl font-semibold flex items-center gap-2">
-          📅 This Week
+          {t("title")}
         </h1>
         <span className="text-xs bg-white/20 rounded-full px-2 py-1">
-          Next 7 days
+          {t("next7")}
         </span>
       </div>
 
@@ -195,7 +195,7 @@ const WeekAtAGlance = async ({
                     <span
                       className={`text-[10px] uppercase tracking-wide rounded-full px-2 py-0.5 font-semibold ${meta.chip}`}
                     >
-                      {meta.label}
+                      {t(item.type)}
                     </span>
                   </div>
                   {item.subtitle && (
@@ -213,7 +213,7 @@ const WeekAtAGlance = async ({
         </div>
       ) : (
         <p className="relative mt-4 text-sm text-white/90">
-          Nothing on the calendar for the next 7 days. Enjoy the quiet 🌤️
+          {t("empty")}
         </p>
       )}
     </div>

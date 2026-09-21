@@ -2,6 +2,7 @@
 
 import { useRef, useState, useCallback, useEffect } from 'react';
 import { Download, Square, Play, Upload } from 'lucide-react';
+import { useFormatter, useTranslations } from 'next-intl';
 
 type RecordingStatus = 'idle' | 'recording' | 'stopping' | 'completed';
 
@@ -13,6 +14,8 @@ interface RecordedVideo {
 }
 
 const MyCamera = () => {
+  const t = useTranslations('Camera.studio');
+  const format = useFormatter();
   const videoRef = useRef<HTMLVideoElement>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
@@ -42,7 +45,7 @@ const MyCamera = () => {
         setCameraActive(true);
       }
     } catch (err) {
-      setError('Camera access denied or unavailable');
+      setError('deniedOrUnavailable');
       setCameraActive(false);
     }
   }, []);
@@ -50,7 +53,7 @@ const MyCamera = () => {
   // Start recording
   const startRecording = useCallback(() => {
     if (!streamRef.current) {
-      setError('Camera not initialized');
+      setError('notInitialized');
       return;
     }
 
@@ -146,11 +149,11 @@ const MyCamera = () => {
 
   return (
     <div className="w-full max-w-4xl mx-auto p-6 bg-white dark:bg-gray-900 rounded-lg shadow-lg">
-      <h2 className="text-2xl font-bold mb-6 text-gray-800 dark:text-white">MyCamera - Video Recording Studio</h2>
+      <h2 className="text-2xl font-bold mb-6 text-gray-800 dark:text-white">{t('title')}</h2>
 
       {error && (
         <div className="mb-4 p-4 bg-red-100 dark:bg-red-900/30 border border-red-400 dark:border-red-700 rounded text-red-700 dark:text-red-200">
-          {error}
+          {t(error)}
         </div>
       )}
 
@@ -165,7 +168,7 @@ const MyCamera = () => {
         {status === 'recording' && (
           <div className="absolute top-4 right-4 bg-red-600 text-white px-3 py-1 rounded-full flex items-center gap-2">
             <span className="w-2 h-2 bg-white rounded-full animate-pulse"></span>
-            Recording - {formatTime(timer)}
+            {t('recording', { time: formatTime(timer) })}
           </div>
         )}
       </div>
@@ -178,7 +181,7 @@ const MyCamera = () => {
             className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-semibold flex items-center gap-2"
           >
             <Play size={18} />
-            Start Camera
+            {t('startCamera')}
           </button>
         )}
 
@@ -188,7 +191,7 @@ const MyCamera = () => {
             className="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-lg font-semibold flex items-center gap-2"
           >
             <Square size={18} />
-            Start Recording
+            {t('startRecording')}
           </button>
         )}
 
@@ -198,14 +201,14 @@ const MyCamera = () => {
             className="bg-gray-600 hover:bg-gray-700 text-white px-6 py-2 rounded-lg font-semibold flex items-center gap-2"
           >
             <Square size={18} />
-            Stop Recording
+            {t('stopRecording')}
           </button>
         )}
 
         {/* Timer info */}
         {status === 'recording' && (
           <div className="bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-200 px-4 py-2 rounded-lg font-semibold">
-            Max time: {formatTime(MAX_RECORDING_TIME / 1000)} | Recording: {formatTime(timer)}
+            {t('maxTime', { max: formatTime(MAX_RECORDING_TIME / 1000), time: formatTime(timer) })}
           </div>
         )}
       </div>
@@ -213,7 +216,7 @@ const MyCamera = () => {
       {/* Recorded Videos List */}
       {recordedVideos.length > 0 && (
         <div className="border-t pt-6">
-          <h3 className="text-xl font-bold mb-4 text-gray-800 dark:text-white">Recorded Videos ({recordedVideos.length})</h3>
+          <h3 className="text-xl font-bold mb-4 text-gray-800 dark:text-white">{t('recordedVideos', { count: recordedVideos.length })}</h3>
           <div className="space-y-3">
             {recordedVideos.map((video, index) => (
               <div
@@ -222,10 +225,10 @@ const MyCamera = () => {
               >
                 <div className="flex-1">
                   <p className="font-semibold text-gray-700 dark:text-gray-200">
-                    Recording {index + 1}
+                    {t('recordingN', { n: index + 1 })}
                   </p>
                   <p className="text-sm text-gray-500 dark:text-gray-400">
-                    {video.timestamp.toLocaleString()} • {formatTime(video.duration)}
+                    {format.dateTime(video.timestamp, { dateStyle: 'medium', timeStyle: 'short' })} • {formatTime(video.duration)}
                   </p>
                 </div>
                 <button
@@ -233,7 +236,7 @@ const MyCamera = () => {
                   className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 ml-4 font-semibold"
                 >
                   <Download size={18} />
-                  Download
+                  {t('download')}
                 </button>
               </div>
             ))}
@@ -244,7 +247,7 @@ const MyCamera = () => {
       {/* Info */}
       <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
         <p className="text-sm text-gray-600 dark:text-gray-300">
-          <strong>Note:</strong> Recordings are saved to your local computer. You can record up to 40 minutes continuously. All videos are stored locally in your browser.
+          <strong>{t('noteLabel')}</strong> {t('noteText')}
         </p>
       </div>
     </div>

@@ -1,4 +1,5 @@
 import { code39Runs, sanitizeForBadge } from "@/lib/barcode39";
+import { useTranslations } from "next-intl";
 
 // Renders a Code 39 barcode as inline SVG - crisp at any print resolution,
 // no canvas/image round trip needed. `value` is sanitized again here
@@ -16,6 +17,7 @@ const Code39Barcode = ({
   quietZone?: number;
   className?: string;
 }) => {
+  const t = useTranslations("Common");
   const safeValue = sanitizeForBadge(value);
   const runs = code39Runs(safeValue);
 
@@ -35,7 +37,7 @@ const Code39Barcode = ({
       height={height}
       className={className}
       role="img"
-      aria-label={`Barcode ${safeValue}`}
+      aria-label={t("barcodeLabel", { value: safeValue })}
     >
       <rect x={0} y={0} width={totalWidth} height={height} fill="white" />
       {bars.map((bar, i) => (

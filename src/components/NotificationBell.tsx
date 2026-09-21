@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useTranslations } from "next-intl";
+import { useFormatter, useTranslations } from "next-intl";
 import { markMessageRead } from "@/lib/masterModuleActions";
 import DropdownPortal from "./DropdownPortal";
 
@@ -54,6 +54,7 @@ const NOOP_STATE = { success: false, error: false };
 // permission slips needing attention.
 const NotificationBell = () => {
   const t = useTranslations("Navbar");
+  const format = useFormatter();
   const [data, setData] = useState<NotificationsResponse>(EMPTY);
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -149,7 +150,14 @@ const NotificationBell = () => {
               >
                 <p className="text-xs text-blue-900 dark:text-blue-100 truncate">{m.content}</p>
                 <p className="text-[10px] text-blue-400 dark:text-blue-500">
-                  {new Date(m.createdAt).toLocaleString()}
+                  {format.dateTime(new Date(m.createdAt), {
+                    year: "numeric",
+                    month: "numeric",
+                    day: "numeric",
+                    hour: "numeric",
+                    minute: "numeric",
+                    second: "numeric",
+                  })}
                 </p>
               </button>
             ))}

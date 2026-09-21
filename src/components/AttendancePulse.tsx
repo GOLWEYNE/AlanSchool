@@ -1,5 +1,6 @@
 import Image from "next/image";
 import prisma from "@/lib/prisma";
+import { getTranslations } from "next-intl/server";
 
 type Role = "admin" | "teacher" | "student" | "parent";
 
@@ -43,6 +44,7 @@ const AttendancePulse = async ({
   teacherId?: string;
   studentIds?: string[];
 }) => {
+  const t = await getTranslations("Widgets.pulse");
   const scope: AttendanceScope =
     role === "teacher" && teacherId
       ? { kind: "teacher", teacherId }
@@ -61,10 +63,10 @@ const AttendancePulse = async ({
     return (
       <div className="rounded-2xl p-5 text-white shine-hover bg-gradient-to-br from-sky-500 via-cyan-500 to-blue-600 shadow-lg">
         <h1 className="text-xl font-semibold flex items-center gap-2">
-          📊 Attendance Pulse
+          {t("title")}
         </h1>
         <p className="mt-4 text-sm text-white/90">
-          No attendance data available yet.
+          {t("noData")}
         </p>
       </div>
     );
@@ -164,7 +166,7 @@ const AttendancePulse = async ({
           const rec = records.find((r) => r.studentId === id);
           return {
             studentId: id,
-            name: rec ? `${rec.student.name} ${rec.student.surname}` : "Student",
+            name: rec ? `${rec.student.name} ${rec.student.surname}` : t("student"),
             img: rec?.student.img ?? null,
             streak: computeStreak(id),
             rate: rate(records.filter((r) => r.studentId === id && r.date >= sevenDaysAgo)),
@@ -176,16 +178,16 @@ const AttendancePulse = async ({
     trend === null
       ? null
       : trend === 0
-      ? "Steady vs last week"
+      ? t("steady")
       : trend > 0
-      ? `▲ ${trend}pts vs last week`
-      : `▼ ${Math.abs(trend)}pts vs last week`;
+      ? t("up", { n: trend })
+      : t("down", { n: Math.abs(trend) });
 
   return (
     <div className="relative overflow-hidden rounded-2xl p-5 text-white shine-hover bg-gradient-to-br from-sky-500 via-cyan-500 to-blue-600 shadow-lg">
       <div className="relative flex items-center justify-between">
         <h1 className="text-xl font-semibold flex items-center gap-2">
-          📊 Attendance Pulse
+          {t("title")}
         </h1>
         {trendLabel && (
           <span className="text-xs bg-white/20 rounded-full px-2 py-1">
@@ -200,12 +202,12 @@ const AttendancePulse = async ({
             <span className="text-4xl font-bold">
               {thisWeekRate !== null ? `${thisWeekRate}%` : "—"}
             </span>
-            <span className="text-sm text-white/80 mb-1">this week</span>
+            <span className="text-sm text-white/80 mb-1">{t("thisWeek")}</span>
           </div>
           {atRisk.length > 0 ? (
             <div className="relative mt-4">
               <p className="text-xs uppercase tracking-wide text-white/80 mb-2">
-                Needs attention
+                {t("needsAttention")}
               </p>
               <div className="flex flex-col gap-2">
                 {atRisk.map((s) => (
@@ -224,7 +226,7 @@ const AttendancePulse = async ({
                       {s.name}
                     </span>
                     <span className="text-[11px] bg-red-500/80 rounded-full px-2 py-0.5 font-semibold whitespace-nowrap">
-                      {s.absences} absences
+                      {t("absences", { count: s.absences })}
                     </span>
                   </div>
                 ))}
@@ -232,7 +234,7 @@ const AttendancePulse = async ({
             </div>
           ) : (
             <p className="relative mt-4 text-sm text-white/90">
-              No students with repeated absences in the last two weeks 🎉
+              {t("noRepeated")}
             </p>
           )}
         </>
@@ -253,12 +255,12 @@ const AttendancePulse = async ({
               <div className="flex-1 min-w-0">
                 <h2 className="font-semibold text-sm truncate">{s.name}</h2>
                 <p className="text-xs text-white/80">
-                  {s.rate !== null ? `${s.rate}% this week` : "No records yet"}
+                  {s.rate !== null ? t("rateThisWeek", { rate: s.rate }) : t("noRecords")}
                 </p>
               </div>
               {s.streak > 0 && (
                 <span className="text-[11px] bg-white/20 rounded-full px-2 py-1 font-semibold whitespace-nowrap">
-                  🔥 {s.streak}d streak
+                  {t("streak", { count: s.streak })}
                 </span>
               )}
             </div>

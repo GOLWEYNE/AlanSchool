@@ -1,11 +1,10 @@
 "use client";
 
 import { useState, type ReactNode } from "react";
-import { Calendar, momentLocalizer, View, Views } from "react-big-calendar";
-import moment from "moment";
+import { Calendar, View, Views } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
-
-const localizer = momentLocalizer(moment);
+import { useFormatter, useTranslations } from "next-intl";
+import { useCalendarI18n } from "@/lib/calendarI18n";
 
 // A small fixed palette so a given class always renders in the same color
 // across the whole calendar (the class id is hashed into the palette - no
@@ -39,22 +38,6 @@ const colorForClass = (classId: number | null) => {
   return CLASS_PALETTE[classId % CLASS_PALETTE.length];
 };
 
-const formatRange = (start: Date, end: Date) => {
-  const sameDay = start.toDateString() === end.toDateString();
-  const dateFmt: Intl.DateTimeFormatOptions = { month: "short", day: "numeric", year: "numeric" };
-  const timeFmt: Intl.DateTimeFormatOptions = { hour: "2-digit", minute: "2-digit" };
-  if (sameDay) {
-    return `${start.toLocaleDateString(undefined, dateFmt)} · ${start.toLocaleTimeString(
-      undefined,
-      timeFmt
-    )} – ${end.toLocaleTimeString(undefined, timeFmt)}`;
-  }
-  return `${start.toLocaleDateString(undefined, dateFmt)} ${start.toLocaleTimeString(
-    undefined,
-    timeFmt
-  )} – ${end.toLocaleDateString(undefined, dateFmt)} ${end.toLocaleTimeString(undefined, timeFmt)}`;
-};
-
 // Replaces the old flat events table with an interactive month/week/agenda
 // calendar. Each event is colored by the class it's targeted at (or a
 // neutral "general" color for school-wide events), and clicking one opens a
@@ -67,6 +50,18 @@ const EventsCalendar = ({
   events: CalendarEventItem[];
   actionsByEventId?: Record<number, ReactNode>;
 }) => {
+  const t = useTranslations("Calendar");
+  const format = useFormatter();
+  const { localizer, culture, messages } = useCalendarI18n();
+  const formatRange = (start: Date, end: Date) => {
+    const sameDay = start.toDateString() === end.toDateString();
+    const dateFmt = { month: "short", day: "numeric", year: "numeric" } as const;
+    const timeFmt = { hour: "2-digit", minute: "2-digit" } as const;
+    if (sameDay) {
+      return `${format.dateTime(start, dateFmt)} · ${format.dateTime(start, timeFmt)} – ${format.dateTime(end, timeFmt)}`;
+    }
+    return `${format.dateTime(start, dateFmt)} ${format.dateTime(start, timeFmt)} – ${format.dateTime(end, dateFmt)} ${format.dateTime(end, timeFmt)}`;
+  };
   const [view, setView] = useState<View>(Views.MONTH);
   const [date, setDate] = useState<Date>(new Date());
   const [selected, setSelected] = useState<CalendarEventItem | null>(null);
@@ -76,13 +71,13 @@ const EventsCalendar = ({
   return (
     <div className="mt-4">
       <div className="flex flex-wrap items-center gap-4 mb-3 text-xs text-gray-500 dark:text-slate-400">
-        <span className="font-semibold text-gray-600 dark:text-slate-300">Legend:</span>
+        <span className="font-semibold text-gray-600 dark:text-slate-300">{t("legend")}</span>
         <span className="inline-flex items-center gap-1.5">
           <span
             className="w-2.5 h-2.5 rounded-full inline-block"
             style={{ backgroundColor: GENERAL_COLOR }}
           />
-          General (all classes)
+          {t("general")}
         </span>
         {hasClassSpecific && (
           <span className="inline-flex items-center gap-1.5">
@@ -90,7 +85,7 @@ const EventsCalendar = ({
               className="w-2.5 h-2.5 rounded-full inline-block"
               style={{ backgroundColor: CLASS_PALETTE[0] }}
             />
-            Targeted at a specific class (color varies by class)
+            {t("targeted")}
           </span>
         )}
       </div>
@@ -98,6 +93,8 @@ const EventsCalendar = ({
       <div className="panel-card p-3 rounded-md" style={{ height: "70vh" }}>
         <Calendar<CalendarEventItem>
           localizer={localizer}
+          culture={culture}
+          messages={messages}
           events={events}
           startAccessor="start"
           endAccessor="end"
@@ -140,6 +137,7 @@ const EventsCalendar = ({
                 type="button"
                 className="text-gray-400 hover:text-gray-600 dark:hover:text-slate-200 text-sm leading-none"
                 onClick={() => setSelected(null)}
+                aria-label={t("close")}
               >
                 ✕
               </button>
@@ -148,7 +146,7 @@ const EventsCalendar = ({
               className="inline-block rounded-full px-2.5 py-1 text-xs font-semibold text-white mb-3"
               style={{ backgroundColor: colorForClass(selected.classId) }}
             >
-              {selected.className ? selected.className : "General (all classes)"}
+              {selected.className ? selected.className : t("general")}
             </span>
             {selected.description && (
               <p className="text-sm text-gray-600 dark:text-slate-300 mb-3 whitespace-pre-wrap">

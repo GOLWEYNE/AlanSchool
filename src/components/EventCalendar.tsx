@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useLocale, useTranslations } from "next-intl";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 
@@ -15,6 +16,8 @@ const sameDay = (a: Date, b: Date) =>
   a.getDate() === b.getDate();
 
 const EventCalendar = ({ eventDates = [] }: { eventDates?: string[] }) => {
+  const t = useTranslations("Widgets.events");
+  const locale = useLocale();
   const [value, onChange] = useState<Value>(new Date());
 
   const router = useRouter();
@@ -31,6 +34,8 @@ const EventCalendar = ({ eventDates = [] }: { eventDates?: string[] }) => {
   return (
     <div className="event-calendar-shell">
       <Calendar
+        // English keeps react-calendar's browser-default week layout.
+        locale={locale === "en" ? undefined : locale}
         onChange={onChange}
         value={value}
         tileContent={({ date, view }) => {
@@ -54,7 +59,7 @@ const EventCalendar = ({ eventDates = [] }: { eventDates?: string[] }) => {
       {eventDates.length > 0 && (
         <div className="flex items-center gap-1.5 mt-3 px-1">
           <span className="w-2 h-2 rounded-full bg-gradient-to-br from-amber-400 to-orange-500" />
-          <span className="text-[11px] text-gray-400 dark:text-slate-500">Days with scheduled events</span>
+          <span className="text-[11px] text-gray-400 dark:text-slate-500">{t("legend")}</span>
         </div>
       )}
     </div>

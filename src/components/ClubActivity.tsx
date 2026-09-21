@@ -1,4 +1,6 @@
 import prisma from "@/lib/prisma";
+import { getLocale, getTranslations } from "next-intl/server";
+import { dateLocale } from "@/lib/dateLocale";
 
 const CATEGORY_META: Record<
   string,
@@ -22,20 +24,31 @@ const CATEGORY_META: Record<
 
 const DEFAULT_META = { emoji: "\u{1F3AF}", gradient: "from-blue-400 to-indigo-500", track: "bg-blue-100 dark:bg-blue-950/40" };
 
-const formatSessionDate = (date: Date) => {
+const formatSessionDate = (
+  date: Date,
+  locale: string,
+  labels: { today: string; tomorrow: string }
+) => {
   const now = new Date();
   const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   const startOfDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
   const diffDays = Math.round((startOfDate.getTime() - startOfToday.getTime()) / (1000 * 60 * 60 * 24));
-  if (diffDays === 0) return "Today";
-  if (diffDays === 1) return "Tomorrow";
-  return new Intl.DateTimeFormat("en-GB", { weekday: "short", day: "2-digit", month: "short" }).format(date);
+  if (diffDays === 0) return labels.today;
+  if (diffDays === 1) return labels.tomorrow;
+  return new Intl.DateTimeFormat(dateLocale(locale), { weekday: "short", day: "2-digit", month: "short" }).format(date);
 };
 
-const formatTime = (date: Date) =>
-  date.toLocaleTimeString("en-UK", { hour: "2-digit", minute: "2-digit", hour12: false });
+const formatTime = (date: Date, locale: string) =>
+  new Intl.DateTimeFormat(dateLocale(locale), {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  }).format(date);
 
 const ClubActivity = async () => {
+  const t = await getTranslations("Widgets.clubs");
+  const tw = await getTranslations("Widgets");
+  const locale = await getLocale();
   const now = new Date();
   const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
@@ -71,9 +84,9 @@ const ClubActivity = async () => {
             <span className="text-lg leading-none">{"\u{1F3AF}"}</span>
           </div>
           <div>
-            <h1 className="text-lg font-bold text-blue-900 dark:text-blue-100">Club Activity</h1>
+            <h1 className="text-lg font-bold text-blue-900 dark:text-blue-100">{t("title")}</h1>
             <p className="text-xs text-blue-500 dark:text-slate-400">
-              {clubs.length} club{clubs.length === 1 ? "" : "s"} · {totalEnrolled} student{totalEnrolled === 1 ? "" : "s"} enrolled
+              {t("summary", { clubs: clubs.length, students: totalEnrolled })}
             </p>
           </div>
         </div>
@@ -81,7 +94,7 @@ const ClubActivity = async () => {
 
       {clubs.length === 0 ? (
         <div className="rounded-xl border border-dashed border-blue-100 dark:border-slate-800 p-6 text-center">
-          <p className="text-sm text-gray-400 dark:text-slate-500">No clubs set up yet.</p>
+          <p className="text-sm text-gray-400 dark:text-slate-500">{t("none")}</p>
         </div>
       ) : (
         <div className="flex flex-col gap-3">
@@ -91,7 +104,7 @@ const ClubActivity = async () => {
             const fillPct = club.capacity > 0 ? Math.min(100, Math.round((enrolled / club.capacity) * 100)) : 0;
             const instructorName = club.instructor
               ? `${club.instructor.name} ${club.instructor.surname}`
-              : "Instructor TBD";
+              : t("instructorTbd");
             return (
               <div key={club.id} className="flex items-center gap-3">
                 <span className="text-base leading-none w-6 text-center shrink-0">{meta.emoji}</span>
@@ -119,9 +132,9 @@ const ClubActivity = async () => {
       )}
 
       <div className="mt-5 pt-4 border-t border-blue-50 dark:border-slate-800">
-        <h2 className="text-sm font-semibold text-blue-900 dark:text-blue-100 mb-2.5">Upcoming Sessions</h2>
+        <h2 className="text-sm font-semibold text-blue-900 dark:text-blue-100 mb-2.5">{t("upcoming")}</h2>
         {upcomingSessions.length === 0 ? (
-          <p className="text-xs text-gray-400 dark:text-slate-500">No sessions scheduled.</p>
+          <p className="text-xs text-gray-400 dark:text-slate-500">{t("noSessions")}</p>
         ) : (
           <div className="flex flex-col gap-2">
             {upcomingSessions.map((session: (typeof upcomingSessions)[number]) => {
@@ -138,7 +151,7 @@ const ClubActivity = async () => {
                     {session.club.name}
                   </span>
                   <span className="shrink-0 text-[11px] text-gray-500 dark:text-slate-400 whitespace-nowrap">
-                    {formatSessionDate(session.date)} · {formatTime(session.startTime)}
+                    {formatSessionDate(session.date, locale, { today: tw("today"), tomorrow: tw("tomorrow") })} · {formatTime(session.startTime, locale)}
                   </span>
                 </div>
               );

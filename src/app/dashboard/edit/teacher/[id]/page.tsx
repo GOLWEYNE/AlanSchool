@@ -3,12 +3,14 @@ import { getUserRole } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 import { notFound, redirect } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 
 const TeacherEditPage = async ({
   params: { id },
 }: {
   params: { id: string };
 }) => {
+  const t = await getTranslations("Forms.teacher");
   const { userId, sessionClaims } = auth();
   const role = getUserRole(sessionClaims);
 
@@ -37,7 +39,7 @@ const TeacherEditPage = async ({
   return (
     <div className="p-4">
       <div className="bg-white rounded-md p-6 shadow-sm">
-        <h1 className="text-2xl font-semibold mb-4">Edit Teacher</h1>
+        <h1 className="text-2xl font-semibold mb-4">{t("editTitle")}</h1>
         <TeacherEditForm
           teacherId={teacher.id}
           data={teacherData}

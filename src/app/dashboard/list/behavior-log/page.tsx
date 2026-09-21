@@ -8,7 +8,7 @@ import { resolvePageSize } from "@/lib/settings";
 import { BehaviorLog, BehaviorType, Prisma, Student, Teacher } from "@/generated/prisma/client";
 import { auth } from "@clerk/nextjs/server";
 import { getUserRole } from "@/lib/auth";
-import { getTranslations } from "next-intl/server";
+import { getFormatter, getTranslations } from "next-intl/server";
 import { CheckCircle2, XCircle } from "lucide-react";
 
 type BehaviorLogRow = BehaviorLog & {
@@ -36,6 +36,7 @@ const BehaviorLogPage = async ({
   const { userId, sessionClaims } = auth();
   const role = getUserRole(sessionClaims);
   const t = await getTranslations("List.behaviorLog");
+  const format = await getFormatter();
 
   if (role !== "admin" && role !== "teacher") {
     return (
@@ -67,7 +68,7 @@ const BehaviorLogPage = async ({
       key={item.id}
       className="border-b border-gray-200 dark:border-slate-800 even:bg-slate-50 dark:even:bg-slate-900/40 text-sm hover:bg-lamaPurpleLight dark:hover:bg-blue-950/40"
     >
-      <td className="p-4">{new Date(item.date).toLocaleDateString()}</td>
+      <td className="p-4">{format.dateTime(new Date(item.date), { year: "numeric", month: "numeric", day: "numeric" })}</td>
       <td>{item.student.name} {item.student.surname}</td>
       <td>
         <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${TYPE_BADGE[item.type]}`}>

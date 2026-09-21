@@ -1,6 +1,7 @@
 import prisma from "@/lib/prisma";
 import { Day } from "@/generated/prisma/client";
 import LiveCountdown from "./LiveCountdown";
+import { getFormatter, getTranslations } from "next-intl/server";
 
 type Role = "admin" | "teacher" | "student" | "parent";
 
@@ -17,10 +18,16 @@ const dayMap: Record<number, Day | null> = {
 const wrapperClass =
   "relative overflow-hidden rounded-2xl p-5 text-white shine-hover bg-gradient-to-br from-emerald-500 via-teal-500 to-cyan-600 shadow-lg";
 
-const Header = ({ badge }: { badge?: { label: string; live?: boolean } }) => (
+const Header = ({
+  title,
+  badge,
+}: {
+  title: string;
+  badge?: { label: string; live?: boolean };
+}) => (
   <div className="relative flex items-center justify-between">
     <h1 className="text-xl font-semibold flex items-center gap-2">
-      🕒 Today&apos;s Timetable
+      {title}
     </h1>
     {badge && (
       <span
@@ -34,17 +41,22 @@ const Header = ({ badge }: { badge?: { label: string; live?: boolean } }) => (
   </div>
 );
 
-const EmptyState = ({ emoji, text }: { emoji: string; text: string }) => (
+const EmptyState = ({
+  emoji,
+  text,
+  title,
+}: {
+  emoji: string;
+  text: string;
+  title: string;
+}) => (
   <div className={wrapperClass}>
-    <Header />
+    <Header title={title} />
     <p className="relative mt-4 text-sm text-white/90">
       {emoji} {text}
     </p>
   </div>
 );
-
-const formatTime = (d: Date) =>
-  d.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: false });
 
 // Compact "next class" card for the dashboard sidebar: shows whichever
 // lesson is happening right now (or the next one still to come) for
@@ -59,11 +71,16 @@ const TodaysTimetableStrip = async ({
   teacherId?: string;
   classIds?: number[];
 }) => {
+  const t = await getTranslations("Widgets.timetable");
+  const format = await getFormatter();
+  const title = t("title");
+  const formatTime = (d: Date) =>
+    format.dateTime(d, { hour: "2-digit", minute: "2-digit", hour12: false });
   const now = new Date();
   const today = dayMap[now.getDay()];
 
   if (!today) {
-    return <EmptyState emoji="🌴" text="No classes today — enjoy the weekend!" />;
+    return <EmptyState emoji="🌴" text={t("weekend")} title={title} />;
   }
 
   const hasNoScope =
@@ -71,7 +88,7 @@ const TodaysTimetableStrip = async ({
     ((role === "student" || role === "parent") && !classIds?.length);
 
   if (hasNoScope) {
-    return <EmptyState emoji="🗓️" text="No timetable set up yet." />;
+    return <EmptyState emoji="🗓️" text={t("noSetup")} title={title} />;
   }
 
   const where =
@@ -117,9 +134,9 @@ const TodaysTimetableStrip = async ({
 
   if (!active) {
     return normalized.length > 0 ? (
-      <EmptyState emoji="✅" text="That's it for today's classes!" />
+      <EmptyState emoji="✅" text={t("allDone")} title={title} />
     ) : (
-      <EmptyState emoji="🗓️" text="No classes scheduled today." />
+      <EmptyState emoji="🗓️" text={t("noneToday")} title={title} />
     );
   }
 
@@ -132,7 +149,10 @@ const TodaysTimetableStrip = async ({
 
   return (
     <div className={wrapperClass}>
-      <Header badge={{ label: isLive ? "In progress" : "Next class", live: isLive }} />
+      <Header
+        title={title}
+        badge={{ label: isLive ? t("inProgress") : t("nextClass"), live: isLive }}
+      />
       <div className="relative mt-4 flex items-center gap-3 rounded-xl bg-white/15 p-3 backdrop-blur-sm">
         <span className="text-xl shrink-0">📚</span>
         <div className="flex-1 min-w-0">
@@ -145,12 +165,12 @@ const TodaysTimetableStrip = async ({
             )}
           </div>
           <p className="text-xs text-white/80 truncate">
-            {active.room ? `Room ${active.room}` : "Room TBD"} · {formatTime(active.start)}–{formatTime(active.end)}
+            {active.room ? t("room", { room: active.room }) : t("roomTbd")} · {formatTime(active.start)}–{formatTime(active.end)}
           </p>
         </div>
         <LiveCountdown
           target={(isLive ? active.end : active.start).toISOString()}
-          prefix={isLive ? "ends in" : "starts in"}
+          kind={isLive ? "ends" : "starts"}
         />
       </div>
     </div>

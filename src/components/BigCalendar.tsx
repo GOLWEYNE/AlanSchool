@@ -1,11 +1,9 @@
 "use client";
 
-import { Calendar, momentLocalizer, View, Views } from "react-big-calendar";
-import moment from "moment";
+import { Calendar, View, Views } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { useState } from "react";
-
-const localizer = momentLocalizer(moment);
+import { useCalendarI18n } from "@/lib/calendarI18n";
 
 const BigCalendar = ({
   data,
@@ -14,6 +12,7 @@ const BigCalendar = ({
   data: { title: string; start: Date; end: Date }[];
   defaultView?: View;
 }) => {
+  const { localizer, culture, messages } = useCalendarI18n();
   const [view, setView] = useState<View>(defaultView ?? Views.WORK_WEEK);
 
   const handleOnChangeView = (selectedView: View) => {
@@ -29,6 +28,8 @@ const BigCalendar = ({
   return (
     <Calendar
       localizer={localizer}
+      culture={culture}
+      messages={messages}
       events={data}
       startAccessor="start"
       endAccessor="end"
