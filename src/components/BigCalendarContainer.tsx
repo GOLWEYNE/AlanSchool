@@ -1,8 +1,7 @@
 import { View } from "react-big-calendar";
 import prisma from "@/lib/prisma";
 import BigCalendar from "./BigCalendar";
-import { adjustScheduleToCurrentWeek } from "@/lib/utils";
-import { Day } from "@/generated/prisma/client";
+import { projectLessonToWeek, schoolTodayLessonDay, schoolWeekMonday, weekStartString } from "@/lib/schoolTime";
 
 const BigCalendarContainer = async ({
   type,
@@ -15,17 +14,9 @@ const BigCalendarContainer = async ({
   todayOnly?: boolean;
   defaultView?: View;
 }) => {
-  const today = new Date();
-  const dayMap: Record<number, Day | null> = {
-    0: null,
-    1: Day.MONDAY,
-    2: Day.TUESDAY,
-    3: Day.WEDNESDAY,
-    4: Day.THURSDAY,
-    5: Day.FRIDAY,
-    6: null,
-  };
-  const todayLessonDay = dayMap[today.getDay()];
+  // "Today" is the school's today, not the server's (UTC) - otherwise the
+  // first hours of every school morning would still count as yesterday.
+  const todayLessonDay = schoolTodayLessonDay();
   const dayFilter = todayOnly && todayLessonDay ? { day: todayLessonDay } : {};
 
   const whereClause =
@@ -49,18 +40,19 @@ const BigCalendarContainer = async ({
     orderBy: { startTime: "asc" },
   });
 
-  const data = dataRes.map((lesson) => ({
+  // Lesson times are recurring: only the school time of day is meaningful and
+  // the weekday lives in `day`. Project each onto this school week and hand the
+  // browser plain wall-clock strings (not Dates) so it draws exactly what the
+  // school clock reads, whatever zone the server or the viewer is in.
+  const monday = schoolWeekMonday();
+  const schedule = dataRes.map((lesson) => ({
     title: lesson.name,
-    start: lesson.startTime,
-    end: lesson.endTime,
-    day: lesson.day,
+    ...projectLessonToWeek(lesson, monday),
   }));
-
-  const schedule = adjustScheduleToCurrentWeek(data);
 
   return (
     <div className="">
-      <BigCalendar data={schedule} defaultView={defaultView} />
+      <BigCalendar data={schedule} weekStart={weekStartString(monday)} defaultView={defaultView} />
     </div>
   );
 };

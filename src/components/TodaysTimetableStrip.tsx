@@ -1,19 +1,9 @@
 import prisma from "@/lib/prisma";
-import { Day } from "@/generated/prisma/client";
+import { onSchoolDayOf, schoolTodayLessonDay } from "@/lib/schoolTime";
 import LiveCountdown from "./LiveCountdown";
 import { getFormatter, getTranslations } from "next-intl/server";
 
 type Role = "admin" | "teacher" | "student" | "parent";
-
-const dayMap: Record<number, Day | null> = {
-  0: null,
-  1: Day.MONDAY,
-  2: Day.TUESDAY,
-  3: Day.WEDNESDAY,
-  4: Day.THURSDAY,
-  5: Day.FRIDAY,
-  6: null,
-};
 
 const wrapperClass =
   "relative overflow-hidden rounded-2xl p-5 text-white shine-hover bg-gradient-to-br from-emerald-500 via-teal-500 to-cyan-600 shadow-lg";
@@ -77,7 +67,9 @@ const TodaysTimetableStrip = async ({
   const formatTime = (d: Date) =>
     format.dateTime(d, { hour: "2-digit", minute: "2-digit", hour12: false });
   const now = new Date();
-  const today = dayMap[now.getDay()];
+  // The school's today (not the server's UTC day), so a lesson is never
+  // matched to the wrong weekday in the early school hours.
+  const today = schoolTodayLessonDay(now);
 
   if (!today) {
     return <EmptyState emoji="🌴" text={t("weekend")} title={title} />;
@@ -113,14 +105,12 @@ const TodaysTimetableStrip = async ({
     orderBy: { startTime: "asc" },
   });
 
-  // Lesson.startTime/endTime store an arbitrary date - only the
-  // time-of-day is meaningful (same convention as BigCalendarContainer /
-  // adjustScheduleToCurrentWeek) - so project each onto today's date.
-  const onToday = (d: Date) => {
-    const projected = new Date(now);
-    projected.setHours(d.getHours(), d.getMinutes(), d.getSeconds(), 0);
-    return projected;
-  };
+  // Lesson.startTime/endTime store an arbitrary date - only the school
+  // time of day is meaningful (same convention as BigCalendarContainer) - so
+  // project each onto today's school date. The result is a real instant, so it
+  // compares correctly with `now` and formats on school time (next-intl is
+  // configured with the school time zone).
+  const onToday = (d: Date) => onSchoolDayOf(now, d);
 
   const normalized = lessons.map((lesson) => ({
     ...lesson,

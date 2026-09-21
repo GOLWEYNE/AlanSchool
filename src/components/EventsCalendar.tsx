@@ -1,10 +1,15 @@
 "use client";
 
-import { useState, type ReactNode } from "react";
+import { useMemo, useState, type ReactNode } from "react";
 import { Calendar, View, Views } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { useFormatter, useTranslations } from "next-intl";
 import { useCalendarI18n } from "@/lib/calendarI18n";
+import {
+  localWallClockToUtcDate,
+  schoolNowAsLocalDate,
+  wallClockToLocalDate,
+} from "@/lib/schoolTime";
 
 // A small fixed palette so a given class always renders in the same color
 // across the whole calendar (the class id is hashed into the palette - no
@@ -27,10 +32,19 @@ export type CalendarEventItem = {
   id: number;
   title: string;
   description: string;
+  /** Wall-clock reading on the school clock (see schoolTime.ts), not a real instant. */
   start: Date;
   end: Date;
   classId: number | null;
   className: string | null;
+};
+
+// What the server sends: school wall-clock strings ("YYYY-MM-DDTHH:mm:ss")
+// instead of Dates, so an event shows the same hour to every viewer whatever
+// zone their browser (or the server) is in.
+export type CalendarEventInput = Omit<CalendarEventItem, "start" | "end"> & {
+  start: string;
+  end: string;
 };
 
 const colorForClass = (classId: number | null) => {
@@ -47,23 +61,36 @@ const EventsCalendar = ({
   events,
   actionsByEventId,
 }: {
-  events: CalendarEventItem[];
+  events: CalendarEventInput[];
   actionsByEventId?: Record<number, ReactNode>;
 }) => {
   const t = useTranslations("Calendar");
   const format = useFormatter();
   const { localizer, culture, messages } = useCalendarI18n();
-  const formatRange = (start: Date, end: Date) => {
-    const sameDay = start.toDateString() === end.toDateString();
-    const dateFmt = { month: "short", day: "numeric", year: "numeric" } as const;
-    const timeFmt = { hour: "2-digit", minute: "2-digit" } as const;
+  const items = useMemo<CalendarEventItem[]>(
+    () =>
+      events.map((e) => ({
+        ...e,
+        start: wallClockToLocalDate(e.start),
+        end: wallClockToLocalDate(e.end),
+      })),
+    [events]
+  );
+  const formatRange = (startWall: Date, endWall: Date) => {
+    const sameDay = startWall.toDateString() === endWall.toDateString();
+    // Print the wall-clock reading as is: the Dates here carry it in their
+    // local fields, so re-home it to UTC and format with timeZone "UTC".
+    const start = localWallClockToUtcDate(startWall);
+    const end = localWallClockToUtcDate(endWall);
+    const dateFmt = { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" } as const;
+    const timeFmt = { hour: "2-digit", minute: "2-digit", timeZone: "UTC" } as const;
     if (sameDay) {
       return `${format.dateTime(start, dateFmt)} · ${format.dateTime(start, timeFmt)} – ${format.dateTime(end, timeFmt)}`;
     }
     return `${format.dateTime(start, dateFmt)} ${format.dateTime(start, timeFmt)} – ${format.dateTime(end, dateFmt)} ${format.dateTime(end, timeFmt)}`;
   };
   const [view, setView] = useState<View>(Views.MONTH);
-  const [date, setDate] = useState<Date>(new Date());
+  const [date, setDate] = useState<Date>(schoolNowAsLocalDate);
   const [selected, setSelected] = useState<CalendarEventItem | null>(null);
 
   const hasClassSpecific = events.some((e) => e.classId !== null);
@@ -95,7 +122,8 @@ const EventsCalendar = ({
           localizer={localizer}
           culture={culture}
           messages={messages}
-          events={events}
+          events={items}
+          getNow={schoolNowAsLocalDate}
           startAccessor="start"
           endAccessor="end"
           titleAccessor={(event: CalendarEventItem) =>

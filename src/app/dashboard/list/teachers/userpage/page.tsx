@@ -10,6 +10,7 @@ import TeacherAssignmentManagement from "@/components/TeacherAssignmentManagemen
 import TeacherStudentWork from "@/components/TeacherStudentWork";
 import Link from "next/link";
 import { getFormatter, getTranslations } from "next-intl/server";
+import { schoolTodayLessonDay } from "@/lib/schoolTime";
 import { Calendar, BookOpen, Award, FileText, Video, Users } from "lucide-react";
 
 const TeacherUserPage = async () => {
@@ -139,7 +140,7 @@ const TeacherUserPage = async () => {
         <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
           <p className="text-sm text-gray-600 dark:text-gray-400">{t("todaysLessons")}</p>
           <p className="text-3xl font-bold text-purple-600">
-            {teacher.lessons?.filter(l => new Date(l.startTime).toDateString() === new Date().toDateString()).length || 0}
+            {teacher.lessons?.filter(l => l.day === schoolTodayLessonDay()).length || 0}
           </p>
         </div>
         <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">

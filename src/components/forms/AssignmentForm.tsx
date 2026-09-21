@@ -15,6 +15,7 @@ import WorkTargetPicker from "./WorkTargetPicker";
 import WorkQuizBuilder, { QuizQuestionDraft } from "./WorkQuizBuilder";
 import WorkRubricBuilder, { RubricCriterionDraft } from "./WorkRubricBuilder";
 import { useValidationMessage } from "@/hooks/useValidationMessage";
+import { toSchoolInputValue } from "@/lib/schoolTime";
 
 const AssignmentForm = ({
   type,
@@ -129,9 +130,7 @@ const AssignmentForm = ({
           label={t("assignment.startDate")}
           name="startDate"
           defaultValue={
-            data?.startDate
-              ? new Date(data.startDate).toISOString().slice(0, 16)
-              : undefined
+            toSchoolInputValue(data?.startDate)
           }
           register={register}
           error={errors?.startDate}
@@ -141,9 +140,7 @@ const AssignmentForm = ({
           label={t("assignment.dueDate")}
           name="dueDate"
           defaultValue={
-            data?.dueDate
-              ? new Date(data.dueDate).toISOString().slice(0, 16)
-              : undefined
+            toSchoolInputValue(data?.dueDate)
           }
           register={register}
           error={errors?.dueDate}

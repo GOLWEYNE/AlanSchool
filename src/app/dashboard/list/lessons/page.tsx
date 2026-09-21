@@ -1,9 +1,10 @@
 import FormContainer from "@/components/FormContainer";
 import PageHero from "@/components/PageHero";
 import TableSearch from "@/components/TableSearch";
-import TimetableGrid, { TimetableLessonItem } from "@/components/TimetableGrid";
+import TimetableGrid, { TimetableLessonInput } from "@/components/TimetableGrid";
 import prisma from "@/lib/prisma";
-import { Class, Day, Lesson, Prisma, Subject, Teacher } from "@/generated/prisma/client";
+import { Class, Lesson, Prisma, Subject, Teacher } from "@/generated/prisma/client";
+import { projectLessonToWeek, schoolWeekMonday, weekStartString } from "@/lib/schoolTime";
 import { auth } from "@clerk/nextjs/server";
 import { getUserRole } from "@/lib/auth";
 import { getTranslations } from "next-intl/server";
@@ -23,47 +24,21 @@ type LessonList = Lesson & {
 // That real weekday lives only in the `day` enum column, so re-projecting
 // a lesson onto the current real week (to line the grid's Mon-Fri columns
 // up with human-readable dates) has to derive the offset from `day`, not
-// from startTime.getDay() - using startTime's date here previously made
-// two lessons on different days (e.g. Monday and Tuesday, same time) look
-// identical whenever their stored dates happened to fall on the same
-// real weekday, which threw off both the conflict highlighting below and
-// (see rescheduleLesson in src/lib/actions.ts) the drag-to-reschedule
-// conflict check.
-const DAY_TO_OFFSET: Record<Day, number> = {
-  MONDAY: 0,
-  TUESDAY: 1,
-  WEDNESDAY: 2,
-  THURSDAY: 3,
-  FRIDAY: 4,
-};
-
-const projectOntoCurrentWeek = (lessons: LessonList[]): TimetableLessonItem[] => {
-  const now = new Date();
-  const dayOfWeek = now.getDay();
-  const diffToMonday = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
-  const monday = new Date(now);
-  monday.setDate(now.getDate() + diffToMonday);
-  monday.setHours(0, 0, 0, 0);
+// from startTime's date - using it here previously made two lessons on
+// different days (e.g. Monday and Tuesday, same time) look identical
+// whenever their stored dates happened to fall on the same real weekday,
+// which threw off both the conflict highlighting below and (see
+// rescheduleLesson in src/lib/actions.ts) the drag-to-reschedule conflict
+// check.
+//
+// The projection is done on the school clock (see src/lib/schoolTime.ts) and
+// handed to the browser as wall-clock strings, so the server's UTC zone and the
+// viewer's own zone can never move a lesson.
+const projectOntoCurrentWeek = (lessons: LessonList[]): TimetableLessonInput[] => {
+  const monday = schoolWeekMonday();
 
   return lessons.map((lesson) => {
-    const daysFromMonday = DAY_TO_OFFSET[lesson.day];
-
-    const start = new Date(monday);
-    start.setDate(monday.getDate() + daysFromMonday);
-    start.setHours(
-      lesson.startTime.getHours(),
-      lesson.startTime.getMinutes(),
-      lesson.startTime.getSeconds(),
-      0
-    );
-
-    const end = new Date(start);
-    end.setHours(
-      lesson.endTime.getHours(),
-      lesson.endTime.getMinutes(),
-      lesson.endTime.getSeconds(),
-      0
-    );
+    const { start, end } = projectLessonToWeek(lesson, monday);
 
     return {
       id: lesson.id,
@@ -242,7 +217,12 @@ const LessonsListPage = async ({
         </form>
       )}
 
-      <TimetableGrid lessons={timetableLessons} canEdit={canEdit} actionsByLessonId={actionsByLessonId} />
+      <TimetableGrid
+        lessons={timetableLessons}
+        weekStart={weekStartString()}
+        canEdit={canEdit}
+        actionsByLessonId={actionsByLessonId}
+      />
     </div>
   );
 };

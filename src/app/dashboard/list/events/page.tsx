@@ -2,7 +2,8 @@ import type { ReactNode } from "react";
 import FormContainer from "@/components/FormContainer";
 import TableSearch from "@/components/TableSearch";
 import PageHero from "@/components/PageHero";
-import EventsCalendar, { CalendarEventItem } from "@/components/EventsCalendar";
+import EventsCalendar, { CalendarEventInput } from "@/components/EventsCalendar";
+import { toWallClockString } from "@/lib/schoolTime";
 import prisma from "@/lib/prisma";
 import { Class, Event, Prisma } from "@/generated/prisma/client";
 import { auth } from "@clerk/nextjs/server";
@@ -75,12 +76,15 @@ const EventListPage = async ({
     orderBy: { startTime: "asc" },
   });
 
-  const calendarEvents: CalendarEventItem[] = data.map((item) => ({
+  // Hand the browser school wall-clock strings (see src/lib/schoolTime.ts), not
+  // Dates: the calendar draws with local getters, so Dates would land at a
+  // different hour on the server render and for viewers in other time zones.
+  const calendarEvents: CalendarEventInput[] = data.map((item) => ({
     id: item.id,
     title: item.title,
     description: item.description,
-    start: item.startTime,
-    end: item.endTime,
+    start: toWallClockString(item.startTime),
+    end: toWallClockString(item.endTime),
     classId: item.classId,
     className: item.class?.name ?? null,
   }));

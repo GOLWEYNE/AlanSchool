@@ -12,6 +12,7 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import ObjectiveTagPicker from "./ObjectiveTagPicker";
 import { useValidationMessage } from "@/hooks/useValidationMessage";
+import { SCHOOL_UTC_LABEL, toSchoolInputValue } from "@/lib/schoolTime";
 
 const LessonForm = ({
   type,
@@ -69,6 +70,7 @@ const LessonForm = ({
       <h1 className="text-xl font-semibold dark:text-blue-100">
         {type === "create" ? t("lesson.createTitle") : t("lesson.updateTitle")}
       </h1>
+      <p className="-mt-4 text-xs text-gray-500 dark:text-slate-400">{t("lesson.timeHint", { zone: SCHOOL_UTC_LABEL })}</p>
 
       <div className="flex justify-between flex-wrap gap-4">
         <InputField
@@ -82,7 +84,7 @@ const LessonForm = ({
           label={t("lesson.startTime")}
           name="startTime"
           defaultValue={
-            data?.startTime ? new Date(data.startTime).toISOString().slice(0, 16) : undefined
+            toSchoolInputValue(data?.startTime)
           }
           register={register}
           error={errors?.startTime}
@@ -92,7 +94,7 @@ const LessonForm = ({
           label={t("lesson.endTime")}
           name="endTime"
           defaultValue={
-            data?.endTime ? new Date(data.endTime).toISOString().slice(0, 16) : undefined
+            toSchoolInputValue(data?.endTime)
           }
           register={register}
           error={errors?.endTime}

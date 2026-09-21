@@ -28,6 +28,7 @@ import { clerkClient } from "@clerk/nextjs/server";
 import { auth } from "@clerk/nextjs/server";
 import { getUserRole } from "./auth";
 import { getTranslations } from "next-intl/server";
+import { fromWallClock, parseWallClockString, schoolMinutesOfDay } from "./schoolTime";
 
 // Server-action messages surface in toasts, so they follow the NEXT_LOCALE
 // cookie the same way page content does.
@@ -1370,16 +1371,24 @@ export type RescheduleLessonState = { success: boolean; error: boolean; message?
 // re-checks for a double-booked teacher or class before saving, so a drag
 // can never silently create a scheduling conflict the old flat table had
 // no way to catch.
+//
+// `start`/`end` are school wall-clock readings ("YYYY-MM-DDTHH:mm:ss", no
+// zone) exactly as the grid shows them - never Dates, which would be read in
+// whatever zone the server or browser happens to be in (see schoolTime.ts).
 export const rescheduleLesson = async (payload: {
   id: number;
-  start: Date;
-  end: Date;
+  start: string;
+  end: string;
 }): Promise<RescheduleLessonState> => {
   const { userId, sessionClaims } = auth();
   const role = getUserRole(sessionClaims);
   if (isReadOnlyRole(role) || (role !== "admin" && role !== "teacher")) {
     return rejectUnauthorized();
   }
+
+  const start = parseWallClockString(payload.start);
+  const end = parseWallClockString(payload.end);
+  if (!start || !end) return { success: false, error: true };
 
   const DAY_BY_INDEX: Partial<Record<number, Day>> = {
     1: Day.MONDAY,
@@ -1388,7 +1397,10 @@ export const rescheduleLesson = async (payload: {
     4: Day.THURSDAY,
     5: Day.FRIDAY,
   };
-  const newDay = DAY_BY_INDEX[payload.start.getDay()];
+  // Weekday of the dropped date. It is a plain calendar date, so read it in
+  // UTC - the server's own zone must not influence which day it is.
+  const droppedWeekday = new Date(Date.UTC(start.year, start.month - 1, start.day)).getUTCDay();
+  const newDay = DAY_BY_INDEX[droppedWeekday];
   if (!newDay) {
     return {
       success: false,
@@ -1423,7 +1435,12 @@ export const rescheduleLesson = async (payload: {
       },
     });
 
-    const overlaps = (aStart: Date, aEnd: Date, bStart: Date, bEnd: Date) =>
+    // Stored lesson times only carry a meaningful time of day, read on the
+    // school clock - compare minutes-of-day, so an unrelated stored date
+    // component (or the server's time zone) can never throw the comparison off.
+    const newStartMin = start.hour * 60 + start.minute;
+    const newEndMin = end.hour * 60 + end.minute;
+    const overlaps = (aStart: number, aEnd: number, bStart: number, bEnd: number) =>
       aStart < bEnd && bStart < aEnd;
 
     const conflict = candidates.find((c) => {
@@ -1435,20 +1452,12 @@ export const rescheduleLesson = async (payload: {
       // different days, or worse, different-day lessons as the same day
       // whenever their stored dates coincidentally share a weekday.
       if (c.day !== newDay) return false;
-      // Stored lesson times only carry a meaningful time-of-day (the
-      // calendar re-projects them onto the current real week for display)
-      // - re-anchor the candidate's time onto the dropped date so an
-      // unrelated stored date component never throws the comparison off.
-      const cStart = new Date(payload.start);
-      cStart.setHours(
-        c.startTime.getHours(),
-        c.startTime.getMinutes(),
-        c.startTime.getSeconds(),
-        0
+      return overlaps(
+        newStartMin,
+        newEndMin,
+        schoolMinutesOfDay(c.startTime),
+        schoolMinutesOfDay(c.endTime)
       );
-      const cEnd = new Date(payload.start);
-      cEnd.setHours(c.endTime.getHours(), c.endTime.getMinutes(), c.endTime.getSeconds(), 0);
-      return overlaps(payload.start, payload.end, cStart, cEnd);
     });
 
     if (conflict) {
@@ -1464,7 +1473,7 @@ export const rescheduleLesson = async (payload: {
 
     await prisma.lesson.update({
       where: { id: payload.id },
-      data: { day: newDay, startTime: payload.start, endTime: payload.end },
+      data: { day: newDay, startTime: fromWallClock(start), endTime: fromWallClock(end) },
     });
 
     revalidatePath("/dashboard/list/lessons");

@@ -24,7 +24,11 @@ const EventCalendar = ({ eventDates = [] }: { eventDates?: string[] }) => {
 
   useEffect(() => {
     if (value instanceof Date) {
-      router.push(`?date=${value}`);
+      // The picked calendar day as YYYY-MM-DD (local fields = the day the user
+      // clicked). A full Date string would carry the browser's zone offset and
+      // the server would read it as a different day.
+      const pad = (n: number) => String(n).padStart(2, "0");
+      router.push(`?date=${value.getFullYear()}-${pad(value.getMonth() + 1)}-${pad(value.getDate())}`);
     }
   }, [value, router]);
 

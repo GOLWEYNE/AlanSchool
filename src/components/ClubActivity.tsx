@@ -1,6 +1,7 @@
 import prisma from "@/lib/prisma";
 import { getLocale, getTranslations } from "next-intl/server";
 import { dateLocale } from "@/lib/dateLocale";
+import { SCHOOL_TIME_ZONE } from "@/lib/schoolTime";
 
 const CATEGORY_META: Record<
   string,
@@ -43,6 +44,7 @@ const formatTime = (date: Date, locale: string) =>
     hour: "2-digit",
     minute: "2-digit",
     hour12: false,
+    timeZone: SCHOOL_TIME_ZONE,
   }).format(date);
 
 const ClubActivity = async () => {

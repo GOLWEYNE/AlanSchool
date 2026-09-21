@@ -5,6 +5,7 @@ import { getUserRole } from "@/lib/auth";
 import MyCamera from "@/components/MyCamera";
 import Link from "next/link";
 import { getFormatter, getTranslations } from "next-intl/server";
+import { schoolTodayLessonDay } from "@/lib/schoolTime";
 import { Calendar, BookOpen, Award, FileText, Video, Clock } from "lucide-react";
 
 const StudentUserPage = async () => {
@@ -89,7 +90,7 @@ const StudentUserPage = async () => {
         <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
           <p className="text-sm text-gray-600 dark:text-gray-400">{t("todaysLessons")}</p>
           <p className="text-3xl font-bold text-blue-600">
-            {student.class?.lessons?.filter(l => new Date(l.startTime).toDateString() === new Date().toDateString()).length || 0}
+            {student.class?.lessons?.filter(l => l.day === schoolTodayLessonDay()).length || 0}
           </p>
         </div>
         <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">

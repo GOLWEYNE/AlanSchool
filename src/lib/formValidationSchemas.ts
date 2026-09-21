@@ -1,4 +1,14 @@
 import { z } from "zod";
+import { parseSchoolDateTime } from "./schoolTime";
+
+// A datetime-local input submits a zone-less "YYYY-MM-DDTHH:mm". z.coerce.date()
+// would read that in the *browser's* zone, so the stored instant would depend on
+// where the form was filled in. Read it as school time instead (see schoolTime.ts).
+const schoolDateTime = (message: string) =>
+  z.preprocess(
+    (value) => (typeof value === "string" ? parseSchoolDateTime(value) ?? value : value),
+    z.coerce.date({ message })
+  );
 
 export const subjectSchema = z.object({
   id: z.coerce.number().optional(),
@@ -220,8 +230,8 @@ export const examSchema = z.object({
   id: z.coerce.number().optional(),
   title: z.string().min(1, { message: "Title name is required!" }),
   description: z.string().optional(),
-  startTime: z.coerce.date({ message: "Start time is required!" }),
-  endTime: z.coerce.date({ message: "End time is required!" }),
+  startTime: schoolDateTime("Start time is required!"),
+  endTime: schoolDateTime("End time is required!"),
   totalMarks: z.preprocess(
     (value) => (value === "" ? undefined : value),
     z.coerce.number().int().min(1).optional()
@@ -244,8 +254,8 @@ export const assignmentSchema = z.object({
   id: z.coerce.number().optional(),
   title: z.string().min(1, { message: "Title is required!" }),
   description: z.string().optional(),
-  startDate: z.coerce.date({ message: "Start date is required!" }),
-  dueDate: z.coerce.date({ message: "Due date is required!" }),
+  startDate: schoolDateTime("Start date is required!"),
+  dueDate: schoolDateTime("Due date is required!"),
   totalMarks: z.preprocess(
     (value) => (value === "" ? undefined : value),
     z.coerce.number().int().min(1).optional()
@@ -307,8 +317,8 @@ export const eventSchema = z.object({
   id: z.coerce.number().optional(),
   title: z.string().min(1, { message: "Title is required!" }),
   description: z.string().min(1, { message: "Description is required!" }),
-  startTime: z.coerce.date({ message: "Start time is required!" }),
-  endTime: z.coerce.date({ message: "End time is required!" }),
+  startTime: schoolDateTime("Start time is required!"),
+  endTime: schoolDateTime("End time is required!"),
   classId: z.preprocess(
     (value) => (value === "" ? undefined : value),
     z.coerce.number().optional()
@@ -321,7 +331,7 @@ export const announcementSchema = z.object({
   id: z.coerce.number().optional(),
   title: z.string().min(1, { message: "Title is required!" }),
   description: z.string().min(1, { message: "Description is required!" }),
-  date: z.coerce.date({ message: "Date is required!" }),
+  date: schoolDateTime("Date is required!"),
   classId: z.preprocess(
     (value) => (value === "" ? undefined : value),
     z.coerce.number().optional()
@@ -334,8 +344,8 @@ export const lessonSchema = z.object({
   id: z.coerce.number().optional(),
   name: z.string().min(1, { message: "Lesson name is required!" }),
   day: z.enum(["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY"], { message: "Day is required!" }),
-  startTime: z.coerce.date({ message: "Start time is required!" }),
-  endTime: z.coerce.date({ message: "End time is required!" }),
+  startTime: schoolDateTime("Start time is required!"),
+  endTime: schoolDateTime("End time is required!"),
   subjectId: z.coerce.number({ message: "Subject is required!" }),
   classId: z.coerce.number({ message: "Class is required!" }),
   teacherId: z.string().min(1, { message: "Teacher is required!" }),
