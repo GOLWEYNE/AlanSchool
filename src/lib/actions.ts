@@ -27,6 +27,12 @@ import { Day, Prisma } from "@/generated/prisma/client";
 import { clerkClient } from "@clerk/nextjs/server";
 import { auth } from "@clerk/nextjs/server";
 import { getUserRole } from "./auth";
+import { getTranslations } from "next-intl/server";
+
+// Server-action messages surface in toasts, so they follow the NEXT_LOCALE
+// cookie the same way page content does.
+const sm = async (key: string, values?: Record<string, string | number>) =>
+  (await getTranslations("ServerMessages"))(key, values);
 
 type CurrentState = { success: boolean; error: boolean };
 
@@ -1387,7 +1393,7 @@ export const rescheduleLesson = async (payload: {
     return {
       success: false,
       error: true,
-      message: "Lessons can only be scheduled Monday through Friday.",
+      message: await sm("lessonWeekdays"),
     };
   }
 
@@ -1446,11 +1452,13 @@ export const rescheduleLesson = async (payload: {
     });
 
     if (conflict) {
-      const reason = conflict.teacherId === lesson.teacherId ? "the teacher" : "the class";
       return {
         success: false,
         error: true,
-        message: `Conflicts with "${conflict.name}" - ${reason} already has a lesson at that time.`,
+        message: await sm(
+          conflict.teacherId === lesson.teacherId ? "conflictTeacher" : "conflictClass",
+          { name: conflict.name }
+        ),
       };
     }
 
@@ -1642,10 +1650,10 @@ export const saveGradebookScore = async (payload: {
     }
 
     if (payload.score < 0) {
-      return { success: false, error: true, message: "Score can't be negative." };
+      return { success: false, error: true, message: await sm("scoreNegative") };
     }
     if (totalMarks != null && payload.score > totalMarks) {
-      return { success: false, error: true, message: `Score can't exceed ${totalMarks}.` };
+      return { success: false, error: true, message: await sm("scoreExceeds", { max: totalMarks }) };
     }
 
     await syncResultScore(
@@ -1676,18 +1684,18 @@ export const submitStudentWork = async (
   const role = getUserRole(sessionClaims);
 
   if (role !== "student" || !userId) {
-    return { success: false, error: true, message: "Only students can submit work." };
+    return { success: false, error: true, message: await sm("onlyStudents") };
   }
 
   if (!data.examId && !data.assignmentId) {
-    return { success: false, error: true, message: "Missing exam or assignment." };
+    return { success: false, error: true, message: await sm("missingWork") };
   }
 
   if (!data.fileUrl && (!data.answers || data.answers.length === 0)) {
     return {
       success: false,
       error: true,
-      message: "Attach a file or answer the questions before submitting.",
+      message: await sm("attachOrAnswer"),
     };
   }
 
@@ -1703,7 +1711,7 @@ export const submitStudentWork = async (
         });
 
     if (!work) {
-      return { success: false, error: true, message: "This exam or assignment no longer exists." };
+      return { success: false, error: true, message: await sm("workGone") };
     }
 
     const student = await prisma.student.findUnique({
@@ -1711,7 +1719,7 @@ export const submitStudentWork = async (
       select: { classId: true },
     });
     if (!student) {
-      return { success: false, error: true, message: "Student record not found." };
+      return { success: false, error: true, message: await sm("studentNotFound") };
     }
 
     const targeted =
@@ -1720,7 +1728,7 @@ export const submitStudentWork = async (
         : work.targetStudentIds.includes(userId);
 
     if (!targeted) {
-      return { success: false, error: true, message: "This isn't assigned to you." };
+      return { success: false, error: true, message: await sm("notAssigned") };
     }
 
     const deadline = data.examId ? (work as { endTime: Date }).endTime : (work as { dueDate: Date }).dueDate;
@@ -1728,7 +1736,7 @@ export const submitStudentWork = async (
       return {
         success: false,
         error: true,
-        message: "The deadline has passed - submissions are closed for this one.",
+        message: await sm("deadlinePassed"),
       };
     }
 
@@ -1788,7 +1796,7 @@ export const submitStudentWork = async (
     return { success: true, error: false, autoScore, autoTotal };
   } catch (err) {
     console.log(err);
-    return { success: false, error: true, message: "Something went wrong - please try again." };
+    return { success: false, error: true, message: await sm("somethingWrongRetry") };
   }
 };
 
@@ -1832,7 +1840,7 @@ export const gradeSubmission = async (
       const rubric =
         (submission.assignment?.rubric as unknown as RubricCriterion[] | null) ?? null;
       if (!rubric || rubric.length === 0) {
-        return { success: false, error: true, message: "This assignment has no rubric." };
+        return { success: false, error: true, message: await sm("noRubric") };
       }
 
       const byName = new Map(rubric.map((c) => [c.name, c]));
@@ -1844,7 +1852,7 @@ export const gradeSubmission = async (
           return {
             success: false,
             error: true,
-            message: "The rubric has changed - please reload and try again.",
+            message: await sm("rubricChanged"),
           };
         }
         const points = Math.max(0, Math.min(entry.points, criterion.maxPoints));

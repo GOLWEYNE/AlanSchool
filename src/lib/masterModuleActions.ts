@@ -5,6 +5,7 @@ import { auth } from "@clerk/nextjs/server";
 import prisma from "./prisma";
 import { getUserRole } from "./auth";
 import { notifyUser } from "./notify";
+import { getTranslations } from "next-intl/server";
 import {
       AttendanceBulkSchema,
       AttendanceRecordSchema,
@@ -50,10 +51,15 @@ const isAdminOrTeacher = () => {
       return role === "admin" || role === "teacher";
 };
 
-const rejectUnauthorized = (): CurrentState => ({
+// Server-action messages surface in toasts, so they follow the NEXT_LOCALE
+// cookie the same way page content does.
+const sm = async (key: string, values?: Record<string, string | number>) =>
+  (await getTranslations("ServerMessages"))(key, values);
+
+const rejectUnauthorized = async (): Promise<CurrentState> => ({
       success: false,
       error: true,
-      message: "You are not authorized to perform this action.",
+      message: await sm("notAuthorized"),
 });
 const fail = (message?: string): CurrentState => ({
       success: false,
@@ -84,21 +90,21 @@ export const submitWork = async (
       const userId = getCurrentUserId();
       if (role !== "student" || !userId) return rejectUnauthorized();
       if (!data.examId && !data.assignmentId) {
-              return fail("Select an exam or assignment to submit for.");
+              return fail(await sm("selectWork"));
       }
 
       try {
               let due: Date | undefined;
               if (data.examId) {
                         const exam = await prisma.exam.findUnique({ where: { id: data.examId } });
-                        if (!exam) return fail("Exam not found.");
+                        if (!exam) return fail(await sm("examNotFound"));
                         due = exam.endTime;
               }
               if (data.assignmentId) {
                         const assignment = await prisma.assignment.findUnique({
                                     where: { id: data.assignmentId },
                         });
-                        if (!assignment) return fail("Assignment not found.");
+                        if (!assignment) return fail(await sm("assignmentNotFound"));
                         due = assignment.dueDate;
               }
 
@@ -369,7 +375,7 @@ export const checkInAttendance = async (
     ): Promise<CurrentState & { studentName?: string; alreadyMarked?: boolean }> => {
       if (!isAdminOrTeacher()) return rejectUnauthorized();
       const parsed = checkInScanSchema.safeParse(input);
-      if (!parsed.success) return fail("Invalid check-in request.");
+      if (!parsed.success) return fail(await sm("invalidCheckin"));
       const { code, classId, date } = parsed.data;
 
       const role = getCurrentRole();
@@ -383,7 +389,7 @@ export const checkInAttendance = async (
                         lessons: { select: { teacherId: true } },
               },
       });
-      if (!cls) return fail("Class not found.");
+      if (!cls) return fail(await sm("classNotFound"));
       if (role === "teacher") {
               const allowed =
                         cls.supervisorId === senderId ||
@@ -397,7 +403,7 @@ export const checkInAttendance = async (
               select: { id: true, name: true, surname: true },
       });
       const match = roster.find((s) => sanitizeForBadge(s.id) === scanned);
-      if (!match) return fail("No student in this class matches that badge.");
+      if (!match) return fail(await sm("noBadgeMatch"));
 
       try {
               const existing = await prisma.attendanceRecord.findFirst({
@@ -444,7 +450,7 @@ export const createBehaviorLog = async (
       // the form instead.
       const role = getCurrentRole();
       const teacherId = role === "teacher" ? userId : data.teacherId;
-      if (!teacherId) return fail("Please choose which teacher to log this as.");
+      if (!teacherId) return fail(await sm("chooseTeacher"));
       try {
               await prisma.behaviorLog.create({
                         data: {
@@ -683,7 +689,7 @@ export const deletePortfolioItem = async (
               const item = await prisma.portfolioItem.findUnique({
                         where: { id: parseInt(id) },
               });
-              if (!item) return fail("Not found.");
+              if (!item) return fail(await sm("notFound"));
               if (!isAdminOrTeacher() && !(role === "student" && item.studentId === userId)) {
                         return rejectUnauthorized();
               }
@@ -805,7 +811,7 @@ export const generateReportCardsForClass = async (
                         select: { id: true },
               });
 
-        if (!students.length) return fail("No students found in this class.");
+        if (!students.length) return fail(await sm("noStudentsInClass"));
 
               const generatedById = getCurrentUserId() ?? undefined;
               for (const student of students) {
@@ -1000,7 +1006,7 @@ export const deleteConferenceSlot = async (
               const slot = await prisma.conferenceSlot.findUnique({
                         where: { id: parseInt(id) },
               });
-              if (!slot) return fail("Not found.");
+              if (!slot) return fail(await sm("notFound"));
               if (role !== "admin" && slot.teacherId !== userId) return rejectUnauthorized();
               await prisma.conferenceSlot.delete({ where: { id: parseInt(id) } });
               revalidatePath("/dashboard/teacher");
@@ -1063,7 +1069,7 @@ export const cancelConferenceBooking = async (
               const booking = await prisma.conferenceBooking.findUnique({
                         where: { id: parseInt(id) },
               });
-              if (!booking) return fail("Not found.");
+              if (!booking) return fail(await sm("notFound"));
               if (role !== "admin" && booking.parentId !== userId) return rejectUnauthorized();
 
         await prisma.$transaction([
@@ -1166,7 +1172,7 @@ export const enrollInClub = async (
                         where: { clubId_studentId: { clubId: data.clubId, studentId: data.studentId } },
               });
               if (existing && existing.status !== "WITHDRAWN") {
-                        return fail("Already enrolled in this club.");
+                        return fail(await sm("alreadyEnrolled"));
               }
 
               // Only ACTIVE seats count against capacity — a WAITLISTED or
@@ -1175,7 +1181,7 @@ export const enrollInClub = async (
                         where: { id: data.clubId },
                         include: { _count: { select: { enrollments: { where: { status: "ACTIVE" } } } } },
               });
-              if (!club) return fail("Club not found.");
+              if (!club) return fail(await sm("clubNotFound"));
 
         const status = club._count.enrollments >= club.capacity ? "WAITLISTED" : "ACTIVE";
 
@@ -1193,7 +1199,7 @@ export const enrollInClub = async (
               return ok();
       } catch (err) {
               console.log(err);
-              return fail("Already enrolled, or this club is unavailable.");
+              return fail(await sm("enrollUnavailable"));
       }
 };
 
@@ -1208,7 +1214,7 @@ export const withdrawFromClub = async (
               const enrollment = await prisma.clubEnrollment.findUnique({
                         where: { id: parseInt(id) },
               });
-              if (!enrollment) return fail("Not found.");
+              if (!enrollment) return fail(await sm("notFound"));
               if (
                         !isAdminOrTeacher() &&
                         !(role === "student" && enrollment.studentId === userId) &&
