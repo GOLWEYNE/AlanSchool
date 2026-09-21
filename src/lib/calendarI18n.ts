@@ -17,6 +17,10 @@ export const calendarLocalizer = momentLocalizer(moment);
 export function useCalendarI18n() {
   const culture = useLocale();
   const t = useTranslations("Calendar");
+  // react-big-calendar derives the first weekday of the month grid from
+  // moment's global locale, so keep it in step with the selected language
+  // (Monday-first for RU/KK; English stays Sunday-first as before).
+  if (moment.locale() !== culture) moment.locale(culture);
   return {
     localizer: calendarLocalizer,
     culture,
