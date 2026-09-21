@@ -13,8 +13,10 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 import prisma from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 
 const Parentpage = async () => {
+  const t = await getTranslations("Dashboards.parent");
   const { userId } = auth();
 
   const children = await prisma.student.findMany({
@@ -116,26 +118,26 @@ const Parentpage = async () => {
     <ProtectedRoute allowedRoles={["parent"]}>
     <div className="flex-1 p-4 flex flex-col gap-4">
       <div className="rounded-2xl p-5 shine-hover text-white shadow-xl bg-gradient-to-r from-teal-500 via-blue-500 to-yellow-400">
-        <h1 className="text-3xl font-bold">Family Overview</h1>
-        <p className="text-cyan-50 mt-2 text-sm">Stay connected with your children&apos;s schedule, attendance, and progress.</p>
+        <h1 className="text-3xl font-bold">{t("title")}</h1>
+        <p className="text-cyan-50 mt-2 text-sm">{t("subtitle")}</p>
         <div className="mt-3 flex flex-wrap gap-2">
-          <span className="rounded-full bg-white/90 text-blue-900 px-3 py-1 text-xs font-semibold">Children: {children.length}</span>
-          <span className="rounded-full bg-white/90 text-blue-900 px-3 py-1 text-xs font-semibold">Upcoming Exams: {upcomingExamsCount}</span>
-          <span className="rounded-full bg-white/90 text-blue-900 px-3 py-1 text-xs font-semibold">Results: {resultsCount}</span>
-          <span className="rounded-full bg-white/90 text-blue-900 px-3 py-1 text-xs font-semibold">Events: {eventsCount}</span>
+          <span className="rounded-full bg-white/90 text-blue-900 px-3 py-1 text-xs font-semibold">{t("children")}: {children.length}</span>
+          <span className="rounded-full bg-white/90 text-blue-900 px-3 py-1 text-xs font-semibold">{t("upcomingExams")}: {upcomingExamsCount}</span>
+          <span className="rounded-full bg-white/90 text-blue-900 px-3 py-1 text-xs font-semibold">{t("results")}: {resultsCount}</span>
+          <span className="rounded-full bg-white/90 text-blue-900 px-3 py-1 text-xs font-semibold">{t("events")}: {eventsCount}</span>
         </div>
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <Link href="/dashboard/list/events" className="panel-card p-3 text-blue-900 font-semibold text-sm text-center shine-hover">Events</Link>
-        <Link href="/dashboard/list/exams" className="panel-card p-3 text-blue-900 font-semibold text-sm text-center shine-hover">Exams</Link>
-        <Link href="/dashboard/list/results" className="panel-card p-3 text-blue-900 font-semibold text-sm text-center shine-hover">Results</Link>
-        <Link href="/dashboard/list/parents" className="panel-card p-3 text-blue-900 font-semibold text-sm text-center shine-hover">Parent Profile</Link>
+        <Link href="/dashboard/list/events" className="panel-card p-3 text-blue-900 font-semibold text-sm text-center shine-hover">{t("events")}</Link>
+        <Link href="/dashboard/list/exams" className="panel-card p-3 text-blue-900 font-semibold text-sm text-center shine-hover">{t("exams")}</Link>
+        <Link href="/dashboard/list/results" className="panel-card p-3 text-blue-900 font-semibold text-sm text-center shine-hover">{t("results")}</Link>
+        <Link href="/dashboard/list/parents" className="panel-card p-3 text-blue-900 font-semibold text-sm text-center shine-hover">{t("parentProfile")}</Link>
       </div>
 
       {/* SCHEDULE - full page width so the whole week is easy to read at a glance */}
       <div className="w-full panel-card p-4 rounded-md min-h-[640px] flex flex-col">
-        <h1 className="text-xl font-semibold text-blue-900 dark:text-blue-100">Today&apos;s Schedule</h1>
+        <h1 className="text-xl font-semibold text-blue-900 dark:text-blue-100">{t("todaysSchedule")}</h1>
         <div className="flex-1 mt-2">
           <BigCalendarContainer
             type="parentId"
@@ -161,7 +163,7 @@ const Parentpage = async () => {
           <AttendancePulse role="parent" studentIds={studentIds} />
           <ClassLeaderboard role="parent" studentIds={studentIds} />
           <div className="panel-card p-4 rounded-md">
-            <h1 className="text-xl font-semibold text-blue-900">Children&apos;s Attendance</h1>
+            <h1 className="text-xl font-semibold text-blue-900">{t("childrenAttendance")}</h1>
             <div className="mt-4 grid gap-4">
               {childAttendanceSummaries.map((summary) => (
                 <ParentChildAttendanceCard
@@ -175,7 +177,7 @@ const Parentpage = async () => {
               ))}
               {childAttendanceSummaries.length === 0 && (
                 <p className="text-sm text-gray-500">
-                  No children assigned to this parent.
+                  {t("noChildren")}
                 </p>
               )}
             </div>
@@ -187,7 +189,7 @@ const Parentpage = async () => {
                 <ReportCardsPanel studentId={child.id} studentName={`${child.name} ${child.surname}`} />
                 {children.length > 1 && (
                   <h2 className="text-sm font-semibold text-gray-500 dark:text-slate-400 -mb-2">
-                    {child.name} {child.surname}&apos;s Behavior &amp; Conduct
+                    {t("behaviorConduct", { name: `${child.name} ${child.surname}` })}
                   </h2>
                 )}
                 <ReportCardBehaviorTimeline logs={childBehaviorLogs} />
