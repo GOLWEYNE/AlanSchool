@@ -1,3 +1,4 @@
+import path from "path";
 import {
   Document,
   Page,
@@ -6,6 +7,25 @@ import {
   StyleSheet,
   Font,
 } from "@react-pdf/renderer";
+
+// The built-in PDF fonts (Helvetica) only cover Western Latin, so Cyrillic and
+// Kazakh names rendered as garbage (e.g. "!%" instead of "НАСЕР ХАДЕМИ").
+// Register Noto Sans (Latin, Cyrillic and Kazakh letters) so every student's
+// real full name prints correctly. The files live in src/assets/fonts and are
+// traced into the serverless bundle via outputFileTracingIncludes in
+// next.config.mjs.
+const FONT_DIR = path.join(process.cwd(), "src", "assets", "fonts");
+
+Font.register({
+  family: "NotoSans",
+  fonts: [
+    { src: path.join(FONT_DIR, "NotoSans-400Regular.ttf"), fontWeight: 400 },
+    { src: path.join(FONT_DIR, "NotoSans-700Bold.ttf"), fontWeight: 700 },
+  ],
+});
+
+// Never break names or words with hyphens; keep them whole.
+Font.registerHyphenationCallback((word) => [word]);
 
 // Human-readable labels for the Term enum used throughout the schema.
 export const TERM_LABELS: Record<string, string> = {
@@ -39,7 +59,7 @@ const styles = StyleSheet.create({
   page: {
     padding: 40,
     fontSize: 10,
-    fontFamily: "Helvetica",
+    fontFamily: "NotoSans",
     color: "#1e293b",
   },
   header: {
@@ -52,7 +72,8 @@ const styles = StyleSheet.create({
   },
   schoolName: {
     fontSize: 18,
-    fontFamily: "Helvetica-Bold",
+    fontFamily: "NotoSans",
+    fontWeight: 700,
     color: "#1d4ed8",
   },
   docTitle: {
@@ -72,7 +93,8 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 11,
-    fontFamily: "Helvetica-Bold",
+    fontFamily: "NotoSans",
+    fontWeight: 700,
     color: "#0f172a",
     marginBottom: 6,
     textTransform: "uppercase",
@@ -93,7 +115,8 @@ const styles = StyleSheet.create({
   },
   infoValue: {
     fontSize: 11,
-    fontFamily: "Helvetica-Bold",
+    fontFamily: "NotoSans",
+    fontWeight: 700,
     color: "#0f172a",
   },
   statsRow: {
@@ -113,7 +136,8 @@ const styles = StyleSheet.create({
   },
   statValue: {
     fontSize: 16,
-    fontFamily: "Helvetica-Bold",
+    fontFamily: "NotoSans",
+    fontWeight: 700,
     color: "#1e3a8a",
     marginTop: 2,
   },
@@ -128,7 +152,8 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#1d4ed8",
     color: "#ffffff",
-    fontFamily: "Helvetica-Bold",
+    fontFamily: "NotoSans",
+    fontWeight: 700,
     fontSize: 9,
     padding: 6,
     borderRight: "1 solid #cbd5e1",
@@ -153,7 +178,8 @@ const styles = StyleSheet.create({
     flex: 0.5,
     backgroundColor: "#1d4ed8",
     color: "#ffffff",
-    fontFamily: "Helvetica-Bold",
+    fontFamily: "NotoSans",
+    fontWeight: 700,
     fontSize: 9,
     padding: 6,
     borderRight: "1 solid #cbd5e1",
@@ -163,7 +189,6 @@ const styles = StyleSheet.create({
   emptyState: {
     fontSize: 9,
     color: "#64748b",
-    fontStyle: "italic",
     padding: 8,
   },
   behaviorBox: {
