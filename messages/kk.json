@@ -1788,5 +1788,21 @@
       "open": "Кестені ашу",
       "truncated": "Алғашқы {shown} / {total} көрсетілген."
     }
+  },
+  "SchedulePdf": {
+    "title": "Апталық сабақ кестесі",
+    "teacher": "Мұғалім",
+    "class": "Сынып",
+    "statLessons": "Аптадағы сабақ саны",
+    "statHours": "Аптадағы сағат саны",
+    "statClasses": "Сыныптар",
+    "statTeachers": "Мұғалімдер",
+    "statBusiest": "Ең жүктелген күн",
+    "generated": "Жасалған күні: {date}",
+    "timesNote": "Барлық уақыт мектеп уақытымен берілген ({zone}).",
+    "empty": "Сабақтар әлі белгіленбеген.",
+    "room": "Кабинет {room}",
+    "scopeClass": "Сынып {name}",
+    "download": "Кестені жүктеу (PDF)"
   }
 }

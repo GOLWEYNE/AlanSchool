@@ -1788,5 +1788,21 @@
       "open": "Open timetable",
       "truncated": "Showing the first {shown} of {total}."
     }
+  },
+  "SchedulePdf": {
+    "title": "Weekly schedule",
+    "teacher": "Teacher",
+    "class": "Class",
+    "statLessons": "Lessons per week",
+    "statHours": "Hours per week",
+    "statClasses": "Classes",
+    "statTeachers": "Teachers",
+    "statBusiest": "Busiest day",
+    "generated": "Generated on {date}",
+    "timesNote": "All times are school time ({zone}).",
+    "empty": "No lessons are scheduled yet.",
+    "room": "Room {room}",
+    "scopeClass": "Class {name}",
+    "download": "Download schedule (PDF)"
   }
 }

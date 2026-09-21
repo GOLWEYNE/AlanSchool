@@ -1788,5 +1788,21 @@
       "open": "Открыть расписание",
       "truncated": "Показаны первые {shown} из {total}."
     }
+  },
+  "SchedulePdf": {
+    "title": "Расписание на неделю",
+    "teacher": "Учитель",
+    "class": "Класс",
+    "statLessons": "Уроков в неделю",
+    "statHours": "Часов в неделю",
+    "statClasses": "Классов",
+    "statTeachers": "Учителей",
+    "statBusiest": "Самый загруженный день",
+    "generated": "Создано: {date}",
+    "timesNote": "Всё время указано по школьным часам ({zone}).",
+    "empty": "Уроки пока не назначены.",
+    "room": "Кабинет {room}",
+    "scopeClass": "Класс {name}",
+    "download": "Скачать расписание (PDF)"
   }
 }
