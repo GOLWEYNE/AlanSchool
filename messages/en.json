@@ -1184,7 +1184,8 @@
       "childrenResults": "Children Results",
       "childrenEvents": "Children Events",
       "childrenAttendance": "Children Attendance",
-      "parentScheduleView": "Parent Schedule View"
+      "parentScheduleView": "Parent Schedule View",
+      "studentStudyPlanner": "Student’s Study Planner"
     },
     "account": {
       "profileTitle": "My Profile",
@@ -1718,6 +1719,12 @@
       "dueReminder": "Assignment due soon: {title}",
       "goalSummary": "Goal: {title}",
       "goalProgress": "Progress so far: {progress}%"
+    },
+    "staff": {
+      "subtitle": "What {name} sees in their Study Planner: personal study goals, upcoming exams and deadlines, and the calendar export.",
+      "goalsTitle": "Study goals",
+      "noGoals": "{name} has not set any study goals yet.",
+      "readOnly": "Read-only view. Only the student can add or change their own goals."
     }
   }
 }

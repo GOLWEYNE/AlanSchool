@@ -3,30 +3,11 @@ import { getFormatter, getTranslations } from "next-intl/server";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import StudyGoals, { type StudyGoalItem } from "@/components/StudyGoals";
 import prisma from "@/lib/prisma";
-import { SCHOOL_UTC_LABEL, fromWallClock, toWallClock } from "@/lib/schoolTime";
+import { SCHOOL_UTC_LABEL } from "@/lib/schoolTime";
 import { MAX_STUDY_GOALS, getStudyGoals } from "@/lib/studyGoals";
+import { UPCOMING_DAYS, daysFromToday, getUpcomingItems, startOfSchoolDay } from "@/lib/studyUpcoming";
 
 export const dynamic = "force-dynamic";
-
-const DAY_MS = 24 * 60 * 60 * 1000;
-const UPCOMING_DAYS = 30;
-
-type UpcomingItem = {
-  key: string;
-  type: "exam" | "assignment";
-  title: string;
-  subject: string;
-  at: Date;
-};
-
-// Whole school-calendar days from today to the given instant (0 = today).
-const daysFromToday = (at: Date, now: Date) => {
-  const a = toWallClock(at);
-  const b = toWallClock(now);
-  return Math.round(
-    (Date.UTC(a.year, a.month - 1, a.day) - Date.UTC(b.year, b.month - 1, b.day)) / DAY_MS
-  );
-};
 
 const StudyPlannerPage = async () => {
   const t = await getTranslations("StudyPlanner");
@@ -55,50 +36,14 @@ const StudyPlannerPage = async () => {
     .sort((a, b) => a.name.localeCompare(b.name));
 
   // What is coming up in the next month: exams and assignment deadlines.
-  const horizon = new Date(now.getTime() + UPCOMING_DAYS * DAY_MS);
-  const [exams, assignments] = classId
-    ? await Promise.all([
-        prisma.exam.findMany({
-          where: { lesson: { classId }, startTime: { gte: now, lte: horizon } },
-          include: { lesson: { include: { subject: { select: { name: true } } } } },
-          orderBy: { startTime: "asc" },
-        }),
-        prisma.assignment.findMany({
-          where: { lesson: { classId }, dueDate: { gte: now, lte: horizon } },
-          include: { lesson: { include: { subject: { select: { name: true } } } } },
-          orderBy: { dueDate: "asc" },
-        }),
-      ])
-    : [[], []];
-
-  const forMe = (ids: string[]) => ids.length === 0 || (userId ? ids.includes(userId) : false);
-  const upcoming: UpcomingItem[] = [
-    ...exams
-      .filter((e) => forMe(e.targetStudentIds))
-      .map((e) => ({
-        key: `exam-${e.id}`,
-        type: "exam" as const,
-        title: e.title,
-        subject: e.lesson.subject.name,
-        at: e.startTime,
-      })),
-    ...assignments
-      .filter((a) => forMe(a.targetStudentIds))
-      .map((a) => ({
-        key: `assignment-${a.id}`,
-        type: "assignment" as const,
-        title: a.title,
-        subject: a.lesson.subject.name,
-        at: a.dueDate,
-      })),
-  ].sort((a, b) => a.at.getTime() - b.at.getTime());
+  const upcoming = classId && userId ? await getUpcomingItems(userId, classId, now) : [];
 
   // Personal goals. If the table cannot be read, show a notice instead of failing the page.
   let goals: StudyGoalItem[] = [];
   let goalsUnavailable = false;
   if (userId) {
     try {
-      const startOfToday = fromWallClock(toWallClock(now));
+      const startOfToday = startOfSchoolDay(now);
       goals = (await getStudyGoals(userId)).map((g) => ({
         id: g.id,
         title: g.title,

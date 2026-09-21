@@ -3,6 +3,7 @@ import BigCalendarContainer from "@/components/BigCalendarContainer";
 import FormContainer from "@/components/FormContainer";
 import Performance from "@/components/Performance";
 import StudentAttendanceCard from "@/components/StudentAttendanceCard";
+import StudentStudyPlanner from "@/components/StudentStudyPlanner";
 import prisma from "@/lib/prisma";
 import { getUserRole } from "@/lib/auth";
 import { auth } from "@clerk/nextjs/server";
@@ -57,6 +58,9 @@ const SingleStudentPage = async ({
   // than having to know who to ask for.
   const messageableTeacher: MessageableTeacher | null =
     student.class.supervisor ?? student.class.lessons[0]?.teacher ?? null;
+
+  // The student's own Study Planner is theirs to edit; staff get a read-only view.
+  const canSeeStudyPlanner = role === "admin" || role === "teacher";
 
   const t = await getTranslations("Profiles.detail");
   const locale = await getLocale();
@@ -223,12 +227,26 @@ const SingleStudentPage = async ({
             >
               {t("studentResults")}
             </Link>
+            {canSeeStudyPlanner && (
+              <a className="p-3 rounded-md bg-lamaPurpleLight" href="#study-planner">
+                {t("studentStudyPlanner")}
+              </a>
+            )}
           </div>
         </div>
         <Performance />
         <Announcements />
       </div>
       </div>
+
+      {/* STUDY PLANNER - goals, upcoming deadlines and the calendar export (staff only, read-only) */}
+      {canSeeStudyPlanner && (
+        <StudentStudyPlanner
+          studentId={student.id}
+          studentName={`${student.name} ${student.surname}`}
+          classId={student.classId}
+        />
+      )}
 
       {/* SCHEDULE - full page width so the whole week is easy to read at a glance */}
       <div className="bg-white dark:bg-slate-900 rounded-md p-4 min-h-[700px] flex flex-col">
