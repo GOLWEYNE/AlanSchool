@@ -11,8 +11,10 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 import prisma from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 
 const TeacherPage = async () => {
+  const t = await getTranslations("Dashboards.teacher");
   const { userId } = auth();
 
   const [lessonsCount, assignmentsCount, examsCount, resultsCount] =
@@ -34,29 +36,29 @@ const TeacherPage = async () => {
     <ProtectedRoute allowedRoles={["teacher"]}>
     <div className="flex-1 p-4 flex flex-col gap-4">
       <div className="rounded-2xl p-5 shine-hover text-white shadow-xl bg-gradient-to-r from-blue-700 via-cyan-600 to-blue-400">
-        <h1 className="text-3xl font-bold">Teacher Planner</h1>
-        <p className="text-cyan-50 mt-2 text-sm">Plan lessons, evaluate learners, and manage your academic flow.</p>
+        <h1 className="text-3xl font-bold">{t("title")}</h1>
+        <p className="text-cyan-50 mt-2 text-sm">{t("subtitle")}</p>
         <div className="mt-3 flex flex-wrap gap-2">
-          <span className="rounded-full bg-white/90 text-blue-900 px-3 py-1 text-xs font-semibold">Lessons: {lessonsCount}</span>
-          <span className="rounded-full bg-white/90 text-blue-900 px-3 py-1 text-xs font-semibold">Assignments: {assignmentsCount}</span>
-          <span className="rounded-full bg-white/90 text-blue-900 px-3 py-1 text-xs font-semibold">Exams: {examsCount}</span>
-          <span className="rounded-full bg-white/90 text-blue-900 px-3 py-1 text-xs font-semibold">Results: {resultsCount}</span>
+          <span className="rounded-full bg-white/90 text-blue-900 px-3 py-1 text-xs font-semibold">{t("lessons")}: {lessonsCount}</span>
+          <span className="rounded-full bg-white/90 text-blue-900 px-3 py-1 text-xs font-semibold">{t("assignments")}: {assignmentsCount}</span>
+          <span className="rounded-full bg-white/90 text-blue-900 px-3 py-1 text-xs font-semibold">{t("exams")}: {examsCount}</span>
+          <span className="rounded-full bg-white/90 text-blue-900 px-3 py-1 text-xs font-semibold">{t("results")}: {resultsCount}</span>
         </div>
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-        <Link href="/dashboard/list/lessons" className="panel-card p-3 text-blue-900 font-semibold text-sm text-center shine-hover">My Lessons</Link>
-        <Link href="/dashboard/list/assignments" className="panel-card p-3 text-blue-900 font-semibold text-sm text-center shine-hover">Assignments</Link>
-        <Link href="/dashboard/list/exams" className="panel-card p-3 text-blue-900 font-semibold text-sm text-center shine-hover">Exams</Link>
-        <Link href="/dashboard/list/results" className="panel-card p-3 text-blue-900 font-semibold text-sm text-center shine-hover">Results</Link>
-        <Link href="/dashboard/list/messages" className="panel-card p-3 text-blue-900 font-semibold text-sm text-center shine-hover">Messages</Link>
+        <Link href="/dashboard/list/lessons" className="panel-card p-3 text-blue-900 font-semibold text-sm text-center shine-hover">{t("myLessons")}</Link>
+        <Link href="/dashboard/list/assignments" className="panel-card p-3 text-blue-900 font-semibold text-sm text-center shine-hover">{t("assignments")}</Link>
+        <Link href="/dashboard/list/exams" className="panel-card p-3 text-blue-900 font-semibold text-sm text-center shine-hover">{t("exams")}</Link>
+        <Link href="/dashboard/list/results" className="panel-card p-3 text-blue-900 font-semibold text-sm text-center shine-hover">{t("results")}</Link>
+        <Link href="/dashboard/list/messages" className="panel-card p-3 text-blue-900 font-semibold text-sm text-center shine-hover">{t("messages")}</Link>
       </div>
 
       {/* SCHEDULE - full page width so the whole week is easy to read at a glance.
           The camera preview lives here, next to the lessons it's actually for,
           rather than as a generic sidebar widget unrelated to going live. */}
       <div className="w-full panel-card p-4 rounded-md min-h-[640px] flex flex-col">
-        <h1 className="text-xl font-semibold text-blue-900 dark:text-blue-100">Schedule</h1>
+        <h1 className="text-xl font-semibold text-blue-900 dark:text-blue-100">{t("schedule")}</h1>
         <div className="flex-1 mt-2 flex flex-col lg:flex-row gap-4">
           <div className="w-full lg:w-2/3 flex-1 min-h-[420px] lg:min-h-0">
             <BigCalendarContainer type="teacherId" id={userId!} />
