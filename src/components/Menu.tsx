@@ -205,7 +205,7 @@ const getMenuItems = (t: Awaited<ReturnType<typeof getTranslations>>, role: stri
 const Menu = async () => {
   const { sessionClaims } = await auth();
   const role = getUserRole(sessionClaims);
-  const t = await getTranslations();
+  const t = await getTranslations("Menu");
   const menuItems = getMenuItems(t, role);
 
   return <MenuContent items={menuItems} role={role} />;
