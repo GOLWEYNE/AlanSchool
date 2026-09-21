@@ -20,15 +20,20 @@ import { SCHOOL_UTC_OFFSET_HOURS, toWallClock } from "./schoolTime";
 // each one to its proper routine period.
 //
 // Grade 11 (classes 11A-11C) was loaded with a different, non-routine timetable
-// (09:00-09:45, 09:55-10:40 ... up to 19:00). At the school's request those are
-// mapped in order onto the upper routine: on each day the 1st lesson becomes
-// Lesson 1, the 2nd becomes Lesson 2, and so on.
+// of 45-minute lessons (09:00-09:45, 09:55-10:40 ... up to 19:00). At the school's
+// request those are mapped in order onto the upper routine: on each day the 1st
+// lesson becomes Lesson 1, the 2nd becomes Lesson 2, and so on. Only lessons of
+// that 45-minute grid are mapped; a lesson of any other length (for example one
+// that was added by hand) is never guessed at and stays on the "not on the
+// routine" list for a human to correct.
 //
 // Safety: every lesson that is changed is first copied into "LessonTimeBackup"
 // (in the same transaction), a lesson is never shifted twice, and the whole
 // change can be undone from the same page.
 
 const LEGACY_SHIFT_MINUTES = 2 * 60;
+/** Length of every lesson in the grade 11 timetable that was loaded in bulk. */
+const GRADE_ELEVEN_LEGACY_MINUTES = 45;
 const SCHOOL_OFFSET_MINUTES = SCHOOL_UTC_OFFSET_HOURS * 60;
 
 /** Dates (UTC, inclusive) the bulk timetable was stored under. */
@@ -183,7 +188,7 @@ export async function getLessonTimeStatus(): Promise<LessonTimeStatus> {
   // Grade 11 lessons per class and day, for the in-order mapping.
   const gradeEleven = new Map<
     string,
-    { className: string; off: { id: number; startAt: Date; start: string }[]; others: number }
+    { className: string; off: { id: number; date: string; start: string }[]; others: number }
   >();
 
   for (const lesson of lessons) {
@@ -226,13 +231,16 @@ export async function getLessonTimeStatus(): Promise<LessonTimeStatus> {
     if (isGradeEleven(className)) {
       // One entry per class and calendar day (school clock), so lessons of
       // different weeks are never mixed up.
-      const key = `${lesson.classId}|${utcDate(new Date(lesson.startTime.getTime() + SCHOOL_OFFSET_MINUTES * 60000))}`;
+      const schoolDate = utcDate(new Date(lesson.startTime.getTime() + SCHOOL_OFFSET_MINUTES * 60000));
+      const key = `${lesson.classId}|${schoolDate}`;
+      const minutes = Math.round((lesson.endTime.getTime() - lesson.startTime.getTime()) / 60000);
       const entry = gradeEleven.get(key) ?? { className, off: [], others: 0 };
       if (onPeriod || alreadyShifted.has(lesson.id)) {
         entry.others += 1;
-      } else {
-        entry.off.push({ id: lesson.id, startAt: lesson.startTime, start });
+      } else if (minutes === GRADE_ELEVEN_LEGACY_MINUTES) {
+        entry.off.push({ id: lesson.id, date: schoolDate, start });
       }
+      // Any other lesson is left alone (and stays on the off-routine list).
       gradeEleven.set(key, entry);
     }
 
@@ -265,7 +273,7 @@ export async function getLessonTimeStatus(): Promise<LessonTimeStatus> {
     const sorted = [...day.off].sort((a, b) => a.start.localeCompare(b.start) || a.id - b.id);
     sorted.forEach((lesson, i) => {
       const period = upperPeriods[i];
-      const date = utcDate(lesson.startAt);
+      const date = lesson.date; // the school day: every routine period is after 05:00 school time, so its UTC date is the same
       inOrderCandidates.push({
         id: lesson.id,
         newStartAt: new Date(`${date}T${fromMinutes(toMinutes(period.start) - SCHOOL_OFFSET_MINUTES)}:00.000Z`),
