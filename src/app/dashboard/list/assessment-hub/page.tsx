@@ -1,16 +1,19 @@
 'use client';
 
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { BookOpen, FileText, Users, Plus } from 'lucide-react';
 
 const AssessmentHub = () => {
+  const t = useTranslations('Assessments');
+  const tm = useTranslations('Menu');
   return (
     <div className="flex-1 p-4 md:p-8 bg-gray-50 dark:bg-gray-900">
       <div className="mb-8">
         <h1 className="text-4xl font-bold text-gray-800 dark:text-white mb-2">
-          Assessment Hub
+          {tm('assessmentHub')}
         </h1>
-        <p className="text-lg text-gray-600 dark:text-gray-400">Manage all your quizzes, exams, and assignments in one place</p>
+        <p className="text-lg text-gray-600 dark:text-gray-400">{t('hub.subtitle')}</p>
       </div>
 
       {/* Quick Action Cards */}
@@ -23,13 +26,13 @@ const AssessmentHub = () => {
               <Plus className="text-blue-600" size={24} />
             </div>
             <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-2">
-              Quiz Management
+              {t('mgmt.quizTitle')}
             </h2>
             <p className="text-gray-600 dark:text-gray-400">
-              Create and manage quizzes for your classes. Set questions, marks, and due dates.
+              {t('hub.quizDesc')}
             </p>
             <div className="mt-4 text-sm text-blue-600 font-semibold">
-              Click to manage →
+              {t('hub.clickToManage')}
             </div>
           </div>
         </Link>
@@ -42,13 +45,13 @@ const AssessmentHub = () => {
               <Plus className="text-purple-600" size={24} />
             </div>
             <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-2">
-              Exam Management
+              {t('mgmt.examTitle')}
             </h2>
             <p className="text-gray-600 dark:text-gray-400">
-              Create exams with duration and total marks. Download as Word format for students.
+              {t('hub.examDesc')}
             </p>
             <div className="mt-4 text-sm text-purple-600 font-semibold">
-              Click to manage →
+              {t('hub.clickToManage')}
             </div>
           </div>
         </Link>
@@ -61,13 +64,13 @@ const AssessmentHub = () => {
               <Plus className="text-green-600" size={24} />
             </div>
             <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-2">
-              Assignment Management
+              {t('mgmt.assignmentTitle')}
             </h2>
             <p className="text-gray-600 dark:text-gray-400">
-              Create assignments with descriptions and due dates. Download in Word format.
+              {t('hub.assignmentDesc')}
             </p>
             <div className="mt-4 text-sm text-green-600 font-semibold">
-              Click to manage →
+              {t('hub.clickToManage')}
             </div>
           </div>
         </Link>
@@ -80,13 +83,13 @@ const AssessmentHub = () => {
               <Plus className="text-orange-600" size={24} />
             </div>
             <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-2">
-              Student Submissions
+              {t('hub.submissionsTitle')}
             </h2>
             <p className="text-gray-600 dark:text-gray-400">
-              Review submissions, grade work, add feedback, and manage student performance.
+              {t('hub.submissionsDesc')}
             </p>
             <div className="mt-4 text-sm text-orange-600 font-semibold">
-              Click to review →
+              {t('hub.clickToReview')}
             </div>
           </div>
         </Link>
@@ -95,31 +98,31 @@ const AssessmentHub = () => {
       {/* Features Overview */}
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
         <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-6">
-          Key Features
+          {t('hub.keyFeatures')}
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <h3 className="font-bold text-gray-800 dark:text-white mb-2">✓ Word Format Documents</h3>
+            <h3 className="font-bold text-gray-800 dark:text-white mb-2">{t('hub.wordTitle')}</h3>
             <p className="text-gray-600 dark:text-gray-400">
-              Download all quizzes, exams, and assignments in Word format for easy distribution
+              {t('hub.wordDesc')}
             </p>
           </div>
           <div>
-            <h3 className="font-bold text-gray-800 dark:text-white mb-2">✓ Deadline Tracking</h3>
+            <h3 className="font-bold text-gray-800 dark:text-white mb-2">{t('hub.deadlineTitle')}</h3>
             <p className="text-gray-600 dark:text-gray-400">
-              Set due dates and track student submissions in real-time
+              {t('hub.deadlineDesc')}
             </p>
           </div>
           <div>
-            <h3 className="font-bold text-gray-800 dark:text-white mb-2">✓ Grading System</h3>
+            <h3 className="font-bold text-gray-800 dark:text-white mb-2">{t('hub.gradingTitle')}</h3>
             <p className="text-gray-600 dark:text-gray-400">
-              Grade student work, add detailed feedback, and track marks
+              {t('hub.gradingDesc')}
             </p>
           </div>
           <div>
-            <h3 className="font-bold text-gray-800 dark:text-white mb-2">✓ Easy Management</h3>
+            <h3 className="font-bold text-gray-800 dark:text-white mb-2">{t('hub.easyTitle')}</h3>
             <p className="text-gray-600 dark:text-gray-400">
-              Create, edit, and delete assessments with one click
+              {t('hub.easyDesc')}
             </p>
           </div>
         </div>

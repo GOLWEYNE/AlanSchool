@@ -2,19 +2,21 @@
 
 import { Download, Printer, Share2 } from "lucide-react";
 import { toast } from "react-toastify";
+import { useTranslations } from "next-intl";
 
 const ReportCardActions = ({ pdfHref }: { pdfHref: string }) => {
+  const t = useTranslations("ReportCards.actions");
   const handleShare = async () => {
     const url = typeof window !== "undefined" ? window.location.href : "";
     try {
       if (navigator.clipboard && url) {
         await navigator.clipboard.writeText(url);
-        toast("Link copied — share it with the parent.");
+        toast(t("linkCopied"));
       } else {
-        toast("Copy the page link from your browser's address bar to share it.");
+        toast(t("copyManually"));
       }
     } catch {
-      toast("Copy the page link from your browser's address bar to share it.");
+      toast(t("copyManually"));
     }
   };
 
@@ -26,7 +28,7 @@ const ReportCardActions = ({ pdfHref }: { pdfHref: string }) => {
         className="toolbar-chip inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold"
       >
         <Share2 size={14} />
-        Share with Parent
+        {t("share")}
       </button>
       <button
         type="button"
@@ -34,7 +36,7 @@ const ReportCardActions = ({ pdfHref }: { pdfHref: string }) => {
         className="toolbar-chip inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold"
       >
         <Printer size={14} />
-        Print
+        {t("print")}
       </button>
       <a
         href={pdfHref}
@@ -43,7 +45,7 @@ const ReportCardActions = ({ pdfHref }: { pdfHref: string }) => {
         className="inline-flex items-center gap-1.5 rounded-full bg-blue-600 hover:bg-blue-700 text-white px-3.5 py-2 text-xs font-semibold shadow-md shadow-blue-600/25 transition-colors"
       >
         <Download size={14} />
-        Download Official PDF
+        {t("downloadPdf")}
       </a>
     </div>
   );

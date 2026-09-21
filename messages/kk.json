@@ -37,7 +37,14 @@
     "reportCards": "Үлгерім табельдері",
     "lostFound": "Жоғалған заттар",
     "featuredVideo": "Күн видеосы",
-    "behaviorLog": "Мінез-құлық журналы"
+    "behaviorLog": "Мінез-құлық журналы",
+    "assessmentsTitle": "Бағалау",
+    "academicsTitle": "Оқу үлгерімі",
+    "communicationsTitle": "Байланыс",
+    "resourcesTitle": "Ресурстар",
+    "assessmentHub": "Бағалау орталығы",
+    "quizzes": "Тесттер",
+    "submissions": "Тапсырылған жұмыстар"
   },
   "Navbar": {
     "searchPlaceholder": "Іздеу...",
@@ -558,7 +565,11 @@
         "wednesday": "Сәрсенбі",
         "thursday": "Бейсенбі",
         "friday": "Жұма"
-      }
+      },
+      "allClasses": "Барлық сыныптар",
+      "noLessonsForClass": "Бұл сыныпта әлі сабақ жоқ — барлық сабақтар көрсетілді.",
+      "descriptionOptional": "Сипаттама / нұсқаулар (міндетті емес)",
+      "totalMarksOptional": "Жалпы балл (міндетті емес)"
     },
     "announcement": {
       "createTitle": "Жаңа хабарландыру құру",
@@ -573,7 +584,8 @@
       "dueDate": "Тапсыру мерзімі",
       "lesson": "Сабақ",
       "toastCreated": "Тапсырма құрылды!",
-      "toastUpdated": "Тапсырма жаңартылды!"
+      "toastUpdated": "Тапсырма жаңартылды!",
+      "descriptionPlaceholder": "Тапсырма нені қамтиды, қалай бағаланады, оқушылар нені білуі керек…"
     },
     "class": {
       "createTitle": "Жаңа сынып құру",
@@ -599,7 +611,9 @@
       "endDate": "Аяқталу күні",
       "lesson": "Сабақ",
       "toastCreated": "Экзамен құрылды!",
-      "toastUpdated": "Экзамен жаңартылды!"
+      "toastUpdated": "Экзамен жаңартылды!",
+      "descriptionPlaceholder": "Экзамен нені қамтиды, қалай бағаланады, оқушылар нені білуі керек…",
+      "durationOptional": "Ұзақтығы, минут (міндетті емес)"
     },
     "lesson": {
       "createTitle": "Жаңа сабақ құру",
@@ -816,6 +830,11 @@
       "messages": "Хабарлар",
       "myLessons": "Менің сабақтарым",
       "schedule": "Кесте"
+    },
+    "leaderboard": {
+      "highlights": "Соңғы жетістіктер",
+      "noResults": "Нәтижелер әлі жоқ.",
+      "pts": "{score} балл"
     }
   },
   "Roles": {
@@ -826,7 +845,22 @@
   },
   "Common": {
     "accessRestricted": "Қолжетімділік шектеулі",
-    "somethingWrongRetry": "Бірдеңе дұрыс болмады. Қайталап көріңіз."
+    "somethingWrongRetry": "Бірдеңе дұрыс болмады. Қайталап көріңіз.",
+    "days": {
+      "monday": "Дүйсенбі",
+      "tuesday": "Сейсенбі",
+      "wednesday": "Сәрсенбі",
+      "thursday": "Бейсенбі",
+      "friday": "Жұма",
+      "saturday": "Сенбі",
+      "sunday": "Жексенбі"
+    },
+    "loading": "Жүктелуде…",
+    "terms": {
+      "TERM_1": "1-триместр",
+      "TERM_2": "2-триместр",
+      "TERM_3": "3-триместр"
+    }
   },
   "Tickets": {
     "page": {
@@ -1034,5 +1068,323 @@
     "username_must_be_at_least_3_characters_long": "Пайдаланушы аты кемінде 3 таңбадан тұруы керек!",
     "username_must_be_at_most_20_characters_long": "Пайдаланушы аты 20 таңбадан аспауы керек!",
     "video_url_is_required": "Бейне сілтемесін көрсетіңіз!"
+  },
+  "Profiles": {
+    "home": {
+      "welcome": "Қош келдіңіз, {name}!",
+      "mySchedule": "Менің кестем",
+      "noLessons": "Кестеде сабақ жоқ",
+      "todaysLessons": "Бүгінгі сабақтар",
+      "totalLessons": "Барлық сабақтар",
+      "videoStudio": "Бейне жазу студиясы",
+      "teacherLine": "Мұғалім: {name}",
+      "classLine": "Сынып: {name}",
+      "gradeLevel": "{level}-сынып",
+      "examBadge": "📝 Экзамен",
+      "assignmentBadge": "📋 Тапсырма",
+      "assessments": "Бағалау жұмыстары",
+      "reportOrFindItems": "Жоғалған заттар туралы хабарлаңыз немесе табыңыз",
+      "watchFeatured": "Мектептің күн бейнелерін көріңіз"
+    },
+    "studentHome": {
+      "subtitle": "Оқушы панелі — {level}-сынып",
+      "submissions": "Тапсырылған жұмыстар",
+      "score": "Балл",
+      "myExams": "Менің экзамендерім мен тапсырмаларым",
+      "noExams": "Экзамендер мен тапсырмалар әлі жоқ",
+      "guidelinesTitle": "Жұмыс тапсыру нұсқаулығы",
+      "formatLabel": "Формат:",
+      "formatText": "Экзамендер мен тапсырмалар Word (.docx) форматында беріледі",
+      "deadlinesLabel": "Мерзімдер:",
+      "deadlinesText": "Әр жұмыстың тапсыру мерзімі мен ұзақтығын тексеріңіз",
+      "submissionLabel": "Тапсыру:",
+      "submissionText": "Жұмысты орындап, тапсырмалар порталы арқылы тапсырыңыз",
+      "statusLabel": "Күйі:",
+      "statusText": "Тапсыру күйін бақылап, мұғалімдерден пікір алыңыз",
+      "tipsLabel": "Кеңестер:",
+      "tipsText": "Тапсырмаларды ерте бастаңыз, нұсқаулықты мұқият оқыңыз және кешіккені үшін айыппұл алмау үшін мерзімінен бұрын тапсырыңыз."
+    },
+    "teacherHome": {
+      "subtitle": "Мұғалім панелі — сыныптарыңыз бен бағалауды басқарыңыз",
+      "classesAssigned": "Бекітілген сыныптар",
+      "subjectsTeaching": "Оқытатын пәндер",
+      "announcementsDesc": "Сынып хабарландыруларын қарап, басқарыңыз",
+      "reportCardsDesc": "Оқушылардың үлгерім табельдерін жасап, басқарыңыз",
+      "lostFoundDesc": "Жоғалған және табылған заттарды басқарыңыз",
+      "quizManagement": "Тесттерді басқару",
+      "examManagement": "Экзамендерді басқару",
+      "assignmentManagement": "Тапсырмаларды басқару",
+      "submissionsGrading": "Оқушылардың жұмыстары және бағалау"
+    },
+    "parentHome": {
+      "subtitle": "Ата-ана панелі — балаларыңыздың үлгерімін бақылаңыз",
+      "yourChildren": "Балаларыңыз",
+      "lessonsCount": "Сабақ: {count}",
+      "assessmentsCount": "Жұмыс: {count}",
+      "avgPerformance": "Орташа нәтиже",
+      "scheduleOf": "{name} кестесі",
+      "room": "Кабинет: {room}",
+      "tba": "нақтыланады",
+      "academicProgress": "Оқу үлгерімі",
+      "noResults": "Нәтижелер әлі жоқ",
+      "excellent": "🌟 Тамаша",
+      "good": "✅ Жақсы",
+      "needsImprovement": "📈 Жақсарту керек",
+      "stayConnected": "Байланыста болыңыз",
+      "stayConnectedDesc": "Баланыңыздың үлгерімі туралы мұғалімдермен тікелей сөйлесіп, сұрақ қойып, мектеп өмірінен хабардар болыңыз.",
+      "messageTeachers": "Мұғалімдерге жазу",
+      "viewEvents": "Іс-шараларды көру"
+    },
+    "detail": {
+      "shortcuts": "Жылдам сілтемелер",
+      "edit": "Өзгерту",
+      "loading": "Жүктелуде…",
+      "grade": "Сынып",
+      "gradeOrdinal": "{n}-сынып",
+      "attendance": "Қатысу",
+      "lessons": "Сабақтар",
+      "class": "Сынып",
+      "classes": "Сыныптар",
+      "branches": "Бағыттар",
+      "messageTeacher": "Жазу: {name}",
+      "studentLessons": "Оқушының сабақтары",
+      "studentTeachers": "Оқушының мұғалімдері",
+      "studentExams": "Оқушының экзамендері",
+      "studentAssignments": "Оқушының тапсырмалары",
+      "studentResults": "Оқушының нәтижелері",
+      "studentSchedule": "Оқушының кестесі",
+      "teacherClasses": "Мұғалімнің сыныптары",
+      "teacherStudents": "Мұғалімнің оқушылары",
+      "teacherLessons": "Мұғалімнің сабақтары",
+      "teacherExams": "Мұғалімнің экзамендері",
+      "teacherAssignments": "Мұғалімнің тапсырмалары",
+      "teacherSchedule": "Мұғалімнің кестесі",
+      "noEmail": "Эл. пошта жоқ",
+      "childrenExams": "Балалардың экзамендері",
+      "childrenResults": "Балалардың нәтижелері",
+      "childrenEvents": "Балалардың іс-шаралары",
+      "childrenAttendance": "Балалардың қатысуы",
+      "parentScheduleView": "Ата-анаға арналған кесте"
+    },
+    "account": {
+      "profileTitle": "Менің профилім",
+      "firstName": "Аты",
+      "lastName": "Тегі",
+      "username": "Пайдаланушы аты",
+      "primaryEmail": "Негізгі эл. пошта",
+      "role": "Рөлі",
+      "settingsSubtitle": "Аккаунт параметрлері және қауіпсіздік әрекеттері.",
+      "logoutDesc": "Ағымдағы сеансты қауіпсіз аяқтаңыз."
+    }
+  },
+  "Assessments": {
+    "hub": {
+      "subtitle": "Барлық тесттерді, экзамендер мен тапсырмаларды бір жерден басқарыңыз",
+      "quizDesc": "Сыныптарыңызға арналған тесттерді жасап, басқарыңыз. Сұрақтарды, балдарды және тапсыру мерзімдерін белгілеңіз.",
+      "examDesc": "Ұзақтығы мен жалпы балы көрсетілген экзамендер жасаңыз. Оқушыларға арналған Word форматында жүктеп алыңыз.",
+      "assignmentDesc": "Сипаттамасы мен тапсыру мерзімі бар тапсырмалар жасаңыз. Word форматында жүктеп алыңыз.",
+      "submissionsTitle": "Оқушылардың жұмыстары",
+      "submissionsDesc": "Жұмыстарды қарап, баға қойыңыз, пікір қалдырыңыз және оқушылардың үлгерімін бақылаңыз.",
+      "clickToManage": "Басқару үшін басыңыз →",
+      "clickToReview": "Қарау үшін басыңыз →",
+      "keyFeatures": "Негізгі мүмкіндіктер",
+      "wordTitle": "✓ Word форматындағы құжаттар",
+      "wordDesc": "Барлық тесттерді, экзамендер мен тапсырмаларды таратуға ыңғайлы Word форматында жүктеп алыңыз",
+      "deadlineTitle": "✓ Мерзімдерді бақылау",
+      "deadlineDesc": "Тапсыру мерзімдерін белгілеп, жұмыстардың түсуін нақты уақытта бақылаңыз",
+      "gradingTitle": "✓ Бағалау жүйесі",
+      "gradingDesc": "Оқушылардың жұмыстарын бағалап, толық пікір қалдырып, балдарды қадағалаңыз",
+      "easyTitle": "✓ Ыңғайлы басқару",
+      "easyDesc": "Жұмыстарды бір басумен жасаңыз, өзгертіңіз және жойыңыз"
+    },
+    "pages": {
+      "assignmentManagementDesc": "Жеке сыныптарға немесе оқушыларға арналған тапсырмаларды жасаңыз, өзгертіңіз және басқарыңыз",
+      "examManagementDesc": "Жеке сыныптарға немесе оқушыларға арналған экзамендерді жасаңыз, өзгертіңіз және басқарыңыз",
+      "quizzesDesc": "Сыныптарыңызға арналған тесттерді жасап, басқарыңыз. Тест — автоматты түрде тексерілетін сұрақтары бар тапсырма: оларды қосу үшін төмендегі формадағы тест құрастырғышын қосыңыз.",
+      "studentWorkTitle": "Оқушылардың жұмыстары және бағалау",
+      "studentWorkDesc": "Оқушылардың жұмыстарын қарап, баға қойып, пікір қалдырыңыз. Қажет болса, жұмыстарды жойыңыз."
+    },
+    "mgmt": {
+      "quizTitle": "Тесттерді басқару",
+      "examTitle": "Экзамендерді басқару",
+      "assignmentTitle": "Тапсырмаларды басқару",
+      "noQuizzes": "Тесттер әлі жоқ — тапсырма жасап, сұрақтар қосу үшін тест құрастырғышын қосыңыз.",
+      "noExams": "Экзамендер әлі жасалмаған",
+      "noAssignments": "Тапсырмалар әлі жасалмаған",
+      "questions": "{count} сұрақ",
+      "marks": "{count} балл",
+      "due": "Мерзімі: {date}",
+      "download": "Жүктеп алу",
+      "minutesShort": "{count} мин",
+      "autoGraded": "автоматты тексерілетін сұрақ: {count}",
+      "dateAt": "{date}, {time}",
+      "quizBadge": "Тест"
+    },
+    "doc": {
+      "classLine": "Сынып: {name}",
+      "totalQuestions": "Сұрақтар саны: {count}",
+      "totalMarks": "Жалпы балл: {count}",
+      "dueDate": "Тапсыру мерзімі: {date}",
+      "instructions": "Нұсқаулар:",
+      "answerAll": "Барлық сұрақтарға жауап беріңіз",
+      "showWorking": "Шешу жолын көрсетіңіз",
+      "manageTime": "Уақытыңызды дұрыс бөліңіз",
+      "submitBeforeDue": "Жұмысты мерзімінен бұрын тапсырыңыз",
+      "examDate": "Күні: {date}",
+      "examTime": "Уақыты: {time}",
+      "duration": "Ұзақтығы: {count} минут",
+      "description": "Сипаттамасы:",
+      "noDescription": "Сипаттама берілмеген",
+      "readCarefully": "Барлық сұрақтарды мұқият оқыңыз",
+      "timeLimit": "Экзаменді орындауға сізде {count} минут бар",
+      "showCalcWorking": "Барлық есептеулерде шешу жолын көрсетіңіз",
+      "submitBeforeTime": "Орындалған жұмысты уақыт біткенше тапсырыңыз",
+      "assignmentWord": "Тапсырма",
+      "assignmentLine": "Тапсырма: {title}",
+      "submissionInstructions": "Тапсыру нұсқаулары:",
+      "subCompleteAll": "Барлық тапсырманы толық орындаңыз",
+      "subViaPortal": "Мерзімінен бұрын тапсырмалар порталы арқылы тапсырыңыз",
+      "subLateMarked": "Кешіккен жұмыстар кеш деп белгіленеді",
+      "subFollowFormat": "Мұғалім көрсеткен форматты сақтаңыз",
+      "subIncludeName": "Жұмыста аты-жөніңіз бен сыныбыңызды көрсетіңіз",
+      "gradingCriteria": "Бағалау критерийлері:",
+      "critCompleteness": "Толықтығы (30%)",
+      "critAccuracy": "Дәлдігі (40%)",
+      "critPresentation": "Рәсімделуі (30%)"
+    },
+    "work": {
+      "title": "Оқушылардың жұмыстары",
+      "noSubmissions": "Жұмыстар әлі жоқ",
+      "status": {
+        "PENDING": "Күтуде",
+        "SUBMITTED": "Тапсырылды",
+        "LATE": "Кешіккен",
+        "GRADED": "Бағаланды",
+        "MISSING": "Тапсырылмады"
+      },
+      "submittedOn": "Тапсырылды: {date}",
+      "marks": "Балл ({marks}/25)",
+      "feedback": "Пікір",
+      "feedbackPlaceholder": "Оқушыға пікір жазыңыз…",
+      "saveFeedback": "Пікірді сақтау",
+      "delete": "Жою",
+      "gradeSaved": "Баға сақталды.",
+      "gradeSaveFailed": "Бағаны сақтау мүмкін болмады.",
+      "colStudent": "Оқушы",
+      "colStatus": "Күйі",
+      "colSubmitted": "Тапсырылды",
+      "colFile": "Файл",
+      "colGrade": "Баға",
+      "colGradeRubric": "Баға (рубрика бойынша)",
+      "notSubmitted": "Тапсырылмаған",
+      "autoGrade": "{grade} (авто)",
+      "feedbackOptional": "Пікір (міндетті емес)",
+      "total": "Барлығы: {total}",
+      "save": "Сақтау",
+      "editGrade": "{grade} — өзгерту",
+      "editGradeRubric": "{grade} (рубрика) — өзгерту",
+      "gradeWithRubric": "Рубрика бойынша бағалау",
+      "download": "Жүктеп алу",
+      "noStudents": "Әзірге бірде-бір оқушы тағайындалмаған.",
+      "submitted": "Тапсырылды!",
+      "submittedScored": "Тапсырылды! Нәтижеңіз: {score}/{total}.",
+      "youSubmitted": "Сіз бұл жұмысты тапсырдыңыз.",
+      "youSubmittedOn": "Сіз бұл жұмысты {date} тапсырдыңыз.",
+      "gradeLabel": "Баға:",
+      "canResubmit": "Мерзімі біткенше жұмысты қайта тапсырып, ауыстыруға болады.",
+      "gradedOn": "Бағалау критерийлері:",
+      "pts": "{count} балл",
+      "deadlinePassed": "Тапсыру мерзімі аяқталды — жұмыс қабылдау жабық.",
+      "points": "({count} балл)",
+      "uploadCompleted": "Орындалған жұмысты жүктеңіз (PDF немесе Word)",
+      "fileReady": "Файл дайын",
+      "chooseCompleted": "Орындалған файлды таңдаңыз",
+      "fileHint": "PDF, DOC немесе DOCX — 20 МБ дейін",
+      "resubmit": "Қайта тапсыру",
+      "submit": "Тапсыру",
+      "paperLabel": "Экзамен / тапсырма парағы (PDF немесе Word — міндетті емес)",
+      "uploadPaper": "Экзамен/тапсырма файлын жүктеу",
+      "viewCurrent": "Ағымдағы файлды ашу",
+      "assignTo": "Кімге тағайындау",
+      "targetHint": "Бүкіл сыныпқа жіберу үшін барлық құсбелгілерді бос қалдырыңыз. Тек нақты оқушыларға жіберу үшін оларды белгілеңіз.",
+      "pickLesson": "Оқушыларды көру үшін жоғарыдан сабақты таңдаңыз.",
+      "examLabel": "{subject} — экзамен",
+      "assignmentLabel": "{subject} — тапсырма",
+      "openUntil": "{date} дейін ашық",
+      "dueOn": "Мерзімі: {date}",
+      "closed": "Жабық",
+      "totalMarks": "Жалпы балл: {count}",
+      "durationMin": "Ұзақтығы: {count} мин",
+      "starts": "Басталуы: {date}",
+      "assigned": "Берілген күні: {date}",
+      "downloadExamPaper": "Экзамен парағын жүктеп алу",
+      "downloadAssignmentPaper": "Тапсырма парағын жүктеп алу",
+      "yourSubmission": "Сіздің жұмысыңыз",
+      "submissionsCount": "Тапсырылған жұмыстар ({done}/{total})",
+      "viewSubmit": "Ашу / тапсыру",
+      "view": "Ашу"
+    }
+  },
+  "ReportCards": {
+    "metrics": {
+      "averageScore": "Орташа балл",
+      "noResultsYet": "Экзамендер мен тапсырмалардың нәтижелері әлі жоқ.",
+      "attendanceRate": "Қатысу көрсеткіші",
+      "noAttendance": "Қатысу деректері әлі жоқ.",
+      "behaviorStatus": "Мінез-құлық күйі",
+      "needsAttention": "Назар аудару керек",
+      "monitor": "Бақылауда",
+      "excellent": "Тамаша",
+      "allClear": "Барлығы жақсы",
+      "noLogs": "Бұл кезеңде жазбалар жоқ",
+      "recentLogs": "Соңғы жазбалар: {count}",
+      "presentAbsent": "Қатысты: {present} · Қатыспады: {absent}",
+      "late": "Кешікті: {count}"
+    },
+    "behavior": {
+      "title": "Мінез-құлық және тәртіп",
+      "POSITIVE": "Оң",
+      "CONCERN": "Ескерту",
+      "INCIDENT": "Оқиға",
+      "noInfractions": "Бәрі жақсы! Бұл кезеңде тәртіп бұзушылықтар тіркелмеген.",
+      "keepUp": "Осылай жалғастырыңыз — мұғалімдердің оң белгілері мен ескертулері осы жерде көрінеді."
+    },
+    "results": {
+      "title": "Нәтижелердің егжей-тегжейі",
+      "count": "Жұмыстар: {count}",
+      "noResultsTitle": "Экзамендер мен тапсырмалардың нәтижелері әлі жоқ",
+      "noResultsDesc": "Оқушының экзамендері мен тапсырмалары бағаланған бойда нәтижелер осы жерде автоматты түрде пайда болады.",
+      "typeExam": "Экзамен",
+      "typeAssignment": "Тапсырма"
+    },
+    "milestones": {
+      "exceeding": "Нормадан жоғары",
+      "meeting": "Норма деңгейінде",
+      "inProgress": "Даму үстінде"
+    },
+    "actions": {
+      "share": "Ата-анамен бөлісу",
+      "print": "Басып шығару",
+      "downloadPdf": "Ресми PDF жүктеп алу",
+      "linkCopied": "Сілтеме көшірілді — оны ата-анаға жіберіңіз.",
+      "copyManually": "Бөлісу үшін бет сілтемесін браузердің мекенжай жолынан көшіріңіз."
+    },
+    "view": {
+      "footerLeft": "Alan International School · Ресми құжат",
+      "footerRight": "Бұл табель электронды түрде жасалған және қолтаңбасыз жарамды."
+    },
+    "header": {
+      "officialTitle": "Оқушының ресми үлгерім табелі",
+      "gradeLevel": "{level}-сынып"
+    },
+    "badge": {
+      "officialVerified": "Ресми құжат · Тексерілді {time}"
+    },
+    "panel": {
+      "noneYet": "Табельдер әлі жасалмаған.",
+      "view": "Ашу",
+      "downloadPdf": "PDF жүктеп алу"
+    },
+    "noPermission": "Бұл оқушының табелін көруге рұқсатыңыз жоқ."
   }
 }

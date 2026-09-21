@@ -1,5 +1,6 @@
 import { TrendingUp, CircleCheck, CircleDot } from "lucide-react";
-import { MILESTONE_LABEL, MilestoneLevel } from "./types";
+import { useTranslations } from "next-intl";
+import { MilestoneLevel } from "./types";
 
 const STYLES: Record<MilestoneLevel, string> = {
   exceeding:
@@ -17,13 +18,14 @@ const ICONS: Record<MilestoneLevel, typeof TrendingUp> = {
 };
 
 const MilestoneBadge = ({ level }: { level: MilestoneLevel }) => {
+  const t = useTranslations("ReportCards.milestones");
   const Icon = ICONS[level];
   return (
     <span
       className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-semibold ring-1 ring-inset ${STYLES[level]}`}
     >
       <Icon size={12} strokeWidth={2.5} />
-      {MILESTONE_LABEL[level]}
+      {t(level)}
     </span>
   );
 };

@@ -3,13 +3,13 @@ import PageHero from "@/components/PageHero";
 import BulkGenerateReportCardsPanel from "@/components/BulkGenerateReportCardsPanel";
 import ReportCardGenerateButton from "@/components/ReportCardGenerateButton";
 import prisma from "@/lib/prisma";
-import { TERM_LABELS } from "@/lib/reportCardPdf";
 import { getTranslations } from "next-intl/server";
 import Image from "next/image";
 import Link from "next/link";
 
 const ReportCardsListPage = async () => {
   const t = await getTranslations("List.reportCards");
+  const tc = await getTranslations("Common");
 
   const [reportCards, classes, students] = await prisma.$transaction([
     prisma.reportCard.findMany({
@@ -51,7 +51,7 @@ const ReportCardsListPage = async () => {
         </div>
       </td>
       <td className="hidden md:table-cell">{item.student.class.name}</td>
-      <td className="hidden md:table-cell">{TERM_LABELS[item.term] ?? item.term}</td>
+      <td className="hidden md:table-cell">{tc.has(`terms.${item.term}`) ? tc(`terms.${item.term}`) : item.term}</td>
       <td className="hidden md:table-cell">{item.schoolYear}</td>
       <td className="hidden lg:table-cell">
         {item.gpa !== null ? Math.round(item.gpa * 100) / 100 : "—"}

@@ -1,5 +1,7 @@
 "use client";
 
+import { useTranslations } from "next-intl";
+
 type LessonLite = { id: number; name: string; classId: number };
 type StudentLite = { id: string; name: string; surname: string; classId: number };
 
@@ -20,20 +22,20 @@ const WorkTargetPicker = ({
   register: any;
   defaultTargetIds?: string[];
 }) => {
+  const t = useTranslations("Assessments.work");
   const lesson = lessons.find((l) => String(l.id) === String(selectedLessonId));
   const classStudents = lesson ? students.filter((s) => s.classId === lesson.classId) : [];
 
   return (
     <div className="flex flex-col gap-2 w-full">
-      <label className="text-xs text-gray-500 dark:text-slate-400">Assign to</label>
+      <label className="text-xs text-gray-500 dark:text-slate-400">{t("assignTo")}</label>
       <p className="text-xs text-gray-400 dark:text-slate-500">
-        Leave every box unchecked to send this to the whole class. Check specific students to
-        send it only to them.
+        {t("targetHint")}
       </p>
       <div className="flex flex-wrap gap-2 max-h-40 overflow-y-auto rounded-lg border border-gray-200 dark:border-slate-700 p-2">
         {classStudents.length === 0 ? (
           <span className="text-xs text-gray-400 dark:text-slate-500 p-1">
-            Pick a lesson above to see its students.
+            {t("pickLesson")}
           </span>
         ) : (
           classStudents.map((s) => (

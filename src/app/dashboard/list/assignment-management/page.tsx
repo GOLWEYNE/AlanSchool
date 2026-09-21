@@ -1,5 +1,6 @@
 import { auth } from "@clerk/nextjs/server";
 import { notFound } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import prisma from "@/lib/prisma";
 import { getUserRole } from "@/lib/auth";
 import FormContainer from "@/components/FormContainer";
@@ -38,14 +39,16 @@ const AssignmentManagementPage = async () => {
     ),
   }));
 
+  const t = await getTranslations("Assessments");
+
   return (
     <div className="flex-1 p-4 md:p-8">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-800 dark:text-white mb-2">
-          Assignment Management
+          {t("mgmt.assignmentTitle")}
         </h1>
         <p className="text-gray-600 dark:text-gray-400">
-          Create, edit, and manage assignments for specific classes or students
+          {t("pages.assignmentManagementDesc")}
         </p>
       </div>
       <TeacherAssignmentManagement

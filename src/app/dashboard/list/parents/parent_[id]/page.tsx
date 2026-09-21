@@ -4,6 +4,7 @@ import prisma from "@/lib/prisma";
 import { getUserRole } from "@/lib/auth";
 import MyCamera from "@/components/MyCamera";
 import Link from "next/link";
+import { getFormatter, getTranslations } from "next-intl/server";
 import { Calendar, Award, FileText, Video, User, BookOpen, MessageSquare } from "lucide-react";
 
 const ParentDashboard = async ({ params }: { params: { id: string } }) => {
@@ -67,14 +68,20 @@ const ParentDashboard = async ({ params }: { params: { id: string } }) => {
 
   const student = parent.students[0]; // Primary student view
 
+  const t = await getTranslations("Profiles.home");
+  const tp = await getTranslations("Profiles.parentHome");
+  const tm = await getTranslations("Menu");
+  const tc = await getTranslations("Common");
+  const format = await getFormatter();
+
   return (
     <div className="flex-1 p-4 md:p-8 bg-gray-50 dark:bg-gray-900">
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-4xl font-bold text-gray-800 dark:text-white mb-2">
-          Welcome, {parent.name}!
+          {t("welcome", { name: parent.name })}
         </h1>
-        <p className="text-lg text-gray-600 dark:text-gray-400">Parent Dashboard - Monitor Your Children&apos;s Progress</p>
+        <p className="text-lg text-gray-600 dark:text-gray-400">{tp("subtitle")}</p>
       </div>
 
       {/* Students Overview */}
@@ -82,7 +89,7 @@ const ParentDashboard = async ({ params }: { params: { id: string } }) => {
         <div className="mb-8">
           <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
             <User className="text-blue-600" size={28} />
-            Your Children
+            {tp("yourChildren")}
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {parent.students.map((std) => (
@@ -94,14 +101,14 @@ const ParentDashboard = async ({ params }: { params: { id: string } }) => {
                   {std.name} {std.surname}
                 </p>
                 <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
-                  Grade {std.grade.level}
+                  {t("gradeLevel", { level: std.grade.level })}
                 </p>
                 <div className="flex gap-2">
                   <span className="text-xs bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 px-2 py-1 rounded">
-                    📚 {std.class?.lessons?.length || 0} Lessons
+                    📚 {tp("lessonsCount", { count: std.class?.lessons?.length || 0 })}
                   </span>
                   <span className="text-xs bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 px-2 py-1 rounded">
-                    ✅ {std.results?.length || 0} Assessments
+                    ✅ {tp("assessmentsCount", { count: std.results?.length || 0 })}
                   </span>
                 </div>
               </div>
@@ -115,21 +122,21 @@ const ParentDashboard = async ({ params }: { params: { id: string } }) => {
           {/* Quick Stats */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
             <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
-              <p className="text-sm text-gray-600 dark:text-gray-400">Total Lessons</p>
+              <p className="text-sm text-gray-600 dark:text-gray-400">{t("totalLessons")}</p>
               <p className="text-3xl font-bold text-blue-600">{student.class?.lessons?.length || 0}</p>
             </div>
             <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
-              <p className="text-sm text-gray-600 dark:text-gray-400">Assessments</p>
+              <p className="text-sm text-gray-600 dark:text-gray-400">{t("assessments")}</p>
               <p className="text-3xl font-bold text-green-600">{student.results?.length || 0}</p>
             </div>
             <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
-              <p className="text-sm text-gray-600 dark:text-gray-400">Teachers</p>
+              <p className="text-sm text-gray-600 dark:text-gray-400">{tm("teachers")}</p>
               <p className="text-3xl font-bold text-purple-600">
                 {student.class?.lessons?.map(l => l.teacher.id).filter((v, i, a) => a.indexOf(v) === i).length || 0}
               </p>
             </div>
             <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
-              <p className="text-sm text-gray-600 dark:text-gray-400">Avg Performance</p>
+              <p className="text-sm text-gray-600 dark:text-gray-400">{tp("avgPerformance")}</p>
               <p className="text-3xl font-bold text-orange-600">
                 {student.results?.length > 0
                   ? Math.round((student.results.reduce((a, b) => a + (b.score || 0), 0) / student.results.length))
@@ -143,7 +150,7 @@ const ParentDashboard = async ({ params }: { params: { id: string } }) => {
             <div className="flex items-center gap-2 mb-4">
               <Calendar className="text-blue-600" size={28} />
               <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
-                {student.name}&apos;s Schedule
+                {tp("scheduleOf", { name: student.name })}
               </h2>
             </div>
             {student.class?.lessons && student.class.lessons.length > 0 ? (
@@ -159,20 +166,20 @@ const ParentDashboard = async ({ params }: { params: { id: string } }) => {
                           {lesson.subject.name}
                         </p>
                         <p className="text-sm text-gray-600 dark:text-gray-400">
-                          Teacher: {lesson.teacher.name} {lesson.teacher.surname}
+                          {t("teacherLine", { name: `${lesson.teacher.name} ${lesson.teacher.surname}` })}
                         </p>
-                        <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">Room: {lesson.room || "TBA"}</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">{tp("room", { room: lesson.room || tp("tba") })}</p>
                       </div>
                       <div className="text-right text-sm text-gray-600 dark:text-gray-400">
-                        <p className="font-semibold">{new Date(lesson.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
-                        <p>{lesson.day}</p>
+                        <p className="font-semibold">{format.dateTime(new Date(lesson.startTime), { hour: "2-digit", minute: "2-digit" })}</p>
+                        <p>{tc.has(`days.${String(lesson.day).toLowerCase()}`) ? tc(`days.${String(lesson.day).toLowerCase()}`) : lesson.day}</p>
                       </div>
                     </div>
                   </div>
                 ))}
               </div>
             ) : (
-              <p className="text-gray-600 dark:text-gray-400">No lessons scheduled</p>
+              <p className="text-gray-600 dark:text-gray-400">{t("noLessons")}</p>
             )}
           </div>
 
@@ -181,7 +188,7 @@ const ParentDashboard = async ({ params }: { params: { id: string } }) => {
             <div className="flex items-center gap-2 mb-4">
               <Video className="text-blue-600" size={28} />
               <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
-                Video Recording Studio
+                {t("videoStudio")}
               </h2>
             </div>
             <MyCamera />
@@ -194,10 +201,10 @@ const ParentDashboard = async ({ params }: { params: { id: string } }) => {
               <div className="bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-900/40 rounded-lg shadow-md p-6 cursor-pointer hover:shadow-lg transition h-full">
                 <FileText className="text-orange-600 mb-3" size={32} />
                 <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-2">
-                  Lost & Found
+                  {tm("lostFound")}
                 </h3>
                 <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Report or find lost items
+                  {t("reportOrFindItems")}
                 </p>
               </div>
             </Link>
@@ -207,10 +214,10 @@ const ParentDashboard = async ({ params }: { params: { id: string } }) => {
               <div className="bg-gradient-to-br from-red-50 to-red-100 dark:from-red-900/20 dark:to-red-900/40 rounded-lg shadow-md p-6 cursor-pointer hover:shadow-lg transition h-full">
                 <Video className="text-red-600 mb-3" size={32} />
                 <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-2">
-                  Featured Video
+                  {tm("featuredVideo")}
                 </h3>
                 <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Watch featured school videos
+                  {t("watchFeatured")}
                 </p>
               </div>
             </Link>
@@ -221,7 +228,7 @@ const ParentDashboard = async ({ params }: { params: { id: string } }) => {
             <div className="flex items-center gap-2 mb-4">
               <BookOpen className="text-green-600" size={28} />
               <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
-                Academic Progress
+                {tp("academicProgress")}
               </h2>
             </div>
             {student.results && student.results.length > 0 ? (
@@ -239,7 +246,7 @@ const ParentDashboard = async ({ params }: { params: { id: string } }) => {
                             {assessment?.title}
                           </p>
                           <p className="text-sm text-gray-600 dark:text-gray-400">
-                            {result.exam ? "📝 Exam" : "📋 Assignment"} • {assessment?.lesson?.subject?.name}
+                            {result.exam ? t("examBadge") : t("assignmentBadge")} • {assessment?.lesson?.subject?.name}
                           </p>
                         </div>
                         <div className="text-right">
@@ -247,7 +254,7 @@ const ParentDashboard = async ({ params }: { params: { id: string } }) => {
                             {result.score}%
                           </p>
                           <p className="text-sm text-gray-600 dark:text-gray-400">
-                            {result.score >= 80 ? "🌟 Excellent" : result.score >= 60 ? "✅ Good" : "📈 Needs Improvement"}
+                            {result.score >= 80 ? tp("excellent") : result.score >= 60 ? tp("good") : tp("needsImprovement")}
                           </p>
                         </div>
                       </div>
@@ -257,7 +264,7 @@ const ParentDashboard = async ({ params }: { params: { id: string } }) => {
               </div>
             ) : (
               <p className="text-gray-600 dark:text-gray-400">
-                No results available yet
+                {tp("noResults")}
               </p>
             )}
           </div>
@@ -266,20 +273,20 @@ const ParentDashboard = async ({ params }: { params: { id: string } }) => {
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
             <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
               <MessageSquare className="text-purple-600" size={28} />
-              Stay Connected
+              {tp("stayConnected")}
             </h2>
             <p className="text-gray-600 dark:text-gray-400 mb-6">
-              Communicate directly with teachers about your child&apos;s progress, ask questions, and stay informed about school activities.
+              {tp("stayConnectedDesc")}
             </p>
             <div className="flex gap-4">
               <Link href="/dashboard/list/messages">
                 <button className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-semibold">
-                  Message Teachers
+                  {tp("messageTeachers")}
                 </button>
               </Link>
               <Link href="/dashboard/list/events">
                 <button className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-semibold">
-                  View Events
+                  {tp("viewEvents")}
                 </button>
               </Link>
             </div>

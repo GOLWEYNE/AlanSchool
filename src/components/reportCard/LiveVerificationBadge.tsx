@@ -2,11 +2,14 @@
 
 import { useEffect, useState } from "react";
 import { BadgeCheck } from "lucide-react";
+import { useFormatter, useTranslations } from "next-intl";
 
 // Small client island: everything else on this page is server-rendered,
 // but the "verified live" stamp ticks in real time to reinforce that this
 // is an authentic, freshly-viewed official document (not a stale export).
 const LiveVerificationBadge = ({ generatedAt }: { generatedAt: string }) => {
+  const t = useTranslations("ReportCards.badge");
+  const format = useFormatter();
   const [now, setNow] = useState<Date | null>(null);
 
   useEffect(() => {
@@ -19,8 +22,11 @@ const LiveVerificationBadge = ({ generatedAt }: { generatedAt: string }) => {
     <div className="inline-flex items-center gap-2 rounded-full bg-white/15 backdrop-blur-md border border-white/25 px-3 py-1.5 print:hidden">
       <BadgeCheck size={15} className="text-emerald-300" strokeWidth={2.5} />
       <span className="text-[11px] font-semibold text-white/95">
-        Official Document · Verified{" "}
-        {now ? now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" }) : "…"}
+        {t("officialVerified", {
+          time: now
+            ? format.dateTime(now, { hour: "2-digit", minute: "2-digit", second: "2-digit" })
+            : "…",
+        })}
       </span>
       <span className="relative flex h-1.5 w-1.5">
         <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-300 opacity-75" />

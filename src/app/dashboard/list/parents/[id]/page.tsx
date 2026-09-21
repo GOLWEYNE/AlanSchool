@@ -6,6 +6,7 @@ import { getUserRole } from "@/lib/auth";
 import { auth } from "@clerk/nextjs/server";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 
 const SingleParentPage = async ({
   params: { id },
@@ -34,6 +35,8 @@ const SingleParentPage = async ({
   if (!parent) {
     return notFound();
   }
+
+  const t = await getTranslations("Profiles.detail");
 
   const today = new Date();
   const startOfToday = new Date(today);
@@ -84,25 +87,25 @@ const SingleParentPage = async ({
             <h1 className="text-xl font-semibold">
               {parent.name} {parent.surname}
             </h1>
-            <p className="text-sm text-gray-500 mt-1">{parent.email || "No email"}</p>
+            <p className="text-sm text-gray-500 mt-1">{parent.email || t("noEmail")}</p>
             <p className="text-sm text-gray-500">{parent.phone}</p>
             <p className="text-sm text-gray-500">{parent.address}</p>
             <div className="mt-4 flex gap-2 flex-wrap text-xs text-gray-600">
               <Link className="p-2 rounded-md bg-lamaSkyLight" href="/dashboard/list/exams">
-                Children Exams
+                {t("childrenExams")}
               </Link>
               <Link className="p-2 rounded-md bg-lamaPurpleLight" href="/dashboard/list/results">
-                Children Results
+                {t("childrenResults")}
               </Link>
               <Link className="p-2 rounded-md bg-lamaYellowLight" href="/dashboard/list/events">
-                Children Events
+                {t("childrenEvents")}
               </Link>
             </div>
           </div>
         </div>
         <div className="w-full xl:w-1/3 flex flex-col gap-4">
           <div className="bg-white p-4 rounded-md">
-            <h1 className="text-xl font-semibold">Children Attendance</h1>
+            <h1 className="text-xl font-semibold">{t("childrenAttendance")}</h1>
             <div className="mt-4 grid gap-4">
               {childAttendanceSummaries.map((summary) => (
                 <ParentChildAttendanceCard
@@ -122,7 +125,7 @@ const SingleParentPage = async ({
 
       {/* SCHEDULE - full page width so the whole week is easy to read at a glance */}
       <div className="bg-white dark:bg-slate-900 rounded-md p-4 min-h-[700px] flex flex-col">
-        <h1 className="text-xl font-semibold text-blue-900 dark:text-blue-100">Parent Schedule View</h1>
+        <h1 className="text-xl font-semibold text-blue-900 dark:text-blue-100">{t("parentScheduleView")}</h1>
         <div className="flex-1 mt-2">
           <BigCalendarContainer type="parentId" id={parent.id} />
         </div>

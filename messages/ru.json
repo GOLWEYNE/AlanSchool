@@ -37,7 +37,14 @@
     "reportCards": "Табели успеваемости",
     "lostFound": "Бюро находок",
     "featuredVideo": "Видео дня",
-    "behaviorLog": "Журнал поведения"
+    "behaviorLog": "Журнал поведения",
+    "assessmentsTitle": "Оценивание",
+    "academicsTitle": "Успеваемость",
+    "communicationsTitle": "Коммуникации",
+    "resourcesTitle": "Ресурсы",
+    "assessmentHub": "Центр оценивания",
+    "quizzes": "Тесты",
+    "submissions": "Сданные работы"
   },
   "Navbar": {
     "searchPlaceholder": "Поиск...",
@@ -558,7 +565,11 @@
         "wednesday": "Среда",
         "thursday": "Четверг",
         "friday": "Пятница"
-      }
+      },
+      "allClasses": "Все классы",
+      "noLessonsForClass": "У этого класса пока нет уроков — показаны все уроки.",
+      "descriptionOptional": "Описание / инструкции (необязательно)",
+      "totalMarksOptional": "Максимальный балл (необязательно)"
     },
     "announcement": {
       "createTitle": "Создать новое объявление",
@@ -573,7 +584,8 @@
       "dueDate": "Срок сдачи",
       "lesson": "Урок",
       "toastCreated": "Задание создано!",
-      "toastUpdated": "Задание обновлено!"
+      "toastUpdated": "Задание обновлено!",
+      "descriptionPlaceholder": "Что охватывает задание, как оно оценивается, что нужно знать ученикам…"
     },
     "class": {
       "createTitle": "Создать новый класс",
@@ -599,7 +611,9 @@
       "endDate": "Дата окончания",
       "lesson": "Урок",
       "toastCreated": "Экзамен создан!",
-      "toastUpdated": "Экзамен обновлён!"
+      "toastUpdated": "Экзамен обновлён!",
+      "descriptionPlaceholder": "Что охватывает экзамен, как он оценивается, что нужно знать ученикам…",
+      "durationOptional": "Длительность, минуты (необязательно)"
     },
     "lesson": {
       "createTitle": "Создать новый урок",
@@ -816,6 +830,11 @@
       "messages": "Сообщения",
       "myLessons": "Мои уроки",
       "schedule": "Расписание"
+    },
+    "leaderboard": {
+      "highlights": "Недавние достижения",
+      "noResults": "Результатов пока нет.",
+      "pts": "{score} б."
     }
   },
   "Roles": {
@@ -826,7 +845,22 @@
   },
   "Common": {
     "accessRestricted": "Доступ ограничен",
-    "somethingWrongRetry": "Что-то пошло не так. Попробуйте ещё раз."
+    "somethingWrongRetry": "Что-то пошло не так. Попробуйте ещё раз.",
+    "days": {
+      "monday": "Понедельник",
+      "tuesday": "Вторник",
+      "wednesday": "Среда",
+      "thursday": "Четверг",
+      "friday": "Пятница",
+      "saturday": "Суббота",
+      "sunday": "Воскресенье"
+    },
+    "loading": "Загрузка…",
+    "terms": {
+      "TERM_1": "1-й триместр",
+      "TERM_2": "2-й триместр",
+      "TERM_3": "3-й триместр"
+    }
   },
   "Tickets": {
     "page": {
@@ -1034,5 +1068,323 @@
     "username_must_be_at_least_3_characters_long": "Имя пользователя должно содержать не менее 3 символов!",
     "username_must_be_at_most_20_characters_long": "Имя пользователя должно содержать не более 20 символов!",
     "video_url_is_required": "Укажите ссылку на видео!"
+  },
+  "Profiles": {
+    "home": {
+      "welcome": "Добро пожаловать, {name}!",
+      "mySchedule": "Моё расписание",
+      "noLessons": "Уроков в расписании нет",
+      "todaysLessons": "Уроки сегодня",
+      "totalLessons": "Всего уроков",
+      "videoStudio": "Студия видеозаписи",
+      "teacherLine": "Учитель: {name}",
+      "classLine": "Класс: {name}",
+      "gradeLevel": "{level}-й класс",
+      "examBadge": "📝 Экзамен",
+      "assignmentBadge": "📋 Задание",
+      "assessments": "Оценочные работы",
+      "reportOrFindItems": "Сообщите о потере или найдите потерянные вещи",
+      "watchFeatured": "Смотрите видео дня от школы"
+    },
+    "studentHome": {
+      "subtitle": "Панель ученика — {level}-й класс",
+      "submissions": "Сданные работы",
+      "score": "Балл",
+      "myExams": "Мои экзамены и задания",
+      "noExams": "Экзаменов и заданий пока нет",
+      "guidelinesTitle": "Правила сдачи работ",
+      "formatLabel": "Формат:",
+      "formatText": "Экзамены и задания выдаются в формате Word (.docx)",
+      "deadlinesLabel": "Сроки:",
+      "deadlinesText": "Проверяйте срок сдачи и продолжительность каждой работы",
+      "submissionLabel": "Сдача:",
+      "submissionText": "Выполните работу и сдайте её через портал заданий",
+      "statusLabel": "Статус:",
+      "statusText": "Следите за статусом сдачи и получайте отзывы учителей",
+      "tipsLabel": "Советы:",
+      "tipsText": "Начинайте заранее, внимательно читайте инструкции и сдавайте работы до срока, чтобы избежать штрафов за опоздание."
+    },
+    "teacherHome": {
+      "subtitle": "Панель учителя — управляйте классами и оцениванием",
+      "classesAssigned": "Закреплённые классы",
+      "subjectsTeaching": "Преподаваемые предметы",
+      "announcementsDesc": "Просматривайте объявления классов и управляйте ими",
+      "reportCardsDesc": "Создавайте табели успеваемости учеников и управляйте ими",
+      "lostFoundDesc": "Управляйте потерянными и найденными вещами",
+      "quizManagement": "Управление тестами",
+      "examManagement": "Управление экзаменами",
+      "assignmentManagement": "Управление заданиями",
+      "submissionsGrading": "Работы учеников и оценивание"
+    },
+    "parentHome": {
+      "subtitle": "Панель родителя — следите за успехами ваших детей",
+      "yourChildren": "Ваши дети",
+      "lessonsCount": "Уроков: {count}",
+      "assessmentsCount": "Работ: {count}",
+      "avgPerformance": "Средний результат",
+      "scheduleOf": "Расписание: {name}",
+      "room": "Кабинет: {room}",
+      "tba": "уточняется",
+      "academicProgress": "Успеваемость",
+      "noResults": "Результатов пока нет",
+      "excellent": "🌟 Отлично",
+      "good": "✅ Хорошо",
+      "needsImprovement": "📈 Нужно подтянуть",
+      "stayConnected": "Оставайтесь на связи",
+      "stayConnectedDesc": "Общайтесь напрямую с учителями об успехах вашего ребёнка, задавайте вопросы и будьте в курсе школьной жизни.",
+      "messageTeachers": "Написать учителям",
+      "viewEvents": "Смотреть мероприятия"
+    },
+    "detail": {
+      "shortcuts": "Быстрые ссылки",
+      "edit": "Изменить",
+      "loading": "Загрузка…",
+      "grade": "Класс",
+      "gradeOrdinal": "{n}-й",
+      "attendance": "Посещаемость",
+      "lessons": "Уроки",
+      "class": "Класс",
+      "classes": "Классы",
+      "branches": "Направления",
+      "messageTeacher": "Написать: {name}",
+      "studentLessons": "Уроки ученика",
+      "studentTeachers": "Учителя ученика",
+      "studentExams": "Экзамены ученика",
+      "studentAssignments": "Задания ученика",
+      "studentResults": "Результаты ученика",
+      "studentSchedule": "Расписание ученика",
+      "teacherClasses": "Классы учителя",
+      "teacherStudents": "Ученики учителя",
+      "teacherLessons": "Уроки учителя",
+      "teacherExams": "Экзамены учителя",
+      "teacherAssignments": "Задания учителя",
+      "teacherSchedule": "Расписание учителя",
+      "noEmail": "Нет эл. почты",
+      "childrenExams": "Экзамены детей",
+      "childrenResults": "Результаты детей",
+      "childrenEvents": "Мероприятия детей",
+      "childrenAttendance": "Посещаемость детей",
+      "parentScheduleView": "Расписание для родителя"
+    },
+    "account": {
+      "profileTitle": "Мой профиль",
+      "firstName": "Имя",
+      "lastName": "Фамилия",
+      "username": "Имя пользователя",
+      "primaryEmail": "Основная эл. почта",
+      "role": "Роль",
+      "settingsSubtitle": "Настройки аккаунта и действия безопасности.",
+      "logoutDesc": "Безопасно завершите текущий сеанс."
+    }
+  },
+  "Assessments": {
+    "hub": {
+      "subtitle": "Управляйте всеми тестами, экзаменами и заданиями в одном месте",
+      "quizDesc": "Создавайте тесты для своих классов и управляйте ими. Задавайте вопросы, баллы и сроки сдачи.",
+      "examDesc": "Создавайте экзамены с указанием длительности и максимального балла. Скачивайте их в формате Word для учеников.",
+      "assignmentDesc": "Создавайте задания с описанием и сроками сдачи. Скачивайте в формате Word.",
+      "submissionsTitle": "Работы учеников",
+      "submissionsDesc": "Проверяйте работы, ставьте оценки, оставляйте отзывы и следите за успеваемостью учеников.",
+      "clickToManage": "Нажмите, чтобы управлять →",
+      "clickToReview": "Нажмите, чтобы проверить →",
+      "keyFeatures": "Основные возможности",
+      "wordTitle": "✓ Документы в формате Word",
+      "wordDesc": "Скачивайте все тесты, экзамены и задания в формате Word для удобной раздачи",
+      "deadlineTitle": "✓ Контроль сроков",
+      "deadlineDesc": "Задавайте сроки сдачи и отслеживайте сдачу работ в реальном времени",
+      "gradingTitle": "✓ Система оценивания",
+      "gradingDesc": "Оценивайте работы учеников, оставляйте подробные отзывы и следите за баллами",
+      "easyTitle": "✓ Удобное управление",
+      "easyDesc": "Создавайте, редактируйте и удаляйте работы в один клик"
+    },
+    "pages": {
+      "assignmentManagementDesc": "Создавайте, редактируйте и ведите задания для отдельных классов или учеников",
+      "examManagementDesc": "Создавайте, редактируйте и ведите экзамены для отдельных классов или учеников",
+      "quizzesDesc": "Создавайте тесты для своих классов и управляйте ими. Тест — это задание с автоматически проверяемыми вопросами: включите конструктор тестов в форме ниже, чтобы добавить их.",
+      "studentWorkTitle": "Работы учеников и оценивание",
+      "studentWorkDesc": "Проверяйте работы учеников, ставьте оценки и оставляйте отзывы. При необходимости удаляйте работы."
+    },
+    "mgmt": {
+      "quizTitle": "Управление тестами",
+      "examTitle": "Управление экзаменами",
+      "assignmentTitle": "Управление заданиями",
+      "noQuizzes": "Тестов пока нет — создайте задание и включите конструктор тестов, чтобы добавить вопросы.",
+      "noExams": "Экзамены ещё не созданы",
+      "noAssignments": "Задания ещё не созданы",
+      "questions": "{count, plural, one {# вопрос} few {# вопроса} many {# вопросов} other {# вопроса}}",
+      "marks": "{count, plural, one {# балл} few {# балла} many {# баллов} other {# балла}}",
+      "due": "Срок: {date}",
+      "download": "Скачать",
+      "minutesShort": "{count} мин",
+      "autoGraded": "{count, plural, one {# вопрос с автопроверкой} few {# вопроса с автопроверкой} many {# вопросов с автопроверкой} other {# вопроса с автопроверкой}}",
+      "dateAt": "{date} в {time}",
+      "quizBadge": "Тест"
+    },
+    "doc": {
+      "classLine": "Класс: {name}",
+      "totalQuestions": "Всего вопросов: {count}",
+      "totalMarks": "Максимальный балл: {count}",
+      "dueDate": "Срок сдачи: {date}",
+      "instructions": "Инструкции:",
+      "answerAll": "Ответьте на все вопросы",
+      "showWorking": "Покажите ход решения",
+      "manageTime": "Разумно распределяйте время",
+      "submitBeforeDue": "Сдайте работу до срока",
+      "examDate": "Дата: {date}",
+      "examTime": "Время: {time}",
+      "duration": "Продолжительность: {count} мин",
+      "description": "Описание:",
+      "noDescription": "Описание не указано",
+      "readCarefully": "Внимательно прочитайте все вопросы",
+      "timeLimit": "На выполнение экзамена у вас {count} мин",
+      "showCalcWorking": "Покажите ход решения во всех вычислениях",
+      "submitBeforeTime": "Сдайте выполненную работу до окончания времени",
+      "assignmentWord": "Задание",
+      "assignmentLine": "Задание: {title}",
+      "submissionInstructions": "Инструкции по сдаче:",
+      "subCompleteAll": "Выполните всё задание полностью",
+      "subViaPortal": "Сдайте через портал заданий до срока",
+      "subLateMarked": "Работы, сданные с опозданием, будут отмечены как поздние",
+      "subFollowFormat": "Соблюдайте формат, указанный учителем",
+      "subIncludeName": "Укажите в работе своё имя и класс",
+      "gradingCriteria": "Критерии оценивания:",
+      "critCompleteness": "Полнота (30%)",
+      "critAccuracy": "Точность (40%)",
+      "critPresentation": "Оформление (30%)"
+    },
+    "work": {
+      "title": "Работы учеников",
+      "noSubmissions": "Работ пока нет",
+      "status": {
+        "PENDING": "Ожидает",
+        "SUBMITTED": "Сдано",
+        "LATE": "С опозданием",
+        "GRADED": "Оценено",
+        "MISSING": "Не сдано"
+      },
+      "submittedOn": "Сдано: {date}",
+      "marks": "Баллы ({marks}/25)",
+      "feedback": "Отзыв",
+      "feedbackPlaceholder": "Оставьте отзыв ученику…",
+      "saveFeedback": "Сохранить отзыв",
+      "delete": "Удалить",
+      "gradeSaved": "Оценка сохранена.",
+      "gradeSaveFailed": "Не удалось сохранить оценку.",
+      "colStudent": "Ученик",
+      "colStatus": "Статус",
+      "colSubmitted": "Сдано",
+      "colFile": "Файл",
+      "colGrade": "Оценка",
+      "colGradeRubric": "Оценка (по рубрике)",
+      "notSubmitted": "Не сдано",
+      "autoGrade": "{grade} (авто)",
+      "feedbackOptional": "Отзыв (необязательно)",
+      "total": "Итого: {total}",
+      "save": "Сохранить",
+      "editGrade": "{grade} — изменить",
+      "editGradeRubric": "{grade} (по рубрике) — изменить",
+      "gradeWithRubric": "Оценить по рубрике",
+      "download": "Скачать",
+      "noStudents": "Пока ни один ученик не назначен.",
+      "submitted": "Сдано!",
+      "submittedScored": "Сдано! Ваш результат: {score}/{total}.",
+      "youSubmitted": "Вы сдали эту работу.",
+      "youSubmittedOn": "Вы сдали эту работу {date}.",
+      "gradeLabel": "Оценка:",
+      "canResubmit": "До окончания срока можно сдать заново, чтобы заменить эту работу.",
+      "gradedOn": "Оценка будет выставлена по критериям:",
+      "pts": "{count} б.",
+      "deadlinePassed": "Срок сдачи истёк — приём работ закрыт.",
+      "points": "({count, plural, one {# балл} few {# балла} many {# баллов} other {# балла}})",
+      "uploadCompleted": "Загрузите выполненную работу (PDF или Word)",
+      "fileReady": "Файл готов",
+      "chooseCompleted": "Выберите выполненный файл",
+      "fileHint": "PDF, DOC или DOCX — до 20 МБ",
+      "resubmit": "Сдать заново",
+      "submit": "Сдать",
+      "paperLabel": "Бланк экзамена / задания (PDF или Word — необязательно)",
+      "uploadPaper": "Загрузить файл экзамена/задания",
+      "viewCurrent": "Открыть текущий файл",
+      "assignTo": "Кому назначить",
+      "targetHint": "Оставьте все флажки пустыми, чтобы отправить всему классу. Отметьте отдельных учеников, чтобы отправить только им.",
+      "pickLesson": "Выберите урок выше, чтобы увидеть его учеников.",
+      "examLabel": "{subject} — экзамен",
+      "assignmentLabel": "{subject} — задание",
+      "openUntil": "Открыт до {date}",
+      "dueOn": "Срок: {date}",
+      "closed": "Закрыт",
+      "totalMarks": "Максимальный балл: {count}",
+      "durationMin": "Длительность: {count} мин",
+      "starts": "Начало: {date}",
+      "assigned": "Выдано: {date}",
+      "downloadExamPaper": "Скачать бланк экзамена",
+      "downloadAssignmentPaper": "Скачать бланк задания",
+      "yourSubmission": "Ваша работа",
+      "submissionsCount": "Сданные работы ({done}/{total})",
+      "viewSubmit": "Открыть / сдать",
+      "view": "Открыть"
+    }
+  },
+  "ReportCards": {
+    "metrics": {
+      "averageScore": "Средний балл",
+      "noResultsYet": "Результатов экзаменов и заданий пока нет.",
+      "attendanceRate": "Посещаемость",
+      "noAttendance": "Данных о посещаемости пока нет.",
+      "behaviorStatus": "Статус поведения",
+      "needsAttention": "Требует внимания",
+      "monitor": "Под наблюдением",
+      "excellent": "Отлично",
+      "allClear": "Всё хорошо",
+      "noLogs": "В этом периоде записей нет",
+      "recentLogs": "{count, plural, one {# недавняя запись} few {# недавние записи} many {# недавних записей} other {# недавней записи}}",
+      "presentAbsent": "Присутствовал: {present} · Отсутствовал: {absent}",
+      "late": "Опоздал: {count}"
+    },
+    "behavior": {
+      "title": "Поведение и дисциплина",
+      "POSITIVE": "Положительное",
+      "CONCERN": "Замечание",
+      "INCIDENT": "Нарушение",
+      "noInfractions": "Всё в порядке! Нарушений поведения в этом периоде нет.",
+      "keepUp": "Так держать — положительные отметки и замечания учителей будут появляться здесь."
+    },
+    "results": {
+      "title": "Подробные результаты",
+      "count": "{count, plural, one {# работа} few {# работы} many {# работ} other {# работы}}",
+      "noResultsTitle": "Результатов экзаменов и заданий пока нет",
+      "noResultsDesc": "Результаты появятся здесь автоматически, как только экзамены и задания ученика будут оценены.",
+      "typeExam": "Экзамен",
+      "typeAssignment": "Задание"
+    },
+    "milestones": {
+      "exceeding": "Выше нормы",
+      "meeting": "На уровне нормы",
+      "inProgress": "В процессе"
+    },
+    "actions": {
+      "share": "Поделиться с родителем",
+      "print": "Печать",
+      "downloadPdf": "Скачать официальный PDF",
+      "linkCopied": "Ссылка скопирована — отправьте её родителю.",
+      "copyManually": "Скопируйте ссылку на страницу из адресной строки браузера, чтобы поделиться ею."
+    },
+    "view": {
+      "footerLeft": "Alan International School · Официальный документ",
+      "footerRight": "Этот табель сформирован электронно и действителен без подписи."
+    },
+    "header": {
+      "officialTitle": "Официальный табель успеваемости",
+      "gradeLevel": "{level}-й класс"
+    },
+    "badge": {
+      "officialVerified": "Официальный документ · Проверено {time}"
+    },
+    "panel": {
+      "noneYet": "Табели пока не сформированы.",
+      "view": "Открыть",
+      "downloadPdf": "Скачать PDF"
+    },
+    "noPermission": "У вас нет прав на просмотр табеля этого ученика."
   }
 }

@@ -2,6 +2,7 @@
 
 import { FileDown } from 'lucide-react';
 import { ReactNode } from 'react';
+import { useFormatter, useTranslations } from 'next-intl';
 
 // One row's worth of what the Exam Management list needs to render. This
 // intentionally mirrors the shape src/app/dashboard/list/exam-management/page.tsx
@@ -25,10 +26,6 @@ type ExamRow = {
   actions: ReactNode;
 };
 
-const formatDate = (d: Date) => new Date(d).toLocaleDateString();
-const formatTime = (d: Date) =>
-  new Date(d).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-
 const TeacherExamManagement = ({
   exams,
   createButton,
@@ -36,27 +33,33 @@ const TeacherExamManagement = ({
   exams: ExamRow[];
   createButton: ReactNode;
 }) => {
+  const t = useTranslations('Assessments');
+  const format = useFormatter();
+  const formatDate = (d: Date | string) =>
+    format.dateTime(new Date(d), { year: 'numeric', month: 'numeric', day: 'numeric' });
+  const formatTime = (d: Date | string) =>
+    format.dateTime(new Date(d), { hour: '2-digit', minute: '2-digit' });
   const downloadExamAsWord = (exam: ExamRow) => {
     const content = `
 ALAN INTERNATIONAL SCHOOL
 ${exam.lesson.subject.name} - ${exam.title}
 
-Class: ${exam.lesson.class.name}
-Date: ${formatDate(exam.startTime)}
-Time: ${formatTime(exam.startTime)}
-${exam.durationMinutes ? `Duration: ${exam.durationMinutes} minutes` : ""}
-${exam.totalMarks ? `Total Marks: ${exam.totalMarks}` : ""}
+${t('doc.classLine', { name: exam.lesson.class.name })}
+${t('doc.examDate', { date: formatDate(exam.startTime) })}
+${t('doc.examTime', { time: formatTime(exam.startTime) })}
+${exam.durationMinutes ? t('doc.duration', { count: exam.durationMinutes }) : ""}
+${exam.totalMarks ? t('doc.totalMarks', { count: exam.totalMarks }) : ""}
 
-Description:
-${exam.description || 'No description provided'}
+${t('doc.description')}
+${exam.description || t('doc.noDescription')}
 
-Instructions:
-1. Read all questions carefully
-${exam.durationMinutes ? `2. You have ${exam.durationMinutes} minutes to complete the exam` : ""}
-3. Answer all questions
-4. Show all your working for calculations
-5. Manage your time wisely
-6. Submit your completed exam before time runs out
+${t('doc.instructions')}
+1. ${t('doc.readCarefully')}
+${exam.durationMinutes ? `2. ${t('doc.timeLimit', { count: exam.durationMinutes })}` : ""}
+3. ${t('doc.answerAll')}
+4. ${t('doc.showCalcWorking')}
+5. ${t('doc.manageTime')}
+6. ${t('doc.submitBeforeTime')}
     `;
     const blob = new Blob([content], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
@@ -72,13 +75,13 @@ ${exam.durationMinutes ? `2. You have ${exam.durationMinutes} minutes to complet
   return (
     <div className="w-full max-w-6xl mx-auto p-6 bg-white dark:bg-gray-900 rounded-lg shadow-lg">
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold text-gray-800 dark:text-white">Exam Management</h2>
+        <h2 className="text-2xl font-bold text-gray-800 dark:text-white">{t('mgmt.examTitle')}</h2>
         {createButton}
       </div>
 
       <div className="space-y-3">
         {exams.length === 0 ? (
-          <p className="text-gray-600 dark:text-gray-400 text-center py-8">No exams created yet</p>
+          <p className="text-gray-600 dark:text-gray-400 text-center py-8">{t('mgmt.noExams')}</p>
         ) : (
           exams.map((exam) => {
             const questionCount = Array.isArray(exam.questions) ? exam.questions.length : 0;
@@ -91,14 +94,14 @@ ${exam.durationMinutes ? `2. You have ${exam.durationMinutes} minutes to complet
                   <h3 className="font-semibold text-gray-800 dark:text-white">{exam.title}</h3>
                   <p className="text-sm text-gray-600 dark:text-gray-400">
                     {exam.lesson.subject.name} • {exam.lesson.class.name}
-                    {exam.durationMinutes ? ` • ${exam.durationMinutes}min` : ""}
-                    {exam.totalMarks ? ` • ${exam.totalMarks} Marks` : ""}
+                    {exam.durationMinutes ? ` • ${t('mgmt.minutesShort', { count: exam.durationMinutes })}` : ""}
+                    {exam.totalMarks ? ` • ${t('mgmt.marks', { count: exam.totalMarks })}` : ""}
                     {questionCount > 0
-                      ? ` • ${questionCount} auto-graded question${questionCount === 1 ? "" : "s"}`
+                      ? ` • ${t('mgmt.autoGraded', { count: questionCount })}`
                       : ""}
                   </p>
                   <p className="text-xs text-gray-500 dark:text-gray-500">
-                    {formatDate(exam.startTime)} at {formatTime(exam.startTime)}
+                    {t('mgmt.dateAt', { date: formatDate(exam.startTime), time: formatTime(exam.startTime) })}
                   </p>
                 </div>
                 <div className="flex items-center gap-2 ml-4">
@@ -107,7 +110,7 @@ ${exam.durationMinutes ? `2. You have ${exam.durationMinutes} minutes to complet
                     className="bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded flex items-center gap-1 text-sm"
                   >
                     <FileDown size={16} />
-                    Download
+                    {t('mgmt.download')}
                   </button>
                   {exam.actions}
                 </div>

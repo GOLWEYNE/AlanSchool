@@ -1,3 +1,4 @@
+import { useTranslations } from "next-intl";
 import ReportCardActions from "./ReportCardActions";
 import ReportCardHeader from "./ReportCardHeader";
 import ReportCardMetrics from "./ReportCardMetrics";
@@ -11,6 +12,7 @@ import { ReportCardViewData } from "./types";
 // every student in the school each time a report card is generated and
 // opened — nothing here is specific to any one example student.
 const ReportCardView = ({ data }: { data: ReportCardViewData }) => {
+  const t = useTranslations("ReportCards.view");
   return (
     <div className="flex-1 p-4 md:p-5 flex flex-col gap-4 print:p-0 print:bg-white">
       <ReportCardActions pdfHref={data.pdfHref} />
@@ -29,10 +31,8 @@ const ReportCardView = ({ data }: { data: ReportCardViewData }) => {
       <ReportCardBehaviorTimeline logs={data.behaviorLogs} />
 
       <div className="hidden print:flex justify-between text-[10px] text-slate-400 border-t border-slate-200 pt-3 mt-2">
-        <span>Alan International School · Official Document</span>
-        <span>
-          This report card was generated electronically and is valid without a signature.
-        </span>
+        <span>{t("footerLeft")}</span>
+        <span>{t("footerRight")}</span>
       </div>
     </div>
   );

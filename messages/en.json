@@ -37,7 +37,14 @@
     "reportCards": "Report Cards",
     "lostFound": "Lost & Found",
     "featuredVideo": "Featured Video",
-    "behaviorLog": "Behavior Log"
+    "behaviorLog": "Behavior Log",
+    "assessmentsTitle": "Assessments",
+    "academicsTitle": "Academics",
+    "communicationsTitle": "Communications",
+    "resourcesTitle": "Resources",
+    "assessmentHub": "Assessment Hub",
+    "quizzes": "Quizzes",
+    "submissions": "Submissions"
   },
   "Navbar": {
     "searchPlaceholder": "Search...",
@@ -558,7 +565,11 @@
         "wednesday": "Wednesday",
         "thursday": "Thursday",
         "friday": "Friday"
-      }
+      },
+      "allClasses": "All classes",
+      "noLessonsForClass": "This class has no lessons yet - showing every lesson instead.",
+      "descriptionOptional": "Description / instructions (optional)",
+      "totalMarksOptional": "Total marks (optional)"
     },
     "announcement": {
       "createTitle": "Create a new announcement",
@@ -573,7 +584,8 @@
       "dueDate": "Due Date",
       "lesson": "Lesson",
       "toastCreated": "Assignment has been created!",
-      "toastUpdated": "Assignment has been updated!"
+      "toastUpdated": "Assignment has been updated!",
+      "descriptionPlaceholder": "What the assignment covers, how it’s marked, anything students should know..."
     },
     "class": {
       "createTitle": "Create a new class",
@@ -599,7 +611,9 @@
       "endDate": "End Date",
       "lesson": "Lesson",
       "toastCreated": "Exam has been created!",
-      "toastUpdated": "Exam has been updated!"
+      "toastUpdated": "Exam has been updated!",
+      "descriptionPlaceholder": "What the exam covers, how it’s marked, anything students should know...",
+      "durationOptional": "Duration, minutes (optional)"
     },
     "lesson": {
       "createTitle": "Create a new lesson",
@@ -816,6 +830,11 @@
       "messages": "Messages",
       "myLessons": "My Lessons",
       "schedule": "Schedule"
+    },
+    "leaderboard": {
+      "highlights": "Recent Highlights",
+      "noResults": "No results recorded yet.",
+      "pts": "{score} pts"
     }
   },
   "Roles": {
@@ -826,7 +845,22 @@
   },
   "Common": {
     "accessRestricted": "Access Restricted",
-    "somethingWrongRetry": "Something went wrong. Please try again."
+    "somethingWrongRetry": "Something went wrong. Please try again.",
+    "days": {
+      "monday": "Monday",
+      "tuesday": "Tuesday",
+      "wednesday": "Wednesday",
+      "thursday": "Thursday",
+      "friday": "Friday",
+      "saturday": "Saturday",
+      "sunday": "Sunday"
+    },
+    "loading": "Loading…",
+    "terms": {
+      "TERM_1": "Term 1",
+      "TERM_2": "Term 2",
+      "TERM_3": "Term 3"
+    }
   },
   "Tickets": {
     "page": {
@@ -1034,5 +1068,323 @@
     "username_must_be_at_least_3_characters_long": "Username must be at least 3 characters long!",
     "username_must_be_at_most_20_characters_long": "Username must be at most 20 characters long!",
     "video_url_is_required": "Video URL is required!"
+  },
+  "Profiles": {
+    "home": {
+      "welcome": "Welcome, {name}!",
+      "mySchedule": "My Schedule",
+      "noLessons": "No lessons scheduled",
+      "todaysLessons": "Today’s Lessons",
+      "totalLessons": "Total Lessons",
+      "videoStudio": "Video Recording Studio",
+      "teacherLine": "Teacher: {name}",
+      "classLine": "Class: {name}",
+      "gradeLevel": "Grade {level}",
+      "examBadge": "📝 Exam",
+      "assignmentBadge": "📋 Assignment",
+      "assessments": "Assessments",
+      "reportOrFindItems": "Report or find lost items",
+      "watchFeatured": "Watch featured school videos"
+    },
+    "studentHome": {
+      "subtitle": "Student Dashboard - Grade {level}",
+      "submissions": "Submissions",
+      "score": "Score",
+      "myExams": "My Exams & Assignments",
+      "noExams": "No exams or assignments yet",
+      "guidelinesTitle": "Submission Guidelines",
+      "formatLabel": "Format:",
+      "formatText": "Exams and assignments are provided in Word format (.docx)",
+      "deadlinesLabel": "Deadlines:",
+      "deadlinesText": "Check the due date and duration for each assessment",
+      "submissionLabel": "Submission:",
+      "submissionText": "Complete the work and submit through the assignment portal",
+      "statusLabel": "Status:",
+      "statusText": "Track submission status and receive feedback from teachers",
+      "tipsLabel": "Tips:",
+      "tipsText": "Start assignments early, read instructions carefully, and submit before deadlines to avoid late penalties."
+    },
+    "teacherHome": {
+      "subtitle": "Teacher Dashboard - Manage Your Classes & Assessments",
+      "classesAssigned": "Classes Assigned",
+      "subjectsTeaching": "Subjects Teaching",
+      "announcementsDesc": "View and manage class announcements",
+      "reportCardsDesc": "Generate and manage student report cards",
+      "lostFoundDesc": "Manage lost and found items",
+      "quizManagement": "Quiz Management",
+      "examManagement": "Exam Management",
+      "assignmentManagement": "Assignment Management",
+      "submissionsGrading": "Student Submissions & Grading"
+    },
+    "parentHome": {
+      "subtitle": "Parent Dashboard - Monitor Your Children’s Progress",
+      "yourChildren": "Your Children",
+      "lessonsCount": "{count} Lessons",
+      "assessmentsCount": "{count} Assessments",
+      "avgPerformance": "Avg Performance",
+      "scheduleOf": "{name}’s Schedule",
+      "room": "Room: {room}",
+      "tba": "TBA",
+      "academicProgress": "Academic Progress",
+      "noResults": "No results available yet",
+      "excellent": "🌟 Excellent",
+      "good": "✅ Good",
+      "needsImprovement": "📈 Needs Improvement",
+      "stayConnected": "Stay Connected",
+      "stayConnectedDesc": "Communicate directly with teachers about your child’s progress, ask questions, and stay informed about school activities.",
+      "messageTeachers": "Message Teachers",
+      "viewEvents": "View Events"
+    },
+    "detail": {
+      "shortcuts": "Shortcuts",
+      "edit": "Edit",
+      "loading": "Loading…",
+      "grade": "Grade",
+      "gradeOrdinal": "{n}th",
+      "attendance": "Attendance",
+      "lessons": "Lessons",
+      "class": "Class",
+      "classes": "Classes",
+      "branches": "Branches",
+      "messageTeacher": "Message {name}",
+      "studentLessons": "Student’s Lessons",
+      "studentTeachers": "Student’s Teachers",
+      "studentExams": "Student’s Exams",
+      "studentAssignments": "Student’s Assignments",
+      "studentResults": "Student’s Results",
+      "studentSchedule": "Student’s Schedule",
+      "teacherClasses": "Teacher’s Classes",
+      "teacherStudents": "Teacher’s Students",
+      "teacherLessons": "Teacher’s Lessons",
+      "teacherExams": "Teacher’s Exams",
+      "teacherAssignments": "Teacher’s Assignments",
+      "teacherSchedule": "Teacher’s Schedule",
+      "noEmail": "No email",
+      "childrenExams": "Children Exams",
+      "childrenResults": "Children Results",
+      "childrenEvents": "Children Events",
+      "childrenAttendance": "Children Attendance",
+      "parentScheduleView": "Parent Schedule View"
+    },
+    "account": {
+      "profileTitle": "My Profile",
+      "firstName": "First name",
+      "lastName": "Last name",
+      "username": "Username",
+      "primaryEmail": "Primary email",
+      "role": "Role",
+      "settingsSubtitle": "Account-level preferences and security actions.",
+      "logoutDesc": "End your current session safely."
+    }
+  },
+  "Assessments": {
+    "hub": {
+      "subtitle": "Manage all your quizzes, exams, and assignments in one place",
+      "quizDesc": "Create and manage quizzes for your classes. Set questions, marks, and due dates.",
+      "examDesc": "Create exams with duration and total marks. Download as Word format for students.",
+      "assignmentDesc": "Create assignments with descriptions and due dates. Download in Word format.",
+      "submissionsTitle": "Student Submissions",
+      "submissionsDesc": "Review submissions, grade work, add feedback, and manage student performance.",
+      "clickToManage": "Click to manage →",
+      "clickToReview": "Click to review →",
+      "keyFeatures": "Key Features",
+      "wordTitle": "✓ Word Format Documents",
+      "wordDesc": "Download all quizzes, exams, and assignments in Word format for easy distribution",
+      "deadlineTitle": "✓ Deadline Tracking",
+      "deadlineDesc": "Set due dates and track student submissions in real-time",
+      "gradingTitle": "✓ Grading System",
+      "gradingDesc": "Grade student work, add detailed feedback, and track marks",
+      "easyTitle": "✓ Easy Management",
+      "easyDesc": "Create, edit, and delete assessments with one click"
+    },
+    "pages": {
+      "assignmentManagementDesc": "Create, edit, and manage assignments for specific classes or students",
+      "examManagementDesc": "Create, edit, and manage exams for specific classes or students",
+      "quizzesDesc": "Create and manage quizzes for your classes. A quiz is an assignment with auto-graded questions attached - turn on the quiz builder in the form below to add them.",
+      "studentWorkTitle": "Student Submissions & Grading",
+      "studentWorkDesc": "Review, grade, and provide feedback on student submissions. Delete work when necessary."
+    },
+    "mgmt": {
+      "quizTitle": "Quiz Management",
+      "examTitle": "Exam Management",
+      "assignmentTitle": "Assignment Management",
+      "noQuizzes": "No quizzes yet - create an assignment and turn on the quiz builder to add questions.",
+      "noExams": "No exams created yet",
+      "noAssignments": "No assignments created yet",
+      "questions": "{count, plural, one {# Question} other {# Questions}}",
+      "marks": "{count} Marks",
+      "due": "Due: {date}",
+      "download": "Download",
+      "minutesShort": "{count}min",
+      "autoGraded": "{count, plural, one {# auto-graded question} other {# auto-graded questions}}",
+      "dateAt": "{date} at {time}",
+      "quizBadge": "Quiz"
+    },
+    "doc": {
+      "classLine": "Class: {name}",
+      "totalQuestions": "Total Questions: {count}",
+      "totalMarks": "Total Marks: {count}",
+      "dueDate": "Due Date: {date}",
+      "instructions": "Instructions:",
+      "answerAll": "Answer all questions",
+      "showWorking": "Show your working",
+      "manageTime": "Manage your time wisely",
+      "submitBeforeDue": "Submit before the due date",
+      "examDate": "Date: {date}",
+      "examTime": "Time: {time}",
+      "duration": "Duration: {count} minutes",
+      "description": "Description:",
+      "noDescription": "No description provided",
+      "readCarefully": "Read all questions carefully",
+      "timeLimit": "You have {count} minutes to complete the exam",
+      "showCalcWorking": "Show all your working for calculations",
+      "submitBeforeTime": "Submit your completed exam before time runs out",
+      "assignmentWord": "Assignment",
+      "assignmentLine": "Assignment: {title}",
+      "submissionInstructions": "Submission Instructions:",
+      "subCompleteAll": "Complete all the assigned work",
+      "subViaPortal": "Submit through the assignment portal before the due date",
+      "subLateMarked": "Late submissions will be marked as late",
+      "subFollowFormat": "Follow the format provided by your teacher",
+      "subIncludeName": "Include your name and class on the submission",
+      "gradingCriteria": "Grading Criteria:",
+      "critCompleteness": "Completeness (30%)",
+      "critAccuracy": "Accuracy (40%)",
+      "critPresentation": "Presentation (30%)"
+    },
+    "work": {
+      "title": "Student Work Submissions",
+      "noSubmissions": "No submissions yet",
+      "status": {
+        "PENDING": "Pending",
+        "SUBMITTED": "Submitted",
+        "LATE": "Late",
+        "GRADED": "Graded",
+        "MISSING": "Missing"
+      },
+      "submittedOn": "Submitted: {date}",
+      "marks": "Marks ({marks}/25)",
+      "feedback": "Feedback",
+      "feedbackPlaceholder": "Provide feedback to the student...",
+      "saveFeedback": "Save Feedback",
+      "delete": "Delete",
+      "gradeSaved": "Grade saved.",
+      "gradeSaveFailed": "Couldn’t save the grade.",
+      "colStudent": "Student",
+      "colStatus": "Status",
+      "colSubmitted": "Submitted",
+      "colFile": "File",
+      "colGrade": "Grade",
+      "colGradeRubric": "Grade (rubric)",
+      "notSubmitted": "Not submitted",
+      "autoGrade": "{grade} (auto)",
+      "feedbackOptional": "Feedback (optional)",
+      "total": "Total: {total}",
+      "save": "Save",
+      "editGrade": "{grade} - edit",
+      "editGradeRubric": "{grade} (rubric) - edit",
+      "gradeWithRubric": "Grade with rubric",
+      "download": "Download",
+      "noStudents": "No students are assigned this yet.",
+      "submitted": "Submitted!",
+      "submittedScored": "Submitted! You scored {score}/{total}.",
+      "youSubmitted": "You submitted this.",
+      "youSubmittedOn": "You submitted this on {date}.",
+      "gradeLabel": "Grade:",
+      "canResubmit": "You can resubmit until the deadline to replace this.",
+      "gradedOn": "This will be graded on:",
+      "pts": "{count} pts",
+      "deadlinePassed": "The deadline has passed - submissions are closed.",
+      "points": "({count, plural, one {# pt} other {# pts}})",
+      "uploadCompleted": "Upload your completed work (PDF or Word)",
+      "fileReady": "File ready",
+      "chooseCompleted": "Choose your completed file",
+      "fileHint": "PDF, DOC, or DOCX - up to 20MB",
+      "resubmit": "Resubmit",
+      "submit": "Submit",
+      "paperLabel": "Exam / assignment paper (PDF or Word - optional)",
+      "uploadPaper": "Upload the exam/assignment file",
+      "viewCurrent": "View current file",
+      "assignTo": "Assign to",
+      "targetHint": "Leave every box unchecked to send this to the whole class. Check specific students to send it only to them.",
+      "pickLesson": "Pick a lesson above to see its students.",
+      "examLabel": "{subject} - Exam",
+      "assignmentLabel": "{subject} - Assignment",
+      "openUntil": "Open until {date}",
+      "dueOn": "Due {date}",
+      "closed": "Closed",
+      "totalMarks": "Total marks: {count}",
+      "durationMin": "Duration: {count} min",
+      "starts": "Starts: {date}",
+      "assigned": "Assigned: {date}",
+      "downloadExamPaper": "Download exam paper",
+      "downloadAssignmentPaper": "Download assignment paper",
+      "yourSubmission": "Your submission",
+      "submissionsCount": "Submissions ({done}/{total})",
+      "viewSubmit": "View / Submit",
+      "view": "View"
+    }
+  },
+  "ReportCards": {
+    "metrics": {
+      "averageScore": "Average Score",
+      "noResultsYet": "No recorded exam or assignment results yet.",
+      "attendanceRate": "Attendance Rate",
+      "noAttendance": "No attendance has been recorded yet.",
+      "behaviorStatus": "Behavior Status",
+      "needsAttention": "Needs Attention",
+      "monitor": "Monitor",
+      "excellent": "Excellent",
+      "allClear": "All Clear",
+      "noLogs": "No logs recorded this term",
+      "recentLogs": "{count, plural, one {# recent log} other {# recent logs}}",
+      "presentAbsent": "{present} present · {absent} absent",
+      "late": "{count} late"
+    },
+    "behavior": {
+      "title": "Behavior & Conduct",
+      "POSITIVE": "Positive",
+      "CONCERN": "Concern",
+      "INCIDENT": "Incident",
+      "noInfractions": "All clear! No behavior infractions recorded this term.",
+      "keepUp": "Keep up the great work — positive notes and any concerns from teachers will show up here."
+    },
+    "results": {
+      "title": "Results Breakdown",
+      "count": "{count, plural, one {# assessment} other {# assessments}}",
+      "noResultsTitle": "No recorded exam or assignment results yet",
+      "noResultsDesc": "Results will appear here automatically as soon as this student’s exams and assignments are graded.",
+      "typeExam": "Exam",
+      "typeAssignment": "Assignment"
+    },
+    "milestones": {
+      "exceeding": "Exceeding",
+      "meeting": "Meeting",
+      "inProgress": "In Progress"
+    },
+    "actions": {
+      "share": "Share with Parent",
+      "print": "Print",
+      "downloadPdf": "Download Official PDF",
+      "linkCopied": "Link copied — share it with the parent.",
+      "copyManually": "Copy the page link from your browser’s address bar to share it."
+    },
+    "view": {
+      "footerLeft": "Alan International School · Official Document",
+      "footerRight": "This report card was generated electronically and is valid without a signature."
+    },
+    "header": {
+      "officialTitle": "Official Student Report Card",
+      "gradeLevel": "Grade {level}"
+    },
+    "badge": {
+      "officialVerified": "Official Document · Verified {time}"
+    },
+    "panel": {
+      "noneYet": "No report cards have been generated yet.",
+      "view": "View",
+      "downloadPdf": "Download PDF"
+    },
+    "noPermission": "You don’t have permission to view this student’s report card."
   }
 }

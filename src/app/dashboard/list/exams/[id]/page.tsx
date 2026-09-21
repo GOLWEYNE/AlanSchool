@@ -2,6 +2,7 @@ import prisma from "@/lib/prisma";
 import { getUserRole } from "@/lib/auth";
 import { auth } from "@clerk/nextjs/server";
 import { notFound } from "next/navigation";
+import { getFormatter, getTranslations } from "next-intl/server";
 import { FileText, Clock } from "lucide-react";
 import WorkSubmitPanel from "@/components/WorkSubmitPanel";
 import WorkSubmissionsPanel from "@/components/WorkSubmissionsPanel";
@@ -139,13 +140,17 @@ const SingleExamPage = async ({ params: { id } }: { params: { id: string } }) =>
     });
   }
 
+  const t = await getTranslations("Assessments.work");
+  const format = await getFormatter();
+  const fmt = (d: Date) => format.dateTime(d, { dateStyle: "medium", timeStyle: "short" });
+
   return (
     <div className="flex-1 p-4 flex flex-col gap-4">
       <div className="panel-card p-5 md:p-6 shine-hover">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
             <p className="text-xs uppercase tracking-wide text-blue-500 font-semibold mb-1">
-              {exam.lesson.subject.name} - Exam
+              {t("examLabel", { subject: exam.lesson.subject.name })}
             </p>
             <h1 className="text-xl md:text-2xl font-bold text-blue-900 dark:text-blue-100">
               {exam.title}
@@ -161,7 +166,7 @@ const SingleExamPage = async ({ params: { id } }: { params: { id: string } }) =>
                 : "bg-red-50 text-red-700 border-red-200 dark:bg-red-950/30 dark:text-red-300"
             }`}
           >
-            <Clock size={12} /> {isOpen ? `Open until ${exam.endTime.toLocaleString()}` : "Closed"}
+            <Clock size={12} /> {isOpen ? t("openUntil", { date: fmt(exam.endTime) }) : t("closed")}
           </span>
         </div>
         {exam.description && (
@@ -170,9 +175,9 @@ const SingleExamPage = async ({ params: { id } }: { params: { id: string } }) =>
           </p>
         )}
         <div className="flex flex-wrap gap-3 mt-4 text-xs text-gray-500 dark:text-slate-400">
-          {exam.totalMarks != null && <span>Total marks: {exam.totalMarks}</span>}
-          {exam.durationMinutes != null && <span>Duration: {exam.durationMinutes} min</span>}
-          <span>Starts: {exam.startTime.toLocaleString()}</span>
+          {exam.totalMarks != null && <span>{t("totalMarks", { count: exam.totalMarks })}</span>}
+          {exam.durationMinutes != null && <span>{t("durationMin", { count: exam.durationMinutes })}</span>}
+          <span>{t("starts", { date: fmt(exam.startTime) })}</span>
         </div>
         {exam.instructionsFileUrl && (
           <a
@@ -181,7 +186,7 @@ const SingleExamPage = async ({ params: { id } }: { params: { id: string } }) =>
             rel="noopener noreferrer"
             className="mt-4 inline-flex items-center gap-2 text-sm text-blue-600 dark:text-blue-300 hover:underline"
           >
-            <FileText size={16} /> {exam.instructionsFileName ?? "Download exam paper"}
+            <FileText size={16} /> {exam.instructionsFileName ?? t("downloadExamPaper")}
           </a>
         )}
       </div>
@@ -189,7 +194,7 @@ const SingleExamPage = async ({ params: { id } }: { params: { id: string } }) =>
       {role === "student" && (
         <div className="panel-card p-5 md:p-6">
           <h2 className="text-sm font-semibold text-blue-900 dark:text-blue-100 mb-3">
-            Your submission
+            {t("yourSubmission")}
           </h2>
           <WorkSubmitPanel
             workType="exam"
@@ -204,7 +209,7 @@ const SingleExamPage = async ({ params: { id } }: { params: { id: string } }) =>
       {(role === "admin" || role === "teacher") && (
         <div className="panel-card p-5 md:p-6">
           <h2 className="text-sm font-semibold text-blue-900 dark:text-blue-100 mb-3">
-            Submissions ({submissionRows.filter((r) => r.submission).length}/{submissionRows.length})
+            {t("submissionsCount", { done: submissionRows.filter((r) => r.submission).length, total: submissionRows.length })}
           </h2>
           <WorkSubmissionsPanel rows={submissionRows} />
         </div>

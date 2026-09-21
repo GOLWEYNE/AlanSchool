@@ -1,15 +1,18 @@
 import Image from "next/image";
 import { IdCard, Users, CalendarRange } from "lucide-react";
+import { useFormatter, useTranslations } from "next-intl";
 import LiveVerificationBadge from "./LiveVerificationBadge";
 import { ReportCardViewData } from "./types";
 
 const ReportCardHeader = ({ data }: { data: ReportCardViewData }) => {
+  const t = useTranslations("ReportCards.header");
+  const format = useFormatter();
   const avatarSrc =
     typeof data.studentImg === "string" && data.studentImg.trim()
       ? data.studentImg
       : "/noAvatar.png";
 
-  const generatedLabel = data.generatedAt.toLocaleDateString("en-US", {
+  const generatedLabel = format.dateTime(data.generatedAt, {
     year: "numeric",
     month: "long",
     day: "numeric",
@@ -49,7 +52,7 @@ const ReportCardHeader = ({ data }: { data: ReportCardViewData }) => {
               {data.studentName}
             </h1>
             <p className="text-white/80 text-sm mt-0.5 print:text-slate-500">
-              Official Student Report Card · {data.termLabel} · {data.schoolYear}
+              {t("officialTitle")} · {data.termLabel} · {data.schoolYear}
             </p>
 
             <div className="mt-3 flex flex-wrap gap-2">
@@ -60,7 +63,7 @@ const ReportCardHeader = ({ data }: { data: ReportCardViewData }) => {
               <span className="inline-flex items-center gap-1.5 rounded-full bg-white/15 backdrop-blur-md border border-white/25 px-3 py-1 text-xs font-semibold text-white print:bg-slate-100 print:text-slate-700 print:border-slate-300">
                 <Users size={13} strokeWidth={2.5} />
                 {data.className}
-                {data.gradeLevel ? ` · Grade ${data.gradeLevel}` : ""}
+                {data.gradeLevel ? ` · ${t("gradeLevel", { level: data.gradeLevel })}` : ""}
               </span>
               <span className="inline-flex items-center gap-1.5 rounded-full bg-white/15 backdrop-blur-md border border-white/25 px-3 py-1 text-xs font-semibold text-white print:bg-slate-100 print:text-slate-700 print:border-slate-300">
                 <CalendarRange size={13} strokeWidth={2.5} />

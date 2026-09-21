@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useFormState } from "react-dom";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
+import { useFormatter, useTranslations } from "next-intl";
 import { FileText } from "lucide-react";
 import { gradeSubmission } from "@/lib/actions";
 import type { RubricCriterion, RubricScore } from "@/lib/formValidationSchemas";
@@ -40,6 +41,8 @@ const statusBadge: Record<string, string> = {
 // that sums into the grade automatically instead of being typed free-hand.
 const GradeRow = ({ row, rubric }: { row: Row; rubric?: RubricCriterion[] | null }) => {
   const router = useRouter();
+  const t = useTranslations("Assessments.work");
+  const format = useFormatter();
   const [state, formAction] = useFormState(gradeSubmission, {
     success: false,
     error: false,
@@ -57,11 +60,11 @@ const GradeRow = ({ row, rubric }: { row: Row; rubric?: RubricCriterion[] | null
 
   useEffect(() => {
     if (state.success) {
-      toast("Grade saved.");
+      toast(t("gradeSaved"));
       setEditing(false);
       router.refresh();
     } else if (state.error) {
-      toast.error(("message" in state && state.message) || "Couldn't save the grade.");
+      toast.error(("message" in state && state.message) || t("gradeSaveFailed"));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state, router]);
@@ -84,16 +87,16 @@ const GradeRow = ({ row, rubric }: { row: Row; rubric?: RubricCriterion[] | null
       </td>
       <td className="p-3">
         <span
-          className={`text-xs font-semibold px-2 py-1 rounded-full ${
+          className={`text-xs uppercase font-semibold px-2 py-1 rounded-full ${
             statusBadge[status] ?? statusBadge.MISSING
           }`}
         >
-          {status}
+          {t.has(`status.${status}`) ? t(`status.${status}`) : status}
         </span>
       </td>
       <td className="p-3 text-xs text-gray-500 dark:text-slate-400">
         {row.submission?.submittedAt
-          ? new Date(row.submission.submittedAt).toLocaleString()
+          ? format.dateTime(new Date(row.submission.submittedAt), { dateStyle: "medium", timeStyle: "short" })
           : "-"}
       </td>
       <td className="p-3">
@@ -104,7 +107,7 @@ const GradeRow = ({ row, rubric }: { row: Row; rubric?: RubricCriterion[] | null
             rel="noopener noreferrer"
             className="text-blue-500 hover:underline flex items-center gap-1 text-xs"
           >
-            <FileText size={12} /> {row.submission.fileName ?? "Download"}
+            <FileText size={12} /> {row.submission.fileName ?? t("download")}
           </a>
         ) : (
           <span className="text-xs text-gray-400">-</span>
@@ -112,9 +115,9 @@ const GradeRow = ({ row, rubric }: { row: Row; rubric?: RubricCriterion[] | null
       </td>
       <td className="p-3">
         {!row.submission ? (
-          <span className="text-xs text-gray-400">Not submitted</span>
+          <span className="text-xs text-gray-400">{t("notSubmitted")}</span>
         ) : row.submission.autoGraded ? (
-          <span className="text-sm font-semibold">{row.submission.grade} (auto)</span>
+          <span className="text-sm font-semibold">{t("autoGrade", { grade: row.submission.grade ?? 0 })}</span>
         ) : editing && hasRubric ? (
           <form
             className="flex flex-col gap-2 min-w-[16rem]"
@@ -155,20 +158,20 @@ const GradeRow = ({ row, rubric }: { row: Row; rubric?: RubricCriterion[] | null
             ))}
             <input
               type="text"
-              placeholder="Feedback (optional)"
+              placeholder={t("feedbackOptional")}
               value={feedback}
               onChange={(e) => setFeedback(e.target.value)}
               className="ring-[1.5px] ring-gray-300 dark:ring-slate-700 dark:bg-slate-800 dark:text-slate-100 p-1 rounded text-sm"
             />
             <div className="flex items-center justify-between gap-2">
               <span className="text-xs font-semibold text-gray-600 dark:text-slate-300">
-                Total: {rubricTotal}
+                {t("total", { total: rubricTotal })}
               </span>
               <button
                 type="submit"
                 className="text-xs bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded shrink-0"
               >
-                Save
+                {t("save")}
               </button>
             </div>
           </form>
@@ -189,7 +192,7 @@ const GradeRow = ({ row, rubric }: { row: Row; rubric?: RubricCriterion[] | null
             />
             <input
               type="text"
-              placeholder="Feedback (optional)"
+              placeholder={t("feedbackOptional")}
               value={feedback}
               onChange={(e) => setFeedback(e.target.value)}
               className="flex-1 min-w-0 ring-[1.5px] ring-gray-300 dark:ring-slate-700 dark:bg-slate-800 dark:text-slate-100 p-1 rounded text-sm"
@@ -198,7 +201,7 @@ const GradeRow = ({ row, rubric }: { row: Row; rubric?: RubricCriterion[] | null
               type="submit"
               className="text-xs bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded shrink-0"
             >
-              Save
+              {t("save")}
             </button>
           </form>
         ) : (
@@ -208,10 +211,10 @@ const GradeRow = ({ row, rubric }: { row: Row; rubric?: RubricCriterion[] | null
             title={rubricBreakdown}
           >
             {row.submission.grade !== null
-              ? `${row.submission.grade}${rubricBreakdown ? " (rubric)" : ""} - edit`
+              ? t(rubricBreakdown ? "editGradeRubric" : "editGrade", { grade: row.submission.grade })
               : hasRubric
-              ? "Grade with rubric"
-              : "Grade"}
+              ? t("gradeWithRubric")
+              : t("colGrade")}
           </button>
         )}
       </td>
@@ -226,8 +229,9 @@ const WorkSubmissionsPanel = ({
   rows: Row[];
   rubric?: RubricCriterion[] | null;
 }) => {
+  const t = useTranslations("Assessments.work");
   if (rows.length === 0) {
-    return <p className="text-sm text-gray-400">No students are assigned this yet.</p>;
+    return <p className="text-sm text-gray-400">{t("noStudents")}</p>;
   }
 
   return (
@@ -235,11 +239,11 @@ const WorkSubmissionsPanel = ({
       <table className="w-full">
         <thead>
           <tr className="text-left text-xs text-gray-500 dark:text-slate-400 border-b border-gray-200 dark:border-slate-800">
-            <th className="p-3">Student</th>
-            <th className="p-3">Status</th>
-            <th className="p-3">Submitted</th>
-            <th className="p-3">File</th>
-            <th className="p-3">Grade{rubric?.length ? " (rubric)" : ""}</th>
+            <th className="p-3">{t("colStudent")}</th>
+            <th className="p-3">{t("colStatus")}</th>
+            <th className="p-3">{t("colSubmitted")}</th>
+            <th className="p-3">{t("colFile")}</th>
+            <th className="p-3">{rubric?.length ? t("colGradeRubric") : t("colGrade")}</th>
           </tr>
         </thead>
         <tbody>

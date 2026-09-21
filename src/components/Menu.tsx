@@ -65,35 +65,35 @@ const getMenuItems = (t: Awaited<ReturnType<typeof getTranslations>>, role: stri
       ],
     },
     {
-      title: "Assessments",
+      title: t("assessmentsTitle"),
       items: [
         {
           icon: "/exam.png",
-          label: "Assessment Hub",
+          label: t("assessmentHub"),
           href: "/dashboard/list/assessment-hub",
           visible: ["teacher"],
         },
         {
           icon: "/exam.png",
-          label: "Quizzes",
+          label: t("quizzes"),
           href: "/dashboard/list/quizzes",
           visible: ["teacher"],
         },
         {
           icon: "/exam.png",
-          label: "Exams",
+          label: t("exams"),
           href: "/dashboard/list/exam-management",
           visible: ["teacher"],
         },
         {
           icon: "/assignment.png",
-          label: "Assignments",
+          label: t("assignments"),
           href: "/dashboard/list/assignment-management",
           visible: ["teacher"],
         },
         {
           icon: "/assignment.png",
-          label: "Submissions",
+          label: t("submissions"),
           href: "/dashboard/list/student-work",
           visible: ["teacher"],
         },
@@ -112,7 +112,7 @@ const getMenuItems = (t: Awaited<ReturnType<typeof getTranslations>>, role: stri
       ],
     },
     {
-      title: "Academics",
+      title: t("academicsTitle"),
       items: [
         {
           icon: "/result.png",
@@ -153,7 +153,7 @@ const getMenuItems = (t: Awaited<ReturnType<typeof getTranslations>>, role: stri
       ],
     },
     {
-      title: "Communications",
+      title: t("communicationsTitle"),
       items: [
         {
           icon: "/calendar.png",
@@ -176,7 +176,7 @@ const getMenuItems = (t: Awaited<ReturnType<typeof getTranslations>>, role: stri
       ],
     },
     {
-      title: "Resources",
+      title: t("resourcesTitle"),
       items: [
         {
           icon: "/search.png",
