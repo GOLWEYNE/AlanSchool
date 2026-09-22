@@ -533,7 +533,33 @@
         "DOMBRA": "Dombra",
         "GUITAR": "Guitar",
         "OTHER": "Other"
-      }
+      },
+      "takeAttendance": "Take attendance",
+      "clubAttendanceButton": "Club attendance"
+    },
+    "clubAttendance": {
+      "title": "Club Attendance",
+      "subtitle": "Mark who showed up at each club meeting.",
+      "emoji": "🎯",
+      "restricted": "Only admins and club instructors can take club attendance.",
+      "clubsLabel": "Clubs",
+      "membersLabel": "Members",
+      "markedLabel": "Marked",
+      "presentLabel": "Present",
+      "clubLabel": "Club",
+      "dateLabel": "Date",
+      "loadButton": "Load roster",
+      "backToClubs": "Back to clubs",
+      "noClubs": "You don't instruct any clubs yet.",
+      "noMembers": "No active members in this club yet.",
+      "sessionExists": "Attendance was already taken for this meeting - saving updates it.",
+      "sessionNew": "No meeting recorded on this day yet - saving creates it.",
+      "startLabel": "Start",
+      "endLabel": "End",
+      "timeOrderError": "End time must be after start time.",
+      "recentTitle": "Recent meetings",
+      "recentNone": "No meetings recorded yet.",
+      "cameCount": "{came}/{total} came"
     }
   },
   "Forms": {
@@ -1648,7 +1674,8 @@
     "noStudentsInClass": "No students found in this class.",
     "alreadyEnrolled": "Already enrolled in this club.",
     "clubNotFound": "Club not found.",
-    "enrollUnavailable": "Already enrolled, or this club is unavailable."
+    "enrollUnavailable": "Already enrolled, or this club is unavailable.",
+    "invalidInput": "Some of the submitted data is invalid."
   },
   "StudyPlanner": {
     "title": "Study Planner",
