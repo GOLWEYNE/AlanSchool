@@ -34,6 +34,7 @@
     "resend": "^6.28.0",
     "ts-node": "^10.9.2",
     "web-push": "^3.6.7",
+    "xlsx": "^0.18.5",
     "zod": "^3.25.76"
   },
   "devDependencies": {
