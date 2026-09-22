@@ -1,3 +1,4 @@
+import Link from "next/link";
 import FormContainer from "@/components/FormContainer";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
@@ -48,7 +49,9 @@ const ClubListPage = async ({
     { header: t("columns.enrolled"), accessor: "enrolled", className: "hidden md:table-cell" },
     { header: t("columns.instructor"), accessor: "instructor", className: "hidden md:table-cell" },
     ...(showEnrollColumn ? [{ header: t("columns.yourEnrollment"), accessor: "enroll" }] : []),
-    ...(role === "admin" ? [{ header: t("columns.actions"), accessor: "action" }] : []),
+    ...(role === "admin" || role === "teacher"
+      ? [{ header: t("columns.actions"), accessor: "action" }]
+      : []),
   ];
 
   const renderRow = (item: ClubList, waitlistPositions: Map<string, number>) => {
@@ -85,6 +88,14 @@ const ClubListPage = async ({
         )}
         <td>
           <div className="flex items-center gap-2">
+            {(role === "admin" || (role === "teacher" && item.instructorId === userId)) && (
+              <Link
+                href={`/dashboard/list/clubs/attendance?clubId=${item.id}`}
+                className="text-xs font-semibold px-2.5 py-1 rounded-md bg-emerald-500 text-white whitespace-nowrap"
+              >
+                {t("takeAttendance")}
+              </Link>
+            )}
             {role === "admin" && (
               <>
                 <FormContainer table="club" type="update" data={item} />
@@ -171,6 +182,14 @@ const ClubListPage = async ({
         <div className="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
           <TableSearch />
           <div className="flex items-center gap-4 self-end">
+            {(role === "admin" || role === "teacher") && (
+              <Link
+                href="/dashboard/list/clubs/attendance"
+                className="bg-emerald-500 text-white px-3 py-1.5 rounded-md text-sm font-semibold whitespace-nowrap"
+              >
+                {t("clubAttendanceButton")}
+              </Link>
+            )}
             {role === "admin" && <FormContainer table="club" type="create" />}
           </div>
         </div>

@@ -261,3 +261,24 @@ export const clubAttendanceSchema = z.object({
 });
 
 export type ClubAttendanceSchema = z.infer<typeof clubAttendanceSchema>;
+
+// Whole-roster capture for one club meeting, mirroring attendanceBulkSchema.
+// The session is found (or created) from club + school-time date, so an
+// instructor never has to set a session up in advance - they just pick the
+// club and the day and mark who showed up.
+export const clubAttendanceBulkSchema = z
+  .object({
+    clubId: z.coerce.number().int().positive(),
+    date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+    startTime: z.string().regex(/^\d{2}:\d{2}$/),
+    endTime: z.string().regex(/^\d{2}:\d{2}$/),
+    records: z.array(
+      z.object({
+        studentId: z.string().min(1),
+        status: z.enum(["PRESENT", "ABSENT", "LATE", "EXCUSED"]),
+      })
+    ),
+  })
+  .refine((d) => d.startTime < d.endTime, { path: ["endTime"] });
+
+export type ClubAttendanceBulkSchema = z.infer<typeof clubAttendanceBulkSchema>;
