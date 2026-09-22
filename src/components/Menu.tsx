@@ -68,6 +68,12 @@ const getMenuItems = (t: Awaited<ReturnType<typeof getTranslations>>, role: stri
           href: "/dashboard/list/lesson-times",
           visible: ["admin"],
         },
+        {
+          icon: "/upload.png",
+          label: t("bulkImport"),
+          href: "/dashboard/list/import",
+          visible: ["admin"],
+        },
       ],
     },
     {
