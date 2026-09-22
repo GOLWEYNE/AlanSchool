@@ -36,6 +36,7 @@ export const routeAccessMap: RouteAccessMap = {
   "/dashboard/list/clubs(.*)": ["admin", "teacher", "student", "parent"],
   "/dashboard/list/lessons(.*)": ["admin", "teacher"],
   "/dashboard/list/lesson-times(.*)": ["admin"],
+  "/dashboard/list/import(.*)": ["admin"],
   "/dashboard/list/exams(.*)": ["admin", "teacher", "student", "parent"],
   "/dashboard/list/assignments(.*)": ["admin", "teacher", "student"],
   "/dashboard/list/results(.*)": ["admin", "teacher", "student", "parent"],
