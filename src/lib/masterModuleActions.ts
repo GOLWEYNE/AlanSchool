@@ -6,12 +6,15 @@ import prisma from "./prisma";
 import { getUserRole } from "./auth";
 import { notifyUser } from "./notify";
 import { getTranslations } from "next-intl/server";
+import { fromWallClock, schoolDayRange } from "./schoolTime";
 import {
       AttendanceBulkSchema,
       AttendanceRecordSchema,
       BehaviorLogSchema,
       CheckInScanSchema,
       checkInScanSchema,
+      ClubAttendanceBulkSchema,
+      clubAttendanceBulkSchema,
       ClubAttendanceSchema,
       ClubEnrollmentSchema,
       ClubSchema,
@@ -1257,7 +1260,7 @@ export const createClubSession = async (
       currentState: CurrentState,
       data: ClubSessionSchema
     ) => {
-      if (!isAdminOrTeacher()) return rejectUnauthorized();
+      if (!(await canManageClub(data.clubId))) return rejectUnauthorized();
       try {
               await prisma.clubSession.create({
                         data: {
@@ -1267,7 +1270,7 @@ export const createClubSession = async (
                                     endTime: data.endTime,
                         },
               });
-              revalidatePath("/dashboard/list/classes");
+              revalidatePath("/dashboard/list/clubs/attendance");
               return ok();
       } catch (err) {
               console.log(err);
@@ -1279,7 +1282,11 @@ export const recordClubAttendance = async (
       currentState: CurrentState,
       data: ClubAttendanceSchema
     ) => {
-      if (!isAdminOrTeacher()) return rejectUnauthorized();
+      const clubSession = await prisma.clubSession.findUnique({
+              where: { id: data.clubSessionId },
+              select: { clubId: true },
+      });
+      if (!clubSession || !(await canManageClub(clubSession.clubId))) return rejectUnauthorized();
       try {
               await prisma.clubAttendance.upsert({
                         where: {
@@ -1295,7 +1302,91 @@ export const recordClubAttendance = async (
                                     status: data.status,
                         },
               });
-              revalidatePath("/dashboard/list/classes");
+              revalidatePath("/dashboard/list/clubs/attendance");
+              return ok();
+      } catch (err) {
+              console.log(err);
+              return fail();
+      }
+};
+
+// Instructors may only take attendance for clubs they run; admins for any.
+const canManageClub = async (clubId: number) => {
+      const role = getCurrentRole();
+      if (role === "admin") return true;
+      if (role !== "teacher") return false;
+      const userId = getCurrentUserId();
+      if (!userId) return false;
+      const club = await prisma.club.findFirst({
+              where: { id: clubId, instructorId: userId },
+              select: { id: true },
+      });
+      return !!club;
+};
+
+// Marks a whole club meeting in one submit - the club counterpart of
+// recordAttendanceBulk. The ClubSession for that school day is reused if one
+// exists (its times are updated to what the instructor entered) or created
+// on the fly, then every row is upserted on the (session, student) unique.
+export const recordClubAttendanceBulk = async (
+      currentState: CurrentState,
+      data: ClubAttendanceBulkSchema
+    ) => {
+      const parsed = clubAttendanceBulkSchema.safeParse(data);
+      if (!parsed.success) return fail(await sm("invalidInput"));
+      const input = parsed.data;
+      if (!(await canManageClub(input.clubId))) return rejectUnauthorized();
+
+      const [y, m, d] = input.date.split("-").map(Number);
+      const [sh, smin] = input.startTime.split(":").map(Number);
+      const [eh, emin] = input.endTime.split(":").map(Number);
+      const day = { year: y, month: m, day: d };
+      const [dayStart, dayEnd] = schoolDayRange(input.date);
+
+      try {
+              // Only students who are (or were) enrolled in this club can be marked.
+              const enrolled = await prisma.clubEnrollment.findMany({
+                        where: { clubId: input.clubId },
+                        select: { studentId: true },
+              });
+              const allowed = new Set(enrolled.map((e) => e.studentId));
+              const records = input.records.filter((r) => allowed.has(r.studentId));
+
+              await prisma.$transaction(async (tx) => {
+                        const times = {
+                                    date: fromWallClock(day),
+                                    startTime: fromWallClock({ ...day, hour: sh, minute: smin }),
+                                    endTime: fromWallClock({ ...day, hour: eh, minute: emin }),
+                        };
+                        const existing = await tx.clubSession.findFirst({
+                                    where: { clubId: input.clubId, date: { gte: dayStart, lt: dayEnd } },
+                                    orderBy: { startTime: "asc" },
+                                    select: { id: true },
+                        });
+                        const session = existing
+                                    ? await tx.clubSession.update({ where: { id: existing.id }, data: times })
+                                    : await tx.clubSession.create({ data: { clubId: input.clubId, ...times } });
+
+                        for (const r of records) {
+                                    await tx.clubAttendance.upsert({
+                                                where: {
+                                                            clubSessionId_studentId: {
+                                                                        clubSessionId: session.id,
+                                                                        studentId: r.studentId,
+                                                            },
+                                                },
+                                                update: { status: r.status },
+                                                create: {
+                                                            clubSessionId: session.id,
+                                                            studentId: r.studentId,
+                                                            status: r.status,
+                                                },
+                                    });
+                        }
+              });
+
+              revalidatePath("/dashboard/list/clubs/attendance");
+              revalidatePath("/dashboard/list/clubs");
               return ok();
       } catch (err) {
               console.log(err);
