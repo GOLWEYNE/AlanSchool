@@ -46,7 +46,8 @@
     "assessmentHub": "Assessment Hub",
     "quizzes": "Quizzes",
     "submissions": "Submissions",
-    "studyPlanner": "Study Planner"
+    "studyPlanner": "Study Planner",
+    "bulkImport": "Bulk Import"
   },
   "Navbar": {
     "searchPlaceholder": "Search...",
@@ -1804,5 +1805,82 @@
     "room": "Room {room}",
     "scopeClass": "Class {name}",
     "download": "Download schedule (PDF)"
+  },
+  "BulkImport": {
+    "title": "Bulk Import",
+    "subtitle": "Upload a spreadsheet to create many student, teacher or parent accounts at once — validate first, then import.",
+    "roles": {
+      "student": "Students",
+      "teacher": "Teachers",
+      "parent": "Parents"
+    },
+    "intro": "Import {role} from a CSV or Excel file.",
+    "help": {
+      "student": "Required: first/last name, sex, birthday, blood type, class, and an existing parent's username. Import parents first if they don't have an account yet.",
+      "teacher": "Required: first/last name, sex, birthday, blood type. Subjects are optional — list existing subject names separated by commas.",
+      "parent": "Required: first/last name, phone, and address."
+    },
+    "downloadTemplate": "Download template (CSV)",
+    "chooseFile": "Choose file",
+    "validating": "Checking rows…",
+    "summary": "{ready} of {total} rows are ready to import ({errors} have errors and will be skipped).",
+    "colStatus": "Status",
+    "colUsername": "Username",
+    "colName": "Name",
+    "colClass": "Class",
+    "colSubjects": "Subjects",
+    "colPhone": "Phone",
+    "colNotes": "Notes",
+    "colPassword": "Temp. password",
+    "statusReady": "Ready",
+    "statusError": "Error",
+    "statusCreated": "Created",
+    "statusFailed": "Failed",
+    "importButton": "Import {count} accounts",
+    "importing": "Importing… {done}/{total}",
+    "confirmImport": "Create {count} new accounts now? This can't be undone from this screen.",
+    "outcomeSummary": "{created} account(s) created, {failed} failed.",
+    "downloadCredentials": "Download usernames & passwords (CSV)",
+    "credentialsHint": "Each new account gets a temporary password shown only here — download this file now and share logins securely, then ask them to change their password.",
+    "errors": {
+      "empty": "The file has no data rows.",
+      "tooMany": "That file has more than {max} rows — split it into smaller files.",
+      "validateFailed": "Couldn't validate the file. Please try again.",
+      "parseFailed": "Couldn't read that file. Make sure it's a CSV or Excel file exported from a spreadsheet."
+    },
+    "fields": {
+      "username": "Username",
+      "name": "First name",
+      "surname": "Last name",
+      "sex": "Sex",
+      "birthday": "Birthday",
+      "bloodtype": "Blood type",
+      "class": "Class",
+      "parentusername": "Parent username",
+      "email": "Email",
+      "phone": "Phone",
+      "address": "Address",
+      "subjects": "Subjects"
+    },
+    "issues": {
+      "required": "{field} is required.",
+      "invalidSex": "Invalid sex \"{value}\" — use M or F.",
+      "invalidBirthday": "Invalid birthday \"{value}\" — use YYYY-MM-DD.",
+      "invalidEmail": "Invalid email \"{value}\".",
+      "unknownClass": "No class named \"{value}\".",
+      "classFull": "Class \"{value}\" is already full.",
+      "unknownParent": "No parent with username \"{value}\". Import parents first, or check the spelling.",
+      "unknownSubject": "No subject named \"{value}\" — skipped.",
+      "duplicateUsername": "Username \"{value}\" is already taken.",
+      "duplicateEmail": "Email \"{value}\" is already in use.",
+      "duplicatePhone": "Phone \"{value}\" is already in use."
+    },
+    "commitErrors": {
+      "duplicateUsername": "Username was taken by someone else in the meantime.",
+      "duplicateEmail": "Email was taken by someone else in the meantime.",
+      "duplicatePhone": "Phone was taken by someone else in the meantime.",
+      "requestFailed": "The request failed — you can try importing this row again.",
+      "unknown": "Something went wrong creating this account."
+    }
   }
 }
