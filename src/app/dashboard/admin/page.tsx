@@ -8,7 +8,6 @@ import ClassLeaderboard from "@/components/ClassLeaderboard";
 import AttendanceChartContainer from "@/components/AttendanceChartContainer";
 import CountChartContainer from "@/components/CountChartContainer";
 import EventCalendarContainer from "@/components/EventCalendarContainer";
-import FinanceChart from "@/components/FinanceChart";
 import ClubActivity from "@/components/ClubActivity";
 import UserCard from "@/components/UserCard";
 import FormContainer from "@/components/FormContainer";
@@ -81,10 +80,6 @@ const AdminPage = async ({
           <div className="w-full lg:w-2/3 h-[450px]">
             <AttendanceChartContainer />
           </div>
-        </div>
-        {/* BOTTOM CHART */}
-        <div className="w-full h-[500px]">
-          <FinanceChart />
         </div>
         {/* CLUB ACTIVITY */}
         <div className="w-full">
