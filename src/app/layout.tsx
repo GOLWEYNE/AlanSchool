@@ -15,8 +15,10 @@ type ClerkLocalization = React.ComponentProps<typeof ClerkProvider>["localizatio
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("Metadata");
   return {
-    title: t("title"),
+    // The school's name is a proper noun, so it is not translated.
+    title: "Alan International School",
     description: t("description"),
+    icons: { icon: "/Alan.png", apple: "/Alan.png" },
   };
 }
 
