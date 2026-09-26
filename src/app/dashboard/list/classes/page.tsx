@@ -9,9 +9,11 @@ import { Class, Prisma, Teacher } from "@/generated/prisma/client";
 import Image from "next/image";
 import { auth } from "@clerk/nextjs/server";
 import { getUserRole } from "@/lib/auth";
-import { getTranslations } from "next-intl/server";
+import { floorOfRoom, getClassRooms } from "@/lib/classLocator";
+import { classLocatorLabels } from "@/lib/classLocatorLabels";
+import { getLocale, getTranslations } from "next-intl/server";
 
-type ClassList = Class & { supervisor: Teacher };
+type ClassList = Class & { supervisor: Teacher; roomNumber?: string };
 
 const ClassListPage = async ({
   searchParams,
@@ -22,6 +24,7 @@ const ClassListPage = async ({
 const { sessionClaims } = auth();
 const role = getUserRole(sessionClaims);
 const t = await getTranslations("List.classes");
+const locators = classLocatorLabels(await getLocale());
 
 
 const columns = [
@@ -37,6 +40,11 @@ const columns = [
   {
     header: t("columns.grade"),
     accessor: "grade",
+    className: "hidden md:table-cell",
+  },
+  {
+    header: locators.column,
+    accessor: "roomNumber",
     className: "hidden md:table-cell",
   },
   {
@@ -62,6 +70,11 @@ const renderRow = (item: ClassList) => (
     <td className="flex items-center gap-4 p-4">{item.name}</td>
     <td className="hidden md:table-cell">{item.capacity}</td>
     <td className="hidden md:table-cell">{item.name[0]}</td>
+    <td className="hidden md:table-cell">
+      {item.roomNumber
+        ? `${item.roomNumber}${floorOfRoom(item.roomNumber) ? ` · ${locators.floor} ${floorOfRoom(item.roomNumber)}` : ""}`
+        : "—"}
+    </td>
     <td className="hidden md:table-cell">
       {item.supervisor ? item.supervisor.name + " " + item.supervisor.surname : "—"}
     </td>
@@ -116,6 +129,9 @@ const renderRow = (item: ClassList) => (
     prisma.class.count({ where: query }),
   ]);
 
+  const rooms = await getClassRooms().catch(() => ({} as Record<number, string>));
+  const rows: ClassList[] = data.map((c) => ({ ...c, roomNumber: rooms[c.id] })) as ClassList[];
+
   return (
     <div className="panel-card p-4 md:p-5 flex-1 m-4 mt-0 list-page-shell">
       <PageHero
@@ -145,7 +161,7 @@ const renderRow = (item: ClassList) => (
         </div>
       </div>
       {/* LIST */}
-      <Table columns={columns} renderRow={renderRow} data={data} />
+      <Table columns={columns} renderRow={renderRow} data={rows} />
       {/* PAGINATION */}
       <Pagination page={p} count={count} pageSize={size} />
     </div>
