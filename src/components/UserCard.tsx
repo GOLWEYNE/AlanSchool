@@ -2,6 +2,7 @@ import prisma from "@/lib/prisma";
 import Image from "next/image";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
+import { currentSchoolYear } from "@/lib/schoolYear";
 
 const UserCard = async ({
   type,
@@ -33,7 +34,7 @@ const UserCard = async ({
     >
       <div className="flex justify-between items-center">
         <span className="text-[10px] bg-white/90 px-2 py-1 rounded-full text-blue-700 font-semibold">
-          2024/25
+          {currentSchoolYear()}
         </span>
         <Image src="/more.png" alt="" width={20} height={20} />
       </div>
