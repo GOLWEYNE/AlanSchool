@@ -9,18 +9,21 @@ import {
   subjectSchema,
   SubjectSchema,
 } from "@/lib/formValidationSchemas";
-import {
-  createClass,
-  createSubject,
-  updateClass,
-  updateSubject,
-} from "@/lib/actions";
+import { createSubject, updateSubject } from "@/lib/actions";
+import { createClassWithRoom, updateClassWithRoom } from "@/lib/classLocatorActions";
+import { classLocatorLabels } from "@/lib/classLocatorLabels";
+import { z } from "zod";
 import { useFormState } from "react-dom";
 import { Dispatch, SetStateAction, useEffect } from "react";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useValidationMessage } from "@/hooks/useValidationMessage";
+
+const classFormSchema = classSchema.extend({
+  roomNumber: z.string().trim().max(10).optional(),
+});
+type ClassFormValues = z.infer<typeof classFormSchema>;
 
 const ClassForm = ({
   type,
@@ -34,19 +37,20 @@ const ClassForm = ({
   relatedData?: any;
 }) => {
   const t = useTranslations("Forms");
+  const locale = useLocale();
   const tv = useValidationMessage();
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<ClassSchema>({
-    resolver: zodResolver(classSchema),
+  } = useForm<ClassFormValues>({
+    resolver: zodResolver(classFormSchema),
   });
 
   // AFTER REACT 19 IT'LL BE USEACTIONSTATE
 
   const [state, formAction] = useFormState(
-    type === "create" ? createClass : updateClass,
+    type === "create" ? createClassWithRoom : updateClassWithRoom,
     {
       success: false,
       error: false,
@@ -90,6 +94,13 @@ const ClassForm = ({
           defaultValue={data?.capacity}
           register={register}
           error={errors?.capacity}
+        />
+        <InputField
+          label={classLocatorLabels(locale).field}
+          name="roomNumber"
+          defaultValue={data?.roomNumber}
+          register={register}
+          error={errors?.roomNumber}
         />
         {data && (
           <InputField
