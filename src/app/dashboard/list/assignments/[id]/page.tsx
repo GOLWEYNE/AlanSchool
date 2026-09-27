@@ -7,11 +7,18 @@ import { FileText, Clock } from "lucide-react";
 import WorkSubmitPanel from "@/components/WorkSubmitPanel";
 import WorkSubmissionsPanel from "@/components/WorkSubmissionsPanel";
 import ParentSubmissionStatus from "@/components/ParentSubmissionStatus";
+import AdminStudentPicker from "@/components/AdminStudentPicker";
 import type { RubricCriterion, RubricScore } from "@/lib/formValidationSchemas";
 
 type QuizQuestion = { text: string; options: string[]; correctIndex: number; points: number };
 
-const SingleAssignmentPage = async ({ params: { id } }: { params: { id: string } }) => {
+const SingleAssignmentPage = async ({
+  params: { id },
+  searchParams,
+}: {
+  params: { id: string };
+  searchParams: { studentId?: string };
+}) => {
   const assignmentId = parseInt(id, 10);
   if (Number.isNaN(assignmentId)) return notFound();
 
@@ -51,6 +58,23 @@ const SingleAssignmentPage = async ({ params: { id } }: { params: { id: string }
 
   if (role === "student" && (!student || !isTargeted(student.id, student.classId))) {
     return notFound();
+  }
+
+  // Every student eligible for this assignment - the whole class, or just
+  // the targeted subset. Used for the admin/teacher submissions table below
+  // and for the admin's "log a submission for a student" picker.
+  let classStudents: { id: string; name: string; surname: string }[] = [];
+  if (role === "admin" || role === "teacher") {
+    classStudents =
+      assignment.targetStudentIds.length > 0
+        ? await prisma.student.findMany({
+            where: { id: { in: assignment.targetStudentIds } },
+            select: { id: true, name: true, surname: true },
+          })
+        : await prisma.student.findMany({
+            where: { classId: assignment.lesson.classId },
+            select: { id: true, name: true, surname: true },
+          });
   }
 
   let parentChild: { name: string; surname: string } | null = null;
@@ -111,6 +135,47 @@ const SingleAssignmentPage = async ({ params: { id } }: { params: { id: string }
     }
   }
 
+  // An admin can pick any eligible student (via ?studentId=) to log a
+  // submission on their behalf, or just preview the same status card a
+  // parent would see - without needing a separate student/parent login.
+  const selectedStudentId = role === "admin" ? searchParams.studentId ?? null : null;
+  let adminSelectedStudent: { id: string; name: string; surname: string } | null = null;
+  let adminSelectedSubmission: {
+    fileUrl: string | null;
+    fileName: string | null;
+    submittedAt: string | null;
+    status: string;
+    grade: number | null;
+    feedback: string | null;
+    answers: number[] | null;
+    rubricScores: RubricScore[] | null;
+  } | null = null;
+
+  if (role === "admin" && selectedStudentId) {
+    adminSelectedStudent =
+      classStudents.find((s) => s.id === selectedStudentId) ?? null;
+
+    if (adminSelectedStudent) {
+      const sub = await prisma.studentSubmission.findUnique({
+        where: {
+          assignmentId_studentId: { assignmentId: assignment.id, studentId: adminSelectedStudent.id },
+        },
+      });
+      if (sub) {
+        adminSelectedSubmission = {
+          fileUrl: sub.fileUrl,
+          fileName: sub.fileName,
+          submittedAt: sub.submittedAt?.toISOString() ?? null,
+          status: sub.status,
+          grade: sub.grade,
+          feedback: sub.feedback,
+          answers: (sub.answers as unknown as number[] | null) ?? null,
+          rubricScores: (sub.rubricScores as unknown as RubricScore[] | null) ?? null,
+        };
+      }
+    }
+  }
+
   let submissionRows: {
     studentId: string;
     name: string;
@@ -129,23 +194,12 @@ const SingleAssignmentPage = async ({ params: { id } }: { params: { id: string }
   }[] = [];
 
   if (role === "admin" || role === "teacher") {
-    const targetStudents =
-      assignment.targetStudentIds.length > 0
-        ? await prisma.student.findMany({
-            where: { id: { in: assignment.targetStudentIds } },
-            select: { id: true, name: true, surname: true },
-          })
-        : await prisma.student.findMany({
-            where: { classId: assignment.lesson.classId },
-            select: { id: true, name: true, surname: true },
-          });
-
     const submissions = await prisma.studentSubmission.findMany({
       where: { assignmentId: assignment.id },
     });
     const submissionByStudent = new Map(submissions.map((s) => [s.studentId, s]));
 
-    submissionRows = targetStudents.map((s) => {
+    submissionRows = classStudents.map((s) => {
       const sub = submissionByStudent.get(s.id);
       return {
         studentId: s.id,
@@ -245,6 +299,42 @@ const SingleAssignmentPage = async ({ params: { id } }: { params: { id: string }
             childName={`${parentChild.name} ${parentChild.surname}`}
             submission={parentSubmission}
           />
+        </div>
+      )}
+
+      {role === "admin" && (
+        <div className="panel-card p-5 md:p-6">
+          <h2 className="text-sm font-semibold text-blue-900 dark:text-blue-100 mb-3">
+            {t("adminSubmitTitle")}
+          </h2>
+          <AdminStudentPicker students={classStudents} selectedStudentId={selectedStudentId} />
+          {adminSelectedStudent ? (
+            <div className="flex flex-col gap-4">
+              <WorkSubmitPanel
+                key={adminSelectedStudent.id}
+                workType="assignment"
+                workId={assignment.id}
+                deadline={assignment.dueDate.toISOString()}
+                questions={studentQuestions}
+                existingSubmission={adminSelectedSubmission}
+                rubric={rubric}
+                studentId={adminSelectedStudent.id}
+              />
+              <div>
+                <h3 className="text-xs font-semibold text-blue-900 dark:text-blue-100 mb-2">
+                  {t("parentPreviewTitle")}
+                </h3>
+                <ParentSubmissionStatus
+                  childName={`${adminSelectedStudent.name} ${adminSelectedStudent.surname}`}
+                  submission={adminSelectedSubmission}
+                />
+              </div>
+            </div>
+          ) : (
+            <p className="text-sm text-gray-500 dark:text-slate-400">
+              {t("adminNoStudentSelected")}
+            </p>
+          )}
         </div>
       )}
 

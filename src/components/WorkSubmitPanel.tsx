@@ -29,6 +29,11 @@ type ExistingSubmission = {
 // deadline replaces the previous attempt; once the deadline passes the
 // server refuses new submissions outright, so this mirrors that by
 // locking the UI too.
+//
+// When studentId is passed, this is an admin logging a submission on that
+// student's behalf rather than the student submitting their own work - the
+// deadline lock is skipped to match the server, which doesn't hold an
+// after-the-fact admin entry to the student-facing deadline either.
 const WorkSubmitPanel = ({
   workType,
   workId,
@@ -36,6 +41,7 @@ const WorkSubmitPanel = ({
   questions,
   existingSubmission,
   rubric,
+  studentId,
 }: {
   workType: "exam" | "assignment";
   workId: number;
@@ -43,6 +49,7 @@ const WorkSubmitPanel = ({
   questions?: QuestionForStudent[] | null;
   existingSubmission?: ExistingSubmission;
   rubric?: RubricCriterion[] | null;
+  studentId?: string;
 }) => {
   const router = useRouter();
   const t = useTranslations("Assessments.work");
@@ -62,7 +69,7 @@ const WorkSubmitPanel = ({
     existingSubmission?.answers ?? (questions ? questions.map(() => -1) : [])
   );
 
-  const isPast = new Date() > new Date(deadline);
+  const isPast = !studentId && new Date() > new Date(deadline);
   const alreadyGraded = existingSubmission?.status === "GRADED";
   const hasQuiz = !!questions && questions.length > 0;
 
@@ -85,6 +92,7 @@ const WorkSubmitPanel = ({
       fileUrl: uploadUrl || undefined,
       fileName: uploadName || undefined,
       answers: hasQuiz ? answers : undefined,
+      studentId,
     };
     formAction(
       workType === "exam"

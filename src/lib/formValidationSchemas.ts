@@ -280,10 +280,14 @@ export const resultSchema = z.object({
 
 export type ResultSchema = z.infer<typeof resultSchema>;
 
-// A student's own file/quiz submission for one exam or assignment.
+// A student's own file/quiz submission for one exam or assignment. An
+// admin logging a submission on a student's behalf also goes through this
+// schema, with studentId naming who it's for - the server only honors
+// studentId for an admin, never for a student acting on their own work.
 export const submissionSchema = z.object({
   examId: z.coerce.number().optional(),
   assignmentId: z.coerce.number().optional(),
+  studentId: z.string().optional(),
   fileUrl: z.string().optional(),
   fileName: z.string().optional(),
   answers: z.preprocess((val) => {

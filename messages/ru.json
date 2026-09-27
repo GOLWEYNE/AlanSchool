@@ -1345,10 +1345,10 @@
       "pts": "{count} б.",
       "deadlinePassed": "Срок сдачи истёк — приём работ закрыт.",
       "points": "({count, plural, one {# балл} few {# балла} many {# баллов} other {# балла}})",
-      "uploadCompleted": "Загрузите выполненную работу (PDF или Word)",
+      "uploadCompleted": "Загрузите выполненную работу (PDF, Word или фото)",
       "fileReady": "Файл готов",
       "chooseCompleted": "Выберите выполненный файл",
-      "fileHint": "PDF, DOC или DOCX — до 20 МБ",
+      "fileHint": "PDF, DOC, DOCX, JPG, PNG или HEIC — до 20 МБ",
       "resubmit": "Сдать заново",
       "submit": "Сдать",
       "paperLabel": "Бланк экзамена / задания (PDF или Word — необязательно)",
@@ -1371,7 +1371,12 @@
       "yourSubmission": "Ваша работа",
       "submissionsCount": "Сданные работы ({done}/{total})",
       "viewSubmit": "Открыть / сдать",
-      "view": "Открыть"
+      "view": "Открыть",
+      "adminSubmitTitle": "Внести работу за ученика",
+      "selectStudentLabel": "Ученик",
+      "chooseStudentPlaceholder": "Выберите ученика...",
+      "parentPreviewTitle": "Предпросмотр вида родителя",
+      "adminNoStudentSelected": "Выберите ученика выше, чтобы увидеть или внести его работу."
     }
   },
   "ReportCards": {
