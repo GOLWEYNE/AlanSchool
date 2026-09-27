@@ -8,6 +8,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages, getTranslations } from "next-intl/server";
 import { ThemeProvider } from "@/context/ThemeContext";
+import SupportChatWidget from "@/components/SupportChatWidget";
 const inter = Inter({ subsets: ["latin"] });
 
 type ClerkLocalization = React.ComponentProps<typeof ClerkProvider>["localization"];
@@ -64,6 +65,7 @@ export default async function RootLayout({
           <NextIntlClientProvider locale={locale} messages={messages}>
             <ThemeProvider>
               {children} <ToastContainer position="bottom-right" theme="dark" />
+              <SupportChatWidget />
             </ThemeProvider>
           </NextIntlClientProvider>
         </body>
