@@ -6,6 +6,7 @@ import { getFormatter, getTranslations } from "next-intl/server";
 import { FileText, Clock } from "lucide-react";
 import WorkSubmitPanel from "@/components/WorkSubmitPanel";
 import WorkSubmissionsPanel from "@/components/WorkSubmissionsPanel";
+import ParentSubmissionStatus from "@/components/ParentSubmissionStatus";
 import type { RubricCriterion, RubricScore } from "@/lib/formValidationSchemas";
 
 type QuizQuestion = { text: string; options: string[]; correctIndex: number; points: number };
@@ -52,12 +53,37 @@ const SingleAssignmentPage = async ({ params: { id } }: { params: { id: string }
     return notFound();
   }
 
+  let parentChild: { name: string; surname: string } | null = null;
+  let parentSubmission: {
+    fileUrl: string | null;
+    fileName: string | null;
+    submittedAt: string | null;
+    status: string;
+    grade: number | null;
+    feedback: string | null;
+  } | null = null;
+
   if (role === "parent" && userId) {
     const child = await prisma.student.findFirst({
       where: { parentId: userId, classId: assignment.lesson.classId },
-      select: { id: true },
+      select: { id: true, name: true, surname: true },
     });
     if (!child) return notFound();
+    parentChild = { name: child.name, surname: child.surname };
+
+    const sub = await prisma.studentSubmission.findUnique({
+      where: { assignmentId_studentId: { assignmentId: assignment.id, studentId: child.id } },
+    });
+    if (sub) {
+      parentSubmission = {
+        fileUrl: sub.fileUrl,
+        fileName: sub.fileName,
+        submittedAt: sub.submittedAt?.toISOString() ?? null,
+        status: sub.status,
+        grade: sub.grade,
+        feedback: sub.feedback,
+      };
+    }
   }
 
   const isOpen = new Date() < assignment.dueDate;
@@ -206,6 +232,18 @@ const SingleAssignmentPage = async ({ params: { id } }: { params: { id: string }
             questions={studentQuestions}
             existingSubmission={mySubmission}
             rubric={rubric}
+          />
+        </div>
+      )}
+
+      {role === "parent" && parentChild && (
+        <div className="panel-card p-5 md:p-6">
+          <h2 className="text-sm font-semibold text-blue-900 dark:text-blue-100 mb-3">
+            {t("yourSubmission")}
+          </h2>
+          <ParentSubmissionStatus
+            childName={`${parentChild.name} ${parentChild.surname}`}
+            submission={parentSubmission}
           />
         </div>
       )}
