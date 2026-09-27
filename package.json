@@ -10,6 +10,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.128.0",
     "@clerk/elements": "^0.14.6",
     "@clerk/localizations": "^3.9.6",
     "@clerk/nextjs": "^5.4.1",
