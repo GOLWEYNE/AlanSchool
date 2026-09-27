@@ -1,5 +1,5 @@
 import prisma from "@/lib/prisma";
-import { resend, RESEND_FROM } from "@/lib/resend";
+import { getResend, RESEND_FROM } from "@/lib/resend";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -140,7 +140,7 @@ export async function GET(req: Request) {
     `;
 
     try {
-      await resend.emails.send({
+      await getResend().emails.send({
         from: RESEND_FROM,
         to: parent.email,
         subject: "Your child's weekly update - Alan International School",
