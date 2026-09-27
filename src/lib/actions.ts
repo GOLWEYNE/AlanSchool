@@ -1685,14 +1685,21 @@ export const saveGradebookScore = async (payload: {
 // actually assigned to them and that the deadline hasn't passed - once
 // startTime/endTime (exam) or dueDate (assignment) is behind "now", the
 // submission is refused outright rather than merely marked late.
+//
+// An admin can also log a submission on a student's behalf (a paper handed
+// in in person, or trying the upload flow without a separate student
+// login) by passing studentId - that field is only ever honored for an
+// admin; a student can only ever act as themselves, from their own userId.
 export const submitStudentWork = async (
   currentState: SubmissionActionState,
   data: SubmissionSchema
 ): Promise<SubmissionActionState> => {
   const { userId, sessionClaims } = auth();
   const role = getUserRole(sessionClaims);
+  const actingAsAdmin = role === "admin";
+  const targetStudentId = actingAsAdmin ? data.studentId : userId;
 
-  if (role !== "student" || !userId) {
+  if ((role !== "student" && !actingAsAdmin) || !targetStudentId) {
     return { success: false, error: true, message: await sm("onlyStudents") };
   }
 
@@ -1724,7 +1731,7 @@ export const submitStudentWork = async (
     }
 
     const student = await prisma.student.findUnique({
-      where: { id: userId },
+      where: { id: targetStudentId },
       select: { classId: true },
     });
     if (!student) {
@@ -1734,19 +1741,23 @@ export const submitStudentWork = async (
     const targeted =
       work.targetStudentIds.length === 0
         ? student.classId === work.lesson.classId
-        : work.targetStudentIds.includes(userId);
+        : work.targetStudentIds.includes(targetStudentId);
 
     if (!targeted) {
       return { success: false, error: true, message: await sm("notAssigned") };
     }
 
-    const deadline = data.examId ? (work as { endTime: Date }).endTime : (work as { dueDate: Date }).dueDate;
-    if (new Date() > new Date(deadline)) {
-      return {
-        success: false,
-        error: true,
-        message: await sm("deadlinePassed"),
-      };
+    // An admin is logging this after the fact, so they aren't held to the
+    // student-facing deadline the way a student submitting their own work is.
+    if (!actingAsAdmin) {
+      const deadline = data.examId ? (work as { endTime: Date }).endTime : (work as { dueDate: Date }).dueDate;
+      if (new Date() > new Date(deadline)) {
+        return {
+          success: false,
+          error: true,
+          message: await sm("deadlinePassed"),
+        };
+      }
     }
 
     const questions = (work.questions as unknown as QuizQuestion[] | null) ?? null;
@@ -1783,19 +1794,19 @@ export const submitStudentWork = async (
 
     await prisma.studentSubmission.upsert({
       where: data.examId
-        ? { examId_studentId: { examId: data.examId, studentId: userId } }
-        : { assignmentId_studentId: { assignmentId: data.assignmentId!, studentId: userId } },
+        ? { examId_studentId: { examId: data.examId, studentId: targetStudentId } }
+        : { assignmentId_studentId: { assignmentId: data.assignmentId!, studentId: targetStudentId } },
       create: {
         examId: data.examId ?? null,
         assignmentId: data.assignmentId ?? null,
-        studentId: userId,
+        studentId: targetStudentId,
         ...submissionData,
       },
       update: submissionData,
     });
 
     if (status === "GRADED" && grade !== null) {
-      await syncResultScore(userId, data.examId ?? null, data.assignmentId ?? null, grade);
+      await syncResultScore(targetStudentId, data.examId ?? null, data.assignmentId ?? null, grade);
     }
 
     revalidatePath("/dashboard/list/exams");
