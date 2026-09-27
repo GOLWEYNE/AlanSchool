@@ -1345,10 +1345,10 @@
       "pts": "{count} балл",
       "deadlinePassed": "Тапсыру мерзімі аяқталды — жұмыс қабылдау жабық.",
       "points": "({count} балл)",
-      "uploadCompleted": "Орындалған жұмысты жүктеңіз (PDF немесе Word)",
+      "uploadCompleted": "Орындалған жұмысты жүктеңіз (PDF, Word немесе фото)",
       "fileReady": "Файл дайын",
       "chooseCompleted": "Орындалған файлды таңдаңыз",
-      "fileHint": "PDF, DOC немесе DOCX — 20 МБ дейін",
+      "fileHint": "PDF, DOC, DOCX, JPG, PNG немесе HEIC — 20 МБ дейін",
       "resubmit": "Қайта тапсыру",
       "submit": "Тапсыру",
       "paperLabel": "Экзамен / тапсырма парағы (PDF немесе Word — міндетті емес)",
@@ -1371,7 +1371,12 @@
       "yourSubmission": "Сіздің жұмысыңыз",
       "submissionsCount": "Тапсырылған жұмыстар ({done}/{total})",
       "viewSubmit": "Ашу / тапсыру",
-      "view": "Ашу"
+      "view": "Ашу",
+      "adminSubmitTitle": "Оқушы үшін жұмысты тіркеу",
+      "selectStudentLabel": "Оқушы",
+      "chooseStudentPlaceholder": "Оқушыны таңдаңыз...",
+      "parentPreviewTitle": "Ата-ана көрінісінің алдын ала қарауы",
+      "adminNoStudentSelected": "Жұмысын көру немесе тіркеу үшін жоғарыда оқушыны таңдаңыз."
     }
   },
   "ReportCards": {

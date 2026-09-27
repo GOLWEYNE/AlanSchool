@@ -1345,10 +1345,10 @@
       "pts": "{count} pts",
       "deadlinePassed": "The deadline has passed - submissions are closed.",
       "points": "({count, plural, one {# pt} other {# pts}})",
-      "uploadCompleted": "Upload your completed work (PDF or Word)",
+      "uploadCompleted": "Upload your completed work (PDF, Word, or a photo)",
       "fileReady": "File ready",
       "chooseCompleted": "Choose your completed file",
-      "fileHint": "PDF, DOC, or DOCX - up to 20MB",
+      "fileHint": "PDF, DOC, DOCX, JPG, PNG, or HEIC - up to 20MB",
       "resubmit": "Resubmit",
       "submit": "Submit",
       "paperLabel": "Exam / assignment paper (PDF or Word - optional)",
@@ -1371,7 +1371,12 @@
       "yourSubmission": "Your submission",
       "submissionsCount": "Submissions ({done}/{total})",
       "viewSubmit": "View / Submit",
-      "view": "View"
+      "view": "View",
+      "adminSubmitTitle": "Log a submission for a student",
+      "selectStudentLabel": "Student",
+      "chooseStudentPlaceholder": "Choose a student...",
+      "parentPreviewTitle": "Parent view preview",
+      "adminNoStudentSelected": "Select a student above to see or log their submission."
     }
   },
   "ReportCards": {
