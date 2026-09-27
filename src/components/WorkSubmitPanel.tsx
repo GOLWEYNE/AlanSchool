@@ -206,7 +206,7 @@ const WorkSubmitPanel = ({
                 options={{
                   resourceType: "auto",
                   sources: ["local"],
-                  clientAllowedFormats: ["pdf", "doc", "docx"],
+                  clientAllowedFormats: ["pdf", "doc", "docx", "jpg", "jpeg", "png", "heic"],
                   maxFileSize: 20971520,
                 }}
                 onSuccess={(result, { widget }) => {
