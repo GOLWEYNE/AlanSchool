@@ -1,8 +1,8 @@
 import PageHero from "@/components/PageHero";
 import Table from "@/components/Table";
 import prisma from "@/lib/prisma";
-import { auth } from "@clerk/nextjs/server";
-import { getUserRole } from "@/lib/auth";
+import { requireRole } from "@/lib/auth";
+import { routeAccessMap } from "@/lib/settings";
 import { getTranslations } from "next-intl/server";
 
 type IdName = { id: number; name: string };
@@ -20,18 +20,8 @@ const CurriculumCoveragePage = async ({
 }: {
   searchParams: { classId?: string; subjectId?: string; from?: string; to?: string };
 }) => {
-  const { userId, sessionClaims } = auth();
-  const role = getUserRole(sessionClaims);
+  const { userId, role } = requireRole(routeAccessMap["/dashboard/list/curriculum-coverage(.*)"]);
   const t = await getTranslations("List.curriculumCoverage");
-
-  if (role !== "admin" && role !== "teacher") {
-    return (
-      <div className="panel-card p-4 md:p-5 rounded-md flex-1 m-4 mt-0 list-page-shell">
-        <PageHero title={t("title")} subtitle={t("subtitle")} emoji={t("emoji")} stats={[]} />
-        <p className="text-sm text-gray-500 dark:text-slate-400 p-4">{t("restricted")}</p>
-      </div>
-    );
-  }
 
   const teacherLessons: { class: IdName; subject: IdName }[] =
     role === "teacher" && userId
