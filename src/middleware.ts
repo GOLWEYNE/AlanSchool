@@ -1,5 +1,6 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import { routeAccessMap } from "./lib/settings";
+import { getUserRole, homeFor } from "./lib/auth";
 import { NextResponse } from "next/server";
 
 const matchers = Object.keys(routeAccessMap).map((route) => ({
@@ -9,23 +10,9 @@ const matchers = Object.keys(routeAccessMap).map((route) => ({
 
 const publicRoutes = createRouteMatcher(["/", "/sign-in(.*)", "/sign-up(.*)"]);
 
-const getRole = (sessionClaims: any) => {
-  const directRole = sessionClaims?.role as string | undefined;
-  const metadataRole = (sessionClaims?.metadata as { role?: string } | undefined)?.role;
-  const publicMetadataRole = (sessionClaims?.publicMetadata as { role?: string } | undefined)?.role;
-  return String(directRole ?? metadataRole ?? publicMetadataRole ?? "").trim().toLowerCase();
-};
-
-// Every role has a purpose-built home dashboard at /dashboard/<role>
-// (admin, teacher, student, parent all live under src/app/dashboard/<role>).
-// Sending everyone there — instead of a generic page or a profile "userpage" —
-// is what makes a parent land on their child's schedule/results and a
-// student land on their own day, rather than everyone seeing the same view.
-const homeFor = (role: string) => (role ? `/dashboard/${role}` : "/dashboard");
-
 export default clerkMiddleware((auth, req) => {
   const { userId, sessionClaims } = auth();
-  const role = getRole(sessionClaims);
+  const role = getUserRole(sessionClaims);
 
   if (publicRoutes(req)) {
     if (userId && req.nextUrl.pathname === "/") {
