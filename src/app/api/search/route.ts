@@ -1,18 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@clerk/nextjs/server";
-import { getUserRole } from "@/lib/auth";
+import { requireApiRole } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 
 // Command-palette search: students, tickets, and messages in one query.
 // Scoped to admin/teacher for now, since those are the only roles with
 // browsable detail pages for tickets today (and full student browsing).
 export async function GET(req: NextRequest) {
-  const { userId, sessionClaims } = auth();
-  const role = getUserRole(sessionClaims);
-
-  if (!userId || (role !== "admin" && role !== "teacher")) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
-  }
+  const access = requireApiRole(["admin", "teacher"]);
+  if (access instanceof NextResponse) return access;
+  const { userId, role } = access;
 
   const q = req.nextUrl.searchParams.get("q")?.trim() ?? "";
 
