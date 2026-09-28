@@ -1,6 +1,6 @@
-import { auth } from "@clerk/nextjs/server";
 import { ShieldAlert, History } from "lucide-react";
-import { getUserRole } from "@/lib/auth";
+import { requireRole } from "@/lib/auth";
+import { routeAccessMap } from "@/lib/settings";
 import prisma from "@/lib/prisma";
 import FeaturedVideoForm from "@/components/forms/FeaturedVideoForm";
 import FeaturedVideoPlayer from "@/components/FeaturedVideoPlayer";
@@ -9,12 +9,19 @@ import { getFormatter, getTranslations } from "next-intl/server";
 // Admin control panel for the dashboard-wide Featured Video broadcast.
 // Publishing a new title/URL here immediately replaces what every Admin,
 // Teacher, Parent, and Student sees on their own dashboard.
+//
+// The route itself (routeAccessMap["/dashboard/list/featured-video(.*)"]) is
+// open to all four roles - every role's own dashboard/userpage links here to
+// let people watch the current broadcast - so requireRole() only enforces
+// "signed in with a known role" at the top, matching middleware.ts exactly.
+// The publish form/history below stay behind their own admin !== check, same
+// as before, since those are this admin-only page's own content, not a
+// route-access decision.
 const FeaturedVideoSettingsPage = async () => {
   const t = await getTranslations("FeaturedVideo");
   const tCommon = await getTranslations("Common");
   const format = await getFormatter();
-  const { sessionClaims } = auth();
-  const role = getUserRole(sessionClaims);
+  const { role } = requireRole(routeAccessMap["/dashboard/list/featured-video(.*)"]);
 
   if (role !== "admin") {
     return (
