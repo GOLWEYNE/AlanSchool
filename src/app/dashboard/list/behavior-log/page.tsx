@@ -4,10 +4,9 @@ import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
 import PageHero from "@/components/PageHero";
 import prisma from "@/lib/prisma";
-import { resolvePageSize } from "@/lib/settings";
+import { resolvePageSize, routeAccessMap } from "@/lib/settings";
 import { BehaviorLog, BehaviorType, Prisma, Student, Teacher } from "@/generated/prisma/client";
-import { auth } from "@clerk/nextjs/server";
-import { getUserRole } from "@/lib/auth";
+import { requireRole } from "@/lib/auth";
 import { getFormatter, getTranslations } from "next-intl/server";
 import { CheckCircle2, XCircle } from "lucide-react";
 
@@ -33,19 +32,11 @@ const BehaviorLogPage = async ({
 }: {
   searchParams: { [key: string]: string | undefined };
 }) => {
-  const { userId, sessionClaims } = auth();
-  const role = getUserRole(sessionClaims);
+  // Same allowed-roles list middleware.ts enforces for this route, pulled
+  // from the single routeAccessMap so the two checks can't drift apart.
+  const { userId, role } = requireRole(routeAccessMap["/dashboard/list/behavior-log(.*)"]);
   const t = await getTranslations("List.behaviorLog");
   const format = await getFormatter();
-
-  if (role !== "admin" && role !== "teacher") {
-    return (
-      <div className="panel-card p-4 md:p-5 rounded-md flex-1 m-4 mt-0 list-page-shell">
-        <PageHero title={t("heading")} subtitle={t("subheading")} emoji={t("emoji")} stats={[]} />
-        <p className="text-sm text-gray-500 dark:text-slate-400 p-4">{t("restricted")}</p>
-      </div>
-    );
-  }
 
   const TYPE_LABELS: Record<BehaviorType, string> = {
     POSITIVE: t("typePositive"),
