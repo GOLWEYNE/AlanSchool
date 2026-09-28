@@ -10,7 +10,6 @@ import CountChartContainer from "@/components/CountChartContainer";
 import EventCalendarContainer from "@/components/EventCalendarContainer";
 import ClubActivity from "@/components/ClubActivity";
 import UserCard from "@/components/UserCard";
-import FormContainer from "@/components/FormContainer";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { getUserRole } from "@/lib/auth";
 import { ensureAdminRecord } from "@/lib/actions";
@@ -50,12 +49,6 @@ const AdminPage = async ({
               <span className="rounded-full bg-white/90 text-blue-900 px-3 py-1 text-xs font-semibold">{t("workspace")}</span>
             </div>
           </div>
-          {role === "admin" && (
-            <div className="flex items-center gap-2">
-              <FormContainer table="admin" type="create" />
-              <FormContainer table="teacher" type="create" />
-            </div>
-          )}
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
