@@ -1,8 +1,8 @@
 import PageHero from "@/components/PageHero";
 import GradebookGrid, { GradebookAssessment, GradebookStudent } from "@/components/GradebookGrid";
 import prisma from "@/lib/prisma";
-import { auth } from "@clerk/nextjs/server";
-import { getUserRole } from "@/lib/auth";
+import { requireRole } from "@/lib/auth";
+import { routeAccessMap } from "@/lib/settings";
 import { getTranslations } from "next-intl/server";
 
 // Spreadsheet-style gradebook: students (rows) x exams/assignments
@@ -17,18 +17,13 @@ const GradebookPage = async ({
 }: {
   searchParams: { classId?: string; subjectId?: string };
 }) => {
-  const { userId, sessionClaims } = auth();
-  const role = getUserRole(sessionClaims);
+  // Same allowed-roles list middleware.ts enforces for this route, pulled
+  // from the single routeAccessMap so the two checks can't drift apart.
+  // redirects (to the caller's own dashboard home) rather than rendering
+  // here - middleware.ts already caught this in the normal case, so this is
+  // the defense-in-depth layer for when it doesn't.
+  const { userId, role } = requireRole(routeAccessMap["/dashboard/list/gradebook(.*)"]);
   const t = await getTranslations("List.gradebook");
-
-  if (role !== "admin" && role !== "teacher") {
-    return (
-      <div className="panel-card p-4 md:p-5 rounded-md flex-1 m-4 mt-0 list-page-shell">
-        <PageHero title={t("title")} subtitle={t("subtitle")} emoji={t("emoji")} stats={[]} />
-        <p className="text-sm text-gray-500 dark:text-slate-400 p-4">{t("restricted")}</p>
-      </div>
-    );
-  }
 
   const teacherLessons: {
     class: { id: number; name: string };

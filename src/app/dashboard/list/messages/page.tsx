@@ -1,8 +1,8 @@
-import { auth } from "@clerk/nextjs/server";
 import Link from "next/link";
 import { getFormatter, getTranslations } from "next-intl/server";
-import { Inbox, Plus, ShieldAlert } from "lucide-react";
-import { getUserRole } from "@/lib/auth";
+import { Inbox, Plus } from "lucide-react";
+import { requireRole } from "@/lib/auth";
+import { routeAccessMap } from "@/lib/settings";
 import PageHero from "@/components/PageHero";
 import MessageComposeForm from "@/components/forms/MessageComposeForm";
 import {
@@ -32,26 +32,12 @@ const MessagesPage = async ({
 }) => {
   const t = await getTranslations("Messages");
   const tRoles = await getTranslations("Roles");
-  const tCommon = await getTranslations("Common");
   const format = await getFormatter();
-  const { userId, sessionClaims } = auth();
-  const role = getUserRole(sessionClaims);
-
-  if (!userId || !role) {
-    return (
-      <div className="flex-1 p-4">
-        <div className="panel-card p-8 rounded-2xl flex flex-col items-center text-center gap-3 max-w-md mx-auto mt-12">
-          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-rose-50 dark:bg-rose-500/10 border border-rose-100 dark:border-rose-500/20">
-            <ShieldAlert size={26} className="text-rose-500 dark:text-rose-300" />
-          </div>
-          <h1 className="text-lg font-bold text-gray-800 dark:text-blue-100">{tCommon("accessRestricted")}</h1>
-          <p className="text-sm text-gray-500 dark:text-slate-400">
-            {t("restrictedBody")}
-          </p>
-        </div>
-      </div>
-    );
-  }
+  // Every role is allowed on this route today (routeAccessMap covers
+  // admin/teacher/student/parent alike), but going through requireRole()
+  // instead of a bare "is anyone signed in" check means a future narrowing
+  // of the map takes effect here automatically, with no separate edit.
+  const { userId, role } = requireRole(routeAccessMap["/dashboard/list/messages(.*)"]);
 
   const threads = await getThreadsForUser(userId);
   const composingNew = searchParams.new === "1";

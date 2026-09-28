@@ -3,11 +3,10 @@ import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
 import prisma from "@/lib/prisma";
-import { resolvePageSize } from "@/lib/settings";
+import { resolvePageSize, routeAccessMap } from "@/lib/settings";
 import { CurriculumObjective, Grade, Prisma, Subject } from "@/generated/prisma/client";
 import Image from "next/image";
-import { auth } from "@clerk/nextjs/server";
-import { getUserRole } from "@/lib/auth";
+import { requireRole } from "@/lib/auth";
 import { getTranslations } from "next-intl/server";
 
 type ObjectiveList = CurriculumObjective & { subject: Subject; grade: Grade | null };
@@ -21,8 +20,10 @@ const ObjectiveListPage = async ({
 }: {
   searchParams: { [key: string]: string | undefined };
 }) => {
-  const { sessionClaims } = auth();
-  const role = getUserRole(sessionClaims);
+  // This page had no role check of its own before - it relied entirely on
+  // middleware.ts's redirect, with no second layer if that ever missed it.
+  // routeAccessMap restricts this route to admin only.
+  const { role } = requireRole(routeAccessMap["/dashboard/list/objectives(.*)"]);
   const t = await getTranslations("List.objectives");
 
   const columns = [

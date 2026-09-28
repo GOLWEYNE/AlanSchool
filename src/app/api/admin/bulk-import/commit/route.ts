@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@clerk/nextjs/server";
-import { getUserRole } from "@/lib/auth";
+import { requireApiRole } from "@/lib/auth";
 import { BULK_IMPORT_ROLES, BulkImportRole } from "@/lib/bulkImportShared";
 import { commitRows, CommitRow } from "@/lib/bulkImportServer";
 
@@ -10,12 +9,11 @@ export const maxDuration = 60;
 // is responsible for sending only rows that came back "ready" from
 // /api/admin/bulk-import/validate, and for splitting a large sheet into
 // batches small enough to finish comfortably within the time limit above.
+// Mirrors "/dashboard/list/import(.*)" in routeAccessMap (admin-only), since
+// this is that page's own write endpoint, not a route the map itself covers.
 export async function POST(req: NextRequest) {
-  const { sessionClaims } = auth();
-  const role = getUserRole(sessionClaims);
-  if (role !== "admin") {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
-  }
+  const access = requireApiRole(["admin"]);
+  if (access instanceof NextResponse) return access;
 
   let body: { role?: string; rows?: CommitRow[] };
   try {
