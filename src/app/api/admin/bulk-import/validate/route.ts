@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@clerk/nextjs/server";
-import { getUserRole } from "@/lib/auth";
+import { requireApiRole } from "@/lib/auth";
 import { BULK_IMPORT_ROLES, BulkImportRole, RawImportRow } from "@/lib/bulkImportShared";
 import { validateRows } from "@/lib/bulkImportServer";
 
@@ -9,12 +8,11 @@ export const maxDuration = 30;
 // Read-only: resolves classes/parents/subjects and checks for duplicate
 // username/email/phone, but never touches Clerk or writes to the database.
 // The admin can upload and re-upload freely before committing anything.
+// Mirrors "/dashboard/list/import(.*)" in routeAccessMap (admin-only), since
+// this is that page's own read endpoint, not a route the map itself covers.
 export async function POST(req: NextRequest) {
-  const { sessionClaims } = auth();
-  const role = getUserRole(sessionClaims);
-  if (role !== "admin") {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
-  }
+  const access = requireApiRole(["admin"]);
+  if (access instanceof NextResponse) return access;
 
   let body: { role?: string; rows?: RawImportRow[] };
   try {
