@@ -659,6 +659,12 @@
       "toastUpdated": "Сабақ жаңартылды!",
       "timeHint": "Уақыт мектеп уақыты бойынша ({zone}) көрсетіледі және кестені қайда ашса да бәріне бірдей."
     },
+    "admin": {
+      "createTitle": "Жаңа әкімші құру",
+      "updateTitle": "Әкімшіні жаңарту",
+      "toastCreated": "Әкімші құрылды!",
+      "toastUpdated": "Әкімші жаңартылды!"
+    },
     "parent": {
       "createTitle": "Жаңа ата-ана құру",
       "updateTitle": "Ата-ананы жаңарту",
@@ -804,6 +810,7 @@
     "deleted": "Жазба жойылды: {entity}",
     "formNotFound": "Форма табылмады!",
     "entities": {
+      "admin": "әкімші",
       "subject": "пән",
       "class": "сынып",
       "teacher": "мұғалім",
