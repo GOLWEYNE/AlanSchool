@@ -13,6 +13,7 @@ import UserCard from "@/components/UserCard";
 import FormContainer from "@/components/FormContainer";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { getUserRole } from "@/lib/auth";
+import { ensureAdminRecord } from "@/lib/actions";
 import { auth } from "@clerk/nextjs/server";
 import { getTranslations } from "next-intl/server";
 import Link from "next/link";
@@ -25,6 +26,13 @@ const AdminPage = async ({
   const { sessionClaims } = auth();
   const role = getUserRole(sessionClaims);
   const t = await getTranslations("AdminPage");
+
+  // Backfills this admin's own Admin row the first time they're seen
+  // without one (see ensureAdminRecord's comment) - keeps the "Admin"
+  // count card below accurate without any manual DB step.
+  if (role === "admin") {
+    await ensureAdminRecord();
+  }
 
   return (
     <ProtectedRoute allowedRoles={["admin"]}>
@@ -42,7 +50,12 @@ const AdminPage = async ({
               <span className="rounded-full bg-white/90 text-blue-900 px-3 py-1 text-xs font-semibold">{t("workspace")}</span>
             </div>
           </div>
-          {role === "admin" && <FormContainer table="teacher" type="create" />}
+          {role === "admin" && (
+            <div className="flex items-center gap-2">
+              <FormContainer table="admin" type="create" />
+              <FormContainer table="teacher" type="create" />
+            </div>
+          )}
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

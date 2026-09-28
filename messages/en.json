@@ -659,6 +659,12 @@
       "toastUpdated": "Lesson has been updated!",
       "timeHint": "Times are school time ({zone}) and are the same for everyone, wherever they view the timetable."
     },
+    "admin": {
+      "createTitle": "Create a new admin",
+      "updateTitle": "Update the admin",
+      "toastCreated": "Admin has been created!",
+      "toastUpdated": "Admin has been updated!"
+    },
     "parent": {
       "createTitle": "Create a new parent",
       "updateTitle": "Update the parent",
@@ -804,6 +810,7 @@
     "deleted": "{entity} has been deleted!",
     "formNotFound": "Form not found!",
     "entities": {
+      "admin": "admin",
       "subject": "subject",
       "class": "class",
       "teacher": "teacher",

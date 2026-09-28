@@ -5,6 +5,7 @@ import { getUserRole } from "@/lib/auth";
 
 export type FormContainerProps = {
   table:
+    | "admin"
     | "teacher"
     | "student"
     | "parent"
@@ -130,6 +131,9 @@ const FormContainer = async ({ table, type, data, id }: FormContainerProps) => {
         relatedData = { classes: studentClasses, grades: studentGrades };
         break;
       case "parent":
+        relatedData = {};
+        break;
+      case "admin":
         relatedData = {};
         break;
       case "exam": {

@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  deleteAdmin,
   deleteAnnouncement,
   deleteAssignment,
   deleteClass,
@@ -35,6 +36,7 @@ type FormRenderer = (
 ) => JSX.Element;
 
 const deleteActionMap: Partial<Record<TableName, DeleteAction>> = {
+  admin: deleteAdmin,
   subject: deleteSubject,
   class: deleteClass,
   teacher: deleteTeacher,
@@ -63,6 +65,9 @@ const FormLoading = () => {
 // import TeacherForm from "./forms/TeacherForm";
 // import StudentForm from "./forms/StudentForm";
 
+const AdminForm = dynamic(() => import("./forms/AdminForm"), {
+  loading: () => <FormLoading />,
+});
 const TeacherForm = dynamic(() => import("./forms/TeacherForm"), {
   loading: () => <FormLoading />,
 });
@@ -107,6 +112,9 @@ const BehaviorLogForm = dynamic(() => import("./forms/BehaviorLogForm"), {
 });
 
 const forms: Partial<Record<TableName, FormRenderer>> = {
+  admin: (setOpen, type, data) => (
+    <AdminForm type={type} data={data} setOpen={setOpen} />
+  ),
   subject: (setOpen, type, data, relatedData) => (
     <SubjectForm
       type={type}

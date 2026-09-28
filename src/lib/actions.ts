@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import {
+  AdminSchema,
   AnnouncementSchema,
   AssignmentSchema,
   ClassSchema,
@@ -25,7 +26,7 @@ import {
 import prisma from "./prisma";
 import { Day, Prisma } from "@/generated/prisma/client";
 import { clerkClient } from "@clerk/nextjs/server";
-import { auth } from "@clerk/nextjs/server";
+import { auth, currentUser } from "@clerk/nextjs/server";
 import { getUserRole } from "./auth";
 import { getTranslations } from "next-intl/server";
 import { fromWallClock, parseWallClockString, schoolMinutesOfDay } from "./schoolTime";
@@ -841,6 +842,135 @@ export const deleteParent = async (
   } catch (err) {
     console.log(err);
     return { success: false, error: true };
+  }
+};
+
+// Creating admin accounts is itself an admin-only user-management action -
+// there is no self-signup or invite flow for admins, by design.
+export const createAdmin = async (
+  currentState: CurrentState,
+  data: AdminSchema
+) => {
+  if (!isAdmin()) return rejectUnauthorized();
+  try {
+    const user = await clerkClient.users.createUser({
+      username: data.username,
+      password: data.password,
+      firstName: data.name,
+      lastName: data.surname,
+      publicMetadata: { role: "admin" },
+    });
+
+    await prisma.admin.create({
+      data: {
+        id: user.id,
+        username: data.username,
+      },
+    });
+
+    return { success: true, error: false };
+  } catch (err) {
+    console.log(err);
+    return { success: false, error: true };
+  }
+};
+
+export const updateAdmin = async (
+  currentState: CurrentState,
+  data: AdminSchema
+) => {
+  if (!isAdmin()) return rejectUnauthorized();
+  if (!data.id) {
+    return { success: false, error: true };
+  }
+
+  try {
+    await clerkClient.users.updateUser(data.id, {
+      username: data.username,
+      ...(data.password !== "" && { password: data.password }),
+      firstName: data.name,
+      lastName: data.surname,
+    });
+
+    await prisma.admin.update({
+      where: { id: data.id },
+      data: {
+        username: data.username,
+      },
+    });
+
+    return { success: true, error: false };
+  } catch (err) {
+    console.log(err);
+    return { success: false, error: true };
+  }
+};
+
+export const deleteAdmin = async (
+  currentState: CurrentState,
+  data: FormData
+) => {
+  if (!isAdmin()) return rejectUnauthorized();
+  const id = data.get("id") as string;
+
+  const { userId } = auth();
+  if (id === userId) {
+    // Refuse to let an admin delete their own account from this form - a
+    // mistaken click here would otherwise lock the last admin out.
+    return { success: false, error: true };
+  }
+
+  try {
+    try {
+      await clerkClient.users.deleteUser(id);
+    } catch (clerkErr) {
+      console.log(
+        "deleteAdmin: Clerk deleteUser failed, continuing with DB delete:",
+        clerkErr
+      );
+    }
+
+    await prisma.admin.delete({
+      where: { id },
+    });
+
+    return { success: true, error: false };
+  } catch (err) {
+    console.log(err);
+    return { success: false, error: true };
+  }
+};
+
+// Self-healing backfill for admins who got their "role": "admin" claim set
+// directly in the Clerk Dashboard (the only way it could be done before
+// createAdmin() above existed) rather than through this app - that path
+// never created a matching Admin row, which is why the Admin user-card
+// count could read 0 even for a school with a real signed-in admin. Safe
+// to call on every admin dashboard render: it's a single indexed lookup
+// on the fast path (row already exists) and only touches Clerk/the DB
+// once, the first time a given admin is ever seen without a row.
+export const ensureAdminRecord = async () => {
+  const { userId, sessionClaims } = auth();
+  const role = getUserRole(sessionClaims);
+  if (!userId || role !== "admin") return;
+
+  const existing = await prisma.admin.findUnique({ where: { id: userId } });
+  if (existing) return;
+
+  try {
+    const user = await currentUser();
+    const username =
+      user?.username ||
+      user?.emailAddresses?.[0]?.emailAddress ||
+      `admin-${userId.slice(-8)}`;
+
+    await prisma.admin.create({
+      data: { id: userId, username },
+    });
+  } catch (err) {
+    // Best-effort - a duplicate-create race (two tabs loading at once) or a
+    // transient Clerk lookup failure shouldn't break the dashboard render.
+    console.log("ensureAdminRecord: failed to backfill Admin row:", err);
   }
 };
 
