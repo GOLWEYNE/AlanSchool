@@ -14,6 +14,7 @@
     "menuTitle": "MENU",
     "otherTitle": "OTHER",
     "home": "Home",
+    "admins": "Admins",
     "teachers": "Teachers",
     "students": "Students",
     "parents": "Parents",
@@ -107,6 +108,18 @@
     "noStudentContext": "No linked student"
   },
   "List": {
+    "admins": {
+      "title": "Admins",
+      "subtitle": "Manage administrator accounts with full access to the school workspace.",
+      "emoji": "🛡️",
+      "totalLabel": "Total Admins",
+      "heading": "All Admins",
+      "columns": {
+        "info": "Info",
+        "actions": "Actions"
+      },
+      "you": "You"
+    },
     "teachers": {
       "title": "Teachers",
       "subtitle": "Manage profiles, subjects, and class assignments with quick actions.",

@@ -16,6 +16,12 @@ const getMenuItems = (t: Awaited<ReturnType<typeof getTranslations>>, role: stri
         },
         {
           icon: "/teacher.png",
+          label: t("admins"),
+          href: "/dashboard/list/admins",
+          visible: ["admin"],
+        },
+        {
+          icon: "/teacher.png",
           label: t("teachers"),
           href: "/dashboard/list/teachers",
           visible: ["admin", "teacher"],
