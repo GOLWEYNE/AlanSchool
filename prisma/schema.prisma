@@ -15,6 +15,7 @@ model Admin {
 }
 
 model Student {
+  uniformChecks UniformCheck[]
   id          String       @id
   username    String       @unique
   name        String
@@ -53,6 +54,7 @@ model Student {
 }
 
 model Teacher {
+  uniformChecks UniformCheck[]
   id        String    @id
   username  String    @unique
   name      String
@@ -105,6 +107,7 @@ model Grade {
 }
 
 model Class {
+  uniformChecks UniformCheck[]
   id       Int    @id @default(autoincrement())
   name     String @unique
   capacity Int
@@ -766,4 +769,30 @@ model StudyGoal {
   updatedAt   DateTime  @updatedAt
 
   @@index([studentId])
+}
+
+enum UniformStatus {
+  FULL
+  PARTIAL
+  NONE
+}
+
+// One row per student per day, recorded by the class supervisor.
+model UniformCheck {
+  id           Int           @id @default(autoincrement())
+  date         DateTime      @db.Date
+  status       UniformStatus
+  missingItems String[]
+  note         String?
+  studentId    String
+  student      Student       @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  classId      Int
+  class        Class         @relation(fields: [classId], references: [id])
+  checkedById  String?
+  checkedBy    Teacher?      @relation(fields: [checkedById], references: [id])
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  @@unique([studentId, date])
+  @@index([classId, date])
 }
