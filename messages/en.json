@@ -99,11 +99,12 @@
     "placeholder": "Search records..."
   },
   "CommandPalette": {
-    "placeholder": "Search students, tickets, messages...",
+    "placeholder": "Search students, teachers, tickets, messages...",
     "prompt": "Type at least 2 characters to search.",
     "searching": "Searching...",
     "noResults": "No results found.",
     "groupStudents": "Students",
+    "groupTeachers": "Teachers",
     "groupTickets": "Tickets",
     "groupMessages": "Messages",
     "noStudentContext": "No linked student"

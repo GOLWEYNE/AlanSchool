@@ -13,6 +13,14 @@ type StudentResult = {
   class: { name: string };
 };
 
+type TeacherResult = {
+  id: string;
+  name: string;
+  surname: string;
+  username: string;
+  subjects: { name: string }[];
+};
+
 type TicketResult = {
   id: number;
   title: string;
@@ -31,19 +39,20 @@ type MessageResult = {
 
 type SearchResponse = {
   students: StudentResult[];
+  teachers: TeacherResult[];
   tickets: TicketResult[];
   messages: MessageResult[];
 };
 
 type FlatResult = {
   key: string;
-  group: "students" | "tickets" | "messages";
+  group: "students" | "teachers" | "tickets" | "messages";
   primary: string;
   secondary: string;
   href: string;
 };
 
-const EMPTY: SearchResponse = { students: [], tickets: [], messages: [] };
+const EMPTY: SearchResponse = { students: [], teachers: [], tickets: [], messages: [] };
 
 // Global ⌘K / Ctrl+K search palette. Opens via the keyboard shortcut from
 // anywhere in the dashboard, or via the "open-command-palette" window event
@@ -130,6 +139,13 @@ const CommandPalette = () => {
       secondary: `@${s.username} · ${s.class.name}`,
       href: `/dashboard/list/students/${s.id}`,
     })),
+    ...results.teachers.map((tc) => ({
+      key: `teacher-${tc.id}`,
+      group: "teachers" as const,
+      primary: `${tc.name} ${tc.surname}`.trim(),
+      secondary: [`@${tc.username}`, tc.subjects.map((sub) => sub.name).join(", ")].filter(Boolean).join(" · "),
+      href: `/dashboard/list/teachers/${tc.id}`,
+    })),
     ...results.tickets.map((tk) => ({
       key: `ticket-${tk.id}`,
       group: "tickets" as const,
@@ -170,6 +186,7 @@ const CommandPalette = () => {
 
   const groups: { key: FlatResult["group"]; label: string; icon: string }[] = [
     { key: "students", label: t("groupStudents"), icon: "/student.png" },
+    { key: "teachers", label: t("groupTeachers"), icon: "/teacher.png" },
     { key: "tickets", label: t("groupTickets"), icon: "/announcement.png" },
     { key: "messages", label: t("groupMessages"), icon: "/message.png" },
   ];

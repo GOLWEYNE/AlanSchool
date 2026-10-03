@@ -99,11 +99,12 @@
     "placeholder": "Поиск записей..."
   },
   "CommandPalette": {
-    "placeholder": "Поиск учеников, заявок, сообщений...",
+    "placeholder": "Поиск учеников, учителей, заявок, сообщений...",
     "prompt": "Введите минимум 2 символа для поиска.",
     "searching": "Поиск...",
     "noResults": "Ничего не найдено.",
     "groupStudents": "Ученики",
+    "groupTeachers": "Учителя",
     "groupTickets": "Заявки",
     "groupMessages": "Сообщения",
     "noStudentContext": "Без привязки к ученику"
