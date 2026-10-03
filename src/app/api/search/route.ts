@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireApiRole } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 
-// Command-palette search: students, tickets, and messages in one query.
+// Command-palette search: students, teachers, tickets, and messages in one query.
 // Scoped to admin/teacher for now, since those are the only roles with
 // browsable detail pages for tickets today (and full student browsing).
 export async function GET(req: NextRequest) {
@@ -13,12 +13,12 @@ export async function GET(req: NextRequest) {
   const q = req.nextUrl.searchParams.get("q")?.trim() ?? "";
 
   if (q.length < 2) {
-    return NextResponse.json({ students: [], tickets: [], messages: [] });
+    return NextResponse.json({ students: [], teachers: [], tickets: [], messages: [] });
   }
 
   const isTeacher = role === "teacher";
 
-  const [students, tickets, messages] = await prisma.$transaction([
+  const [students, teachers, tickets, messages] = await prisma.$transaction([
     prisma.student.findMany({
       where: {
         AND: [
@@ -35,6 +35,19 @@ export async function GET(req: NextRequest) {
       },
       select: { id: true, name: true, surname: true, username: true, class: { select: { name: true } } },
       take: 5,
+    }),
+    prisma.teacher.findMany({
+      where: {
+        OR: [
+          { name: { contains: q, mode: "insensitive" } },
+          { surname: { contains: q, mode: "insensitive" } },
+          { username: { contains: q, mode: "insensitive" } },
+          { email: { contains: q, mode: "insensitive" } },
+        ],
+      },
+      select: { id: true, name: true, surname: true, username: true, subjects: { select: { name: true } } },
+      orderBy: [{ name: "asc" }, { surname: "asc" }],
+      take: 8,
     }),
     prisma.ticket.findMany({
       where: {
@@ -86,5 +99,5 @@ export async function GET(req: NextRequest) {
     student: m.studentId ? studentById.get(m.studentId) ?? null : null,
   }));
 
-  return NextResponse.json({ students, tickets, messages: messagesWithStudent });
+  return NextResponse.json({ students, teachers, tickets, messages: messagesWithStudent });
 }
