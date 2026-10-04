@@ -50,7 +50,8 @@
     "submissions": "Submissions",
     "studyPlanner": "Study Planner",
     "bulkImport": "Bulk Import",
-    "uniform": "Uniform Check"
+    "uniform": "Uniform Check",
+    "clerkSync": "Sync with Clerk"
   },
   "Navbar": {
     "searchPlaceholder": "Search...",
@@ -2081,5 +2082,31 @@
     },
     "statusAtRisk": "At risk",
     "statusOk": "OK"
+  },
+  "ClerkSync": {
+    "title": "Sync with Clerk",
+    "emoji": "🔄",
+    "subtitle": "Find students and teachers whose sign-in account was deleted from Clerk, and remove their leftover school records.",
+    "stats": {
+      "checked": "Records checked",
+      "missing": "No Clerk account"
+    },
+    "intro": "These records have no matching Clerk account. Tick the ones to remove.",
+    "none": "Everything is in sync: every student and teacher has a Clerk account.",
+    "columns": {
+      "name": "Name",
+      "username": "Username",
+      "type": "Type"
+    },
+    "types": {
+      "student": "Student",
+      "teacher": "Teacher"
+    },
+    "selectAll": "Select all",
+    "confirm": "I understand this permanently deletes the selected people and everything linked to them (results, attendance, lessons, exams, assignments, report cards). This cannot be undone.",
+    "remove": "Remove selected ({count})",
+    "working": "Removing...",
+    "done": "Removed {removed}. Could not remove {failed}.",
+    "failedCheck": "Could not check Clerk right now. Nothing was changed."
   }
 }

@@ -28,6 +28,7 @@ import { Day, Prisma } from "@/generated/prisma/client";
 import { clerkClient } from "@clerk/nextjs/server";
 import { auth, currentUser } from "@clerk/nextjs/server";
 import { getUserRole } from "./auth";
+import { deleteStudentCascade, deleteTeacherCascade } from "./purge";
 import { getTranslations } from "next-intl/server";
 import { fromWallClock, parseWallClockString, schoolMinutesOfDay } from "./schoolTime";
 
@@ -462,11 +463,9 @@ export const deleteTeacher = async (
       );
     }
 
-    await prisma.teacher.delete({
-      where: {
-        id: id,
-      },
-    });
+    // Removes everything linked to them first (results, attendance,
+    // lessons, ...) so the delete no longer fails on leftover records.
+    await deleteTeacherCascade(id);
 
     // revalidatePath("/list/teachers");
     return { success: true, error: false };
@@ -591,11 +590,9 @@ export const deleteStudent = async (
       );
     }
 
-    await prisma.student.delete({
-      where: {
-        id: id,
-      },
-    });
+    // Removes everything linked to them first (results, attendance,
+    // lessons, ...) so the delete no longer fails on leftover records.
+    await deleteStudentCascade(id);
 
     // revalidatePath("/list/students");
     return { success: true, error: false };
