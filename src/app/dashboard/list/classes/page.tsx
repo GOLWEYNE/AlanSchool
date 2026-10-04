@@ -9,6 +9,7 @@ import { Class, Prisma, Teacher } from "@/generated/prisma/client";
 import Image from "next/image";
 import { auth } from "@clerk/nextjs/server";
 import { getUserRole } from "@/lib/auth";
+import { teacherClassWhere } from "@/lib/teacherScope";
 import { floorOfRoom, getClassRooms } from "@/lib/classLocator";
 import { classLocatorLabels } from "@/lib/classLocatorLabels";
 import { getLocale, getTranslations } from "next-intl/server";
@@ -21,7 +22,7 @@ const ClassListPage = async ({
   searchParams: { [key: string]: string | undefined };
 }) => {
 
-const { sessionClaims } = auth();
+const { userId, sessionClaims } = auth();
 const role = getUserRole(sessionClaims);
 const t = await getTranslations("List.classes");
 const locators = classLocatorLabels(await getLocale());
@@ -117,16 +118,20 @@ const renderRow = (item: ClassList) => (
     }
   }
 
+  // A teacher only sees their own classes (supervised or taught).
+  const scopedQuery: Prisma.ClassWhereInput =
+    role === "teacher" ? { AND: [query, teacherClassWhere(userId!)] } : query;
+
   const [data, count] = await prisma.$transaction([
     prisma.class.findMany({
-      where: query,
+      where: scopedQuery,
       include: {
         supervisor: true,
       },
       take: size,
       skip: size * (p - 1),
     }),
-    prisma.class.count({ where: query }),
+    prisma.class.count({ where: scopedQuery }),
   ]);
 
   const rooms = await getClassRooms().catch(() => ({} as Record<number, string>));

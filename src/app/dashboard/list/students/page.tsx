@@ -13,6 +13,7 @@ import Link from "next/link";
 
 import { auth } from "@clerk/nextjs/server";
 import { getUserRole } from "@/lib/auth";
+import { getTeacherClassIds, teacherStudentWhere } from "@/lib/teacherScope";
 import { getTranslations } from "next-intl/server";
 
 type StudentList = Student & { class: Class };
@@ -22,7 +23,7 @@ const StudentListPage = async ({
 }: {
   searchParams: { [key: string]: string | undefined };
 }) => {
-  const { sessionClaims } = auth();
+  const { userId, sessionClaims } = auth();
   const role = getUserRole(sessionClaims);
   const t = await getTranslations("List.students");
 
@@ -139,16 +140,23 @@ const StudentListPage = async ({
     }
   }
 
+  // A teacher only ever sees students of their own classes (supervised or
+  // taught), whatever the URL filters say: the scope is AND-ed in last.
+  const scopedQuery: Prisma.StudentWhereInput =
+    role === "teacher"
+      ? { AND: [query, teacherStudentWhere(await getTeacherClassIds(userId!))] }
+      : query;
+
   const [data, count] = await prisma.$transaction([
     prisma.student.findMany({
-      where: query,
+      where: scopedQuery,
       include: {
         class: true,
       },
       take: size,
       skip: size * (p - 1),
     }),
-    prisma.student.count({ where: query }),
+    prisma.student.count({ where: scopedQuery }),
   ]);
 
   return (

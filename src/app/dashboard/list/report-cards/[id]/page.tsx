@@ -4,6 +4,7 @@ import { ShieldAlert } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import prisma from "@/lib/prisma";
 import { getUserRole } from "@/lib/auth";
+import { teacherCanAccessStudent } from "@/lib/teacherScope";
 import ReportCardView from "@/components/reportCard/ReportCardView";
 import {
   AttendanceBreakdown,
@@ -47,7 +48,10 @@ const SingleReportCardPage = async ({
   const tr = await getTranslations("ReportCards");
   const tc = await getTranslations("Common");
 
-  const isAdminOrTeacher = role === "admin" || role === "teacher";
+  // A teacher may only open report cards of students in their own classes.
+  const teacherInScope =
+    role === "teacher" && (await teacherCanAccessStudent(userId, student.id));
+  const isAdminOrTeacher = role === "admin" || teacherInScope;
   const isSelf = role === "student" && userId === student.id;
   const isParent = role === "parent" && userId === student.parentId;
 

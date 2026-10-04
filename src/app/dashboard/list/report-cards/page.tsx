@@ -3,6 +3,9 @@ import PageHero from "@/components/PageHero";
 import BulkGenerateReportCardsPanel from "@/components/BulkGenerateReportCardsPanel";
 import ReportCardGenerateButton from "@/components/ReportCardGenerateButton";
 import prisma from "@/lib/prisma";
+import { auth } from "@clerk/nextjs/server";
+import { getUserRole } from "@/lib/auth";
+import { getTeacherClassIds } from "@/lib/teacherScope";
 import { getFormatter, getTranslations } from "next-intl/server";
 import Image from "next/image";
 import Link from "next/link";
@@ -12,14 +15,26 @@ const ReportCardsListPage = async () => {
   const tc = await getTranslations("Common");
   const format = await getFormatter();
 
+  // A teacher only sees report cards, classes and students from their own
+  // classes (supervised or taught). Admins see everything.
+  const { userId, sessionClaims } = auth();
+  const teacherClassIds =
+    getUserRole(sessionClaims) === "teacher" ? await getTeacherClassIds(userId!) : null;
+  const classFilter = teacherClassIds ? { in: teacherClassIds } : undefined;
+
   const [reportCards, classes, students] = await prisma.$transaction([
     prisma.reportCard.findMany({
+      where: classFilter ? { student: { classId: classFilter } } : undefined,
       include: { student: { include: { class: true } } },
       orderBy: [{ generatedAt: "desc" }],
       take: 100,
     }),
-    prisma.class.findMany({ orderBy: { name: "asc" } }),
+    prisma.class.findMany({
+      where: classFilter ? { id: classFilter } : undefined,
+      orderBy: { name: "asc" },
+    }),
     prisma.student.findMany({
+      where: classFilter ? { classId: classFilter } : undefined,
       select: { id: true, name: true, surname: true, classId: true },
       orderBy: { name: "asc" },
     }),

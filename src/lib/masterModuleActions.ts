@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { auth } from "@clerk/nextjs/server";
 import prisma from "./prisma";
 import { getUserRole } from "./auth";
+import { teacherCanAccessClass, teacherCanAccessStudent } from "./teacherScope";
 import { notifyUser } from "./notify";
 import { getTranslations } from "next-intl/server";
 import { fromWallClock, schoolDayRange } from "./schoolTime";
@@ -276,6 +277,10 @@ export const recordAttendance = async (
       if (!isAdminOrTeacher()) return rejectUnauthorized();
       const senderId = getCurrentUserId();
       const senderRole = getCurrentRole();
+      // A teacher can only mark attendance for their own classes.
+      if (senderRole === "teacher" && !(senderId && (await teacherCanAccessClass(senderId, data.classId)))) {
+        return rejectUnauthorized();
+      }
       // AttendanceRecord.markedById is a foreign key into Teacher, not a
       // generic "whoever is signed in" column - an admin's Clerk id has no
       // row there, so passing it unconditionally throws a foreign key
@@ -320,6 +325,10 @@ export const recordAttendanceBulk = async (
       if (!isAdminOrTeacher()) return rejectUnauthorized();
       const senderId = getCurrentUserId();
       const senderRole = getCurrentRole();
+      // A teacher can only mark attendance for their own classes.
+      if (senderRole === "teacher" && !(senderId && (await teacherCanAccessClass(senderId, data.classId)))) {
+        return rejectUnauthorized();
+      }
       // See recordAttendance above: markedById is a Teacher-only foreign
       // key, so an admin's id must never be passed as one. The parent
       // alert must still fire either way, so it's gated on senderId
@@ -452,6 +461,10 @@ export const createBehaviorLog = async (
       // always logs as themselves; an admin must pick a real teacher from
       // the form instead.
       const role = getCurrentRole();
+      // A teacher can only log behavior for students in their own classes.
+      if (role === "teacher" && !(await teacherCanAccessStudent(userId, data.studentId))) {
+        return rejectUnauthorized();
+      }
       const teacherId = role === "teacher" ? userId : data.teacherId;
       if (!teacherId) return fail(await sm("chooseTeacher"));
       try {
@@ -581,6 +594,13 @@ export const createPermissionSlip = async (
       if (!isAdminOrTeacher()) return rejectUnauthorized();
       const userId = getCurrentUserId();
       if (!userId) return rejectUnauthorized();
+      // A teacher can only send slips to one of their own classes; a school-wide
+      // slip (no class) is for admins.
+      if (getCurrentRole() === "teacher") {
+        if (!data.classId || !(await teacherCanAccessClass(userId, data.classId))) {
+          return rejectUnauthorized();
+        }
+      }
       try {
               const slip = await prisma.permissionSlip.create({
                         data: {
@@ -785,6 +805,11 @@ export const generateReportCard = async (
       data: ReportCardGenerateSchema
     ) => {
       if (!isAdminOrTeacher()) return rejectUnauthorized();
+      // A teacher can only generate report cards for students in their own classes.
+      if (getCurrentRole() === "teacher") {
+        const uid = getCurrentUserId();
+        if (!uid || !(await teacherCanAccessStudent(uid, data.studentId))) return rejectUnauthorized();
+      }
       try {
               await buildReportCardForStudent(
                         data.studentId,
@@ -808,6 +833,11 @@ export const generateReportCardsForClass = async (
       data: ReportCardBulkGenerateSchema
     ) => {
       if (!isAdminOrTeacher()) return rejectUnauthorized();
+      // A teacher can only generate report cards for their own classes.
+      if (getCurrentRole() === "teacher") {
+        const uid = getCurrentUserId();
+        if (!uid || !(await teacherCanAccessClass(uid, data.classId))) return rejectUnauthorized();
+      }
       try {
               const students = await prisma.student.findMany({
                         where: { classId: data.classId },
@@ -845,6 +875,14 @@ export const setLessonRoom = async (
       data: LessonRoomSchema
     ) => {
       if (!isAdminOrTeacher()) return rejectUnauthorized();
+      // A teacher can only set the room of their own lessons.
+      if (getCurrentRole() === "teacher") {
+        const uid = getCurrentUserId();
+        const own = uid
+          ? await prisma.lesson.findFirst({ where: { id: data.id, teacherId: uid }, select: { id: true } })
+          : null;
+        if (!own) return rejectUnauthorized();
+      }
       try {
               await prisma.lesson.update({
                         where: { id: data.id },
