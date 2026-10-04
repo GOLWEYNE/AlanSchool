@@ -443,14 +443,10 @@ export const deleteTeacher = async (
   data: FormData
 ) => {
   const id = data.get("id") as string;
-  const { userId, sessionClaims } = auth();
-  const role = getUserRole(sessionClaims);
-  if (isReadOnlyRole(role) || (role !== "admin" && role !== "teacher")) {
-    return rejectUnauthorized();
-  }
-  if (role === "teacher" && userId !== id) {
-    return rejectUnauthorized();
-  }
+  // Deleting a teacher also deletes their sign-in account and orphans their
+  // lessons, classes and results, so it is admin-only. A teacher must never
+  // be able to remove their own account - they ask an admin instead.
+  if (!isAdmin()) return rejectUnauthorized();
   try {
         try {
       await clerkClient.users.deleteUser(id);
