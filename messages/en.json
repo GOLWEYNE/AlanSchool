@@ -21,6 +21,7 @@
     "subjects": "Subjects",
     "objectives": "Objectives",
     "classes": "Classes",
+    "myClass": "My Class",
     "clubs": "Clubs",
     "lessons": "Lessons",
     "lessonTimes": "Lesson times",
@@ -2016,5 +2017,69 @@
       "body": "{student} was marked \"{status}\" on {date}.{items}",
       "missingSuffix": " Missing: {items}."
     }
+  },
+  "MyClass": {
+    "title": "My Class",
+    "subtitle": "Everything about your class on one page: roster, attendance, behavior, uniform, parent contacts and students who need attention.",
+    "subtitleAdmin": "Class supervisor view. Pick any class to see its roster, attendance, behavior, uniform and at-risk students.",
+    "noClass": "You are not the supervisor of any class yet. Ask an admin to assign you as a class supervisor.",
+    "class": "Class",
+    "open": "Open",
+    "supervisor": "Supervisor: {name}",
+    "goAttendance": "Take attendance",
+    "goBehavior": "Behavior log",
+    "goUniform": "Uniform check",
+    "cards": {
+      "students": "Students",
+      "attendanceWeek": "Attendance, last 7 days",
+      "uniformToday": "Full uniform today",
+      "concerns": "Concerns, last 30 days",
+      "atRisk": "At-risk students"
+    },
+    "atRiskTitle": "Students who need attention",
+    "atRiskHint": "A student is flagged after {absent} or more absent days (or attendance below 80%) in 14 days, an incident or {behavior} or more concerns in the recent weeks, or {uniform} or more uniform issues in 7 days.",
+    "noAtRisk": "No student is flagged right now.",
+    "reason": {
+      "absences": "{days} days absent",
+      "attendanceRate": "Attendance {percent}%",
+      "behaviorConcerns": "{count} behavior concerns",
+      "incident": "Incident logged ({count})",
+      "uniform": "{days} uniform issues"
+    },
+    "attendanceTrend": "Attendance, last {days} days",
+    "noAttendance": "No attendance has been recorded for this class yet.",
+    "noRecords": "no records",
+    "absentShort": "absent",
+    "trendLegend": "Green is 90% or more, amber 80-89%, red below 80%. Excused absences are not counted.",
+    "uniformTitle": "Uniform, last 7 days",
+    "uniformIssuesToday": "Not in full uniform today",
+    "uniformNotChecked": "Uniform has not been checked today.",
+    "uniformAllFull": "Everyone is in full uniform.",
+    "uniformStatus": {
+      "FULL": "Full uniform",
+      "PARTIAL": "Partial",
+      "NONE": "No uniform"
+    },
+    "behaviorTitle": "Behavior notes, last {days} days",
+    "behaviorType": {
+      "POSITIVE": "Positive",
+      "CONCERN": "Concern",
+      "INCIDENT": "Incident"
+    },
+    "noBehavior": "No behavior notes in this period.",
+    "rosterTitle": "Roster and parent contacts",
+    "noStudents": "There are no students in this class.",
+    "cols": {
+      "student": "Student",
+      "attendance": "Attendance {days}d",
+      "uniform": "Uniform issues {days}d",
+      "behavior": "Behavior",
+      "parent": "Parent",
+      "phone": "Phone",
+      "email": "Email",
+      "status": "Status"
+    },
+    "statusAtRisk": "At risk",
+    "statusOk": "OK"
   }
 }
