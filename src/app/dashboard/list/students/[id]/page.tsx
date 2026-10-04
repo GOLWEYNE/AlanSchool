@@ -6,6 +6,7 @@ import StudentAttendanceCard from "@/components/StudentAttendanceCard";
 import StudentStudyPlanner from "@/components/StudentStudyPlanner";
 import prisma from "@/lib/prisma";
 import { getUserRole } from "@/lib/auth";
+import { teacherCanAccessStudent } from "@/lib/teacherScope";
 import { auth } from "@clerk/nextjs/server";
 import Image from "next/image";
 import Link from "next/link";
@@ -22,8 +23,13 @@ const SingleStudentPage = async ({
 }: {
   params: { id: string };
 }) => {
-  const { sessionClaims } = auth();
+  const { userId, sessionClaims } = auth();
   const role = getUserRole(sessionClaims);
+
+  // Teachers may only open students from their own classes.
+  if (role === "teacher" && !(await teacherCanAccessStudent(userId!, id))) {
+    return notFound();
+  }
 
   const student:
     | (Student & {

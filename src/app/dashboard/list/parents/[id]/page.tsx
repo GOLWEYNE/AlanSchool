@@ -3,6 +3,7 @@ import BigCalendarContainer from "@/components/BigCalendarContainer";
 import ParentChildAttendanceCard from "@/components/ParentChildAttendanceCard";
 import prisma from "@/lib/prisma";
 import { getUserRole } from "@/lib/auth";
+import { getTeacherClassIds, teacherCanAccessParent } from "@/lib/teacherScope";
 import { auth } from "@clerk/nextjs/server";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
@@ -20,10 +21,19 @@ const SingleParentPage = async ({
     redirect(`/dashboard/list/parents/${userId}`);
   }
 
+  // Teachers may only open parents of students in their own classes.
+  if (role === "teacher" && !(await teacherCanAccessParent(userId!, id))) {
+    return notFound();
+  }
+
+  // For a teacher, only the children who are in their own classes are loaded.
+  const teacherClassIds = role === "teacher" ? await getTeacherClassIds(userId!) : null;
+
   const parent = await prisma.parent.findUnique({
     where: { id },
     include: {
       students: {
+        ...(teacherClassIds ? { where: { classId: { in: teacherClassIds } } } : {}),
         include: {
           class: true,
           attendances: true,

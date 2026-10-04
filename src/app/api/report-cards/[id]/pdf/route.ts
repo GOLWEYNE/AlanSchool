@@ -3,6 +3,7 @@ import { renderToBuffer } from "@react-pdf/renderer";
 import { auth } from "@clerk/nextjs/server";
 import prisma from "@/lib/prisma";
 import { getUserRole } from "@/lib/auth";
+import { teacherCanAccessStudent } from "@/lib/teacherScope";
 import { ReportCardDocument, ReportCardResultRow } from "@/lib/reportCardPdf";
 
 // Report cards are rendered on demand rather than stored as static
@@ -39,7 +40,10 @@ export async function GET(
 
   const { student } = reportCard;
 
-  const isAdminOrTeacher = role === "admin" || role === "teacher";
+  // A teacher may only download report cards of students in their own classes.
+  const teacherInScope =
+    role === "teacher" && (await teacherCanAccessStudent(userId, student.id));
+  const isAdminOrTeacher = role === "admin" || teacherInScope;
   const isSelf = role === "student" && userId === student.id;
   const isParent =
     role === "parent" && userId === student.parentId;

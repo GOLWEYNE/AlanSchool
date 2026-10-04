@@ -10,6 +10,7 @@ import Link from "next/link";
 
 import { auth } from "@clerk/nextjs/server";
 import { getUserRole } from "@/lib/auth";
+import { getTeacherClassIds, teacherParentWhere } from "@/lib/teacherScope";
 import { getTranslations } from "next-intl/server";
 
 type ParentList = Parent & { students: Student[] };
@@ -20,7 +21,7 @@ const ParentListPage = async ({
   searchParams: { [key: string]: string | undefined };
 }) => {
 
-const { sessionClaims } = auth();
+const { userId, sessionClaims } = auth();
 const role = getUserRole(sessionClaims);
 const t = await getTranslations("List.parents");
 
@@ -112,16 +113,25 @@ const renderRow = (item: ParentList) => (
     }
   }
 
+  // A teacher only sees parents of students in their own classes (supervised
+  // or taught), and only those students on each parent row.
+  const teacherClassIds = role === "teacher" ? await getTeacherClassIds(userId!) : null;
+  const scopedQuery: Prisma.ParentWhereInput = teacherClassIds
+    ? { AND: [query, teacherParentWhere(teacherClassIds)] }
+    : query;
+
   const [data, count] = await prisma.$transaction([
     prisma.parent.findMany({
-      where: query,
+      where: scopedQuery,
       include: {
-        students: true,
+        students: teacherClassIds
+          ? { where: { classId: { in: teacherClassIds } } }
+          : true,
       },
       take: size,
       skip: size * (p - 1),
     }),
-    prisma.parent.count({ where: query }),
+    prisma.parent.count({ where: scopedQuery }),
   ]);
 
   return (
