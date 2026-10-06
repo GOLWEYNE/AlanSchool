@@ -119,8 +119,24 @@ const LessonsListPage = async ({
     if (selectedTeacherId) query.teacherId = selectedTeacherId;
   }
 
+  // A teacher sees their own lessons plus the whole weekly schedule of any
+  // class they supervise, which they manage on behalf of that class.
+  let supervisedClassIds: number[] = [];
   if (role === "teacher") {
-    query.teacherId = currentUserId!;
+    supervisedClassIds = (
+      await prisma.class.findMany({
+        where: { supervisorId: currentUserId! },
+        select: { id: true },
+      })
+    ).map((c) => c.id);
+    query.AND = [
+      {
+        OR: [
+          { teacherId: currentUserId! },
+          ...(supervisedClassIds.length > 0 ? [{ classId: { in: supervisedClassIds } }] : []),
+        ],
+      },
+    ];
   }
 
   const data: LessonList[] = await prisma.lesson.findMany({
@@ -142,10 +158,13 @@ const LessonsListPage = async ({
   const actionsByLessonId: Record<number, ReactNode> = {};
   if (canEdit) {
     for (const item of data) {
+      const supervisesClass = supervisedClassIds.includes(item.classId);
       actionsByLessonId[item.id] = (
         <>
           <FormContainer table="lesson" type="update" data={item} />
-          {role === "admin" && <FormContainer table="lesson" type="delete" id={item.id} />}
+          {(role === "admin" || supervisesClass) && (
+            <FormContainer table="lesson" type="delete" id={item.id} />
+          )}
         </>
       );
     }

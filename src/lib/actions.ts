@@ -61,6 +61,17 @@ const isAdminOrTeacher = () => {
 
 const rejectUnauthorized = () => ({ success: false, error: true });
 
+// A class supervisor owns the whole weekly lesson schedule of the class they
+// supervise (Class.supervisorId), whoever teaches the individual lessons.
+const supervisesClass = async (userId: string | null | undefined, classId: number) => {
+  if (!userId) return false;
+  const supervised = await prisma.class.findFirst({
+    where: { id: classId, supervisorId: userId },
+    select: { id: true },
+  });
+  return !!supervised;
+};
+
 export const createSubject = async (
   currentState: CurrentState,
   data: SubjectSchema
@@ -1413,7 +1424,13 @@ export const createLesson = async (
   if (isReadOnlyRole(role) || (role !== "admin" && role !== "teacher")) {
     return rejectUnauthorized();
   }
-  if (role === "teacher" && data.teacherId !== userId) {
+  // A teacher creates lessons for themselves; a class supervisor may also
+  // schedule any teacher into the class they supervise.
+  if (
+    role === "teacher" &&
+    data.teacherId !== userId &&
+    !(await supervisesClass(userId, data.classId))
+  ) {
     return rejectUnauthorized();
   }
 
@@ -1456,10 +1473,17 @@ export const updateLesson = async (
 
   try {
     if (role === "teacher") {
-      const existingLesson = await prisma.lesson.findFirst({
-        where: { id: data.id, teacherId: userId! },
-      });
-      if (!existingLesson || data.teacherId !== userId) {
+      const existing = await prisma.lesson.findUnique({ where: { id: data.id } });
+      if (!existing) {
+        return { success: false, error: true };
+      }
+      // Own lesson stays own; otherwise the lesson must sit in a class the
+      // teacher supervises, and may only stay in (or move to) such a class.
+      const ownsLesson = existing.teacherId === userId && data.teacherId === userId;
+      const supervisorEdit =
+        (await supervisesClass(userId, existing.classId)) &&
+        (await supervisesClass(userId, data.classId));
+      if (!ownsLesson && !supervisorEdit) {
         return { success: false, error: true };
       }
     }
@@ -1535,7 +1559,11 @@ export const rescheduleLesson = async (payload: {
   try {
     const lesson = await prisma.lesson.findUnique({ where: { id: payload.id } });
     if (!lesson) return { success: false, error: true };
-    if (role === "teacher" && lesson.teacherId !== userId) {
+    if (
+      role === "teacher" &&
+      lesson.teacherId !== userId &&
+      !(await supervisesClass(userId, lesson.classId))
+    ) {
       return rejectUnauthorized();
     }
 
@@ -1662,12 +1690,25 @@ export const deleteLesson = async (
   currentState: CurrentState,
   data: FormData
   ) => {
-  if (!isAdmin()) {
-    return rejectUnauthorized();
-  }
+  const { userId, sessionClaims } = auth();
+  const role = getUserRole(sessionClaims);
   const id = data.get("id") as string;
 
   try {
+    if (role !== "admin") {
+      // Only a class supervisor may delete lessons, and only from their class.
+      const lesson =
+        role === "teacher"
+          ? await prisma.lesson.findUnique({
+              where: { id: parseInt(id) },
+              select: { classId: true },
+            })
+          : null;
+      if (!lesson || !(await supervisesClass(userId, lesson.classId))) {
+        return rejectUnauthorized();
+      }
+    }
+
     await prisma.lesson.delete({
       where: { id: parseInt(id) },
     });

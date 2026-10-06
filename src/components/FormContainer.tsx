@@ -50,10 +50,18 @@ const FormContainer = async ({ table, type, data, id }: FormContainerProps) => {
     const teacherFullCrudTables = ["exam", "assignment", "result", "behaviorLog"];
     const teacherCreateUpdateOnlyTables = ["lesson"];
 
+    // Class supervisors may also delete lessons from the class they supervise
+    // (deleteLesson re-checks which class on the server).
+    const supervisesAnyClass =
+      table === "lesson" && type === "delete"
+        ? (await prisma.class.count({ where: { supervisorId: currentUserId! } })) > 0
+        : false;
+
     const allowed =
       teacherFullCrudTables.includes(table) ||
       (teacherCreateUpdateOnlyTables.includes(table) &&
-        (type === "create" || type === "update"));
+        (type === "create" || type === "update")) ||
+      supervisesAnyClass;
 
     if (!allowed) {
       return null;
