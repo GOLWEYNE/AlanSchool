@@ -7,14 +7,22 @@ import SidebarShell from "@/components/SidebarShell";
 import CommandPalette from "@/components/CommandPalette";
 import { auth } from "@clerk/nextjs/server";
 import { getUserRole } from "@/lib/auth";
+import { redirect } from "next/navigation";
+import { teacherNeedsProfile } from "@/lib/teacherProfile";
 
 export default async function DashboardLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const { sessionClaims } = auth();
+  const { userId, sessionClaims } = auth();
   const role = getUserRole(sessionClaims);
+
+  // Teachers must complete their profile (photo + position) before using the
+  // dashboard. The form lives outside this layout so it can't loop.
+  if (role === "teacher" && userId && (await teacherNeedsProfile(userId))) {
+    redirect("/complete-profile");
+  }
   // Mirrors the same admin/teacher scoping as the search API and its Navbar
   // trigger, so the shortcut doesn't open a palette that can't return anything.
   const canSearch = role === "admin" || role === "teacher";

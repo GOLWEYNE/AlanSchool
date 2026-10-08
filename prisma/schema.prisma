@@ -77,6 +77,8 @@ model Teacher {
   attendanceRecordsMarked AttendanceRecord[]
   ledClubs             Club[]
   supervisedClubs      ClubSupervisor[]
+  profile              TeacherProfile?
+  objectives           TeacherObjective[]
   clubUniformChecks    ClubUniformCheck[]
   conferenceSlots      ConferenceSlot[]
 }
@@ -750,6 +752,46 @@ model ClubUniformCheck {
 
   @@unique([clubId, studentId, date])
   @@index([clubId, date])
+}
+
+// A teacher's own profile, completed on first login: photo, position at the
+// school, background, achievements, vision and per-term objectives. Kept in its
+// own table so the existing Teacher record (managed by admins) is untouched.
+model TeacherProfile {
+  teacherId       String    @id
+  teacher         Teacher   @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  photoUrl        String?
+  position        String?
+  department      String?
+  yearJoined      Int?
+  about           String?
+  education       String?
+  previousSchools String?
+  yearsExperience Int?
+  certificates    String?
+  achievements    Json?
+  vision          String?
+  // Set once the required parts (photo + position) are filled in.
+  completedAt     DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+// One objective a teacher sets for a term (1-4) of a school year.
+model TeacherObjective {
+  id         Int      @id @default(autoincrement())
+  schoolYear String
+  term       Int
+  text       String
+  // PLANNED | IN_PROGRESS | ACHIEVED
+  status     String   @default("PLANNED")
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  teacherId String
+  teacher   Teacher @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+
+  @@index([teacherId, schoolYear])
 }
 
 // ---- Featured Video Announcement -------------------------------------

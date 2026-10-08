@@ -52,7 +52,8 @@
     "bulkImport": "Bulk Import",
     "uniform": "Uniform Check",
     "clerkSync": "Sync with Clerk",
-    "library": "Library"
+    "library": "Library",
+    "teacherProfiles": "Teacher profiles"
   },
   "Navbar": {
     "searchPlaceholder": "Search...",
@@ -2528,6 +2529,117 @@
       "listEmpty": "Nothing published yet.",
       "pin": "Pin",
       "unpin": "Unpin"
+    }
+  },
+  "TeacherProfile": {
+    "progress": "Step {done} of {total} complete",
+    "requiredNote": "Your photo and your position at Alan International School are required. Everything else is optional and you can fill it in later.",
+    "requiredFooter": "* Photo and position are required to continue.",
+    "saved": "Profile saved",
+    "saving": "Saving...",
+    "saveAndContinue": "Save and continue",
+    "save": "Save profile",
+    "remove": "Remove",
+    "editMyProfile": "Edit my profile",
+    "welcomeTitle": "Welcome to Alan International School!",
+    "welcomeSubtitle": "Before you start, please introduce yourself to the school community. It takes about five minutes.",
+    "editTitle": "My teacher profile",
+    "editSubtitle": "Keep your background, achievements and goals up to date.",
+    "backToDashboard": "Back to dashboard",
+    "logout": "Sign out",
+    "identity": {
+      "title": "About you",
+      "position": "Your position at the school",
+      "choose": "Choose your position",
+      "department": "Department",
+      "yearJoined": "Year you joined",
+      "about": "Short introduction",
+      "aboutPlaceholder": "A few sentences about who you are as a teacher",
+      "supervisesClasses": "You supervise: {names}",
+      "supervisesClubs": "You supervise clubs: {names}"
+    },
+    "photo": {
+      "none": "No photo",
+      "upload": "Upload photo",
+      "change": "Change photo",
+      "uploading": "Uploading...",
+      "hint": "A clear photo of your face. Max 5 MB.",
+      "updated": "Photo updated",
+      "failed": "Could not upload the photo",
+      "notImage": "Please choose an image file",
+      "tooBig": "The photo must be smaller than 5 MB"
+    },
+    "positions": {
+      "SUBJECT_TEACHER": "Subject teacher",
+      "CLASS_SUPERVISOR": "Class supervisor",
+      "CLUB_SUPERVISOR": "Club supervisor",
+      "HEAD_OF_DEPARTMENT": "Head of department",
+      "DEPUTY_DIRECTOR": "Deputy director",
+      "DIRECTOR": "Director",
+      "LIBRARIAN": "Librarian",
+      "OTHER": "Other"
+    },
+    "background": {
+      "title": "Your background",
+      "education": "Education",
+      "educationPlaceholder": "University, degree, year",
+      "previousSchools": "Previous schools",
+      "yearsExperience": "Years of teaching experience",
+      "certificates": "Certificates and courses"
+    },
+    "achievements": {
+      "title": "Your successes as a teacher",
+      "hint": "Up to 5 achievements: awards, student results, projects you are proud of.",
+      "add": "Add achievement",
+      "titlePlaceholder": "Achievement",
+      "year": "Year",
+      "note": "Details (optional)"
+    },
+    "goals": {
+      "title": "Goals and objectives",
+      "vision": "Your goals for the future of Alan School",
+      "visionPlaceholder": "Where do you want Alan School to be in three years, and what will you do to help?",
+      "visibility": "Only you and the school director can see your goals and objectives.",
+      "objectivesTitle": "Objectives for each term",
+      "term": "Term {term}",
+      "addObjective": "Add objective",
+      "objectivePlaceholder": "What do you want to achieve this term?"
+    },
+    "status": {
+      "PLANNED": "Planned",
+      "IN_PROGRESS": "In progress",
+      "ACHIEVED": "Achieved"
+    },
+    "required": {
+      "photo": "photo",
+      "position": "position"
+    },
+    "errors": {
+      "notAllowed": "Only teachers can edit this profile",
+      "invalid": "Some fields are not valid",
+      "noTeacher": "Your teacher record was not found. Please contact the administrator.",
+      "unavailable": "Profiles are not available right now. Please try again later.",
+      "failed": "Could not save your profile",
+      "missingRequired": "Still required: {items}"
+    },
+    "card": {
+      "title": "Teacher profile",
+      "notCompleted": "This teacher has not completed their profile yet.",
+      "noAbout": "No introduction yet."
+    },
+    "overview": {
+      "title": "Teacher profiles",
+      "subtitle": "See who has completed their profile and how term objectives are going.",
+      "teachers": "Teachers",
+      "all": "All",
+      "pending": "Pending",
+      "complete": "Completed",
+      "completeLabel": "Completed",
+      "pendingLabel": "Pending",
+      "none": "No teachers here.",
+      "noPosition": "No position yet",
+      "objectives": "{total} objectives, {achieved} achieved, {inProgress} in progress",
+      "noObjectives": "No objectives yet"
     }
   }
 }

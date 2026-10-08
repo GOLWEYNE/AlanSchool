@@ -30,6 +30,7 @@ export const routeAccessMap: RouteAccessMap = {
   "/dashboard/list/admins(.*)": ["admin"],
   "/dashboard/list/clerk-sync(.*)": ["admin"],
   "/dashboard/list/teachers(.*)": ["admin", "teacher"],
+  "/dashboard/list/teachers/profiles(.*)": ["admin"],
   "/dashboard/list/students(.*)": ["admin", "teacher"],
   "/dashboard/list/parents": ["admin", "teacher"],
   "/dashboard/list/parents/(.*)": ["admin", "teacher", "parent"],

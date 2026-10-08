@@ -1,5 +1,6 @@
 import { currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
+import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 
 const ProfilePage = async () => {
@@ -12,6 +13,7 @@ const ProfilePage = async () => {
   const role = (user.publicMetadata as { role?: string } | undefined)?.role;
   const t = await getTranslations("Profiles.account");
   const tr = await getTranslations("Roles");
+  const tp = await getTranslations("TeacherProfile");
   const roleLabel = role ? (tr.has(role) ? tr(role) : role) : "-";
 
   return (
@@ -40,6 +42,14 @@ const ProfilePage = async () => {
             <p className="font-medium capitalize">{roleLabel}</p>
           </div>
         </div>
+        {role === "teacher" && (
+          <Link
+            href="/complete-profile"
+            className="mt-5 inline-block rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700"
+          >
+            {tp("editMyProfile")}
+          </Link>
+        )}
       </div>
     </div>
   );
