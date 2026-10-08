@@ -1,26 +1,7 @@
 import prisma from "@/lib/prisma";
 
-// Shared constants for the teacher profile (kept here, not in the "use server"
-// actions file, which may only export async functions).
-
-export const POSITIONS = [
-  "SUBJECT_TEACHER",
-  "CLASS_SUPERVISOR",
-  "CLUB_SUPERVISOR",
-  "HEAD_OF_DEPARTMENT",
-  "DEPUTY_DIRECTOR",
-  "DIRECTOR",
-  "LIBRARIAN",
-  "OTHER",
-] as const;
-export type PositionKey = (typeof POSITIONS)[number];
-
-export const OBJECTIVE_STATUSES = ["PLANNED", "IN_PROGRESS", "ACHIEVED"] as const;
-export type ObjectiveStatus = (typeof OBJECTIVE_STATUSES)[number];
-
-export const TERMS = [1, 2, 3, 4] as const;
-
-export type Achievement = { title: string; year?: number | null; note?: string };
+export * from "@/lib/teacherProfileConstants";
+import type { Achievement } from "@/lib/teacherProfileConstants";
 
 // Idempotent DDL, kept in sync with prisma/migrations/*_add_teacher_profile.
 // Like the Library and club supervision, the tables create themselves on first
