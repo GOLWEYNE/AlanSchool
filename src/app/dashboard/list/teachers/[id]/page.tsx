@@ -13,6 +13,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getLocale, getTranslations } from "next-intl/server";
+import TeacherProfileCard from "@/components/TeacherProfileCard";
+import { ensureTeacherProfile } from "@/lib/teacherProfile";
 
 type TeacherWithCounts = {
   id: string;
@@ -52,7 +54,16 @@ const SingleTeacherPage = async ({
   }
 
   const t = await getTranslations("Profiles.detail");
+  const tp = await getTranslations("TeacherProfile");
   const locale = await getLocale();
+  // The teacher's own profile (photo, position, about) replaces the placeholder text.
+  const profile = (await ensureTeacherProfile())
+    ? await prisma.teacherProfile.findUnique({
+        where: { teacherId: id },
+        select: { photoUrl: true, position: true, about: true },
+      })
+    : null;
+  const canSeeGoals = role === "admin" || (role === "teacher" && userId === teacher.id);
   // English keeps the day/month/year order it always had; other locales use their own.
   const dateLocale = locale === "en" ? "en-GB" : locale;
 
@@ -66,13 +77,22 @@ const SingleTeacherPage = async ({
           {/* USER INFO CARD */}
           <div className="bg-lamaSky py-6 px-4 rounded-md flex-1 flex gap-4">
             <div className="w-1/3">
-              <Image
-                src={typeof teacher.img === "string" && teacher.img.trim() ? teacher.img : "/Alan.png"}
-                alt=""
-                width={144}
-                height={144}
-                className="w-36 h-36 rounded-full object-cover"
-              />
+              {profile?.photoUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={profile.photoUrl}
+                  alt=""
+                  className="w-36 h-36 rounded-full object-cover"
+                />
+              ) : (
+                <Image
+                  src={typeof teacher.img === "string" && teacher.img.trim() ? teacher.img : "/Alan.png"}
+                  alt=""
+                  width={144}
+                  height={144}
+                  className="w-36 h-36 rounded-full object-cover"
+                />
+              )}
             </div>
             <div className="w-2/3 flex flex-col justify-between gap-4">
               <div className="flex items-center gap-4">
@@ -89,7 +109,10 @@ const SingleTeacherPage = async ({
                 )}
               </div>
               <p className="text-sm text-gray-500">
-                Lorem ipsum, dolor sit amet consectetur adipisicing elit.
+                {profile?.position ? (
+                  <span className="block font-semibold text-gray-700">{tp(`positions.${profile.position}`)}</span>
+                ) : null}
+                {profile?.about || tp("card.noAbout")}
               </p>
               <div className="flex items-center justify-between gap-2 flex-wrap text-xs font-medium">
                 <div className="w-full md:w-1/3 lg:w-full 2xl:w-1/3 flex items-center gap-2">
@@ -178,6 +201,7 @@ const SingleTeacherPage = async ({
               </div>
             </div>
           </div>
+          <TeacherProfileCard teacherId={teacher.id} canSeeGoals={canSeeGoals} />
         </div>
       </div>
       {/* RIGHT */}
