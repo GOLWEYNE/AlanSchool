@@ -70,3 +70,40 @@ export function weekStreak(dates: Date[], now: Date = new Date()): number {
 export function clamp(value: string | null | undefined, max: number): string {
   return (value ?? "").trim().slice(0, max);
 }
+
+// ---------------------------------------------------------------------------
+// Library Studio announcements
+// ---------------------------------------------------------------------------
+
+// Which picker an announcement type uses:
+//   student  - pick one student        students - pick several students
+//   class    - pick one class          books    - pick several books
+//   audience - pick who sees it (everyone, grades or classes)
+export const ANNOUNCEMENT_TYPES = [
+  { key: "READER_OF_MONTH", emoji: "🏆", picker: "student" },
+  { key: "READING_STARS", emoji: "⭐", picker: "students" },
+  { key: "CLASS_CHAMPION", emoji: "🏫", picker: "class" },
+  { key: "GRADE_CHALLENGE", emoji: "🎯", picker: "audience" },
+  { key: "NEW_BOOKS", emoji: "📚", picker: "books" },
+  { key: "EVENT", emoji: "🎉", picker: "audience" },
+  { key: "NEWS", emoji: "📰", picker: "audience" },
+] as const;
+
+export type AnnouncementTypeKey = (typeof ANNOUNCEMENT_TYPES)[number]["key"];
+export type AnnouncementPicker = (typeof ANNOUNCEMENT_TYPES)[number]["picker"];
+
+export const ANNOUNCEMENT_TYPE_KEYS: string[] = ANNOUNCEMENT_TYPES.map((t) => t.key);
+
+export const typeMeta = (key: string) => ANNOUNCEMENT_TYPES.find((t) => t.key === key) ?? ANNOUNCEMENT_TYPES[6];
+
+export const AUDIENCES = ["ALL", "GRADES", "CLASSES"] as const;
+export type Audience = (typeof AUDIENCES)[number];
+
+export const MAX_PHOTOS = 12;
+export const MAX_PICKED_STUDENTS = 40;
+
+// Only http(s) links may be stored as media (blocks javascript: and data: URLs).
+export function safeUrl(value: string | null | undefined): string | null {
+  const v = (value ?? "").trim();
+  return /^https?:\/\/[^\s]+$/i.test(v) && v.length <= 600 ? v : null;
+}

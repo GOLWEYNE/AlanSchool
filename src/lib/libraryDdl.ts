@@ -1,4 +1,4 @@
-// Generated from prisma/migrations/20261008000000_add_library/migration.sql.
+// Generated from prisma/migrations/*add_library*/migration.sql (in order).
 // Idempotent DDL used by ensureLibrary() so the Library works on first deploy even
 // before `prisma migrate deploy` has been run against the production database.
 export const LIBRARY_DDL: string[] = [
@@ -17,5 +17,12 @@ export const LIBRARY_DDL: string[] = [
   "CREATE TABLE IF NOT EXISTS \"LibraryRequest\" (\n    \"id\" SERIAL NOT NULL,\n    \"studentId\" TEXT NOT NULL,\n    \"message\" TEXT NOT NULL,\n    \"reply\" TEXT,\n    \"suggestedBookId\" INTEGER,\n    \"status\" TEXT NOT NULL DEFAULT 'OPEN',\n    \"createdAt\" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,\n    \"repliedAt\" TIMESTAMP(3),\n    CONSTRAINT \"LibraryRequest_pkey\" PRIMARY KEY (\"id\"),\n    CONSTRAINT \"LibraryRequest_suggestedBookId_fkey\" FOREIGN KEY (\"suggestedBookId\") REFERENCES \"LibraryBook\"(\"id\") ON DELETE SET NULL ON UPDATE CASCADE\n)",
   "CREATE INDEX IF NOT EXISTS \"LibraryRequest_studentId_idx\" ON \"LibraryRequest\"(\"studentId\")",
   "CREATE INDEX IF NOT EXISTS \"LibraryRequest_status_idx\" ON \"LibraryRequest\"(\"status\")",
-  "CREATE TABLE IF NOT EXISTS \"LibrarySettings\" (\n    \"id\" INTEGER NOT NULL,\n    \"librarianName\" TEXT,\n    \"librarianImg\" TEXT,\n    \"librarianTeacherId\" TEXT,\n    \"intro\" TEXT,\n    \"goals\" TEXT,\n    \"hours\" TEXT,\n    \"featuredBookId\" INTEGER,\n    \"featuredNote\" TEXT,\n    \"featuredSetAt\" TIMESTAMP(3),\n    \"updatedAt\" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,\n    CONSTRAINT \"LibrarySettings_pkey\" PRIMARY KEY (\"id\"),\n    CONSTRAINT \"LibrarySettings_featuredBookId_fkey\" FOREIGN KEY (\"featuredBookId\") REFERENCES \"LibraryBook\"(\"id\") ON DELETE SET NULL ON UPDATE CASCADE\n)"
+  "CREATE TABLE IF NOT EXISTS \"LibrarySettings\" (\n    \"id\" INTEGER NOT NULL,\n    \"librarianName\" TEXT,\n    \"librarianImg\" TEXT,\n    \"librarianTeacherId\" TEXT,\n    \"intro\" TEXT,\n    \"goals\" TEXT,\n    \"hours\" TEXT,\n    \"featuredBookId\" INTEGER,\n    \"featuredNote\" TEXT,\n    \"featuredSetAt\" TIMESTAMP(3),\n    \"updatedAt\" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,\n    CONSTRAINT \"LibrarySettings_pkey\" PRIMARY KEY (\"id\"),\n    CONSTRAINT \"LibrarySettings_featuredBookId_fkey\" FOREIGN KEY (\"featuredBookId\") REFERENCES \"LibraryBook\"(\"id\") ON DELETE SET NULL ON UPDATE CASCADE\n)",
+  "ALTER TABLE \"LibrarySettings\" ADD COLUMN IF NOT EXISTS \"spotlightVideoUrl\" TEXT",
+  "ALTER TABLE \"LibrarySettings\" ADD COLUMN IF NOT EXISTS \"spotlightVideoTitle\" TEXT",
+  "ALTER TABLE \"LibrarySettings\" ADD COLUMN IF NOT EXISTS \"spotlightAudioUrl\" TEXT",
+  "ALTER TABLE \"LibrarySettings\" ADD COLUMN IF NOT EXISTS \"spotlightAudioTitle\" TEXT",
+  "CREATE TABLE IF NOT EXISTS \"LibraryAnnouncement\" (\n    \"id\" SERIAL NOT NULL,\n    \"type\" TEXT NOT NULL,\n    \"title\" TEXT NOT NULL,\n    \"body\" TEXT NOT NULL,\n    \"month\" TEXT,\n    \"eventAt\" TIMESTAMP(3),\n    \"audience\" TEXT NOT NULL DEFAULT 'ALL',\n    \"gradeLevels\" INTEGER[],\n    \"classIds\" INTEGER[],\n    \"studentIds\" TEXT[],\n    \"bookIds\" INTEGER[],\n    \"photoUrls\" TEXT[],\n    \"videoUrl\" TEXT,\n    \"audioUrl\" TEXT,\n    \"audioTitle\" TEXT,\n    \"pinned\" BOOLEAN NOT NULL DEFAULT false,\n    \"authorId\" TEXT,\n    \"createdAt\" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,\n    \"updatedAt\" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,\n    CONSTRAINT \"LibraryAnnouncement_pkey\" PRIMARY KEY (\"id\")\n)",
+  "CREATE INDEX IF NOT EXISTS \"LibraryAnnouncement_createdAt_idx\" ON \"LibraryAnnouncement\"(\"createdAt\")",
+  "CREATE INDEX IF NOT EXISTS \"LibraryAnnouncement_type_idx\" ON \"LibraryAnnouncement\"(\"type\")"
 ];
