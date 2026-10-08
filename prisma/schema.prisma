@@ -904,5 +904,40 @@ model LibrarySettings {
   featuredBook       LibraryBook? @relation(fields: [featuredBookId], references: [id], onDelete: SetNull)
   featuredNote       String?
   featuredSetAt      DateTime?
+  // "Watch & listen" spaces on the library home page (set by admins in the Library Studio).
+  spotlightVideoUrl   String?
+  spotlightVideoTitle String?
+  spotlightAudioUrl   String?
+  spotlightAudioTitle String?
   updatedAt          DateTime     @default(now()) @updatedAt
+}
+
+// Announcements written by admins in the Library Studio. Everyone can read them;
+// targeted ones (audience GRADES / CLASSES) only reach the matching students and
+// parents. People are referenced by plain ids (no foreign keys), like the rest of the library.
+model LibraryAnnouncement {
+  id          Int       @id @default(autoincrement())
+  // READER_OF_MONTH | READING_STARS | CLASS_CHAMPION | GRADE_CHALLENGE | NEW_BOOKS | EVENT | NEWS
+  type        String
+  title       String
+  body        String
+  month       String?
+  eventAt     DateTime?
+  // ALL | GRADES | CLASSES - who can see it
+  audience    String    @default("ALL")
+  gradeLevels Int[]
+  classIds    Int[]
+  studentIds  String[]
+  bookIds     Int[]
+  photoUrls   String[]
+  videoUrl    String?
+  audioUrl    String?
+  audioTitle  String?
+  pinned      Boolean   @default(false)
+  authorId    String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @default(now()) @updatedAt
+
+  @@index([createdAt])
+  @@index([type])
 }
