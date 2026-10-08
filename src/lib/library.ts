@@ -10,15 +10,17 @@ let pending: Promise<boolean> | null = null;
 async function prepareTables(): Promise<boolean> {
   try {
     await prisma.libraryBook.count();
-    await prisma.librarySettings.count();
     await prisma.libraryRequest.count();
+    await prisma.libraryAnnouncement.count();
+    await prisma.librarySettings.findFirst({ select: { spotlightVideoUrl: true } });
     return true;
   } catch {
     try {
       for (const statement of LIBRARY_DDL) {
         await prisma.$executeRawUnsafe(statement);
       }
-      await prisma.libraryBook.count();
+      await prisma.libraryAnnouncement.count();
+      await prisma.librarySettings.findFirst({ select: { spotlightVideoUrl: true } });
       return true;
     } catch (error) {
       console.error("[library] could not prepare tables", error);

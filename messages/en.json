@@ -2121,7 +2121,9 @@
       "books": "Collection",
       "stats": "Reading stats",
       "community": "Community",
-      "desk": "Librarian desk"
+      "desk": "Librarian desk",
+      "announcements": "Announcements",
+      "studio": "Library Studio"
     },
     "setup": {
       "title": "The library is almost ready",
@@ -2141,7 +2143,13 @@
       "alreadyReviewed": "You have already reviewed this book.",
       "tooManyRequests": "You already have 3 open requests. Please wait for the librarian to answer.",
       "photoRequired": "Please upload a photo first.",
-      "studentsOnly": "Only students can do this."
+      "studentsOnly": "Only students can do this.",
+      "adminOnly": "Only school admins can use the Library Studio.",
+      "pickStudent": "Please pick at least one student.",
+      "pickClass": "Please pick a class.",
+      "pickGrade": "Please pick at least one grade.",
+      "pickBook": "Please pick at least one book.",
+      "pickDate": "Please choose the date and time of the event."
     },
     "notify": {
       "returnedTitle": "Book returned",
@@ -2325,6 +2333,122 @@
       "published": "Published!",
       "lent": "\"{title}\" lent. Happy reading!",
       "returned": "Returned - thank you!"
+    },
+    "announce": {
+      "latest": "Latest announcements",
+      "allTypes": "All announcements",
+      "byGrade": "Grade",
+      "empty": "No announcements yet. Check back soon!",
+      "pinned": "Pinned",
+      "forMonth": "For {month}",
+      "forEveryone": "Everyone in school",
+      "forGrades": "Grade {grades}",
+      "forClasses": "Class {classes}",
+      "watchListen": "Watch & listen"
+    },
+    "studio": {
+      "title": "Library Studio",
+      "subtitle": "Only admins can write here. Pick the students, grades or classes, add photos, a video or a recording, and publish. Teachers, students and parents will see it in the Library.",
+      "composeTitle": "Write an announcement",
+      "step1": "Choose the type of announcement",
+      "step2": {
+        "student": "Who is the Reader of the Month?",
+        "students": "Which students are the Reading Stars?",
+        "class": "Which class is the champion?",
+        "books": "Which books arrived?",
+        "audience": "Who should see this?"
+      },
+      "step3": "Write it",
+      "step4": "Add photos, video and sound (optional)",
+      "types": {
+        "READER_OF_MONTH": {
+          "name": "Reader of the Month",
+          "hint": "Celebrate one student"
+        },
+        "READING_STARS": {
+          "name": "Reading Stars",
+          "hint": "Shout out several students"
+        },
+        "CLASS_CHAMPION": {
+          "name": "Class Champions",
+          "hint": "The class that reads the most"
+        },
+        "GRADE_CHALLENGE": {
+          "name": "Grade Challenge",
+          "hint": "A reading challenge for grades or classes"
+        },
+        "NEW_BOOKS": {
+          "name": "New Books",
+          "hint": "Show off new arrivals"
+        },
+        "EVENT": {
+          "name": "Library Event",
+          "hint": "Date, time and who is invited"
+        },
+        "NEWS": {
+          "name": "Library News",
+          "hint": "Any other news"
+        }
+      },
+      "titlePlaceholder": {
+        "READER_OF_MONTH": "Reader of the Month - October",
+        "READING_STARS": "Our Reading Stars this week",
+        "CLASS_CHAMPION": "Congratulations, class champions!",
+        "GRADE_CHALLENGE": "Grade 2 Reading Challenge",
+        "NEW_BOOKS": "New books on our shelves",
+        "EVENT": "Storytelling afternoon",
+        "NEWS": "Library news"
+      },
+      "bodyPlaceholder": "Write your message here...",
+      "fTitle": "Title",
+      "fBody": "Message",
+      "fMonth": "Month",
+      "fEvent": "Date and time of the event (school time)",
+      "gradePicker": "Grade",
+      "classPicker": "Class",
+      "allGrades": "All grades",
+      "allClasses": "All classes",
+      "gradeLabel": "Grade {n}",
+      "selectAll": "Select all",
+      "clearAll": "Clear",
+      "searchStudent": "Search student",
+      "searchBook": "Search books...",
+      "noStudents": "No students match.",
+      "noBooks": "No books match.",
+      "suggestions": "This month's top readers - tap to pick",
+      "suggestionsClass": "Classes that read the most - tap to pick",
+      "pickedCount": "Picked {count} of {max}",
+      "booksPicked": "{count} books picked",
+      "remove": "Remove",
+      "audience": {
+        "ALL": "Everyone in school",
+        "GRADES": "Selected grades",
+        "CLASSES": "Selected classes"
+      },
+      "audienceAllHint": "Every teacher, student and parent will see it.",
+      "photos": "Photos",
+      "addPhotos": "Add photos",
+      "photosHint": "Up to {max} photos.",
+      "video": "Video",
+      "videoHint": "Paste a YouTube, Vimeo, TikTok or Instagram Reel link, or upload a video file.",
+      "audio": "Audio (speaker)",
+      "audioHint": "Paste a link to an audio file, or upload a recording (mp3, wav, m4a).",
+      "audioTitle": "Audio title",
+      "uploadVideo": "Upload video",
+      "uploadAudio": "Upload audio",
+      "pinned": "Pin to the top",
+      "notify": "Also notify the people involved (push and email). Whole-school posts are not pushed.",
+      "publish": "Publish announcement",
+      "published": "Published! {count} people were notified.",
+      "galleryTitle": "Library photo space",
+      "galleryHint": "Photos from our library and its events. They appear on the Library home page.",
+      "spotlightTitle": "Watch & listen space",
+      "spotlightHint": "A featured video and an audio recording on the Library home page.",
+      "videoTitle": "Video title (optional)",
+      "listTitle": "Published announcements",
+      "listEmpty": "Nothing published yet.",
+      "pin": "Pin",
+      "unpin": "Unpin"
     }
   }
 }

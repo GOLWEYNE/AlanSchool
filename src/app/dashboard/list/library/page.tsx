@@ -5,6 +5,8 @@ import { requireRole } from "@/lib/auth";
 import { routeAccessMap } from "@/lib/settings";
 import { getReadingOverview, getStudentReading } from "@/lib/library";
 import { BADGE_TIERS, CATEGORY_EMOJI, type BookCategory, earnedBadges, nextBadge, weekStreak } from "@/lib/libraryShared";
+import { loadAnnouncements, viewerAudience } from "@/lib/libraryAnnouncements";
+import AnnouncementCard, { AudioPlayer, VideoPlayer } from "@/components/library/AnnouncementCard";
 import { Avatar, BookCover, CARD, Empty, Section, StatTile, Stars } from "@/components/library/LibraryUi";
 
 type TFn = (key: string, values?: Record<string, string | number>) => string;
@@ -100,7 +102,8 @@ const LibraryHome = async () => {
   const format = await getFormatter();
   const now = Date.now();
 
-  const [settings, today, news, photos, bookCount, copies, onLoan, overdue, overview, popularReviews] =
+  const viewer = await viewerAudience(userId, role);
+  const [settings, today, news, photos, bookCount, copies, onLoan, overdue, overview, popularReviews, latest] =
     await Promise.all([
       prisma.librarySettings.findUnique({
         where: { id: 1 },
@@ -120,6 +123,7 @@ const LibraryHome = async () => {
         _avg: { rating: true },
         _count: { _all: true },
       }),
+      loadAnnouncements(viewer, { take: 3 }),
     ]);
 
   const featured = settings?.featuredBook ?? null;
@@ -172,6 +176,47 @@ const LibraryHome = async () => {
           {t("stats.onLoanLine", { onLoan, overdue })}
         </p>
       ) : null}
+
+      {/* Latest announcements from the Library Studio */}
+      <Section
+        title={t("announce.latest")}
+        emoji="📣"
+        action={
+          <Link href={`${BASE}/announcements`} className="text-sm font-semibold text-blue-600 hover:underline dark:text-blue-300">
+            {t("seeAll")} →
+          </Link>
+        }
+      >
+        {latest.length === 0 ? (
+          <Empty>{t("announce.empty")}</Empty>
+        ) : (
+          <div className="grid gap-4 xl:grid-cols-2">
+            {latest.map((item) => (
+              <AnnouncementCard key={item.id} item={item} t={t} compact />
+            ))}
+          </div>
+        )}
+      </Section>
+
+      {(settings?.spotlightVideoUrl || settings?.spotlightAudioUrl) && (
+        <Section title={t("announce.watchListen")} emoji="🎬">
+          <div className="grid gap-4 lg:grid-cols-2">
+            {settings.spotlightVideoUrl && (
+              <div className="flex flex-col gap-2">
+                {settings.spotlightVideoTitle && (
+                  <div className="font-semibold text-gray-800 dark:text-slate-100">{settings.spotlightVideoTitle}</div>
+                )}
+                <VideoPlayer url={settings.spotlightVideoUrl} title={settings.spotlightVideoTitle} />
+              </div>
+            )}
+            {settings.spotlightAudioUrl && (
+              <div className="flex flex-col justify-center">
+                <AudioPlayer url={settings.spotlightAudioUrl} title={settings.spotlightAudioTitle} />
+              </div>
+            )}
+          </div>
+        </Section>
+      )}
 
       <div className="grid gap-4 lg:grid-cols-2">
         {/* Book of the week */}

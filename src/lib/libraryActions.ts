@@ -7,7 +7,17 @@ import prisma from "@/lib/prisma";
 import { getUserRole } from "@/lib/auth";
 import { notifyUser } from "@/lib/notify";
 import { canManageLibrary, ensureLibrary } from "@/lib/library";
-import { BOOK_CATEGORIES, LOAN_DAYS, clamp } from "@/lib/libraryShared";
+import {
+  ANNOUNCEMENT_TYPE_KEYS,
+  AUDIENCES,
+  BOOK_CATEGORIES,
+  LOAN_DAYS,
+  MAX_PHOTOS,
+  MAX_PICKED_STUDENTS,
+  clamp,
+  safeUrl,
+  typeMeta,
+} from "@/lib/libraryShared";
 
 export type LibraryResult = { ok: boolean; error?: string; message?: string };
 
@@ -45,6 +55,22 @@ async function asStudent(
   const { t, userId, role } = await context();
   if (!userId) return { ok: false, error: t("errors.notSignedIn") };
   if (role !== "student") return { ok: false, error: t("errors.studentsOnly") };
+  if (!(await ensureLibrary())) return { ok: false, error: t("errors.notReady") };
+  try {
+    return await fn({ t, userId });
+  } catch (error) {
+    console.error("[library] action failed", error);
+    return { ok: false, error: t("errors.generic") };
+  }
+}
+
+// Runs `fn` only for a signed-in admin (the Library Studio is admin-only).
+async function asAdmin(
+  fn: (ctx: { t: TFn; userId: string }) => Promise<LibraryResult>
+): Promise<LibraryResult> {
+  const { t, userId, role } = await context();
+  if (!userId) return { ok: false, error: t("errors.notSignedIn") };
+  if (role !== "admin") return { ok: false, error: t("errors.adminOnly") };
   if (!(await ensureLibrary())) return { ok: false, error: t("errors.notReady") };
   try {
     return await fn({ t, userId });
@@ -308,6 +334,172 @@ export async function setFeaturedBook(formData: FormData): Promise<LibraryResult
     if (!Number.isFinite(bookId)) return { ok: false, error: t("errors.invalid") };
     const note = clamp(String(formData.get("note") ?? ""), 400) || null;
     const data = { featuredBookId: bookId, featuredNote: note, featuredSetAt: new Date() };
+    await prisma.librarySettings.upsert({ where: { id: 1 }, update: data, create: { id: 1, ...data } });
+    refresh();
+    return { ok: true, message: t("desk.saved") };
+  });
+}
+
+// ---------------------------------------------------------------- Library Studio (admin only)
+
+const ints = (values: FormDataEntryValue[]) =>
+  Array.from(new Set(values.map((v) => parseInt(String(v), 10)).filter((n) => Number.isFinite(n))));
+const strs = (values: FormDataEntryValue[], max: number) =>
+  Array.from(new Set(values.map((v) => String(v).trim()).filter(Boolean))).slice(0, max);
+
+export async function publishAnnouncement(formData: FormData): Promise<LibraryResult> {
+  return asAdmin(async ({ t, userId }) => {
+    const type = String(formData.get("type") ?? "");
+    if (!ANNOUNCEMENT_TYPE_KEYS.includes(type)) return { ok: false, error: t("errors.invalid") };
+    const picker = typeMeta(type).picker;
+
+    const title = clamp(String(formData.get("title") ?? ""), 140);
+    const body = clamp(String(formData.get("body") ?? ""), 3000);
+    if (!title || !body) return { ok: false, error: t("errors.invalid") };
+
+    // Re-check every picked id against the database so nothing made-up is stored.
+    let studentIds = picker === "student" || picker === "students" ? strs(formData.getAll("studentIds"), MAX_PICKED_STUDENTS) : [];
+    if (picker === "student") studentIds = studentIds.slice(0, 1);
+    let classIds = picker === "class" || picker === "audience" ? ints(formData.getAll("classIds")) : [];
+    if (picker === "class") classIds = classIds.slice(0, 1);
+    let gradeLevels = picker === "audience" ? ints(formData.getAll("gradeLevels")) : [];
+    let bookIds = picker === "books" ? ints(formData.getAll("bookIds")).slice(0, 30) : [];
+
+    let audience = "ALL";
+    if (picker === "audience") {
+      const a = String(formData.get("audience") ?? "ALL");
+      audience = (AUDIENCES as readonly string[]).includes(a) ? a : "ALL";
+      if (audience === "ALL") { gradeLevels = []; classIds = []; }
+      if (audience === "GRADES") classIds = [];
+      if (audience === "CLASSES") gradeLevels = [];
+    }
+
+    if (studentIds.length) {
+      const found = await prisma.student.findMany({ where: { id: { in: studentIds } }, select: { id: true } });
+      studentIds = found.map((f) => f.id);
+    }
+    if (classIds.length) {
+      const found = await prisma.class.findMany({ where: { id: { in: classIds } }, select: { id: true } });
+      classIds = found.map((f) => f.id);
+    }
+    if (gradeLevels.length) {
+      const found = await prisma.grade.findMany({ where: { level: { in: gradeLevels } }, select: { level: true } });
+      gradeLevels = found.map((f) => f.level);
+    }
+    if (bookIds.length) {
+      const found = await prisma.libraryBook.findMany({ where: { id: { in: bookIds } }, select: { id: true } });
+      bookIds = found.map((f) => f.id);
+    }
+
+    if ((picker === "student" || picker === "students") && studentIds.length === 0) return { ok: false, error: t("errors.pickStudent") };
+    if (picker === "class" && classIds.length === 0) return { ok: false, error: t("errors.pickClass") };
+    if (picker === "books" && bookIds.length === 0) return { ok: false, error: t("errors.pickBook") };
+    if (picker === "audience" && audience === "GRADES" && gradeLevels.length === 0) return { ok: false, error: t("errors.pickGrade") };
+    if (picker === "audience" && audience === "CLASSES" && classIds.length === 0) return { ok: false, error: t("errors.pickClass") };
+
+    let eventAt: Date | null = null;
+    if (type === "EVENT") {
+      const raw = String(formData.get("eventAt") ?? "");
+      const d = raw ? new Date(raw + "+05:00") : null; // school time is UTC+5
+      if (!d || Number.isNaN(d.getTime())) return { ok: false, error: t("errors.pickDate") };
+      eventAt = d;
+    }
+
+    const month = /^\d{4}-\d{2}$/.test(String(formData.get("month") ?? "")) ? String(formData.get("month")) : null;
+    const photoUrls = strs(formData.getAll("photoUrls"), MAX_PHOTOS).map(safeUrl).filter((u): u is string => !!u);
+    const videoUrl = safeUrl(String(formData.get("videoUrl") ?? ""));
+    const audioUrl = safeUrl(String(formData.get("audioUrl") ?? ""));
+
+    const created = await prisma.libraryAnnouncement.create({
+      data: {
+        type,
+        title,
+        body,
+        month: type === "READER_OF_MONTH" || type === "CLASS_CHAMPION" ? month : null,
+        eventAt,
+        audience,
+        gradeLevels,
+        classIds,
+        studentIds,
+        bookIds,
+        photoUrls,
+        videoUrl,
+        audioUrl,
+        audioTitle: audioUrl ? clamp(String(formData.get("audioTitle") ?? ""), 120) || null : null,
+        pinned: formData.get("pinned") === "on",
+        authorId: userId,
+      },
+    });
+
+    // Optional push/email to the people the announcement is about or aimed at.
+    // Whole-school posts are not pushed (they simply appear in the Library).
+    let notified = 0;
+    if (formData.get("notify") === "on") {
+      const students = await prisma.student.findMany({
+        where: {
+          OR: [
+            ...(studentIds.length ? [{ id: { in: studentIds } }] : []),
+            ...(classIds.length ? [{ classId: { in: classIds } }] : []),
+            ...(gradeLevels.length ? [{ grade: { level: { in: gradeLevels } } }] : []),
+          ],
+        },
+        select: { id: true, parentId: true },
+        take: 400,
+      });
+      const recipients = Array.from(new Set(students.flatMap((s) => [s.id, s.parentId])));
+      const payload = { title, body: body.slice(0, 140), url: "/dashboard/list/library/announcements" };
+      try {
+        for (let i = 0; i < recipients.length; i += 25) {
+          await Promise.allSettled(recipients.slice(i, i + 25).map((id) => notifyUser(id, payload)));
+        }
+        notified = recipients.length;
+      } catch {
+        // Notifications must never make publishing fail.
+      }
+    }
+
+    refresh();
+    return { ok: true, message: t("studio.published", { id: created.id, count: notified }) };
+  });
+}
+
+export async function deleteAnnouncement(id: number): Promise<LibraryResult> {
+  return asAdmin(async () => {
+    await prisma.libraryAnnouncement.delete({ where: { id } });
+    refresh();
+    return { ok: true };
+  });
+}
+
+export async function togglePinAnnouncement(id: number, pinned: boolean): Promise<LibraryResult> {
+  return asAdmin(async () => {
+    await prisma.libraryAnnouncement.update({ where: { id }, data: { pinned } });
+    refresh();
+    return { ok: true };
+  });
+}
+
+// Several library photos at once (the Studio's photo space).
+export async function addPhotos(formData: FormData): Promise<LibraryResult> {
+  return asAdmin(async ({ t }) => {
+    const urls = strs(formData.getAll("photoUrls"), MAX_PHOTOS).map(safeUrl).filter((u): u is string => !!u);
+    if (urls.length === 0) return { ok: false, error: t("errors.photoRequired") };
+    const caption = clamp(String(formData.get("caption") ?? ""), 200) || null;
+    await prisma.libraryPhoto.createMany({ data: urls.map((url) => ({ url, caption })) });
+    refresh();
+    return { ok: true, message: t("desk.published") };
+  });
+}
+
+// The "Watch & listen" video and audio spaces on the library home page.
+export async function saveSpotlight(formData: FormData): Promise<LibraryResult> {
+  return asAdmin(async ({ t }) => {
+    const data = {
+      spotlightVideoUrl: safeUrl(String(formData.get("videoUrl") ?? "")),
+      spotlightVideoTitle: clamp(String(formData.get("videoTitle") ?? ""), 140) || null,
+      spotlightAudioUrl: safeUrl(String(formData.get("audioUrl") ?? "")),
+      spotlightAudioTitle: clamp(String(formData.get("audioTitle") ?? ""), 140) || null,
+    };
     await prisma.librarySettings.upsert({ where: { id: 1 }, update: data, create: { id: 1, ...data } });
     refresh();
     return { ok: true, message: t("desk.saved") };
