@@ -12,7 +12,7 @@ import {
   TERMS,
   type ObjectiveStatus,
   type PositionKey,
-} from "@/lib/teacherProfile";
+} from "@/lib/teacherProfileConstants";
 
 export type ProfileFormData = {
   position: PositionKey | "";
