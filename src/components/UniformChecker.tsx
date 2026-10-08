@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { saveUniformChecks } from "@/lib/uniformActions";
+import { saveClubUniformChecks } from "@/lib/clubSupervisionActions";
 import type { UniformStatusKey } from "@/lib/uniform";
 
 export type UniformRow = {
@@ -39,12 +40,15 @@ const OFF =
 
 export default function UniformChecker({
   classId,
+  clubId,
   date,
   initial,
   canEdit,
   labels,
 }: {
   classId: number;
+  // When set, the rows are saved as a club uniform check instead of a class one.
+  clubId?: number;
   date: string;
   initial: UniformRow[];
   canEdit: boolean;
@@ -82,11 +86,10 @@ export default function UniformChecker({
 
   const save = () => {
     startTransition(async () => {
-      const res = await saveUniformChecks(
-        classId,
-        date,
-        rows.map((r) => ({ studentId: r.id, status: r.status, missingItems: r.missingItems, note: r.note }))
-      );
+      const entries = rows.map((r) => ({ studentId: r.id, status: r.status, missingItems: r.missingItems, note: r.note }));
+      const res = clubId !== undefined
+        ? await saveClubUniformChecks(clubId, date, entries)
+        : await saveUniformChecks(classId, date, entries);
       setMessage(
         res.ok
           ? { ok: true, text: labels.savedTemplate.replace("__COUNT__", String(res.saved ?? 0)) }
