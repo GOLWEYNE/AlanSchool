@@ -796,3 +796,113 @@ model UniformCheck {
   @@unique([studentId, date])
   @@index([classId, date])
 }
+
+// ---------------------------------------------------------------------------
+// School library. Student / teacher ids are stored as plain strings (Clerk
+// user ids) on purpose: the library is self-contained and never changes the
+// existing Student / Teacher / Class tables.
+// ---------------------------------------------------------------------------
+
+model LibraryBook {
+  id          Int      @id @default(autoincrement())
+  title       String
+  author      String
+  // TEXTBOOK | FICTION | OTHER
+  category    String   @default("FICTION")
+  gradeLevel  String?
+  language    String?
+  description String?
+  coverUrl    String?
+  shelf       String?
+  copies      Int      @default(1)
+  createdAt   DateTime @default(now())
+
+  loans       LibraryLoan[]
+  reviews     LibraryReview[]
+  suggestedIn LibraryRequest[]
+  featuredIn  LibrarySettings[]
+
+  @@index([category])
+}
+
+model LibraryLoan {
+  id         Int         @id @default(autoincrement())
+  bookId     Int
+  book       LibraryBook @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  studentId  String
+  borrowedAt DateTime    @default(now())
+  dueAt      DateTime
+  returnedAt DateTime?
+  recordedBy String?
+
+  @@index([studentId])
+  @@index([bookId])
+  @@index([returnedAt])
+}
+
+model LibraryReview {
+  id        Int         @id @default(autoincrement())
+  bookId    Int
+  book      LibraryBook @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  studentId String
+  rating    Int
+  text      String
+  // PENDING | APPROVED | REJECTED
+  status    String      @default("PENDING")
+  createdAt DateTime    @default(now())
+
+  @@index([status])
+  @@index([bookId])
+}
+
+model LibraryPost {
+  id        Int      @id @default(autoincrement())
+  // NEWS | TODAY
+  kind      String   @default("NEWS")
+  title     String
+  body      String
+  imageUrl  String?
+  authorId  String?
+  createdAt DateTime @default(now())
+
+  @@index([kind, createdAt])
+}
+
+model LibraryPhoto {
+  id        Int      @id @default(autoincrement())
+  url       String
+  caption   String?
+  createdAt DateTime @default(now())
+}
+
+model LibraryRequest {
+  id              Int          @id @default(autoincrement())
+  studentId       String
+  message         String
+  reply           String?
+  suggestedBookId Int?
+  suggestedBook   LibraryBook? @relation(fields: [suggestedBookId], references: [id], onDelete: SetNull)
+  // OPEN | ANSWERED
+  status          String       @default("OPEN")
+  createdAt       DateTime     @default(now())
+  repliedAt       DateTime?
+
+  @@index([studentId])
+  @@index([status])
+}
+
+// Single row (id = 1): the librarian's profile and the library's own texts.
+model LibrarySettings {
+  id                 Int          @id
+  librarianName      String?
+  librarianImg       String?
+  librarianTeacherId String?
+  intro              String?
+  goals              String?
+  hours              String?
+  featuredBookId     Int?
+  featuredBook       LibraryBook? @relation(fields: [featuredBookId], references: [id], onDelete: SetNull)
+  featuredNote       String?
+  featuredSetAt      DateTime?
+  updatedAt          DateTime     @default(now()) @updatedAt
+}
