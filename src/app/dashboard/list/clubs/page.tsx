@@ -11,9 +11,11 @@ import { Club, ClubEnrollment, Prisma, Teacher } from "@/generated/prisma/client
 import { auth } from "@clerk/nextjs/server";
 import { getUserRole } from "@/lib/auth";
 import { getTranslations } from "next-intl/server";
+import { getClubSupervisors, getSupervisedClubIds, type ClubSupervisorLite } from "@/lib/clubSupervision";
 
 type ClubList = Club & {
   instructor: Teacher | null;
+  supervisors: ClubSupervisorLite[];
   _count: { enrollments: number };
   enrollments: ClubEnrollment[];
 };
@@ -42,12 +44,17 @@ const ClubListPage = async ({
   }
   const showEnrollColumn = relevantStudents.length > 0;
 
+  // Clubs this teacher supervises (lead instructor or co-supervisor): they get
+  // the register / attendance / uniform tools for those clubs only.
+  const supervisedIds = new Set(role === "teacher" ? await getSupervisedClubIds(userId) : []);
+  const canSupervise = (clubId: number) => role === "admin" || supervisedIds.has(clubId);
+
   const columns = [
     { header: t("columns.name"), accessor: "name" },
     { header: t("columns.category"), accessor: "category", className: "hidden md:table-cell" },
     { header: t("columns.capacity"), accessor: "capacity", className: "hidden md:table-cell" },
     { header: t("columns.enrolled"), accessor: "enrolled", className: "hidden md:table-cell" },
-    { header: t("columns.instructor"), accessor: "instructor", className: "hidden md:table-cell" },
+    { header: t("columns.supervisors"), accessor: "supervisors", className: "hidden md:table-cell" },
     ...(showEnrollColumn ? [{ header: t("columns.yourEnrollment"), accessor: "enroll" }] : []),
     ...(role === "admin" || role === "teacher"
       ? [{ header: t("columns.actions"), accessor: "action" }]
@@ -79,7 +86,14 @@ const ClubListPage = async ({
         <td className="hidden md:table-cell">{item.capacity}</td>
         <td className="hidden md:table-cell">{item._count.enrollments}</td>
         <td className="hidden md:table-cell">
-          {item.instructor ? `${item.instructor.name} ${item.instructor.surname}` : t("unassigned")}
+          {item.supervisors.length > 0
+            ? item.supervisors.map((s) => `${s.name} ${s.surname}`).join(", ")
+            : t("unassigned")}
+          {role === "teacher" && supervisedIds.has(item.id) && (
+            <span className="ml-2 rounded-full bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300 px-2 py-0.5 text-xs font-semibold whitespace-nowrap">
+              {t("youSupervise")}
+            </span>
+          )}
         </td>
         {showEnrollColumn && (
           <td>
@@ -88,17 +102,35 @@ const ClubListPage = async ({
         )}
         <td>
           <div className="flex items-center gap-2">
-            {(role === "admin" || (role === "teacher" && item.instructorId === userId)) && (
-              <Link
-                href={`/dashboard/list/clubs/attendance?clubId=${item.id}`}
-                className="text-xs font-semibold px-2.5 py-1 rounded-md bg-emerald-500 text-white whitespace-nowrap"
-              >
-                {t("takeAttendance")}
-              </Link>
+            {canSupervise(item.id) && (
+              <>
+                <Link
+                  href={`/dashboard/list/clubs/register?clubId=${item.id}`}
+                  className="text-xs font-semibold px-2.5 py-1 rounded-md bg-blue-500 text-white whitespace-nowrap"
+                >
+                  {t("registerStudents")}
+                </Link>
+                <Link
+                  href={`/dashboard/list/clubs/attendance?clubId=${item.id}`}
+                  className="text-xs font-semibold px-2.5 py-1 rounded-md bg-emerald-500 text-white whitespace-nowrap"
+                >
+                  {t("takeAttendance")}
+                </Link>
+                <Link
+                  href={`/dashboard/list/clubs/uniform?clubId=${item.id}`}
+                  className="text-xs font-semibold px-2.5 py-1 rounded-md bg-amber-500 text-white whitespace-nowrap"
+                >
+                  {t("checkUniform")}
+                </Link>
+              </>
             )}
             {role === "admin" && (
               <>
-                <FormContainer table="club" type="update" data={item} />
+                <FormContainer
+                  table="club"
+                  type="update"
+                  data={{ ...item, supervisorIds: item.supervisors.map((s) => s.id) }}
+                />
                 <FormContainer table="club" type="delete" id={item.id} />
               </>
             )}
@@ -126,7 +158,7 @@ const ClubListPage = async ({
     }
   }
 
-  const [data, count] = await prisma.$transaction([
+  const [rawData, count] = await prisma.$transaction([
     prisma.club.findMany({
       where: query,
       include: {
@@ -143,6 +175,12 @@ const ClubListPage = async ({
     }),
     prisma.club.count({ where: query }),
   ]);
+
+  const supervisorsByClub = await getClubSupervisors(rawData.map((c) => c.id));
+  const data: ClubList[] = rawData.map((c) => ({
+    ...c,
+    supervisors: supervisorsByClub.get(c.id) ?? [],
+  }));
 
   // For any waitlisted enrollment on this page, work out its queue position
   // (1-based, ordered by whoever has waited longest) so the badge can show
@@ -183,12 +221,26 @@ const ClubListPage = async ({
           <TableSearch />
           <div className="flex items-center gap-4 self-end">
             {(role === "admin" || role === "teacher") && (
-              <Link
-                href="/dashboard/list/clubs/attendance"
-                className="bg-emerald-500 text-white px-3 py-1.5 rounded-md text-sm font-semibold whitespace-nowrap"
-              >
-                {t("clubAttendanceButton")}
-              </Link>
+              <>
+                <Link
+                  href="/dashboard/list/clubs/register"
+                  className="bg-blue-500 text-white px-3 py-1.5 rounded-md text-sm font-semibold whitespace-nowrap"
+                >
+                  {t("registerButton")}
+                </Link>
+                <Link
+                  href="/dashboard/list/clubs/attendance"
+                  className="bg-emerald-500 text-white px-3 py-1.5 rounded-md text-sm font-semibold whitespace-nowrap"
+                >
+                  {t("clubAttendanceButton")}
+                </Link>
+                <Link
+                  href="/dashboard/list/clubs/uniform"
+                  className="bg-amber-500 text-white px-3 py-1.5 rounded-md text-sm font-semibold whitespace-nowrap"
+                >
+                  {t("clubUniformButton")}
+                </Link>
+              </>
             )}
             {role === "admin" && <FormContainer table="club" type="create" />}
           </div>
