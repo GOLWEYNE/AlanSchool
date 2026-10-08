@@ -24,8 +24,10 @@ export default async function LibraryLayout({ children }: { children: ReactNode 
     { href: BASE, label: t("tabs.home") },
     { href: BASE + "/books", label: t("tabs.books") },
     { href: BASE + "/stats", label: t("tabs.stats") },
+    { href: BASE + "/announcements", label: t("tabs.announcements") },
     { href: BASE + "/community", label: t("tabs.community") },
     ...(manager ? [{ href: BASE + "/desk", label: t("tabs.desk") }] : []),
+    ...(role === "admin" ? [{ href: BASE + "/studio", label: t("tabs.studio") }] : []),
   ];
 
   return (
