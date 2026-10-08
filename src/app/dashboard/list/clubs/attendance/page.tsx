@@ -6,6 +6,7 @@ import { auth } from "@clerk/nextjs/server";
 import { getUserRole } from "@/lib/auth";
 import { getFormatter, getTranslations } from "next-intl/server";
 import { schoolDayRange, toWallClock, SCHOOL_TIME_ZONE } from "@/lib/schoolTime";
+import { getSupervisedClubIds } from "@/lib/clubSupervision";
 
 type Status = "PRESENT" | "ABSENT" | "LATE" | "EXCUSED";
 
@@ -25,7 +26,7 @@ const DEFAULT_END = "16:00";
 
 // Club-meeting attendance, built on the same pattern as the class Attendance
 // page: pick a club and a day, mark the roster, save. Admins see every club;
-// teachers only the clubs they instruct.
+// teachers only the clubs they supervise (lead instructor or co-supervisor).
 const ClubAttendancePage = async ({
   searchParams,
 }: {
@@ -50,8 +51,9 @@ const ClubAttendancePage = async ({
       : schoolDateString(new Date());
   const [dayStart, dayEnd] = schoolDayRange(date);
 
+  const supervisedIds = role === "teacher" ? await getSupervisedClubIds(userId) : null;
   const clubs = await prisma.club.findMany({
-    where: role === "teacher" ? { instructorId: userId ?? "" } : {},
+    where: supervisedIds ? { id: { in: supervisedIds } } : {},
     select: { id: true, name: true },
     orderBy: { name: "asc" },
   });
@@ -152,6 +154,14 @@ const ClubAttendancePage = async ({
         >
           {t("backToClubs")}
         </Link>
+        {selectedClubId && (
+          <Link
+            href={`/dashboard/list/clubs/uniform?clubId=${selectedClubId}&date=${date}`}
+            className="bg-amber-500 text-white px-4 py-2 rounded-md text-sm font-semibold"
+          >
+            {t("uniformButton")}
+          </Link>
+        )}
       </form>
 
       {clubs.length === 0 ? (

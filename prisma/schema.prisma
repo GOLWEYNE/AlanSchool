@@ -48,6 +48,7 @@ model Student {
   conferenceBookings    ConferenceBooking[]
   clubEnrollments       ClubEnrollment[]
   clubAttendances       ClubAttendance[]
+  clubUniformChecks     ClubUniformCheck[]
 
   // Personal study goals the student tracks on their Study Planner page.
   studyGoals            StudyGoal[]
@@ -75,6 +76,8 @@ model Teacher {
   behaviorLogsGiven    BehaviorLog[]
   attendanceRecordsMarked AttendanceRecord[]
   ledClubs             Club[]
+  supervisedClubs      ClubSupervisor[]
+  clubUniformChecks    ClubUniformCheck[]
   conferenceSlots      ConferenceSlot[]
 }
 
@@ -667,6 +670,11 @@ model Club {
 
   enrollments ClubEnrollment[]
   sessions    ClubSession[]
+
+  // Co-supervisors (the lead instructor is also listed here). A supervisor
+  // takes attendance and the uniform check for this club.
+  supervisors   ClubSupervisor[]
+  uniformChecks ClubUniformCheck[]
 }
 
 model ClubEnrollment {
@@ -704,6 +712,44 @@ model ClubAttendance {
   student       Student     @relation(fields: [studentId], references: [id])
 
   @@unique([clubSessionId, studentId])
+}
+
+// A teacher who supervises a club. Supervisors take the club's attendance and
+// its uniform check, and can register students into the club.
+model ClubSupervisor {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  clubId    Int
+  club      Club    @relation(fields: [clubId], references: [id], onDelete: Cascade)
+  teacherId String
+  teacher   Teacher @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+
+  @@unique([clubId, teacherId])
+  @@index([teacherId])
+}
+
+// One row per student per club per day, recorded by a club supervisor.
+// Separate from UniformCheck (the class supervisor's daily check) so a club
+// check never overwrites the class one.
+model ClubUniformCheck {
+  id           Int           @id @default(autoincrement())
+  date         DateTime      @db.Date
+  status       UniformStatus
+  missingItems String[]
+  note         String?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  clubId      Int
+  club        Club     @relation(fields: [clubId], references: [id], onDelete: Cascade)
+  studentId   String
+  student     Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  checkedById String?
+  checkedBy   Teacher? @relation(fields: [checkedById], references: [id], onDelete: SetNull)
+
+  @@unique([clubId, studentId, date])
+  @@index([clubId, date])
 }
 
 // ---- Featured Video Announcement -------------------------------------

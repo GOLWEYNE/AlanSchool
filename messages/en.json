@@ -521,7 +521,8 @@
         "enrolled": "Enrolled",
         "instructor": "Instructor",
         "yourEnrollment": "Your Enrollment",
-        "actions": "Actions"
+        "actions": "Actions",
+        "supervisors": "Supervisors"
       },
       "enroll": {
         "updated": "Enrollment updated.",
@@ -553,7 +554,12 @@
         "OTHER": "Other"
       },
       "takeAttendance": "Take attendance",
-      "clubAttendanceButton": "Club attendance"
+      "clubAttendanceButton": "Club attendance",
+      "youSupervise": "You supervise",
+      "registerStudents": "Register students",
+      "checkUniform": "Check uniform",
+      "registerButton": "Register students",
+      "clubUniformButton": "Club uniform"
     },
     "clubAttendance": {
       "title": "Club Attendance",
@@ -577,7 +583,78 @@
       "timeOrderError": "End time must be after start time.",
       "recentTitle": "Recent meetings",
       "recentNone": "No meetings recorded yet.",
-      "cameCount": "{came}/{total} came"
+      "cameCount": "{came}/{total} came",
+      "uniformButton": "Check uniform"
+    },
+    "clubRegister": {
+      "title": "Register Students in Clubs",
+      "subtitle": "Pick a club, choose a grade and class, and register students from the whole school.",
+      "emoji": "📝",
+      "restricted": "Only admins and club supervisors can register students.",
+      "clubsLabel": "Clubs",
+      "studentsLabel": "School Students",
+      "membersLabel": "Members",
+      "clubLabel": "Club",
+      "loadButton": "Load",
+      "backToClubs": "Back to clubs",
+      "attendanceButton": "Attendance",
+      "uniformButton": "Uniform",
+      "noClubs": "There are no clubs yet.",
+      "noSupervisedClubs": "You are not a supervisor of any club yet. Ask an admin to add you to a club.",
+      "gradeLabel": "Grade",
+      "classLabel": "Class",
+      "allGrades": "All grades",
+      "allClasses": "All classes",
+      "gradeName": "Grade {level}",
+      "showLabel": "Show",
+      "viewAll": "Everyone",
+      "viewNotIn": "Not in this club",
+      "viewIn": "Already in this club",
+      "searchLabel": "Search",
+      "searchPlaceholder": "Name or class",
+      "seats": "{active}/{capacity} seats taken",
+      "waitlistCount": "{count} on waitlist",
+      "shownCount": "Showing {shown} of {total} students",
+      "selectShown": "Select all shown",
+      "unselectShown": "Unselect all shown",
+      "noStudents": "No students match these filters.",
+      "inClub": "In club",
+      "onWaitlist": "Waitlist",
+      "registerButton": "Register {count} selected",
+      "removeButton": "Remove {count} from club",
+      "clearSelection": "Clear selection",
+      "registered": "Registered {added} students. {waitlisted} added to the waitlist.",
+      "removed": "Removed {count} students from the club.",
+      "errors": {
+        "invalid": "Invalid club.",
+        "notAllowed": "Only admins and this club's supervisors can do that.",
+        "nothingSelected": "Select at least one student.",
+        "clubNotFound": "Club not found.",
+        "failed": "Something went wrong. Please try again."
+      }
+    },
+    "clubUniform": {
+      "title": "Club Uniform Check",
+      "subtitle": "Supervisors record whether each club member came in the right uniform.",
+      "emoji": "👔",
+      "restricted": "Only admins and club supervisors can check club uniform.",
+      "clubsLabel": "Clubs",
+      "membersLabel": "Members",
+      "recordedLabel": "Recorded",
+      "clubLabel": "Club",
+      "dateLabel": "Date",
+      "loadButton": "Load",
+      "backToClubs": "Back to clubs",
+      "attendanceButton": "Attendance",
+      "noClubs": "There are no clubs yet.",
+      "noSupervisedClubs": "You are not a supervisor of any club yet. Ask an admin to add you to a club.",
+      "noMembers": "This club has no active members yet. Register students first.",
+      "errors": {
+        "notSupervisor": "Only this club's supervisors can record its uniform.",
+        "clubNotFound": "Club not found.",
+        "unavailable": "Club uniform is not available right now.",
+        "failed": "Could not save the uniform check. Please try again."
+      }
     }
   },
   "Forms": {
@@ -816,7 +893,9 @@
       "instructorOptional": "Instructor (optional)",
       "unassigned": "Unassigned",
       "created": "Club has been created!",
-      "updated": "Club has been updated!"
+      "updated": "Club has been updated!",
+      "supervisorsLabel": "Club supervisors",
+      "supervisorsHint": "Tick every teacher who supervises this club. Supervisors register students, take attendance and check uniform."
     }
   },
   "Modal": {

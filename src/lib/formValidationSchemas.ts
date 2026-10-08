@@ -409,6 +409,8 @@ export const clubSchema = z.object({
     (value) => (value === "" ? undefined : value),
     z.string().optional()
   ),
+  // Extra teachers who supervise the club (take attendance + uniform).
+  supervisorIds: z.array(z.string()).optional(),
 });
 
 export type ClubSchema = z.infer<typeof clubSchema>;

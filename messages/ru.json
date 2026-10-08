@@ -521,7 +521,8 @@
         "enrolled": "Записано",
         "instructor": "Руководитель",
         "yourEnrollment": "Ваша запись",
-        "actions": "Действия"
+        "actions": "Действия",
+        "supervisors": "Кураторы"
       },
       "enroll": {
         "updated": "Запись обновлена.",
@@ -553,7 +554,12 @@
         "OTHER": "Другое"
       },
       "takeAttendance": "Отметить посещаемость",
-      "clubAttendanceButton": "Посещаемость кружков"
+      "clubAttendanceButton": "Посещаемость кружков",
+      "youSupervise": "Вы куратор",
+      "registerStudents": "Записать учеников",
+      "checkUniform": "Проверить форму",
+      "registerButton": "Запись в кружки",
+      "clubUniformButton": "Форма в кружках"
     },
     "clubAttendance": {
       "title": "Посещаемость кружков",
@@ -577,7 +583,78 @@
       "timeOrderError": "Время окончания должно быть позже начала.",
       "recentTitle": "Последние занятия",
       "recentNone": "Занятий пока нет.",
-      "cameCount": "пришли {came}/{total}"
+      "cameCount": "пришли {came}/{total}",
+      "uniformButton": "Проверить форму"
+    },
+    "clubRegister": {
+      "title": "Запись учеников в кружки",
+      "subtitle": "Выберите кружок, затем параллель и класс, и записывайте учеников всей школы.",
+      "emoji": "📝",
+      "restricted": "Записывать учеников могут только администраторы и кураторы кружка.",
+      "clubsLabel": "Кружки",
+      "studentsLabel": "Ученики школы",
+      "membersLabel": "Участники",
+      "clubLabel": "Кружок",
+      "loadButton": "Показать",
+      "backToClubs": "К кружкам",
+      "attendanceButton": "Посещаемость",
+      "uniformButton": "Форма",
+      "noClubs": "Кружков пока нет.",
+      "noSupervisedClubs": "Вы пока не куратор ни одного кружка. Попросите администратора добавить вас в кружок.",
+      "gradeLabel": "Параллель",
+      "classLabel": "Класс",
+      "allGrades": "Все параллели",
+      "allClasses": "Все классы",
+      "gradeName": "{level} класс",
+      "showLabel": "Показать",
+      "viewAll": "Все",
+      "viewNotIn": "Не в этом кружке",
+      "viewIn": "Уже в кружке",
+      "searchLabel": "Поиск",
+      "searchPlaceholder": "Имя или класс",
+      "seats": "Занято мест: {active}/{capacity}",
+      "waitlistCount": "В листе ожидания: {count}",
+      "shownCount": "Показано {shown} из {total} учеников",
+      "selectShown": "Выбрать всех показанных",
+      "unselectShown": "Снять выбор со всех показанных",
+      "noStudents": "Нет учеников по этим фильтрам.",
+      "inClub": "В кружке",
+      "onWaitlist": "Ожидание",
+      "registerButton": "Записать выбранных: {count}",
+      "removeButton": "Убрать из кружка: {count}",
+      "clearSelection": "Сбросить выбор",
+      "registered": "Записано учеников: {added}. В лист ожидания добавлено: {waitlisted}.",
+      "removed": "Убрано из кружка учеников: {count}.",
+      "errors": {
+        "invalid": "Неверный кружок.",
+        "notAllowed": "Это могут делать только администраторы и кураторы кружка.",
+        "nothingSelected": "Выберите хотя бы одного ученика.",
+        "clubNotFound": "Кружок не найден.",
+        "failed": "Что-то пошло не так. Попробуйте ещё раз."
+      }
+    },
+    "clubUniform": {
+      "title": "Проверка формы в кружках",
+      "subtitle": "Кураторы отмечают, пришёл ли каждый участник кружка в нужной форме.",
+      "emoji": "👔",
+      "restricted": "Проверять форму в кружках могут только администраторы и кураторы кружка.",
+      "clubsLabel": "Кружки",
+      "membersLabel": "Участники",
+      "recordedLabel": "Отмечено",
+      "clubLabel": "Кружок",
+      "dateLabel": "Дата",
+      "loadButton": "Показать",
+      "backToClubs": "К кружкам",
+      "attendanceButton": "Посещаемость",
+      "noClubs": "Кружков пока нет.",
+      "noSupervisedClubs": "Вы пока не куратор ни одного кружка. Попросите администратора добавить вас в кружок.",
+      "noMembers": "В этом кружке пока нет участников. Сначала запишите учеников.",
+      "errors": {
+        "notSupervisor": "Форму в этом кружке могут отмечать только его кураторы.",
+        "clubNotFound": "Кружок не найден.",
+        "unavailable": "Проверка формы в кружках сейчас недоступна.",
+        "failed": "Не удалось сохранить проверку формы. Попробуйте ещё раз."
+      }
     }
   },
   "Forms": {
@@ -816,7 +893,9 @@
       "instructorOptional": "Руководитель (необязательно)",
       "unassigned": "Не назначен",
       "created": "Кружок создан!",
-      "updated": "Кружок обновлён!"
+      "updated": "Кружок обновлён!",
+      "supervisorsLabel": "Кураторы кружка",
+      "supervisorsHint": "Отметьте всех учителей, которые курируют этот кружок. Кураторы записывают учеников, отмечают посещаемость и проверяют форму."
     }
   },
   "Modal": {

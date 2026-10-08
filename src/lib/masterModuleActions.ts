@@ -6,6 +6,7 @@ import prisma from "./prisma";
 import { getUserRole } from "./auth";
 import { teacherCanAccessClass, teacherCanAccessStudent } from "./teacherScope";
 import { notifyUser } from "./notify";
+import { canSuperviseClub } from "./clubSupervision";
 import { getTranslations } from "next-intl/server";
 import { fromWallClock, schoolDayRange } from "./schoolTime";
 import {
@@ -1348,18 +1349,10 @@ export const recordClubAttendance = async (
       }
 };
 
-// Instructors may only take attendance for clubs they run; admins for any.
+// Supervisors (the lead instructor and any co-supervisors) may only take
+// attendance for clubs they supervise; admins for any.
 const canManageClub = async (clubId: number) => {
-      const role = getCurrentRole();
-      if (role === "admin") return true;
-      if (role !== "teacher") return false;
-      const userId = getCurrentUserId();
-      if (!userId) return false;
-      const club = await prisma.club.findFirst({
-              where: { id: clubId, instructorId: userId },
-              select: { id: true },
-      });
-      return !!club;
+      return canSuperviseClub(getCurrentRole(), getCurrentUserId(), clubId);
 };
 
 // Marks a whole club meeting in one submit - the club counterpart of
