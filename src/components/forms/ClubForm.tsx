@@ -6,7 +6,7 @@ import InputField from "../InputField";
 import { clubCategories, clubSchema, ClubSchema } from "@/lib/formValidationSchemas";
 import { createClub, updateClub } from "@/lib/actions";
 import { useFormState } from "react-dom";
-import { Dispatch, SetStateAction, useEffect } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
@@ -45,8 +45,16 @@ const ClubForm = ({
     }
   );
 
+  // Extra supervisors beyond the lead instructor: any teacher ticked here can
+  // take this club's attendance and uniform check.
+  const [supervisorIds, setSupervisorIds] = useState<string[]>(
+    Array.isArray(data?.supervisorIds) ? data.supervisorIds : []
+  );
+  const toggleSupervisor = (id: string) =>
+    setSupervisorIds((prev) => (prev.includes(id) ? prev.filter((s) => s !== id) : [...prev, id]));
+
   const onSubmit = handleSubmit((formData) => {
-    formAction(formData);
+    formAction({ ...formData, supervisorIds });
   });
 
   const router = useRouter();
@@ -152,6 +160,25 @@ const ClubForm = ({
           {errors.instructorId?.message && (
             <p className="text-xs text-red-400">{tv(errors.instructorId.message)}</p>
           )}
+        </div>
+        <div className="flex flex-col gap-2 w-full">
+          <label className="text-xs text-gray-500 dark:text-slate-400">{t("supervisorsLabel")}</label>
+          <p className="text-xs text-gray-400 dark:text-slate-500">{t("supervisorsHint")}</p>
+          <div className="max-h-44 overflow-y-auto grid grid-cols-1 sm:grid-cols-2 gap-1 ring-[1.5px] ring-gray-300 dark:ring-slate-700 rounded-md p-2">
+            {teachers.map((teacher) => (
+              <label
+                key={teacher.id}
+                className="flex items-center gap-2 text-sm dark:text-slate-100 cursor-pointer"
+              >
+                <input
+                  type="checkbox"
+                  checked={supervisorIds.includes(teacher.id)}
+                  onChange={() => toggleSupervisor(teacher.id)}
+                />
+                {teacher.name + " " + teacher.surname}
+              </label>
+            ))}
+          </div>
         </div>
       </div>
 
