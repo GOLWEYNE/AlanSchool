@@ -51,7 +51,8 @@
     "studyPlanner": "Study Planner",
     "bulkImport": "Bulk Import",
     "uniform": "Uniform Check",
-    "clerkSync": "Sync with Clerk"
+    "clerkSync": "Sync with Clerk",
+    "library": "Library"
   },
   "Navbar": {
     "searchPlaceholder": "Search...",
@@ -2108,5 +2109,222 @@
     "working": "Removing...",
     "done": "Removed {removed}. Could not remove {failed}.",
     "failedCheck": "Could not check Clerk right now. Nothing was changed."
+  },
+  "Library": {
+    "title": "Library",
+    "subtitle": "Read, discover and share the joy of books.",
+    "seeAll": "See all",
+    "rules": "Books count as \"read\" when they are returned to the library. Textbooks are not counted. Reading badges go up to {count} books - can you collect them all?",
+    "monthsShort": "Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec",
+    "tabs": {
+      "home": "Home",
+      "books": "Collection",
+      "stats": "Reading stats",
+      "community": "Community",
+      "desk": "Librarian desk"
+    },
+    "setup": {
+      "title": "The library is almost ready",
+      "body": "The library tables could not be prepared automatically. Ask the site administrator to run the database migration below, then reload this page."
+    },
+    "errors": {
+      "notSignedIn": "Please sign in again.",
+      "notReady": "The library is not ready yet.",
+      "notAllowed": "Only the librarian can do this.",
+      "generic": "Something went wrong. Please try again.",
+      "invalid": "Please check the form - something is missing or too short.",
+      "bookOnLoan": "This book is currently borrowed. Return all copies before deleting it.",
+      "notFound": "Not found.",
+      "alreadyBorrowed": "This student already has this book.",
+      "noCopies": "All copies of this book are borrowed.",
+      "notBorrowed": "You can only review books you have borrowed.",
+      "alreadyReviewed": "You have already reviewed this book.",
+      "tooManyRequests": "You already have 3 open requests. Please wait for the librarian to answer.",
+      "photoRequired": "Please upload a photo first.",
+      "studentsOnly": "Only students can do this."
+    },
+    "notify": {
+      "returnedTitle": "Book returned",
+      "returnedBody": "Thank you for returning \"{title}\"! It now counts in your reading score.",
+      "answerTitle": "The librarian answered your request"
+    },
+    "today": {
+      "title": "Today in the library",
+      "fresh": "Posted today",
+      "empty": "No update yet today - check back soon!"
+    },
+    "stats": {
+      "titles": "Book titles",
+      "copies": "Copies on shelves",
+      "booksRead": "Books read",
+      "readers": "Readers",
+      "thisMonth": "Read this month",
+      "onLoanLine": "{onLoan} books are borrowed right now, {overdue} of them overdue."
+    },
+    "featured": {
+      "title": "Book of the week",
+      "by": "by {author}",
+      "view": "Find it in the collection",
+      "empty": "The librarian will pick the next Book of the Week soon."
+    },
+    "readerMonth": {
+      "title": "Reader of the month",
+      "class": "Class {name}",
+      "books": "{count} books read",
+      "empty": "No finished books this month yet - be the first!"
+    },
+    "me": {
+      "title": "My reading",
+      "childTitle": "{name}'s reading",
+      "read": "Books read",
+      "reading": "Reading now",
+      "streak": "Week streak",
+      "badges": "Reading badges",
+      "noBadges": "Return your first book to earn your first badge!",
+      "nextBadge": "Next badge: {name} at {count} books",
+      "overdue": "Overdue",
+      "due": "Due {date}"
+    },
+    "badges": {
+      "b1": "Beginner reader",
+      "b5": "Bookworm",
+      "b10": "Wise owl",
+      "b20": "Reading star",
+      "b50": "Library legend"
+    },
+    "classRank": {
+      "title": "The class that reads the most",
+      "empty": "No class has finished a book yet.",
+      "total": "{total} books",
+      "avg": "{avg} per student"
+    },
+    "topReaders": {
+      "title": "Top readers",
+      "titleAll": "Top readers of all time",
+      "empty": "No readers yet."
+    },
+    "news": {
+      "title": "Library news",
+      "empty": "No news yet."
+    },
+    "about": {
+      "title": "About our library",
+      "goals": "Our main goals",
+      "librarian": "Librarian",
+      "notSet": "To be announced",
+      "introDefault": "Our school library is a quiet, friendly place where every student can find a book to love - textbooks for lessons, stories for dreaming and knowledge for growing.",
+      "goalsDefault": "• Help every student fall in love with reading\n• Support lessons with the right textbooks\n• Grow a rich collection of fiction and literature\n• Make the library a welcoming space for the whole school"
+    },
+    "photos": {
+      "title": "From our library events",
+      "empty": "Photos from library events will appear here."
+    },
+    "collection": {
+      "all": "All books",
+      "textbooks": "Textbooks",
+      "fiction": "Fiction & literature",
+      "other": "Other books",
+      "searchLabel": "Search the collection",
+      "search": "Title or author...",
+      "onlyAvailable": "Only available",
+      "go": "Search",
+      "empty": "No books match your search.",
+      "emptyAll": "The collection is empty for now. The librarian is adding books!",
+      "grade": "Grade {grade}",
+      "available": "{n} of {total} available",
+      "unavailable": "All borrowed"
+    },
+    "charts": {
+      "perMonth": "Books read per month",
+      "empty": "The chart will fill up as students return books.",
+      "popular": "Most borrowed books",
+      "emptyPopular": "No loans yet.",
+      "times": "{count}x"
+    },
+    "community": {
+      "findTitle": "Let's find a book together",
+      "findIntro": "Tell the librarian what you like - animals, space, funny stories, adventures... and get a book suggestion just for you.",
+      "findPlaceholder": "I love dinosaurs and funny stories. What should I read?",
+      "findSend": "Ask the librarian",
+      "requestSent": "Sent! The librarian will answer soon.",
+      "librarianSays": "Librarian",
+      "waiting": "Waiting for the librarian",
+      "studentsOnly": "This is for students. Ask your child to try it!",
+      "writeTitle": "Write a review",
+      "nothingToReview": "Borrow a book first - then you can tell everyone what you thought.",
+      "pickBook": "Which book did you read?",
+      "rating": "Your rating",
+      "reviewPlaceholder": "What did you like about this book?",
+      "send": "Send review",
+      "pendingNote": "Thank you! The librarian will check your review before it appears.",
+      "reviewsTitle": "Readers' reviews",
+      "reviewsEmpty": "No reviews yet - be the first to share what you read!"
+    },
+    "desk": {
+      "openLoans": "{count} books borrowed",
+      "overdueCount": "{count} overdue",
+      "pendingCount": "{count} waiting for you",
+      "addFirst": "Add your first book below.",
+      "lendTitle": "Lend a book",
+      "lend": "Record loan",
+      "fClass": "Class",
+      "fStudent": "Student",
+      "fBook": "Book",
+      "fDays": "Days to keep",
+      "choose": "Choose...",
+      "searchStudent": "Search student",
+      "loansTitle": "Books borrowed now",
+      "noLoans": "No books are borrowed right now.",
+      "due": "Due",
+      "return": "Mark returned",
+      "reviewsTitle": "Reviews to approve",
+      "noReviews": "No reviews are waiting.",
+      "approve": "Approve",
+      "reject": "Reject",
+      "delete": "Delete",
+      "confirmDelete": "Are you sure?",
+      "requestsTitle": "Book requests",
+      "noRequests": "No open requests.",
+      "reply": "Send answer",
+      "replyPlaceholder": "Write a friendly suggestion...",
+      "noSuggestion": "No specific book",
+      "featuredTitle": "Book of the week",
+      "featuredNote": "Why should everyone read it? (optional)",
+      "save": "Save",
+      "postTitle": "News and \"Today in the library\"",
+      "publish": "Publish",
+      "fTitle": "Title",
+      "postBody": "Write your update...",
+      "fImage": "Picture (optional)",
+      "upload": "Upload",
+      "kindToday": "TODAY",
+      "kindNews": "NEWS",
+      "photosTitle": "Event photos",
+      "fPhoto": "Photo",
+      "fCaption": "Caption (optional)",
+      "booksTitle": "Manage books",
+      "addBook": "Add a book",
+      "copiesLine": "{out}/{total} borrowed",
+      "deleteBook": "Delete this book",
+      "settingsTitle": "Library information",
+      "fLibrarianName": "Librarian's name",
+      "fLibrarianPhoto": "Librarian's photo",
+      "fHours": "Opening hours",
+      "fLibrarianTeacher": "Teacher who is the librarian (can manage the library)",
+      "fIntro": "Short introduction to the library",
+      "fGoals": "Main goals (one per line)",
+      "fAuthor": "Author",
+      "fCategory": "Category",
+      "fCopies": "Copies",
+      "fGrade": "Grade level",
+      "fLanguage": "Language",
+      "fShelf": "Shelf / place",
+      "fCover": "Cover picture",
+      "fDescription": "Short description",
+      "saved": "Saved!",
+      "published": "Published!",
+      "lent": "\"{title}\" lent. Happy reading!",
+      "returned": "Returned - thank you!"
+    }
   }
 }
