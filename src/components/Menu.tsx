@@ -221,6 +221,12 @@ const getMenuItems = (t: Awaited<ReturnType<typeof getTranslations>>, role: stri
       title: t("resourcesTitle"),
       items: [
         {
+          icon: "/subject.png",
+          label: t("library"),
+          href: "/dashboard/list/library",
+          visible: ["admin", "teacher", "student", "parent"],
+        },
+        {
           icon: "/search.png",
           label: t("lostFound"),
           href: "/dashboard/list/tickets",
