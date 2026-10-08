@@ -28,6 +28,7 @@ import { Day, Prisma } from "@/generated/prisma/client";
 import { clerkClient } from "@clerk/nextjs/server";
 import { auth, currentUser } from "@clerk/nextjs/server";
 import { getUserRole } from "./auth";
+import { setClubSupervisors } from "./clubSupervision";
 import { deleteStudentCascade, deleteTeacherCascade } from "./purge";
 import { getTranslations } from "next-intl/server";
 import { fromWallClock, parseWallClockString, schoolMinutesOfDay } from "./schoolTime";
@@ -282,7 +283,7 @@ export const createClub = async (
 ) => {
   if (!isAdmin()) return rejectUnauthorized();
   try {
-    await prisma.club.create({
+    const created = await prisma.club.create({
       data: {
         name: data.name,
         category: data.category,
@@ -293,6 +294,7 @@ export const createClub = async (
         instructorId: data.instructorId || undefined,
       },
     });
+    await setClubSupervisors(created.id, data.supervisorIds ?? [], data.instructorId);
 
     return { success: true, error: false };
   } catch (err) {
@@ -321,6 +323,9 @@ export const updateClub = async (
         instructorId: data.instructorId || undefined,
       },
     });
+    if (data.id) {
+      await setClubSupervisors(data.id, data.supervisorIds ?? [], data.instructorId);
+    }
 
     return { success: true, error: false };
   } catch (err) {
