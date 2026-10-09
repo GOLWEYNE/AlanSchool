@@ -52,6 +52,10 @@ model Student {
 
   // Personal study goals the student tracks on their Study Planner page.
   studyGoals            StudyGoal[]
+
+  // Digital hall pass.
+  hallPasses            HallPass[]
+  groupMemberships      GroupMember[]
 }
 
 model Teacher {
@@ -129,6 +133,9 @@ model Class {
   // --- Master module package relations (additive) ---
   attendanceRecords AttendanceRecord[]
   permissionSlips   PermissionSlip[]
+
+  // Digital hall pass (snapshot of the student's class when the pass was issued).
+  hallPasses        HallPass[]
 }
 
 model Subject {
@@ -1028,4 +1035,70 @@ model LibraryAnnouncement {
 
   @@index([createdAt])
   @@index([type])
+}
+
+// ---------------------------------------------------------------------------
+// Digital hall pass. Students log temporary exits (bathroom, nurse, office);
+// teachers/admins watch active passes live and audit the history. Restricted
+// groups hold students who must never be out of class at the same time.
+//
+// Note: a student can have only ONE active pass. Prisma cannot express the
+// partial unique index that enforces it, so it lives in the migration SQL
+// (HallPass_one_active_per_student) and in src/lib/hallPassDdl.ts.
+// ---------------------------------------------------------------------------
+
+enum PassStatus {
+  ACTIVE
+  RETURNED
+  AUTO_CLOSED // never marked as returned; closed automatically at the end of the school day
+}
+
+model PassDestination {
+  id            Int        @id @default(autoincrement())
+  name          String     @unique
+  maxMinutes    Int        @default(10)
+  maxConcurrent Int? // optional cap on how many students can be at this destination at once
+  active        Boolean    @default(true)
+  sortOrder     Int        @default(0)
+  passes        HallPass[]
+}
+
+model HallPass {
+  id            Int             @id @default(autoincrement())
+  studentId     String
+  student       Student         @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  destinationId Int
+  destination   PassDestination @relation(fields: [destinationId], references: [id])
+  classId       Int
+  class         Class           @relation(fields: [classId], references: [id])
+  gradeLevel    Int
+  maxMinutes    Int // the limit that applied when the pass was issued
+  status        PassStatus      @default(ACTIVE)
+  issuedAt      DateTime        @default(now())
+  returnedAt    DateTime?
+  endedById     String? // Clerk id of the student / teacher / admin who ended it
+  endedByRole   String?
+
+  @@index([status])
+  @@index([issuedAt])
+  @@index([studentId, issuedAt])
+}
+
+model RestrictedGroup {
+  id      Int           @id @default(autoincrement())
+  name    String        @unique
+  note    String?
+  active  Boolean       @default(true)
+  members GroupMember[]
+}
+
+model GroupMember {
+  id        Int             @id @default(autoincrement())
+  groupId   Int
+  group     RestrictedGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  studentId String
+  student   Student         @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@unique([groupId, studentId])
+  @@index([studentId])
 }
