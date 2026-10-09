@@ -53,7 +53,8 @@
     "uniform": "Uniform Check",
     "clerkSync": "Sync with Clerk",
     "library": "Library",
-    "teacherProfiles": "Teacher profiles"
+    "teacherProfiles": "Teacher profiles",
+    "hallPass": "Hall Pass"
   },
   "Navbar": {
     "searchPlaceholder": "Search...",
@@ -2640,6 +2641,127 @@
       "noPosition": "No position yet",
       "objectives": "{total} objectives, {achieved} achieved, {inProgress} in progress",
       "noObjectives": "No objectives yet"
+    }
+  },
+  "HallPass": {
+    "title": "Hall Pass",
+    "subtitleStudent": "Leaving class? Choose where you are going, and tap \"I'm back\" when you return.",
+    "subtitleStaff": "See who is out of class right now, where they are and for how long.",
+    "subtitleHistory": "A searchable log of every hall pass, for follow-up and auditing.",
+    "subtitleSettings": "Set destinations, time limits and restricted groups.",
+    "nav": {
+      "live": "Live",
+      "history": "History",
+      "settings": "Settings"
+    },
+    "status": {
+      "ACTIVE": "Out",
+      "RETURNED": "Returned",
+      "AUTO_CLOSED": "Auto-closed"
+    },
+    "student": {
+      "chooseDestination": "Where are you going?",
+      "maxTime": "Up to {minutes} min",
+      "noDestinations": "No destinations are open right now. Please ask your teacher.",
+      "youAreOut": "You are out of class",
+      "timeLimit": "Time limit: {minutes} min",
+      "overdueNotice": "You are over the time limit. Please return to class now.",
+      "iAmBack": "I'm back",
+      "ending": "Saving...",
+      "todayTitle": "My passes today",
+      "noneToday": "You have not used a hall pass today."
+    },
+    "board": {
+      "outNow": "Out now",
+      "overdue": "Overdue",
+      "todayTotal": "Passes today",
+      "live": "Live - updates automatically",
+      "offline": "Connection lost - retrying...",
+      "empty": "Nobody is out of class right now.",
+      "overLimit": "Over limit",
+      "leftAt": "Left at {time}",
+      "limit": "limit {minutes} min",
+      "end": "Mark as returned",
+      "ending": "Saving..."
+    },
+    "history": {
+      "search": "Student",
+      "searchPlaceholder": "Name or student ID",
+      "from": "From",
+      "to": "To",
+      "all": "All",
+      "apply": "Apply",
+      "reset": "Reset",
+      "exportCsv": "Export CSV",
+      "total": "{count, plural, one {# record} other {# records}}",
+      "noRecords": "No passes match these filters.",
+      "cols": {
+        "student": "Student",
+        "studentId": "Student ID",
+        "grade": "Grade",
+        "class": "Class",
+        "destination": "Destination",
+        "date": "Date",
+        "out": "Out",
+        "back": "Back",
+        "minutes": "Minutes",
+        "status": "Status"
+      }
+    },
+    "settings": {
+      "destinations": {
+        "title": "Destinations and time limits",
+        "hint": "Students can only choose active destinations. The time limit decides when a pass is flagged as overdue; the optional cap limits how many students can be at one destination at the same time.",
+        "name": "Destination",
+        "minutes": "Minutes",
+        "maxConcurrent": "Max at once",
+        "noLimit": "No cap",
+        "order": "Order",
+        "active": "Active",
+        "save": "Save",
+        "add": "Add",
+        "addTitle": "Add a destination",
+        "saved": "Saved.",
+        "delete": "Delete",
+        "confirmDelete": "Delete \"{name}\"?"
+      },
+      "groups": {
+        "title": "Restricted groups",
+        "hint": "Students in the same group can never be out of class at the same time, even from different classrooms. While one member is out, the others cannot request a pass. Turn a group off to pause its rule.",
+        "name": "Group name",
+        "namePlaceholder": "e.g. 8th Grade #1",
+        "note": "Note (optional)",
+        "create": "Create group",
+        "none": "No restricted groups yet.",
+        "memberCount": "{count, plural, one {# student} other {# students}}",
+        "someoneOut": "A member is out",
+        "ruleActive": "Rule active",
+        "delete": "Delete group",
+        "confirmDelete": "Delete the group \"{name}\"? Its students are not affected.",
+        "noMembers": "No students in this group yet.",
+        "remove": "Remove from group",
+        "searchPlaceholder": "Add a student - type a name or ID"
+      }
+    },
+    "errors": {
+      "notSignedIn": "Please sign in first.",
+      "studentsOnly": "Only students can request a hall pass.",
+      "adminOnly": "Only an administrator can change these settings.",
+      "notAllowed": "You are not allowed to do that.",
+      "unavailable": "The hall pass is not available right now. Please try again in a moment.",
+      "destinationInvalid": "Please choose a destination.",
+      "destinationInactive": "That destination is not open right now.",
+      "destinationFull": "That destination is full right now. Please try again in a few minutes.",
+      "studentNotFound": "Student not found.",
+      "alreadyOut": "You already have an open hall pass.",
+      "groupBusy": "You can't go out right now because another student from your restricted group is already out. Please wait until they return.",
+      "passNotFound": "Pass not found.",
+      "alreadyEnded": "This pass has already ended.",
+      "invalidInput": "Please check the values and try again.",
+      "nameTaken": "That name is already used.",
+      "destinationInUse": "This destination appears in the history, so it can't be deleted. Switch it off instead.",
+      "alreadyMember": "That student is already in the group.",
+      "generic": "Something went wrong. Please try again."
     }
   }
 }
