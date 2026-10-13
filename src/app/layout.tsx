@@ -19,7 +19,8 @@ export async function generateMetadata(): Promise<Metadata> {
     // The school's name is a proper noun, so it is not translated.
     title: "Alan International School",
     description: t("description"),
-    icons: { icon: "/Alan.png", apple: "/Alan.png" },
+    icons: { icon: "/Alan.png", apple: "/icon-192.png" },
+    appleWebApp: { capable: true, title: "Alan School", statusBarStyle: "default" },
   };
 }
 
