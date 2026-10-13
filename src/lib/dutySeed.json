@@ -1,0 +1,2712 @@
+[
+{
+"floor": 1,
+"weekday": 1,
+"block": "1-2",
+"start": "08:55",
+"end": "09:40",
+"teachers": [
+"Urazimbetova G."
+]
+},
+{
+"floor": 1,
+"weekday": 1,
+"block": "3-4",
+"start": "08:55",
+"end": "09:40",
+"teachers": [
+"Yskakova U."
+]
+},
+{
+"floor": 1,
+"weekday": 1,
+"block": "1-2",
+"start": "09:40",
+"end": "10:25",
+"teachers": [
+"Omirzakhova G."
+]
+},
+{
+"floor": 1,
+"weekday": 1,
+"block": "3-4",
+"start": "09:40",
+"end": "10:25",
+"teachers": [
+"Svarovskaya L."
+]
+},
+{
+"floor": 1,
+"weekday": 1,
+"block": "1-2",
+"start": "10:25",
+"end": "11:10",
+"teachers": [
+"Isakhova U."
+]
+},
+{
+"floor": 1,
+"weekday": 1,
+"block": "3-4",
+"start": "10:25",
+"end": "11:10",
+"teachers": [
+"Evdakimova P."
+]
+},
+{
+"floor": 1,
+"weekday": 1,
+"block": "1-2",
+"start": "11:10",
+"end": "11:55",
+"teachers": [
+"Dzhumataeva A."
+]
+},
+{
+"floor": 1,
+"weekday": 1,
+"block": "3-4",
+"start": "11:10",
+"end": "11:55",
+"teachers": [
+"Abdimanap A."
+]
+},
+{
+"floor": 1,
+"weekday": 1,
+"block": "1-2",
+"start": "11:55",
+"end": "13:00",
+"teachers": [
+"Ismailova A."
+]
+},
+{
+"floor": 1,
+"weekday": 1,
+"block": "3-4",
+"start": "11:55",
+"end": "13:00",
+"teachers": [
+"Khvan E."
+]
+},
+{
+"floor": 1,
+"weekday": 1,
+"block": "1-2",
+"start": "13:00",
+"end": "14:00",
+"teachers": [
+"Samykova A."
+]
+},
+{
+"floor": 1,
+"weekday": 1,
+"block": "3-4",
+"start": "13:00",
+"end": "14:00",
+"teachers": [
+"Niyazbekova F."
+]
+},
+{
+"floor": 1,
+"weekday": 1,
+"block": "1-2",
+"start": "14:00",
+"end": "15:00",
+"teachers": [
+"Suindikova N."
+]
+},
+{
+"floor": 1,
+"weekday": 1,
+"block": "3-4",
+"start": "14:00",
+"end": "15:00",
+"teachers": [
+"Yskakova U."
+]
+},
+{
+"floor": 1,
+"weekday": 1,
+"block": "1-2",
+"start": "15:00",
+"end": "16:00",
+"teachers": [
+"Beybitbaev A."
+]
+},
+{
+"floor": 1,
+"weekday": 1,
+"block": "3-4",
+"start": "15:00",
+"end": "16:00",
+"teachers": [
+"Zhuasova G."
+]
+},
+{
+"floor": 1,
+"weekday": 1,
+"block": "1-2",
+"start": "16:00",
+"end": "17:30",
+"teachers": [
+"Isakhova U."
+]
+},
+{
+"floor": 1,
+"weekday": 1,
+"block": "3-4",
+"start": "16:00",
+"end": "17:30",
+"teachers": [
+"Egamberdieva P."
+]
+},
+{
+"floor": 1,
+"weekday": 2,
+"block": "1-2",
+"start": "08:55",
+"end": "09:40",
+"teachers": [
+"Suindikova N."
+]
+},
+{
+"floor": 1,
+"weekday": 2,
+"block": "3-4",
+"start": "08:55",
+"end": "09:40",
+"teachers": [
+"Isabekova E."
+]
+},
+{
+"floor": 1,
+"weekday": 2,
+"block": "1-2",
+"start": "09:40",
+"end": "10:25",
+"teachers": [
+"Omirzakhova G."
+]
+},
+{
+"floor": 1,
+"weekday": 2,
+"block": "3-4",
+"start": "09:40",
+"end": "10:25",
+"teachers": [
+"Svarovskaya L."
+]
+},
+{
+"floor": 1,
+"weekday": 2,
+"block": "1-2",
+"start": "10:25",
+"end": "11:10",
+"teachers": [
+"Dospaeva A."
+]
+},
+{
+"floor": 1,
+"weekday": 2,
+"block": "3-4",
+"start": "10:25",
+"end": "11:10",
+"teachers": [
+"Egamberdieva P."
+]
+},
+{
+"floor": 1,
+"weekday": 2,
+"block": "1-2",
+"start": "11:10",
+"end": "11:55",
+"teachers": [
+"Isakhova U."
+]
+},
+{
+"floor": 1,
+"weekday": 2,
+"block": "3-4",
+"start": "11:10",
+"end": "11:55",
+"teachers": [
+"Yskakova U."
+]
+},
+{
+"floor": 1,
+"weekday": 2,
+"block": "1-2",
+"start": "11:55",
+"end": "13:00",
+"teachers": [
+"Dzhumataeva A."
+]
+},
+{
+"floor": 1,
+"weekday": 2,
+"block": "3-4",
+"start": "11:55",
+"end": "13:00",
+"teachers": [
+"Niyazbekova F."
+]
+},
+{
+"floor": 1,
+"weekday": 2,
+"block": "1-2",
+"start": "13:00",
+"end": "14:00",
+"teachers": [
+"Urazimbetova G."
+]
+},
+{
+"floor": 1,
+"weekday": 2,
+"block": "3-4",
+"start": "13:00",
+"end": "14:00",
+"teachers": [
+"Abdimanap A."
+]
+},
+{
+"floor": 1,
+"weekday": 2,
+"block": "1-2",
+"start": "14:00",
+"end": "15:00",
+"teachers": [
+"Samykova A."
+]
+},
+{
+"floor": 1,
+"weekday": 2,
+"block": "3-4",
+"start": "14:00",
+"end": "15:00",
+"teachers": [
+"Khvan E."
+]
+},
+{
+"floor": 1,
+"weekday": 2,
+"block": "1-2",
+"start": "15:00",
+"end": "16:00",
+"teachers": [
+"Mukhammed A."
+]
+},
+{
+"floor": 1,
+"weekday": 2,
+"block": "3-4",
+"start": "15:00",
+"end": "16:00",
+"teachers": [
+"Baymak P."
+]
+},
+{
+"floor": 1,
+"weekday": 2,
+"block": "1-2",
+"start": "16:00",
+"end": "17:30",
+"teachers": [
+"Ismailova A."
+]
+},
+{
+"floor": 1,
+"weekday": 2,
+"block": "3-4",
+"start": "16:00",
+"end": "17:30",
+"teachers": [
+"Isabekova E."
+]
+},
+{
+"floor": 1,
+"weekday": 3,
+"block": "1-2",
+"start": "08:55",
+"end": "09:40",
+"teachers": [
+"Akylbay A."
+]
+},
+{
+"floor": 1,
+"weekday": 3,
+"block": "3-4",
+"start": "08:55",
+"end": "09:40",
+"teachers": [
+"Isabekova E."
+]
+},
+{
+"floor": 1,
+"weekday": 3,
+"block": "1-2",
+"start": "09:40",
+"end": "10:25",
+"teachers": [
+"Suindikova N."
+]
+},
+{
+"floor": 1,
+"weekday": 3,
+"block": "3-4",
+"start": "09:40",
+"end": "10:25",
+"teachers": [
+"Khvan E."
+]
+},
+{
+"floor": 1,
+"weekday": 3,
+"block": "1-2",
+"start": "10:25",
+"end": "11:10",
+"teachers": [
+"Isakhova U."
+]
+},
+{
+"floor": 1,
+"weekday": 3,
+"block": "3-4",
+"start": "10:25",
+"end": "11:10",
+"teachers": [
+"Svarovskaya L."
+]
+},
+{
+"floor": 1,
+"weekday": 3,
+"block": "1-2",
+"start": "11:10",
+"end": "11:55",
+"teachers": [
+"Samykova A."
+]
+},
+{
+"floor": 1,
+"weekday": 3,
+"block": "3-4",
+"start": "11:10",
+"end": "11:55",
+"teachers": [
+"Yskakova U."
+]
+},
+{
+"floor": 1,
+"weekday": 3,
+"block": "1-2",
+"start": "11:55",
+"end": "13:00",
+"teachers": [
+"Dzhumataeva A."
+]
+},
+{
+"floor": 1,
+"weekday": 3,
+"block": "3-4",
+"start": "11:55",
+"end": "13:00",
+"teachers": [
+"Niyazbekova F."
+]
+},
+{
+"floor": 1,
+"weekday": 3,
+"block": "1-2",
+"start": "13:00",
+"end": "14:00",
+"teachers": [
+"Urazimbetova G."
+]
+},
+{
+"floor": 1,
+"weekday": 3,
+"block": "3-4",
+"start": "13:00",
+"end": "14:00",
+"teachers": [
+"Egamberdieva P."
+]
+},
+{
+"floor": 1,
+"weekday": 3,
+"block": "1-2",
+"start": "14:00",
+"end": "15:00",
+"teachers": [
+"Dzhumataeva A."
+]
+},
+{
+"floor": 1,
+"weekday": 3,
+"block": "3-4",
+"start": "14:00",
+"end": "15:00",
+"teachers": [
+"Abdimanap A."
+]
+},
+{
+"floor": 1,
+"weekday": 3,
+"block": "1-2",
+"start": "15:00",
+"end": "16:00",
+"teachers": [
+"Mukhammed A."
+]
+},
+{
+"floor": 1,
+"weekday": 3,
+"block": "3-4",
+"start": "15:00",
+"end": "16:00",
+"teachers": [
+"Baymak P."
+]
+},
+{
+"floor": 1,
+"weekday": 3,
+"block": "1-2",
+"start": "16:00",
+"end": "17:30",
+"teachers": [
+"Omirzakhova G."
+]
+},
+{
+"floor": 1,
+"weekday": 3,
+"block": "3-4",
+"start": "16:00",
+"end": "17:30",
+"teachers": [
+"Evdakimova P."
+]
+},
+{
+"floor": 1,
+"weekday": 4,
+"block": "1-2",
+"start": "08:55",
+"end": "09:40",
+"teachers": [
+"Isakhova U."
+]
+},
+{
+"floor": 1,
+"weekday": 4,
+"block": "3-4",
+"start": "08:55",
+"end": "09:40",
+"teachers": [
+"Iles Sh."
+]
+},
+{
+"floor": 1,
+"weekday": 4,
+"block": "1-2",
+"start": "09:40",
+"end": "10:25",
+"teachers": [
+"Suindikova N."
+]
+},
+{
+"floor": 1,
+"weekday": 4,
+"block": "3-4",
+"start": "09:40",
+"end": "10:25",
+"teachers": [
+"Evdakimova P."
+]
+},
+{
+"floor": 1,
+"weekday": 4,
+"block": "1-2",
+"start": "10:25",
+"end": "11:10",
+"teachers": [
+"Samykova A."
+]
+},
+{
+"floor": 1,
+"weekday": 4,
+"block": "3-4",
+"start": "10:25",
+"end": "11:10",
+"teachers": [
+"Egamberdieva P."
+]
+},
+{
+"floor": 1,
+"weekday": 4,
+"block": "1-2",
+"start": "11:10",
+"end": "11:55",
+"teachers": [
+"Urazimbetova G."
+]
+},
+{
+"floor": 1,
+"weekday": 4,
+"block": "3-4",
+"start": "11:10",
+"end": "11:55",
+"teachers": [
+"Niyazbekova F."
+]
+},
+{
+"floor": 1,
+"weekday": 4,
+"block": "1-2",
+"start": "11:55",
+"end": "13:00",
+"teachers": [
+"Omirzakhova G."
+]
+},
+{
+"floor": 1,
+"weekday": 4,
+"block": "3-4",
+"start": "11:55",
+"end": "13:00",
+"teachers": [
+"Svarovskaya L."
+]
+},
+{
+"floor": 1,
+"weekday": 4,
+"block": "1-2",
+"start": "13:00",
+"end": "14:00",
+"teachers": [
+"Isakhova U."
+]
+},
+{
+"floor": 1,
+"weekday": 4,
+"block": "3-4",
+"start": "13:00",
+"end": "14:00",
+"teachers": [
+"Khvan E."
+]
+},
+{
+"floor": 1,
+"weekday": 4,
+"block": "1-2",
+"start": "14:00",
+"end": "15:00",
+"teachers": [
+"Dzhumataeva A."
+]
+},
+{
+"floor": 1,
+"weekday": 4,
+"block": "3-4",
+"start": "14:00",
+"end": "15:00",
+"teachers": [
+"Niyazbekova F."
+]
+},
+{
+"floor": 1,
+"weekday": 4,
+"block": "1-2",
+"start": "15:00",
+"end": "16:00",
+"teachers": [
+"Mukhammed A."
+]
+},
+{
+"floor": 1,
+"weekday": 4,
+"block": "3-4",
+"start": "15:00",
+"end": "16:00",
+"teachers": [
+"Baymak P."
+]
+},
+{
+"floor": 1,
+"weekday": 4,
+"block": "1-2",
+"start": "16:00",
+"end": "17:30",
+"teachers": [
+"Isabekova E."
+]
+},
+{
+"floor": 1,
+"weekday": 4,
+"block": "3-4",
+"start": "16:00",
+"end": "17:30",
+"teachers": [
+"Abdimanap A."
+]
+},
+{
+"floor": 1,
+"weekday": 5,
+"block": "1-2",
+"start": "08:55",
+"end": "09:40",
+"teachers": [
+"Akylbay A."
+]
+},
+{
+"floor": 1,
+"weekday": 5,
+"block": "3-4",
+"start": "08:55",
+"end": "09:40",
+"teachers": [
+"Evdakimova P."
+]
+},
+{
+"floor": 1,
+"weekday": 5,
+"block": "1-2",
+"start": "09:40",
+"end": "10:25",
+"teachers": [
+"Dzhumataeva A."
+]
+},
+{
+"floor": 1,
+"weekday": 5,
+"block": "3-4",
+"start": "09:40",
+"end": "10:25",
+"teachers": [
+"Khvan E."
+]
+},
+{
+"floor": 1,
+"weekday": 5,
+"block": "1-2",
+"start": "10:25",
+"end": "11:10",
+"teachers": [
+"Omirzakhova G."
+]
+},
+{
+"floor": 1,
+"weekday": 5,
+"block": "3-4",
+"start": "10:25",
+"end": "11:10",
+"teachers": [
+"Svarovskaya L."
+]
+},
+{
+"floor": 1,
+"weekday": 5,
+"block": "1-2",
+"start": "11:10",
+"end": "11:55",
+"teachers": [
+"Suindikova N."
+]
+},
+{
+"floor": 1,
+"weekday": 5,
+"block": "3-4",
+"start": "11:10",
+"end": "11:55",
+"teachers": [
+"Yskakova U."
+]
+},
+{
+"floor": 1,
+"weekday": 5,
+"block": "1-2",
+"start": "11:55",
+"end": "13:00",
+"teachers": [
+"Samykova A."
+]
+},
+{
+"floor": 1,
+"weekday": 5,
+"block": "3-4",
+"start": "11:55",
+"end": "13:00",
+"teachers": [
+"Abdimanap A."
+]
+},
+{
+"floor": 1,
+"weekday": 5,
+"block": "1-2",
+"start": "13:00",
+"end": "14:00",
+"teachers": [
+"Dzhumataeva A."
+]
+},
+{
+"floor": 1,
+"weekday": 5,
+"block": "3-4",
+"start": "13:00",
+"end": "14:00",
+"teachers": [
+"Egamberdieva P."
+]
+},
+{
+"floor": 1,
+"weekday": 5,
+"block": "1-2",
+"start": "14:00",
+"end": "15:00",
+"teachers": [
+"Urazimbetova G."
+]
+},
+{
+"floor": 1,
+"weekday": 5,
+"block": "3-4",
+"start": "14:00",
+"end": "15:00",
+"teachers": [
+"Isabekova E."
+]
+},
+{
+"floor": 1,
+"weekday": 5,
+"block": "1-2",
+"start": "15:00",
+"end": "16:00",
+"teachers": [
+"Beybitbaev A."
+]
+},
+{
+"floor": 1,
+"weekday": 5,
+"block": "3-4",
+"start": "15:00",
+"end": "16:00",
+"teachers": [
+"Zhuasova G."
+]
+},
+{
+"floor": 1,
+"weekday": 5,
+"block": "1-2",
+"start": "16:00",
+"end": "17:30",
+"teachers": [
+"Omirzakhova G."
+]
+},
+{
+"floor": 1,
+"weekday": 5,
+"block": "3-4",
+"start": "16:00",
+"end": "17:30",
+"teachers": [
+"Yskakova U."
+]
+},
+{
+"floor": 2,
+"weekday": 1,
+"block": "1-2",
+"start": "08:55",
+"end": "09:40",
+"teachers": [
+"Kalmurzaeva U."
+]
+},
+{
+"floor": 2,
+"weekday": 1,
+"block": "3-4",
+"start": "08:55",
+"end": "09:40",
+"teachers": [
+"Ordabek Zh."
+]
+},
+{
+"floor": 2,
+"weekday": 1,
+"block": "1-2",
+"start": "09:40",
+"end": "10:25",
+"teachers": [
+"Marieva A.O."
+]
+},
+{
+"floor": 2,
+"weekday": 1,
+"block": "3-4",
+"start": "09:40",
+"end": "10:25",
+"teachers": [
+"Shakhanova L.I."
+]
+},
+{
+"floor": 2,
+"weekday": 1,
+"block": "1-2",
+"start": "10:25",
+"end": "11:10",
+"teachers": [
+"Berdieva M.A."
+]
+},
+{
+"floor": 2,
+"weekday": 1,
+"block": "3-4",
+"start": "10:25",
+"end": "11:10",
+"teachers": [
+"Aytbay A."
+]
+},
+{
+"floor": 2,
+"weekday": 1,
+"block": "1-2",
+"start": "11:10",
+"end": "11:55",
+"teachers": [
+"Shamshidin A."
+]
+},
+{
+"floor": 2,
+"weekday": 1,
+"block": "3-4",
+"start": "11:10",
+"end": "11:55",
+"teachers": [
+"Bapaeva D."
+]
+},
+{
+"floor": 2,
+"weekday": 1,
+"block": "1-2",
+"start": "11:55",
+"end": "13:00",
+"teachers": [
+"Toregeldi A."
+]
+},
+{
+"floor": 2,
+"weekday": 1,
+"block": "3-4",
+"start": "11:55",
+"end": "13:00",
+"teachers": [
+"Gabidullina A.K."
+]
+},
+{
+"floor": 2,
+"weekday": 1,
+"block": "1-2",
+"start": "13:00",
+"end": "14:00",
+"teachers": [
+"Ravshanbekova M."
+]
+},
+{
+"floor": 2,
+"weekday": 1,
+"block": "3-4",
+"start": "13:00",
+"end": "14:00",
+"teachers": [
+"Sarbasova S."
+]
+},
+{
+"floor": 2,
+"weekday": 1,
+"block": "1-2",
+"start": "14:00",
+"end": "15:00",
+"teachers": [
+"Kerimova D."
+]
+},
+{
+"floor": 2,
+"weekday": 1,
+"block": "3-4",
+"start": "14:00",
+"end": "15:00",
+"teachers": [
+"Alypkaraev N."
+]
+},
+{
+"floor": 2,
+"weekday": 1,
+"block": "1-2",
+"start": "15:00",
+"end": "16:00",
+"teachers": [
+"Ashim A."
+]
+},
+{
+"floor": 2,
+"weekday": 1,
+"block": "3-4",
+"start": "15:00",
+"end": "16:00",
+"teachers": [
+"Rysaldy A."
+]
+},
+{
+"floor": 2,
+"weekday": 1,
+"block": "1-2",
+"start": "16:00",
+"end": "17:30",
+"teachers": [
+"Kerimova D.",
+"Ashim A."
+]
+},
+{
+"floor": 2,
+"weekday": 1,
+"block": "3-4",
+"start": "16:00",
+"end": "17:30",
+"teachers": [
+"Alypkaraev N.",
+"Rysaldy A."
+]
+},
+{
+"floor": 2,
+"weekday": 2,
+"block": "1-2",
+"start": "08:55",
+"end": "09:40",
+"teachers": [
+"Kim D."
+]
+},
+{
+"floor": 2,
+"weekday": 2,
+"block": "3-4",
+"start": "08:55",
+"end": "09:40",
+"teachers": [
+"Matveeva I.M."
+]
+},
+{
+"floor": 2,
+"weekday": 2,
+"block": "1-2",
+"start": "09:40",
+"end": "10:25",
+"teachers": [
+"Prokhorova A.A."
+]
+},
+{
+"floor": 2,
+"weekday": 2,
+"block": "3-4",
+"start": "09:40",
+"end": "10:25",
+"teachers": [
+"Shakhanova L.I."
+]
+},
+{
+"floor": 2,
+"weekday": 2,
+"block": "1-2",
+"start": "10:25",
+"end": "11:10",
+"teachers": [
+"Umeshova K.T."
+]
+},
+{
+"floor": 2,
+"weekday": 2,
+"block": "3-4",
+"start": "10:25",
+"end": "11:10",
+"teachers": [
+"Sarbasova S."
+]
+},
+{
+"floor": 2,
+"weekday": 2,
+"block": "1-2",
+"start": "11:10",
+"end": "11:55",
+"teachers": [
+"Marieva A.O."
+]
+},
+{
+"floor": 2,
+"weekday": 2,
+"block": "3-4",
+"start": "11:10",
+"end": "11:55",
+"teachers": [
+"Bapaeva D."
+]
+},
+{
+"floor": 2,
+"weekday": 2,
+"block": "1-2",
+"start": "11:55",
+"end": "13:00",
+"teachers": [
+"Shamshidin A."
+]
+},
+{
+"floor": 2,
+"weekday": 2,
+"block": "3-4",
+"start": "11:55",
+"end": "13:00",
+"teachers": [
+"Ablaeva D."
+]
+},
+{
+"floor": 2,
+"weekday": 2,
+"block": "1-2",
+"start": "13:00",
+"end": "14:00",
+"teachers": [
+"Ravshanbekova M."
+]
+},
+{
+"floor": 2,
+"weekday": 2,
+"block": "3-4",
+"start": "13:00",
+"end": "14:00",
+"teachers": [
+"Aytbay A."
+]
+},
+{
+"floor": 2,
+"weekday": 2,
+"block": "1-2",
+"start": "14:00",
+"end": "15:00",
+"teachers": [
+"Kulmurzaeva U."
+]
+},
+{
+"floor": 2,
+"weekday": 2,
+"block": "3-4",
+"start": "14:00",
+"end": "15:00",
+"teachers": [
+"Gabidullina A."
+]
+},
+{
+"floor": 2,
+"weekday": 2,
+"block": "1-2",
+"start": "15:00",
+"end": "16:00",
+"teachers": [
+"Irismatova D."
+]
+},
+{
+"floor": 2,
+"weekday": 2,
+"block": "3-4",
+"start": "15:00",
+"end": "16:00",
+"teachers": [
+"Shamshidin A."
+]
+},
+{
+"floor": 2,
+"weekday": 2,
+"block": "1-2",
+"start": "16:00",
+"end": "17:30",
+"teachers": [
+"Kulmurzaeva U.",
+"Irismatova D."
+]
+},
+{
+"floor": 2,
+"weekday": 2,
+"block": "3-4",
+"start": "16:00",
+"end": "17:30",
+"teachers": [
+"Gabidullina A.",
+"Shamshidin A."
+]
+},
+{
+"floor": 2,
+"weekday": 3,
+"block": "1-2",
+"start": "08:55",
+"end": "09:40",
+"teachers": [
+"Kim D."
+]
+},
+{
+"floor": 2,
+"weekday": 3,
+"block": "3-4",
+"start": "08:55",
+"end": "09:40",
+"teachers": [
+"Bapaeva D."
+]
+},
+{
+"floor": 2,
+"weekday": 3,
+"block": "1-2",
+"start": "09:40",
+"end": "10:25",
+"teachers": [
+"Kalmurzaeva U."
+]
+},
+{
+"floor": 2,
+"weekday": 3,
+"block": "3-4",
+"start": "09:40",
+"end": "10:25",
+"teachers": [
+"Matveeva I.M."
+]
+},
+{
+"floor": 2,
+"weekday": 3,
+"block": "1-2",
+"start": "10:25",
+"end": "11:10",
+"teachers": [
+"Prokhorova A.A."
+]
+},
+{
+"floor": 2,
+"weekday": 3,
+"block": "3-4",
+"start": "10:25",
+"end": "11:10",
+"teachers": [
+"Shakhanova L.I."
+]
+},
+{
+"floor": 2,
+"weekday": 3,
+"block": "1-2",
+"start": "11:10",
+"end": "11:55",
+"teachers": [
+"Dzhakipbekova A."
+]
+},
+{
+"floor": 2,
+"weekday": 3,
+"block": "3-4",
+"start": "11:10",
+"end": "11:55",
+"teachers": [
+"Gabidullina A.K."
+]
+},
+{
+"floor": 2,
+"weekday": 3,
+"block": "1-2",
+"start": "11:55",
+"end": "13:00",
+"teachers": [
+"Toregeldi A."
+]
+},
+{
+"floor": 2,
+"weekday": 3,
+"block": "3-4",
+"start": "11:55",
+"end": "13:00",
+"teachers": [
+"Sarbasova S."
+]
+},
+{
+"floor": 2,
+"weekday": 3,
+"block": "1-2",
+"start": "13:00",
+"end": "14:00",
+"teachers": [
+"Ravshanbekova M."
+]
+},
+{
+"floor": 2,
+"weekday": 3,
+"block": "3-4",
+"start": "13:00",
+"end": "14:00",
+"teachers": [
+"Aytbay A."
+]
+},
+{
+"floor": 2,
+"weekday": 3,
+"block": "1-2",
+"start": "14:00",
+"end": "15:00",
+"teachers": [
+"Kim D."
+]
+},
+{
+"floor": 2,
+"weekday": 3,
+"block": "3-4",
+"start": "14:00",
+"end": "15:00",
+"teachers": [
+"Shakhanova L."
+]
+},
+{
+"floor": 2,
+"weekday": 3,
+"block": "1-2",
+"start": "15:00",
+"end": "16:00",
+"teachers": [
+"Ravshanbekova M."
+]
+},
+{
+"floor": 2,
+"weekday": 3,
+"block": "3-4",
+"start": "15:00",
+"end": "16:00",
+"teachers": [
+"Bapaeva D."
+]
+},
+{
+"floor": 2,
+"weekday": 3,
+"block": "1-2",
+"start": "16:00",
+"end": "17:30",
+"teachers": [
+"Kim D.",
+"Ravshanbekova M."
+]
+},
+{
+"floor": 2,
+"weekday": 3,
+"block": "3-4",
+"start": "16:00",
+"end": "17:30",
+"teachers": [
+"Shakhanova L.",
+"Bapaeva D."
+]
+},
+{
+"floor": 2,
+"weekday": 4,
+"block": "1-2",
+"start": "08:55",
+"end": "09:40",
+"teachers": [
+"Kim D."
+]
+},
+{
+"floor": 2,
+"weekday": 4,
+"block": "3-4",
+"start": "08:55",
+"end": "09:40",
+"teachers": [
+"Ablaeva D."
+]
+},
+{
+"floor": 2,
+"weekday": 4,
+"block": "1-2",
+"start": "09:40",
+"end": "10:25",
+"teachers": [
+"Berdieva M.A."
+]
+},
+{
+"floor": 2,
+"weekday": 4,
+"block": "3-4",
+"start": "09:40",
+"end": "10:25",
+"teachers": [
+"Shakhanova L.I."
+]
+},
+{
+"floor": 2,
+"weekday": 4,
+"block": "1-2",
+"start": "10:25",
+"end": "11:10",
+"teachers": [
+"Marieva A.O."
+]
+},
+{
+"floor": 2,
+"weekday": 4,
+"block": "3-4",
+"start": "10:25",
+"end": "11:10",
+"teachers": [
+"Bapaeva D."
+]
+},
+{
+"floor": 2,
+"weekday": 4,
+"block": "1-2",
+"start": "11:10",
+"end": "11:55",
+"teachers": [
+"Umeshova K.T."
+]
+},
+{
+"floor": 2,
+"weekday": 4,
+"block": "3-4",
+"start": "11:10",
+"end": "11:55",
+"teachers": [
+"Matveeva I.M."
+]
+},
+{
+"floor": 2,
+"weekday": 4,
+"block": "1-2",
+"start": "11:55",
+"end": "13:00",
+"teachers": [
+"Toregeldi A."
+]
+},
+{
+"floor": 2,
+"weekday": 4,
+"block": "3-4",
+"start": "11:55",
+"end": "13:00",
+"teachers": [
+"Aytbay A."
+]
+},
+{
+"floor": 2,
+"weekday": 4,
+"block": "1-2",
+"start": "13:00",
+"end": "14:00",
+"teachers": [
+"Ravshanbekova M."
+]
+},
+{
+"floor": 2,
+"weekday": 4,
+"block": "3-4",
+"start": "13:00",
+"end": "14:00",
+"teachers": [
+"Sarbasova S."
+]
+},
+{
+"floor": 2,
+"weekday": 4,
+"block": "1-2",
+"start": "14:00",
+"end": "15:00",
+"teachers": [
+"Toregeldi A."
+]
+},
+{
+"floor": 2,
+"weekday": 4,
+"block": "3-4",
+"start": "14:00",
+"end": "15:00",
+"teachers": [
+"Marieva A."
+]
+},
+{
+"floor": 2,
+"weekday": 4,
+"block": "1-2",
+"start": "15:00",
+"end": "16:00",
+"teachers": [
+"Nurzhankyzy G."
+]
+},
+{
+"floor": 2,
+"weekday": 4,
+"block": "3-4",
+"start": "15:00",
+"end": "16:00",
+"teachers": [
+"Orazbak Sh."
+]
+},
+{
+"floor": 2,
+"weekday": 4,
+"block": "1-2",
+"start": "16:00",
+"end": "17:30",
+"teachers": [
+"Toregeldi A.",
+"Nurzhankyzy G."
+]
+},
+{
+"floor": 2,
+"weekday": 4,
+"block": "3-4",
+"start": "16:00",
+"end": "17:30",
+"teachers": [
+"Marieva A.",
+"Orazbak Sh."
+]
+},
+{
+"floor": 2,
+"weekday": 5,
+"block": "1-2",
+"start": "08:55",
+"end": "09:40",
+"teachers": [
+"Kim D."
+]
+},
+{
+"floor": 2,
+"weekday": 5,
+"block": "3-4",
+"start": "08:55",
+"end": "09:40",
+"teachers": [
+"Shakhanova L.I."
+]
+},
+{
+"floor": 2,
+"weekday": 5,
+"block": "1-2",
+"start": "09:40",
+"end": "10:25",
+"teachers": [
+"Umeshova K.T."
+]
+},
+{
+"floor": 2,
+"weekday": 5,
+"block": "3-4",
+"start": "09:40",
+"end": "10:25",
+"teachers": [
+"Gabidullina A.K."
+]
+},
+{
+"floor": 2,
+"weekday": 5,
+"block": "1-2",
+"start": "10:25",
+"end": "11:10",
+"teachers": [
+"Saparbaeva P.Zh."
+]
+},
+{
+"floor": 2,
+"weekday": 5,
+"block": "3-4",
+"start": "10:25",
+"end": "11:10",
+"teachers": [
+"Bapaeva D."
+]
+},
+{
+"floor": 2,
+"weekday": 5,
+"block": "1-2",
+"start": "11:10",
+"end": "11:55",
+"teachers": [
+"Prokhorova A.A."
+]
+},
+{
+"floor": 2,
+"weekday": 5,
+"block": "3-4",
+"start": "11:10",
+"end": "11:55",
+"teachers": [
+"Matveeva I.M."
+]
+},
+{
+"floor": 2,
+"weekday": 5,
+"block": "1-2",
+"start": "11:55",
+"end": "13:00",
+"teachers": [
+"Toregeldi A."
+]
+},
+{
+"floor": 2,
+"weekday": 5,
+"block": "3-4",
+"start": "11:55",
+"end": "13:00",
+"teachers": [
+"Ablaeva D."
+]
+},
+{
+"floor": 2,
+"weekday": 5,
+"block": "1-2",
+"start": "13:00",
+"end": "14:00",
+"teachers": [
+"Shamshidin A."
+]
+},
+{
+"floor": 2,
+"weekday": 5,
+"block": "3-4",
+"start": "13:00",
+"end": "14:00",
+"teachers": [
+"Aytbay A."
+]
+},
+{
+"floor": 2,
+"weekday": 5,
+"block": "1-2",
+"start": "14:00",
+"end": "15:00",
+"teachers": [
+"Prokhorova A."
+]
+},
+{
+"floor": 2,
+"weekday": 5,
+"block": "3-4",
+"start": "14:00",
+"end": "15:00",
+"teachers": [
+"Aytbay A."
+]
+},
+{
+"floor": 2,
+"weekday": 5,
+"block": "1-2",
+"start": "15:00",
+"end": "16:00",
+"teachers": [
+"Dzhakipbekova A."
+]
+},
+{
+"floor": 2,
+"weekday": 5,
+"block": "3-4",
+"start": "15:00",
+"end": "16:00",
+"teachers": [
+"Matveeva I.M."
+]
+},
+{
+"floor": 2,
+"weekday": 5,
+"block": "1-2",
+"start": "16:00",
+"end": "17:30",
+"teachers": [
+"Prokhorova A.",
+"Dzhakipbekova A."
+]
+},
+{
+"floor": 2,
+"weekday": 5,
+"block": "3-4",
+"start": "16:00",
+"end": "17:30",
+"teachers": [
+"Aytbay A.",
+"Matveeva I.M."
+]
+},
+{
+"floor": 3,
+"weekday": 1,
+"block": "1-2",
+"start": "08:55",
+"end": "09:40",
+"teachers": [
+"Bekmakhambet B."
+]
+},
+{
+"floor": 3,
+"weekday": 1,
+"block": "3-4",
+"start": "08:55",
+"end": "09:40",
+"teachers": [
+"Aytbaeva A.I."
+]
+},
+{
+"floor": 3,
+"weekday": 1,
+"block": "1-2",
+"start": "09:40",
+"end": "10:25",
+"teachers": [
+"Alypkaraev N."
+]
+},
+{
+"floor": 3,
+"weekday": 1,
+"block": "3-4",
+"start": "09:40",
+"end": "10:25",
+"teachers": [
+"Irismetova D.N."
+]
+},
+{
+"floor": 3,
+"weekday": 1,
+"block": "1-2",
+"start": "10:25",
+"end": "11:10",
+"teachers": [
+"Zhumabek B."
+]
+},
+{
+"floor": 3,
+"weekday": 1,
+"block": "3-4",
+"start": "10:25",
+"end": "11:10",
+"teachers": [
+"Suleymenova Kh.R."
+]
+},
+{
+"floor": 3,
+"weekday": 1,
+"block": "1-2",
+"start": "11:10",
+"end": "11:55",
+"teachers": [
+"Saparbaeva P.Zh."
+]
+},
+{
+"floor": 3,
+"weekday": 1,
+"block": "3-4",
+"start": "11:10",
+"end": "11:55",
+"teachers": [
+"Serikuly D."
+]
+},
+{
+"floor": 3,
+"weekday": 1,
+"block": "1-2",
+"start": "11:55",
+"end": "13:00",
+"teachers": [
+"Baimirzaeva M."
+]
+},
+{
+"floor": 3,
+"weekday": 1,
+"block": "3-4",
+"start": "11:55",
+"end": "13:00",
+"teachers": [
+"Abdukarimova M.B."
+]
+},
+{
+"floor": 3,
+"weekday": 1,
+"block": "1-2",
+"start": "13:00",
+"end": "14:00",
+"teachers": [
+"Sariev N.O."
+]
+},
+{
+"floor": 3,
+"weekday": 1,
+"block": "3-4",
+"start": "13:00",
+"end": "14:00",
+"teachers": [
+"Bukharbaev D."
+]
+},
+{
+"floor": 3,
+"weekday": 1,
+"block": "1-2",
+"start": "14:00",
+"end": "15:00",
+"teachers": [
+"Suleymenova Kh."
+]
+},
+{
+"floor": 3,
+"weekday": 1,
+"block": "3-4",
+"start": "14:00",
+"end": "15:00",
+"teachers": [
+"Aytbaeva A.I."
+]
+},
+{
+"floor": 3,
+"weekday": 1,
+"block": "1-2",
+"start": "15:00",
+"end": "16:00",
+"teachers": [
+"Suleymenova Kh."
+]
+},
+{
+"floor": 3,
+"weekday": 1,
+"block": "3-4",
+"start": "15:00",
+"end": "16:00",
+"teachers": [
+"Aytbaeva A.I."
+]
+},
+{
+"floor": 3,
+"weekday": 1,
+"block": "1-2",
+"start": "16:00",
+"end": "17:30",
+"teachers": [
+"Suleymenova Kh."
+]
+},
+{
+"floor": 3,
+"weekday": 1,
+"block": "3-4",
+"start": "16:00",
+"end": "17:30",
+"teachers": [
+"Aytbaeva A.I."
+]
+},
+{
+"floor": 3,
+"weekday": 2,
+"block": "1-2",
+"start": "08:55",
+"end": "09:40",
+"teachers": [
+"Baimirzaeva M."
+]
+},
+{
+"floor": 3,
+"weekday": 2,
+"block": "3-4",
+"start": "08:55",
+"end": "09:40",
+"teachers": [
+"Baimirzaeva M."
+]
+},
+{
+"floor": 3,
+"weekday": 2,
+"block": "1-2",
+"start": "09:40",
+"end": "10:25",
+"teachers": [
+"Sariev N.O."
+]
+},
+{
+"floor": 3,
+"weekday": 2,
+"block": "3-4",
+"start": "09:40",
+"end": "10:25",
+"teachers": [
+"Aytbaeva A.I."
+]
+},
+{
+"floor": 3,
+"weekday": 2,
+"block": "1-2",
+"start": "10:25",
+"end": "11:10",
+"teachers": [
+"Zhumabek B."
+]
+},
+{
+"floor": 3,
+"weekday": 2,
+"block": "3-4",
+"start": "10:25",
+"end": "11:10",
+"teachers": [
+"Bukharbaev D."
+]
+},
+{
+"floor": 3,
+"weekday": 2,
+"block": "1-2",
+"start": "11:10",
+"end": "11:55",
+"teachers": [
+"Abdikarimova A."
+]
+},
+{
+"floor": 3,
+"weekday": 2,
+"block": "3-4",
+"start": "11:10",
+"end": "11:55",
+"teachers": [
+"Serikuly D."
+]
+},
+{
+"floor": 3,
+"weekday": 2,
+"block": "1-2",
+"start": "11:55",
+"end": "13:00",
+"teachers": [
+"Abdikarimova A."
+]
+},
+{
+"floor": 3,
+"weekday": 2,
+"block": "3-4",
+"start": "11:55",
+"end": "13:00",
+"teachers": [
+"Mombay G."
+]
+},
+{
+"floor": 3,
+"weekday": 2,
+"block": "1-2",
+"start": "13:00",
+"end": "14:00",
+"teachers": [
+"Alypkaraev N."
+]
+},
+{
+"floor": 3,
+"weekday": 2,
+"block": "3-4",
+"start": "13:00",
+"end": "14:00",
+"teachers": [
+"Irismetova D.N."
+]
+},
+{
+"floor": 3,
+"weekday": 2,
+"block": "1-2",
+"start": "14:00",
+"end": "15:00",
+"teachers": [
+"Zhumabek B.N."
+]
+},
+{
+"floor": 3,
+"weekday": 2,
+"block": "3-4",
+"start": "14:00",
+"end": "15:00",
+"teachers": [
+"Manikaeva A.T."
+]
+},
+{
+"floor": 3,
+"weekday": 2,
+"block": "1-2",
+"start": "15:00",
+"end": "16:00",
+"teachers": [
+"Zhumabek B.N."
+]
+},
+{
+"floor": 3,
+"weekday": 2,
+"block": "3-4",
+"start": "15:00",
+"end": "16:00",
+"teachers": [
+"Manikaeva A.T."
+]
+},
+{
+"floor": 3,
+"weekday": 2,
+"block": "1-2",
+"start": "16:00",
+"end": "17:30",
+"teachers": [
+"Zhumabek B.N."
+]
+},
+{
+"floor": 3,
+"weekday": 2,
+"block": "3-4",
+"start": "16:00",
+"end": "17:30",
+"teachers": [
+"Manikaeva A.T."
+]
+},
+{
+"floor": 3,
+"weekday": 3,
+"block": "1-2",
+"start": "08:55",
+"end": "09:40",
+"teachers": [
+"Saparbaeva P.Zh."
+]
+},
+{
+"floor": 3,
+"weekday": 3,
+"block": "3-4",
+"start": "08:55",
+"end": "09:40",
+"teachers": [
+"Zhasuzak T."
+]
+},
+{
+"floor": 3,
+"weekday": 3,
+"block": "1-2",
+"start": "09:40",
+"end": "10:25",
+"teachers": [
+"Bekmakhambet B."
+]
+},
+{
+"floor": 3,
+"weekday": 3,
+"block": "3-4",
+"start": "09:40",
+"end": "10:25",
+"teachers": [
+"Aytbaeva A.I."
+]
+},
+{
+"floor": 3,
+"weekday": 3,
+"block": "1-2",
+"start": "10:25",
+"end": "11:10",
+"teachers": [
+"Zhumabek B."
+]
+},
+{
+"floor": 3,
+"weekday": 3,
+"block": "3-4",
+"start": "10:25",
+"end": "11:10",
+"teachers": [
+"Irysmatova N.Sh."
+]
+},
+{
+"floor": 3,
+"weekday": 3,
+"block": "1-2",
+"start": "11:10",
+"end": "11:55",
+"teachers": [
+"Zhasuzak T."
+]
+},
+{
+"floor": 3,
+"weekday": 3,
+"block": "3-4",
+"start": "11:10",
+"end": "11:55",
+"teachers": [
+"Serikuly D."
+]
+},
+{
+"floor": 3,
+"weekday": 3,
+"block": "1-2",
+"start": "11:55",
+"end": "13:00",
+"teachers": [
+"Baimirzaeva M."
+]
+},
+{
+"floor": 3,
+"weekday": 3,
+"block": "3-4",
+"start": "11:55",
+"end": "13:00",
+"teachers": [
+"Dintaeva A.Zh."
+]
+},
+{
+"floor": 3,
+"weekday": 3,
+"block": "1-2",
+"start": "13:00",
+"end": "14:00",
+"teachers": [
+"Abdukarimova M.B."
+]
+},
+{
+"floor": 3,
+"weekday": 3,
+"block": "3-4",
+"start": "13:00",
+"end": "14:00",
+"teachers": [
+"Manikaeva A.T."
+]
+},
+{
+"floor": 3,
+"weekday": 3,
+"block": "1-2",
+"start": "14:00",
+"end": "15:00",
+"teachers": [
+"Abdukarimova A.B."
+]
+},
+{
+"floor": 3,
+"weekday": 3,
+"block": "3-4",
+"start": "14:00",
+"end": "15:00",
+"teachers": [
+"Alimova M."
+]
+},
+{
+"floor": 3,
+"weekday": 3,
+"block": "1-2",
+"start": "15:00",
+"end": "16:00",
+"teachers": [
+"Okhenkhen V."
+]
+},
+{
+"floor": 3,
+"weekday": 3,
+"block": "3-4",
+"start": "15:00",
+"end": "16:00",
+"teachers": [
+"Alimova M."
+]
+},
+{
+"floor": 3,
+"weekday": 3,
+"block": "1-2",
+"start": "16:00",
+"end": "17:30",
+"teachers": [
+"Okhenkhen V."
+]
+},
+{
+"floor": 3,
+"weekday": 3,
+"block": "3-4",
+"start": "16:00",
+"end": "17:30",
+"teachers": [
+"Alimova M."
+]
+},
+{
+"floor": 3,
+"weekday": 4,
+"block": "1-2",
+"start": "08:55",
+"end": "09:40",
+"teachers": [
+"Abdikarimova A."
+]
+},
+{
+"floor": 3,
+"weekday": 4,
+"block": "3-4",
+"start": "08:55",
+"end": "09:40",
+"teachers": [
+"Abdukarimova M.B."
+]
+},
+{
+"floor": 3,
+"weekday": 4,
+"block": "1-2",
+"start": "09:40",
+"end": "10:25",
+"teachers": [
+"Zhumabek B."
+]
+},
+{
+"floor": 3,
+"weekday": 4,
+"block": "3-4",
+"start": "09:40",
+"end": "10:25",
+"teachers": [
+"Bukharbaev D."
+]
+},
+{
+"floor": 3,
+"weekday": 4,
+"block": "1-2",
+"start": "10:25",
+"end": "11:10",
+"teachers": [
+"Baimirzaeva M."
+]
+},
+{
+"floor": 3,
+"weekday": 4,
+"block": "3-4",
+"start": "10:25",
+"end": "11:10",
+"teachers": [
+"Irismetova D.N."
+]
+},
+{
+"floor": 3,
+"weekday": 4,
+"block": "1-2",
+"start": "11:10",
+"end": "11:55",
+"teachers": [
+"Alypkaraev N."
+]
+},
+{
+"floor": 3,
+"weekday": 4,
+"block": "3-4",
+"start": "11:10",
+"end": "11:55",
+"teachers": [
+"Manikaeva A.T."
+]
+},
+{
+"floor": 3,
+"weekday": 4,
+"block": "1-2",
+"start": "11:55",
+"end": "13:00",
+"teachers": [
+"Saparbaeva P.Zh."
+]
+},
+{
+"floor": 3,
+"weekday": 4,
+"block": "3-4",
+"start": "11:55",
+"end": "13:00",
+"teachers": [
+"Aytbaeva A.I."
+]
+},
+{
+"floor": 3,
+"weekday": 4,
+"block": "1-2",
+"start": "13:00",
+"end": "14:00",
+"teachers": [
+"Mombay G."
+]
+},
+{
+"floor": 3,
+"weekday": 4,
+"block": "3-4",
+"start": "13:00",
+"end": "14:00",
+"teachers": [
+"Irysmatova N.Sh."
+]
+},
+{
+"floor": 3,
+"weekday": 4,
+"block": "1-2",
+"start": "14:00",
+"end": "15:00",
+"teachers": [
+"Mombay G."
+]
+},
+{
+"floor": 3,
+"weekday": 4,
+"block": "3-4",
+"start": "14:00",
+"end": "15:00",
+"teachers": [
+"Baymyrza M."
+]
+},
+{
+"floor": 3,
+"weekday": 4,
+"block": "1-2",
+"start": "15:00",
+"end": "16:00",
+"teachers": [
+"Mombay G."
+]
+},
+{
+"floor": 3,
+"weekday": 4,
+"block": "3-4",
+"start": "15:00",
+"end": "16:00",
+"teachers": [
+"Baymyrza M."
+]
+},
+{
+"floor": 3,
+"weekday": 4,
+"block": "1-2",
+"start": "16:00",
+"end": "17:30",
+"teachers": [
+"Mombay G."
+]
+},
+{
+"floor": 3,
+"weekday": 4,
+"block": "3-4",
+"start": "16:00",
+"end": "17:30",
+"teachers": [
+"Baymyrza M."
+]
+},
+{
+"floor": 3,
+"weekday": 5,
+"block": "1-2",
+"start": "08:55",
+"end": "09:40",
+"teachers": [
+"Baimirzaeva M."
+]
+},
+{
+"floor": 3,
+"weekday": 5,
+"block": "3-4",
+"start": "08:55",
+"end": "09:40",
+"teachers": [
+"Dintaeva A.Zh."
+]
+},
+{
+"floor": 3,
+"weekday": 5,
+"block": "1-2",
+"start": "09:40",
+"end": "10:25",
+"teachers": [
+"Suleymenova Kh.R."
+]
+},
+{
+"floor": 3,
+"weekday": 5,
+"block": "3-4",
+"start": "09:40",
+"end": "10:25",
+"teachers": [
+"Aytbaeva A.I."
+]
+},
+{
+"floor": 3,
+"weekday": 5,
+"block": "1-2",
+"start": "10:25",
+"end": "11:10",
+"teachers": [
+"Mombay G."
+]
+},
+{
+"floor": 3,
+"weekday": 5,
+"block": "3-4",
+"start": "10:25",
+"end": "11:10",
+"teachers": [
+"Serikuly D."
+]
+},
+{
+"floor": 3,
+"weekday": 5,
+"block": "1-2",
+"start": "11:10",
+"end": "11:55",
+"teachers": [
+"Bekmakhambet B."
+]
+},
+{
+"floor": 3,
+"weekday": 5,
+"block": "3-4",
+"start": "11:10",
+"end": "11:55",
+"teachers": [
+"Bukharbaev D."
+]
+},
+{
+"floor": 3,
+"weekday": 5,
+"block": "1-2",
+"start": "11:55",
+"end": "13:00",
+"teachers": [
+"Zhasuzak T."
+]
+},
+{
+"floor": 3,
+"weekday": 5,
+"block": "3-4",
+"start": "11:55",
+"end": "13:00",
+"teachers": [
+"Irismetova D.N."
+]
+},
+{
+"floor": 3,
+"weekday": 5,
+"block": "1-2",
+"start": "13:00",
+"end": "14:00",
+"teachers": [
+"Sariev N.O."
+]
+},
+{
+"floor": 3,
+"weekday": 5,
+"block": "3-4",
+"start": "13:00",
+"end": "14:00",
+"teachers": [
+"Irysmatova N.Sh."
+]
+},
+{
+"floor": 3,
+"weekday": 5,
+"block": "1-2",
+"start": "14:00",
+"end": "15:00",
+"teachers": [
+"Tazhiev D.S."
+]
+},
+{
+"floor": 3,
+"weekday": 5,
+"block": "3-4",
+"start": "14:00",
+"end": "15:00",
+"teachers": [
+"Alkhodzhaeva K.M."
+]
+},
+{
+"floor": 3,
+"weekday": 5,
+"block": "1-2",
+"start": "15:00",
+"end": "16:00",
+"teachers": [
+"Tazhiev D.S."
+]
+},
+{
+"floor": 3,
+"weekday": 5,
+"block": "3-4",
+"start": "15:00",
+"end": "16:00",
+"teachers": [
+"Kasimov A."
+]
+},
+{
+"floor": 3,
+"weekday": 5,
+"block": "1-2",
+"start": "16:00",
+"end": "17:30",
+"teachers": [
+"Tazhiev D.S."
+]
+},
+{
+"floor": 3,
+"weekday": 5,
+"block": "3-4",
+"start": "16:00",
+"end": "17:30",
+"teachers": [
+"Kasimov A."
+]
+}
+]
