@@ -85,6 +85,7 @@ model Teacher {
   objectives           TeacherObjective[]
   clubUniformChecks    ClubUniformCheck[]
   conferenceSlots      ConferenceSlot[]
+  dutyTeacher          DutyTeacher?
 }
 
 model Parent {
@@ -1101,4 +1102,93 @@ model GroupMember {
 
   @@unique([groupId, studentId])
   @@index([studentId])
+}
+
+// ---------------------------------------------------------------------------
+// Duty roster + notifications (additive; see src/lib/duty.ts).
+// ---------------------------------------------------------------------------
+
+// A person on the duty rota. Named separately from Teacher because the rota
+// lists names as printed on the schedule (e.g. "Isakhova U.") before anyone has
+// linked them to a real account; teacherId is that optional link.
+model DutyTeacher {
+  id           Int              @id @default(autoincrement())
+  nameEn       String           @unique
+  nameOriginal String?
+  teacherId    String?          @unique
+  teacher      Teacher?         @relation(fields: [teacherId], references: [id], onDelete: SetNull)
+  createdAt    DateTime         @default(now())
+  assignments  DutyAssignment[]
+}
+
+// One (floor, weekday, block, time range). weekday: 1 = Monday ... 5 = Friday.
+// startTime / endTime are school-local "HH:mm".
+model DutySlot {
+  id          Int              @id @default(autoincrement())
+  floor       Int
+  weekday     Int
+  block       String
+  startTime   String
+  endTime     String
+  assignments DutyAssignment[]
+
+  @@unique([floor, weekday, block, startTime])
+}
+
+// Who is on duty in a slot. Most slots have one row, the 16:00-17:30 slot two.
+model DutyAssignment {
+  id            Int                   @id @default(autoincrement())
+  slotId        Int
+  slot          DutySlot              @relation(fields: [slotId], references: [id], onDelete: Cascade)
+  dutyTeacherId Int
+  dutyTeacher   DutyTeacher           @relation(fields: [dutyTeacherId], references: [id], onDelete: Cascade)
+  logs          DutyNotificationLog[]
+
+  @@unique([slotId, dutyTeacherId])
+  @@index([dutyTeacherId])
+}
+
+// One row per reminder produced. The unique key (assignment, date, kind) is what
+// stops the every-few-minutes scheduler from notifying twice. It doubles as the
+// in-app inbox (inApp rows with readAt = null show in the navbar bell).
+// assignmentId is null for admin "test" notifications.
+model DutyNotificationLog {
+  id           Int             @id @default(autoincrement())
+  assignmentId Int?
+  assignment   DutyAssignment? @relation(fields: [assignmentId], references: [id], onDelete: SetNull)
+  date         String
+  kind         String
+  userId       String?
+  title        String
+  body         String
+  channels     String          @default("")
+  inApp        Boolean         @default(true)
+  sentAt       DateTime        @default(now())
+  readAt       DateTime?
+
+  @@unique([assignmentId, date, kind])
+  @@index([userId, readAt])
+}
+
+// A date (school-local "YYYY-MM-DD") on which no duty reminders are sent.
+model DutyDayOff {
+  date   String  @id
+  reason String?
+}
+
+// Single settings row (id = 1).
+model DutySettings {
+  id            Int     @id @default(1)
+  enabled       Boolean @default(true)
+  leadMinutes   Int     @default(10)
+  notifyAtStart Boolean @default(true)
+  timeZone      String  @default("Asia/Almaty")
+}
+
+// Each user's channel opt-ins. Missing row = defaults (in-app + push on, email off).
+model DutyPreference {
+  userId String  @id
+  inApp  Boolean @default(true)
+  push   Boolean @default(true)
+  email  Boolean @default(false)
 }

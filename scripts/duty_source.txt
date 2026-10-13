@@ -1,0 +1,151 @@
+# floor day  -> 9 rows: "Block 1-2 | Block 3-4", "/" separates two teachers in the same slot
+F1 MON
+Urazimbetova G. | Yskakova U.
+Omirzakhova G. | Svarovskaya L.
+Isakhova U. | Evdakimova P.
+Dzhumataeva A. | Abdimanap A.
+Ismailova A. | Khvan E.
+Samykova A. | Niyazbekova F.
+Suindikova N. | Yskakova U.
+Beybitbaev A. | Zhuasova G.
+Isakhova U. | Egamberdieva P.
+F1 TUE
+Suindikova N. | Isabekova E.
+Omirzakhova G. | Svarovskaya L.
+Dospaeva A. | Egamberdieva P.
+Isakhova U. | Yskakova U.
+Dzhumataeva A. | Niyazbekova F.
+Urazimbetova G. | Abdimanap A.
+Samykova A. | Khvan E.
+Mukhammed A. | Baymak P.
+Ismailova A. | Isabekova E.
+F1 WED
+Akylbay A. | Isabekova E.
+Suindikova N. | Khvan E.
+Isakhova U. | Svarovskaya L.
+Samykova A. | Yskakova U.
+Dzhumataeva A. | Niyazbekova F.
+Urazimbetova G. | Egamberdieva P.
+Dzhumataeva A. | Abdimanap A.
+Mukhammed A. | Baymak P.
+Omirzakhova G. | Evdakimova P.
+F1 THU
+Isakhova U. | Iles Sh.
+Suindikova N. | Evdakimova P.
+Samykova A. | Egamberdieva P.
+Urazimbetova G. | Niyazbekova F.
+Omirzakhova G. | Svarovskaya L.
+Isakhova U. | Khvan E.
+Dzhumataeva A. | Niyazbekova F.
+Mukhammed A. | Baymak P.
+Isabekova E. | Abdimanap A.
+F1 FRI
+Akylbay A. | Evdakimova P.
+Dzhumataeva A. | Khvan E.
+Omirzakhova G. | Svarovskaya L.
+Suindikova N. | Yskakova U.
+Samykova A. | Abdimanap A.
+Dzhumataeva A. | Egamberdieva P.
+Urazimbetova G. | Isabekova E.
+Beybitbaev A. | Zhuasova G.
+Omirzakhova G. | Yskakova U.
+F2 MON
+Kalmurzaeva U. | Ordabek Zh.
+Marieva A.O. | Shakhanova L.I.
+Berdieva M.A. | Aytbay A.
+Shamshidin A. | Bapaeva D.
+Toregeldi A. | Gabidullina A.K.
+Ravshanbekova M. | Sarbasova S.
+Kerimova D. | Alypkaraev N.
+Ashim A. | Rysaldy A.
+Kerimova D. / Ashim A. | Alypkaraev N. / Rysaldy A.
+F2 TUE
+Kim D. | Matveeva I.M.
+Prokhorova A.A. | Shakhanova L.I.
+Umeshova K.T. | Sarbasova S.
+Marieva A.O. | Bapaeva D.
+Shamshidin A. | Ablaeva D.
+Ravshanbekova M. | Aytbay A.
+Kulmurzaeva U. | Gabidullina A.
+Irismatova D. | Shamshidin A.
+Kulmurzaeva U. / Irismatova D. | Gabidullina A. / Shamshidin A.
+F2 WED
+Kim D. | Bapaeva D.
+Kalmurzaeva U. | Matveeva I.M.
+Prokhorova A.A. | Shakhanova L.I.
+Dzhakipbekova A. | Gabidullina A.K.
+Toregeldi A. | Sarbasova S.
+Ravshanbekova M. | Aytbay A.
+Kim D. | Shakhanova L.
+Ravshanbekova M. | Bapaeva D.
+Kim D. / Ravshanbekova M. | Shakhanova L. / Bapaeva D.
+F2 THU
+Kim D. | Ablaeva D.
+Berdieva M.A. | Shakhanova L.I.
+Marieva A.O. | Bapaeva D.
+Umeshova K.T. | Matveeva I.M.
+Toregeldi A. | Aytbay A.
+Ravshanbekova M. | Sarbasova S.
+Toregeldi A. | Marieva A.
+Nurzhankyzy G. | Orazbak Sh.
+Toregeldi A. / Nurzhankyzy G. | Marieva A. / Orazbak Sh.
+F2 FRI
+Kim D. | Shakhanova L.I.
+Umeshova K.T. | Gabidullina A.K.
+Saparbaeva P.Zh. | Bapaeva D.
+Prokhorova A.A. | Matveeva I.M.
+Toregeldi A. | Ablaeva D.
+Shamshidin A. | Aytbay A.
+Prokhorova A. | Aytbay A.
+Dzhakipbekova A. | Matveeva I.M.
+Prokhorova A. / Dzhakipbekova A. | Aytbay A. / Matveeva I.M.
+F3 MON
+Bekmakhambet B. | Aytbaeva A.I.
+Alypkaraev N. | Irismetova D.N.
+Zhumabek B. | Suleymenova Kh.R.
+Saparbaeva P.Zh. | Serikuly D.
+Baimirzaeva M. | Abdukarimova M.B.
+Sariev N.O. | Bukharbaev D.
+Suleymenova Kh. | Aytbaeva A.I.
+Suleymenova Kh. | Aytbaeva A.I.
+Suleymenova Kh. | Aytbaeva A.I.
+F3 TUE
+Baimirzaeva M. | Baimirzaeva M.
+Sariev N.O. | Aytbaeva A.I.
+Zhumabek B. | Bukharbaev D.
+Abdikarimova A. | Serikuly D.
+Abdikarimova A. | Mombay G.
+Alypkaraev N. | Irismetova D.N.
+Zhumabek B.N. | Manikaeva A.T.
+Zhumabek B.N. | Manikaeva A.T.
+Zhumabek B.N. | Manikaeva A.T.
+F3 WED
+Saparbaeva P.Zh. | Zhasuzak T.
+Bekmakhambet B. | Aytbaeva A.I.
+Zhumabek B. | Irysmatova N.Sh.
+Zhasuzak T. | Serikuly D.
+Baimirzaeva M. | Dintaeva A.Zh.
+Abdukarimova M.B. | Manikaeva A.T.
+Abdukarimova A.B. | Alimova M.
+Okhenkhen V. | Alimova M.
+Okhenkhen V. | Alimova M.
+F3 THU
+Abdikarimova A. | Abdukarimova M.B.
+Zhumabek B. | Bukharbaev D.
+Baimirzaeva M. | Irismetova D.N.
+Alypkaraev N. | Manikaeva A.T.
+Saparbaeva P.Zh. | Aytbaeva A.I.
+Mombay G. | Irysmatova N.Sh.
+Mombay G. | Baymyrza M.
+Mombay G. | Baymyrza M.
+Mombay G. | Baymyrza M.
+F3 FRI
+Baimirzaeva M. | Dintaeva A.Zh.
+Suleymenova Kh.R. | Aytbaeva A.I.
+Mombay G. | Serikuly D.
+Bekmakhambet B. | Bukharbaev D.
+Zhasuzak T. | Irismetova D.N.
+Sariev N.O. | Irysmatova N.Sh.
+Tazhiev D.S. | Alkhodzhaeva K.M.
+Tazhiev D.S. | Kasimov A.
+Tazhiev D.S. | Kasimov A.

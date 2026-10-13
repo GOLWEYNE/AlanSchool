@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { getUserRole } from "@/lib/auth";
 import prisma from "@/lib/prisma";
+import { ensureDuty } from "@/lib/duty";
 
 // Powers the navbar notification bell: unread messages, ticket updates,
 // and permission slip updates relevant to whoever is signed in. Polled
@@ -115,10 +116,28 @@ export async function GET() {
     slipsQuery = Promise.resolve([]);
   }
 
-  const [messages, tickets, slips] = await Promise.all([
+  // Duty reminders (see lib/duty.ts): unread in-app rows addressed to this user.
+  // Wrapped so a missing/failed duty table can never break the rest of the bell.
+  const dutyQuery = (async () => {
+    try {
+      if (!isStaff) return [];
+      if (!(await ensureDuty())) return [];
+      return await prisma.dutyNotificationLog.findMany({
+        where: { userId, inApp: true, readAt: null },
+        select: { id: true, title: true, body: true, sentAt: true },
+        orderBy: { sentAt: "desc" },
+        take: 10,
+      });
+    } catch {
+      return [];
+    }
+  })();
+
+  const [messages, tickets, slips, duty] = await Promise.all([
     messagesQuery,
     ticketsQuery,
     slipsQuery,
+    dutyQuery,
   ]);
 
   return NextResponse.json({
@@ -126,10 +145,12 @@ export async function GET() {
       messages: messages.length,
       tickets: tickets.length,
       slips: slips.length,
+      duty: duty.length,
     },
     messages,
     tickets,
     slips,
+    duty,
   });
 }
 

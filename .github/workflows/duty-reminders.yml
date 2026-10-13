@@ -1,0 +1,43 @@
+name: Duty reminders
+
+# Vercel Hobby cron only runs once a day, so this workflow calls the secured
+# endpoint every 5 minutes instead. GitHub cron uses UTC and can start a few
+# minutes late - the endpoint is built to tolerate that (wide time windows plus a
+# unique log row per duty/day/reminder, so nothing is sent twice).
+#
+# School hours are 08:55-17:30 in Asia/Almaty (UTC+5) = 03:55-12:30 UTC, so the
+# schedule below covers 03:00-12:59 UTC, Monday-Friday. If the school's time zone
+# changes, adjust the hours here as well as the setting in the admin page.
+#
+# Required repository secrets (Settings -> Secrets and variables -> Actions):
+#   DUTY_APP_URL  e.g. https://www.alaninternationalschool.com   (no trailing slash)
+#   CRON_SECRET   the same value as the CRON_SECRET env var in Vercel
+on:
+  schedule:
+    - cron: "*/5 3-12 * * 1-5"
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: duty-reminders
+  cancel-in-progress: false
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Call duty reminder endpoint
+        env:
+          DUTY_APP_URL: ${{ secrets.DUTY_APP_URL }}
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          if [ -z "$DUTY_APP_URL" ] || [ -z "$CRON_SECRET" ]; then
+            echo "DUTY_APP_URL and CRON_SECRET secrets must be set" >&2
+            exit 1
+          fi
+          curl --silent --show-error --fail-with-body \
+            --retry 2 --retry-delay 5 --max-time 60 \
+            -H "Authorization: Bearer ${CRON_SECRET}" \
+            "${DUTY_APP_URL%/}/api/cron/duty-reminders"

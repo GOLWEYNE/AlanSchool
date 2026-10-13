@@ -8,7 +8,9 @@ const matchers = Object.keys(routeAccessMap).map((route) => ({
   allowedRoles: routeAccessMap[route],
 }));
 
-const publicRoutes = createRouteMatcher(["/", "/sign-in(.*)", "/sign-up(.*)"]);
+// The duty reminder cron has no signed-in user - the route authenticates itself
+// with CRON_SECRET. Only that one route is opened up (not all of /api/cron).
+const publicRoutes = createRouteMatcher(["/", "/sign-in(.*)", "/sign-up(.*)", "/api/cron/duty-reminders", "/manifest.webmanifest", "/icon-(.*)\\.png"]);
 
 export default clerkMiddleware((auth, req) => {
   const { userId, sessionClaims } = auth();

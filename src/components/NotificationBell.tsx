@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useFormatter, useTranslations } from "next-intl";
 import { markMessageRead } from "@/lib/masterModuleActions";
+import { markDutyNotificationRead } from "@/lib/dutyActions";
 import DropdownPortal from "./DropdownPortal";
 
 type MessageItem = {
@@ -30,18 +31,27 @@ type SlipItem = {
   pendingCount: number | null;
 };
 
+type DutyItem = {
+  id: number;
+  title: string;
+  body: string;
+  sentAt: string;
+};
+
 type NotificationsResponse = {
-  counts: { messages: number; tickets: number; slips: number };
+  counts: { messages: number; tickets: number; slips: number; duty: number };
   messages: MessageItem[];
   tickets: TicketItem[];
   slips: SlipItem[];
+  duty: DutyItem[];
 };
 
 const EMPTY: NotificationsResponse = {
-  counts: { messages: 0, tickets: 0, slips: 0 },
+  counts: { messages: 0, tickets: 0, slips: 0, duty: 0 },
   messages: [],
   tickets: [],
   slips: [],
+  duty: [],
 };
 
 // No websocket/push infrastructure exists yet, so "live" means polling
@@ -65,7 +75,7 @@ const NotificationBell = () => {
       const res = await fetch("/api/notifications", { cache: "no-store" });
       if (!res.ok) return;
       const json = (await res.json()) as NotificationsResponse;
-      setData(json);
+      setData({ ...EMPTY, ...json, duty: json.duty ?? [], counts: { ...EMPTY.counts, ...json.counts } });
     } catch {
       // A missed poll isn't worth surfacing — just keep the last known state.
     } finally {
@@ -79,7 +89,7 @@ const NotificationBell = () => {
     return () => clearInterval(interval);
   }, [load]);
 
-  const total = data.counts.messages + data.counts.tickets + data.counts.slips;
+  const total = data.counts.messages + data.counts.tickets + data.counts.slips + data.counts.duty;
 
   const dismissMessage = async (id: number) => {
     setData((prev) => ({
@@ -91,6 +101,19 @@ const NotificationBell = () => {
       const formData = new FormData();
       formData.set("id", String(id));
       await markMessageRead(NOOP_STATE, formData);
+    } catch {
+      // Best-effort — the next poll reconciles if this failed.
+    }
+  };
+
+  const dismissDuty = async (id: number) => {
+    setData((prev) => ({
+      ...prev,
+      duty: prev.duty.filter((d) => d.id !== id),
+      counts: { ...prev.counts, duty: Math.max(0, prev.counts.duty - 1) },
+    }));
+    try {
+      await markDutyNotificationRead(id);
     } catch {
       // Best-effort — the next poll reconciles if this failed.
     }
@@ -134,6 +157,30 @@ const NotificationBell = () => {
           <p className="px-3 py-4 text-xs text-center text-blue-400 dark:text-blue-300">
             {t("noNotifications")}
           </p>
+        )}
+
+        {data.duty.length > 0 && (
+          <div className="mb-1">
+            <p className="px-3 py-1 text-[10px] font-semibold uppercase text-blue-400 dark:text-blue-500">
+              {t("dutyReminders")}
+            </p>
+            {data.duty.map((d) => (
+              <Link
+                key={`duty-${d.id}`}
+                href="/dashboard/list/my-duties"
+                onClick={() => {
+                  dismissDuty(d.id);
+                  setOpen(false);
+                }}
+                className="block px-3 py-2 hover:bg-blue-50 dark:hover:bg-blue-950/60"
+              >
+                <p className="text-xs text-blue-900 dark:text-blue-100">{d.body}</p>
+                <p className="text-[10px] text-blue-400 dark:text-blue-500">
+                  {format.dateTime(new Date(d.sentAt), { hour: "numeric", minute: "numeric" })}
+                </p>
+              </Link>
+            ))}
+          </div>
         )}
 
         {data.messages.length > 0 && (

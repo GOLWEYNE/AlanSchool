@@ -54,6 +54,8 @@ export const routeAccessMap: RouteAccessMap = {
   "/dashboard/list/gradebook(.*)": ["admin", "teacher"],
   "/dashboard/list/behavior-log(.*)": ["admin", "teacher"],
   "/dashboard/list/uniform(.*)": ["admin", "teacher", "parent"],
+  "/dashboard/list/duty-roster(.*)": ["admin"],
+  "/dashboard/list/my-duties(.*)": ["admin", "teacher"],
   "/dashboard/list/hall-pass(.*)": ["admin", "teacher", "student"],
   "/dashboard/list/hall-pass/history(.*)": ["admin", "teacher"],
   "/dashboard/list/hall-pass/settings(.*)": ["admin"],
