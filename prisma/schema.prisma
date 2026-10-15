@@ -537,6 +537,26 @@ model ReportCard {
   @@unique([studentId, term, schoolYear])
 }
 
+// ---- Report card: weekly IELTS / SAT mock test scores ----------------
+// One row per mock test a student sat. `kind` is "IELTS" (score = overall band
+// 0-9 in half steps) or "SAT" (score = total 400-1600). `sections` optionally
+// holds the section scores, e.g. IELTS {"listening":7,"reading":6.5,
+// "writing":6,"speaking":6.5} or SAT {"readingWriting":590,"math":620}.
+// Created on first use by ensureMockTests() (src/lib/mockTests.ts) and also by
+// prisma/migrations/20261015000000_add_mock_test_scores.
+model MockTestScore {
+  id        Int      @id @default(autoincrement())
+  studentId String
+  kind      String
+  score     Float
+  sections  Json?
+  takenAt   DateTime @default(now())
+  note      String?
+  createdAt DateTime @default(now())
+
+  @@index([studentId, takenAt])
+}
+
 // ---- Module 7: Personalized Timetable & Classroom Locator -----------
 // Uses the existing Lesson model (day/startTime/endTime/classId/
 // teacherId) plus the new Lesson.room field added above — no
