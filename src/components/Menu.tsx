@@ -216,6 +216,12 @@ const getMenuItems = (t: Awaited<ReturnType<typeof getTranslations>>, role: stri
           href: "/dashboard/list/report-cards",
           visible: ["admin", "teacher"],
         },
+        {
+          icon: "/result.png",
+          label: t("mockTests"),
+          href: "/dashboard/list/mock-tests",
+          visible: ["admin", "teacher"],
+        },
       ],
     },
     {
