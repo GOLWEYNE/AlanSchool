@@ -7,6 +7,7 @@ import AttendancePulse from "@/components/AttendancePulse";
 import ClassLeaderboard from "@/components/ClassLeaderboard";
 import BigCalendarContainer from "@/components/BigCalendarContainer";
 import ParentChildAttendanceCard from "@/components/ParentChildAttendanceCard";
+import ParentClassVideos from "@/components/ParentClassVideos";
 import ReportCardsPanel from "@/components/ReportCardsPanel";
 import ReportCardBehaviorTimeline from "@/components/reportCard/ReportCardBehaviorTimeline";
 import ProtectedRoute from "@/components/ProtectedRoute";
@@ -150,7 +151,9 @@ const Parentpage = async () => {
 
       <div className="flex gap-4 flex-col xl:flex-row">
         {/* LEFT */}
-        <div className="w-full xl:w-2/3">
+        <div className="w-full xl:w-2/3 flex flex-col gap-4">
+          {/* LIVE CLASS + SHARED RECORDINGS FROM THE CHILDREN'S TEACHERS */}
+          <ParentClassVideos />
           {/* FEATURED VIDEO BROADCAST */}
           <FeaturedVideoPlayer />
         </div>
