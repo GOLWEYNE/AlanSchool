@@ -1212,3 +1212,32 @@ model DutyPreference {
   push   Boolean @default(true)
   email  Boolean @default(false)
 }
+
+// ---- Teacher camera: saved recordings + live broadcast -----------------
+// TeacherRecording: a clip a teacher recorded from the dashboard camera and
+// saved (uploaded to Cloudinary). `sharedWithParents` lets the parents of the
+// teacher's students watch it. TeacherLive: one row per teacher who is
+// currently broadcasting; `lastSeenAt` is a heartbeat so a closed tab stops
+// showing as live after ~a minute. Both are created on first use by
+// ensureTeacherVideo() (src/lib/teacherVideo.ts) and by
+// prisma/migrations/20261020000000_add_teacher_recordings_live.
+model TeacherRecording {
+  id               Int      @id @default(autoincrement())
+  teacherId        String
+  title            String
+  url              String
+  publicId         String
+  durationSec      Int      @default(0)
+  bytes            Int      @default(0)
+  sharedWithParents Boolean @default(false)
+  createdAt        DateTime @default(now())
+
+  @@index([teacherId, createdAt])
+}
+
+model TeacherLive {
+  teacherId String   @id
+  title     String?
+  startedAt DateTime @default(now())
+  lastSeenAt DateTime @default(now())
+}
