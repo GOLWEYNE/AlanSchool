@@ -38,6 +38,7 @@
     "settings": "Settings",
     "logout": "Logout",
     "reportCards": "Report Cards",
+    "mockTests": "Mock Tests (IELTS / SAT)",
     "lostFound": "Lost & Found",
     "featuredVideo": "Featured Video",
     "behaviorLog": "Behavior Log",
@@ -2926,5 +2927,49 @@
     "prefPush": "Browser / phone push",
     "prefEmail": "Email",
     "prefHint": "For push, also tap the bell button to allow notifications in this browser. On a phone, install the app first (Share → Add to Home Screen)."
+  },
+  "MockTests": {
+    "title": "Mock Tests (IELTS / SAT)",
+    "subtitle": "Enter weekly IELTS and SAT mock test scores. They appear on each student's report card.",
+    "stats": {
+      "students": "Students",
+      "entered": "Scored on this date"
+    },
+    "class": "Class",
+    "test": "Test",
+    "date": "Date",
+    "student": "Student",
+    "score": "Score",
+    "overall": "Overall band",
+    "total": "Total",
+    "sections": {
+      "listening": "Listening",
+      "reading": "Reading",
+      "writing": "Writing",
+      "speaking": "Speaking",
+      "readingWriting": "Reading & Writing",
+      "math": "Math"
+    },
+    "hintIelts": "Bands from 0 to 9 in half steps. Leave Overall empty to use the average of the four sections.",
+    "hintSat": "Sections 200-800 each; total 400-1600. Leave Total empty to use Reading & Writing + Math.",
+    "save": "Save scores",
+    "saving": "Saving...",
+    "saved": "Saved {count} scores",
+    "deleted": "Score deleted",
+    "filled": "{count} students filled in",
+    "recentTitle": "Recent scores",
+    "noRecent": "No scores entered yet.",
+    "noStudents": "No students in this class.",
+    "delete": "Delete",
+    "confirmDelete": "Delete this score?",
+    "errors": {
+      "notAllowed": "You can only enter scores for students in your own classes.",
+      "invalid": "Something in the form is not valid.",
+      "invalidSection": "A section score is out of range.",
+      "invalidBand": "IELTS bands must be 0-9 in half steps.",
+      "invalidTotal": "SAT totals must be a whole number from 400 to 1600.",
+      "nothingToSave": "Enter at least one score.",
+      "unavailable": "Could not save right now. Please try again."
+    }
   }
 }
