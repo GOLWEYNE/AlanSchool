@@ -140,6 +140,7 @@ model Class {
 
   // Classroom noise monitor (one row per class per minute).
   noiseMinutes      NoiseMinute[]
+  noiseDevice       NoiseDevice?
 }
 
 model Subject {
@@ -1269,4 +1270,13 @@ model NoiseSetting {
   id           Int @id @default(1)
   limitDb      Int @default(65)
   yellowMargin Int @default(10)
+}
+
+// Which device is currently listening for a class (one device per class at a time,
+// so a teacher's phone and the classroom board cannot both report the same room).
+model NoiseDevice {
+  classId    Int      @id
+  class      Class    @relation(fields: [classId], references: [id], onDelete: Cascade)
+  deviceId   String
+  lastSeenAt DateTime
 }

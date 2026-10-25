@@ -1,8 +1,13 @@
 import { NextResponse } from "next/server";
 import { requireApiRole } from "@/lib/auth";
-import { getNoiseSettings, recordNoise, REPORT_EVERY_SECONDS } from "@/lib/noise";
-import { teacherCanAccessClass } from "@/lib/teacherScope";
-import prisma from "@/lib/prisma";
+import {
+  canUseClass,
+  claimClass,
+  getNoiseSettings,
+  isValidDeviceId,
+  recordNoise,
+  REPORT_EVERY_SECONDS,
+} from "@/lib/noise";
 
 export const dynamic = "force-dynamic";
 
@@ -42,13 +47,17 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: false, error: "bad_values" }, { status: 400 });
   }
 
-  if (access.role === "teacher") {
-    if (!(await teacherCanAccessClass(access.userId, classId))) {
-      return NextResponse.json({ ok: false, error: "not_your_class" }, { status: 403 });
-    }
-  } else {
-    const exists = await prisma.class.findUnique({ where: { id: classId }, select: { id: true } });
-    if (!exists) return NextResponse.json({ ok: false, error: "no_class" }, { status: 404 });
+  if (!isValidDeviceId(body.deviceId)) {
+    return NextResponse.json({ ok: false, error: "bad_values" }, { status: 400 });
+  }
+
+  const allowed = await canUseClass(access.role, access.userId, classId);
+  if (allowed === "forbidden") return NextResponse.json({ ok: false, error: "not_your_class" }, { status: 403 });
+  if (allowed === "missing") return NextResponse.json({ ok: false, error: "no_class" }, { status: 404 });
+
+  // Only the device that holds the class may report for it (this also keeps its claim fresh).
+  if (!(await claimClass(classId, body.deviceId, false))) {
+    return NextResponse.json({ ok: false, error: "in_use" }, { status: 409 });
   }
 
   const saved = await recordNoise({ classId, seconds, avgDb, maxDb, overSeconds, yellowSeconds });
