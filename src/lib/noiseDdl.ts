@@ -21,6 +21,13 @@ CONSTRAINT "NoiseMinute_classId_fkey" FOREIGN KEY ("classId") REFERENCES "Class"
 "yellowMargin" INTEGER NOT NULL DEFAULT 10,
 CONSTRAINT "NoiseSetting_pkey" PRIMARY KEY ("id")
 )`,
+  `CREATE TABLE IF NOT EXISTS "NoiseDevice" (
+"classId" INTEGER NOT NULL,
+"deviceId" TEXT NOT NULL,
+"lastSeenAt" TIMESTAMP(3) NOT NULL,
+CONSTRAINT "NoiseDevice_pkey" PRIMARY KEY ("classId"),
+CONSTRAINT "NoiseDevice_classId_fkey" FOREIGN KEY ("classId") REFERENCES "Class"("id") ON DELETE CASCADE ON UPDATE CASCADE
+)`,
   `CREATE INDEX IF NOT EXISTS "NoiseMinute_minute_idx" ON "NoiseMinute"("minute")`,
   `CREATE UNIQUE INDEX IF NOT EXISTS "NoiseMinute_classId_minute_key" ON "NoiseMinute"("classId", "minute")`,
 ];

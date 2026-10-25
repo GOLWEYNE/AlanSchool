@@ -19,6 +19,14 @@ const MAX_PENDING_SECONDS = REPORT_EVERY_SECONDS * 3;
 const KEY_CLASS = "noise.classId";
 const KEY_OFFSET = "noise.offsetDb";
 const KEY_SOUND = "noise.sound";
+const KEY_DEVICE = "noise.deviceId";
+
+// A random id that stays the same on this browser, so the server can tell devices apart.
+const makeId = () => {
+  const c = typeof crypto !== "undefined" ? crypto : undefined;
+  if (c?.randomUUID) return c.randomUUID().replace(/-/g, "");
+  return Array.from({ length: 4 }, () => Math.random().toString(36).slice(2, 10)).join("");
+};
 
 const readStore = (key: string): string | null => {
   try {
@@ -73,6 +81,7 @@ export default function ClassroomMonitor({
   const [online, setOnline] = useState(true);
   const [showSettings, setShowSettings] = useState(false);
   const [awake, setAwake] = useState(false);
+  const [busy, setBusy] = useState(false); // another device already listens for this class
 
   // Everything the audio loop needs lives in refs so the interval never goes stale.
   const settingsRef = useRef(settings);
@@ -93,6 +102,9 @@ export default function ClassroomMonitor({
   const overRunRef = useRef(0);
   const lastChimeRef = useRef(0);
   const smoothRef = useRef<number | null>(null);
+  const runningRef = useRef(false);
+  const deviceIdRef = useRef<string>("");
+  const stopRef = useRef<((reason?: "taken") => Promise<void>) | null>(null);
 
   // Restore what this board remembered last time.
   useEffect(() => {
@@ -131,6 +143,7 @@ export default function ClassroomMonitor({
     const payload = {
       classId: id,
       seconds: b.seconds,
+      deviceId: deviceIdRef.current,
       avgDb: Math.round((b.sumDb / b.seconds) * 10) / 10,
       maxDb: Math.round(b.maxDb * 10) / 10,
       overSeconds: b.over,
@@ -142,6 +155,11 @@ export default function ClassroomMonitor({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
+      if (res.status === 409) {
+        // Another device took this class over: stop quietly instead of double counting.
+        if (runningRef.current) void stopRef.current?.("taken");
+        return;
+      }
       if (!res.ok) throw new Error(String(res.status));
       const body = (await res.json()) as NoiseReportResponse;
       // Only what was sent is cleared; seconds measured while the request ran stay queued.
@@ -182,7 +200,8 @@ export default function ClassroomMonitor({
     }
   }, []);
 
-  const stop = useCallback(async () => {
+  const stop = useCallback(async (reason?: "taken") => {
+    runningRef.current = false;
     if (timerRef.current) clearInterval(timerRef.current);
     timerRef.current = null;
     streamRef.current?.getTracks().forEach((track) => track.stop());
@@ -193,15 +212,38 @@ export default function ClassroomMonitor({
     releaseWake();
     setRunning(false);
     if (document.fullscreenElement) void document.exitFullscreen().catch(() => undefined);
-    await flush();
+    if (reason === "taken") {
+      setError(t("board.takenOver"));
+    } else {
+      await flush();
+      const id = classRef.current;
+      if (id !== null) {
+        // Let go of the class so another device can use it straight away.
+        void fetch("/api/noise/claim", {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ classId: id, deviceId: deviceIdRef.current }),
+        }).catch(() => undefined);
+      }
+    }
     batchRef.current = emptyBatch();
     smoothRef.current = null;
     overRunRef.current = 0;
-  }, [flush, releaseWake]);
+  }, [flush, releaseWake, t]);
+  stopRef.current = stop;
 
-  const start = useCallback(async () => {
+  const start = useCallback(async (takeover = false) => {
     setError(null);
+    setBusy(false);
     if (classRef.current === null) return;
+    if (!deviceIdRef.current) {
+      let id = readStore(KEY_DEVICE);
+      if (!id || !/^[A-Za-z0-9_-]{8,64}$/.test(id)) {
+        id = makeId();
+        writeStore(KEY_DEVICE, id);
+      }
+      deviceIdRef.current = id;
+    }
     if (!navigator.mediaDevices?.getUserMedia) {
       setError(t("board.micUnsupported"));
       return;
@@ -226,6 +268,26 @@ export default function ClassroomMonitor({
     if (!AudioCtx) {
       stream.getTracks().forEach((track) => track.stop());
       setError(t("board.micUnsupported"));
+      return;
+    }
+
+    // Only one device may listen for a class at a time (otherwise the same room is counted twice).
+    try {
+      const res = await fetch("/api/noise/claim", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ classId: classRef.current, deviceId: deviceIdRef.current, takeover }),
+      });
+      if (res.status === 409) {
+        stream.getTracks().forEach((track) => track.stop());
+        setBusy(true);
+        setError(t("board.inUse"));
+        return;
+      }
+      if (!res.ok) throw new Error(String(res.status));
+    } catch {
+      stream.getTracks().forEach((track) => track.stop());
+      setError(t("board.sendFailed"));
       return;
     }
 
@@ -291,6 +353,7 @@ export default function ClassroomMonitor({
       if (b.seconds >= REPORT_EVERY_SECONDS) void flush();
     }, 100);
 
+    runningRef.current = true;
     setRunning(true);
     void requestWake();
     try {
@@ -377,7 +440,7 @@ export default function ClassroomMonitor({
 
         <button
           type="button"
-          onClick={() => void start()}
+          onClick={() => void start(false)}
           disabled={running || classId === null}
           className="rounded-xl bg-emerald-600 px-6 py-4 text-lg font-bold text-white shadow hover:bg-emerald-700 disabled:opacity-60"
         >
@@ -388,6 +451,15 @@ export default function ClassroomMonitor({
           <p role="alert" className="rounded-xl border border-rose-300 bg-rose-50 p-3 text-sm text-rose-700 dark:border-rose-800 dark:bg-rose-900/30 dark:text-rose-300">
             {error}
           </p>
+        )}
+        {busy && (
+          <button
+            type="button"
+            onClick={() => void start(true)}
+            className="rounded-xl border border-amber-400 bg-amber-50 px-4 py-3 text-sm font-semibold text-amber-900 hover:bg-amber-100"
+          >
+            {t("board.takeOver")}
+          </button>
         )}
         <p className="text-xs text-gray-500 dark:text-slate-400">{t("board.startHint")}</p>
       </div>

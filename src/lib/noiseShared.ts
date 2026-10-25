@@ -9,6 +9,8 @@ export const MAX_YELLOW_MARGIN = 25;
 
 // A board reports every REPORT_EVERY_SECONDS seconds.
 export const REPORT_EVERY_SECONDS = 10;
+// A device that has not reported for this long loses its claim on the class.
+export const DEVICE_TIMEOUT_MS = 40_000;
 // A class counts as "live" while its newest minute is at most this old.
 export const LIVE_WINDOW_MS = 3 * 60_000;
 // The day strip is drawn between these school hours in cells of CELL_MINUTES.
@@ -61,6 +63,9 @@ export type NoiseReport = {
 };
 
 export type NoiseReportResponse = { ok: boolean; error?: string; settings?: NoiseSettings };
+
+export const isValidDeviceId = (v: unknown): v is string =>
+  typeof v === "string" && /^[A-Za-z0-9_-]{8,64}$/.test(v);
 
 export const isValidYmd = (v: string | undefined | null): v is string =>
   !!v && /^\d{4}-\d{2}-\d{2}$/.test(v) && !Number.isNaN(Date.parse(v + "T00:00:00Z"));

@@ -3000,7 +3000,10 @@
       "sending": "Sent to the office",
       "sendFailed": "Cannot reach the school server - retrying",
       "keepAwake": "Keeping the screen on",
-      "db": "dB"
+      "db": "dB",
+      "inUse": "This class is already being listened to on another device. Only one device can listen for a class at a time.",
+      "takeOver": "Use this device instead",
+      "takenOver": "Another device took over this class, so this one stopped listening."
     }
   }
 }

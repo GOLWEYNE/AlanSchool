@@ -1,9 +1,11 @@
 import prisma from "@/lib/prisma";
 import { NOISE_DDL } from "@/lib/noiseDdl";
+import { teacherCanAccessClass } from "@/lib/teacherScope";
 import { schoolDayRange, toWallClock } from "@/lib/schoolTime";
 import {
   CELL_MINUTES,
   DEFAULT_LIMIT_DB,
+  DEVICE_TIMEOUT_MS,
   DEFAULT_YELLOW_MARGIN,
   LIVE_WINDOW_MS,
   STRIP_END_HOUR,
@@ -31,6 +33,7 @@ let pending: Promise<boolean> | null = null;
 async function probeTables() {
   await prisma.noiseMinute.count();
   await prisma.noiseSetting.count();
+  await prisma.noiseDevice.count();
 }
 
 async function prepareTables(): Promise<boolean> {
@@ -75,6 +78,40 @@ export async function getNoiseSettings(): Promise<NoiseSettings> {
     limitDb: row?.limitDb ?? DEFAULT_LIMIT_DB,
     yellowMargin: row?.yellowMargin ?? DEFAULT_YELLOW_MARGIN,
   };
+}
+
+// Teachers may only listen for their own classes; admins for any class.
+export async function canUseClass(role: string, userId: string, classId: number): Promise<"ok" | "forbidden" | "missing"> {
+  if (role === "teacher") return (await teacherCanAccessClass(userId, classId)) ? "ok" : "forbidden";
+  const exists = await prisma.class.findUnique({ where: { id: classId }, select: { id: true } });
+  return exists ? "ok" : "missing";
+}
+
+// ---------------------------------------------------------------------------
+// One listening device per class. A device claims the class when it starts and
+// refreshes the claim with every report; another device is refused until the claim
+// is released, goes quiet for DEVICE_TIMEOUT_MS, or is taken over on purpose.
+// Returns true when this device now holds (or refreshed) the claim.
+// ---------------------------------------------------------------------------
+export async function claimClass(classId: number, deviceId: string, takeover: boolean): Promise<boolean> {
+  if (!(await ensureNoise())) return false;
+  const now = new Date();
+  const stale = new Date(now.getTime() - DEVICE_TIMEOUT_MS);
+  const changed = await prisma.$executeRaw`
+    INSERT INTO "NoiseDevice" ("classId", "deviceId", "lastSeenAt")
+    VALUES (${classId}, ${deviceId}, ${now})
+    ON CONFLICT ("classId") DO UPDATE SET
+      "deviceId" = EXCLUDED."deviceId",
+      "lastSeenAt" = EXCLUDED."lastSeenAt"
+    WHERE "NoiseDevice"."deviceId" = EXCLUDED."deviceId"
+       OR "NoiseDevice"."lastSeenAt" < ${stale}
+       OR ${takeover}`;
+  return changed > 0;
+}
+
+export async function releaseClass(classId: number, deviceId: string): Promise<void> {
+  if (!(await ensureNoise())) return;
+  await prisma.$executeRaw`DELETE FROM "NoiseDevice" WHERE "classId" = ${classId} AND "deviceId" = ${deviceId}`;
 }
 
 // ---------------------------------------------------------------------------
