@@ -137,6 +137,9 @@ model Class {
 
   // Digital hall pass (snapshot of the student's class when the pass was issued).
   hallPasses        HallPass[]
+
+  // Classroom noise monitor (one row per class per minute).
+  noiseMinutes      NoiseMinute[]
 }
 
 model Subject {
@@ -1240,4 +1243,30 @@ model TeacherLive {
   title     String?
   startedAt DateTime @default(now())
   lastSeenAt DateTime @default(now())
+}
+
+// ---------------------------------------------------------------------------
+// Classroom noise monitor. The classroom board measures loudness in the browser
+// and sends only numbers (never audio): one row per class per minute.
+// ---------------------------------------------------------------------------
+model NoiseMinute {
+  id            Int      @id @default(autoincrement())
+  classId       Int
+  class         Class    @relation(fields: [classId], references: [id], onDelete: Cascade)
+  minute        DateTime // start of the minute (UTC instant)
+  seconds       Int      // seconds of sound measured in this minute
+  sumDb         Float    // sum of (average dB x seconds); divide by seconds for the mean
+  maxDb         Float
+  overSeconds   Int      // seconds above the limit
+  yellowSeconds Int      // seconds in the warning band just under the limit
+
+  @@unique([classId, minute])
+  @@index([minute])
+}
+
+// Single settings row (id = 1) shared by every classroom board.
+model NoiseSetting {
+  id           Int @id @default(1)
+  limitDb      Int @default(65)
+  yellowMargin Int @default(10)
 }

@@ -199,6 +199,18 @@ const getMenuItems = (t: Awaited<ReturnType<typeof getTranslations>>, role: stri
           visible: ["admin", "teacher", "student"],
         },
         {
+          icon: "/announcement.png",
+          label: t("noiseMonitor"),
+          href: "/dashboard/list/noise-monitor",
+          visible: ["admin"],
+        },
+        {
+          icon: "/announcement.png",
+          label: t("noiseBoard"),
+          href: "/dashboard/list/noise-monitor/board",
+          visible: ["teacher"],
+        },
+        {
           icon: "/calendar.png",
           label: t("myDuties"),
           href: "/dashboard/list/my-duties",

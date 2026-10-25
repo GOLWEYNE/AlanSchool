@@ -56,7 +56,9 @@
     "teacherProfiles": "Teacher profiles",
     "hallPass": "Hall Pass",
     "myDuties": "My Duties",
-    "dutyRoster": "Duty Roster"
+    "dutyRoster": "Duty Roster",
+    "noiseMonitor": "Noise monitor",
+    "noiseBoard": "Classroom noise screen"
   },
   "Navbar": {
     "searchPlaceholder": "Search...",
@@ -2926,5 +2928,79 @@
     "prefPush": "Browser / phone push",
     "prefEmail": "Email",
     "prefHint": "For push, also tap the bell button to allow notifications in this browser. On a phone, install the app first (Share → Add to Home Screen)."
+  },
+  "Noise": {
+    "title": "Classroom Noise",
+    "subtitleAdmin": "Which classes are noisy today. Every classroom board measures loudness in the browser and sends only numbers, never audio.",
+    "subtitleBoard": "Put this screen on the classroom board. It turns green, yellow or red with the noise in the room.",
+    "nav": {
+      "overview": "Noisy today",
+      "board": "Classroom board"
+    },
+    "admin": {
+      "date": "Day",
+      "live": "Live",
+      "offline": "Offline - retrying",
+      "classesMonitored": "Classes monitored",
+      "overNow": "Over the limit right now",
+      "noisiestClass": "Noisiest class",
+      "none": "none",
+      "rank": "#",
+      "class": "Class",
+      "status": "Status",
+      "avg": "Average",
+      "peak": "Peak",
+      "timeOver": "Time over limit",
+      "measured": "Measured",
+      "timeline": "Day timeline",
+      "timelineHint": "Each block is half an hour. Red means a lot of it was over the limit; grey means nothing was measured.",
+      "statusLive": "Listening",
+      "statusEarlier": "Earlier today",
+      "statusNone": "No board connected",
+      "empty": "No readings for this day yet. Open the classroom board in a class to start.",
+      "limitTitle": "School-wide limit",
+      "limitHint": "Every classroom board uses this. Red above the limit, yellow in the last few dB before it.",
+      "limitLabel": "Limit (dB)",
+      "marginLabel": "Yellow margin (dB)",
+      "save": "Save",
+      "saved": "Saved",
+      "openBoard": "Open the classroom board",
+      "errors": {
+        "forbidden": "Only admins can change this.",
+        "limit": "Limit must be between 40 and 110 dB.",
+        "margin": "Margin must be between 3 and 25 dB.",
+        "unavailable": "Could not save right now.",
+        "generic": "Could not save."
+      }
+    },
+    "board": {
+      "chooseClass": "Which class is in this room?",
+      "noClasses": "You have no classes yet, so there is nothing to monitor.",
+      "start": "Start listening",
+      "stop": "Stop",
+      "startHint": "Your browser will ask to use the microphone. Allow it. Only a loudness number leaves this screen - no sound is recorded or sent.",
+      "micDenied": "The microphone is blocked. Allow it for this site in the browser address bar, then try again.",
+      "micMissing": "No microphone was found on this device.",
+      "micUnsupported": "This browser cannot use the microphone here. Open the site in a current Chrome or Edge.",
+      "settings": "Settings",
+      "calibration": "Calibration",
+      "calibrationHint": "Hold a phone sound-meter app next to the board. If it says 60 and this screen says 55, raise the offset by 5.",
+      "offset": "Offset (dB)",
+      "limit": "Limit",
+      "sound": "Chime when too loud",
+      "soundOn": "On",
+      "soundOff": "Off",
+      "exit": "Close",
+      "perfect": "PERFECT",
+      "perfectSub": "Lovely and calm",
+      "shush": "TSHSHSHSH!",
+      "shushSub": "SHUT UP",
+      "loud": "TOO LOUD!",
+      "loudSub": "Quiet please",
+      "sending": "Sent to the office",
+      "sendFailed": "Cannot reach the school server - retrying",
+      "keepAwake": "Keeping the screen on",
+      "db": "dB"
+    }
   }
 }
