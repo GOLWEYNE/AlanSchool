@@ -8,13 +8,14 @@ import { CurriculumObjective, Grade, Prisma, Subject } from "@/generated/prisma/
 import Image from "next/image";
 import { requireRole } from "@/lib/auth";
 import { getTranslations } from "next-intl/server";
+import { getTeacherSubjectIds } from "@/lib/teacherSubjects";
 
 type ObjectiveList = CurriculumObjective & { subject: Subject; grade: Grade | null };
 
 // The curriculum's learning-objective bank (e.g. the Grade 1-2 science
-// curriculum's objectives) that teachers tag Lessons/Exams against. Admin-
-// managed, mirroring the Subjects list page exactly - only the columns and
-// underlying Prisma model differ.
+// curriculum's objectives) that teachers tag Lessons/Exams against. Admins
+// manage the whole bank; teachers see all of it and can add/edit objectives
+// for the subjects they teach (deleting stays admin-only).
 const ObjectiveListPage = async ({
   searchParams,
 }: {
@@ -22,9 +23,16 @@ const ObjectiveListPage = async ({
 }) => {
   // This page had no role check of its own before - it relied entirely on
   // middleware.ts's redirect, with no second layer if that ever missed it.
-  // routeAccessMap restricts this route to admin only.
-  const { role } = requireRole(routeAccessMap["/dashboard/list/objectives(.*)"]);
+  // routeAccessMap restricts this route to admins and teachers.
+  const { userId, role } = requireRole(routeAccessMap["/dashboard/list/objectives(.*)"]);
   const t = await getTranslations("List.objectives");
+
+  // The subjects a teacher may add/edit objectives for (admins: all of them).
+  const teacherSubjectIds: number[] =
+    role === "teacher" && userId ? await getTeacherSubjectIds(userId) : [];
+  const canCreate = role === "admin" || teacherSubjectIds.length > 0;
+  const canEdit = (subjectId: number) =>
+    role === "admin" || teacherSubjectIds.includes(subjectId);
 
   const columns = [
     {
@@ -69,12 +77,10 @@ const ObjectiveListPage = async ({
       <td className="hidden lg:table-cell">{item.strand ?? "-"}</td>
       <td>
         <div className="flex items-center gap-2">
-          {role === "admin" && (
-            <>
-              <FormContainer table="objective" type="update" data={item} />
-              <FormContainer table="objective" type="delete" id={item.id} />
-            </>
+          {canEdit(item.subjectId) && (
+            <FormContainer table="objective" type="update" data={item} />
           )}
+          {role === "admin" && <FormContainer table="objective" type="delete" id={item.id} />}
         </div>
       </td>
     </tr>
@@ -133,7 +139,7 @@ const ObjectiveListPage = async ({
             <button className="circle-icon-btn">
               <Image src="/sort.png" alt="" width={14} height={14} />
             </button>
-            {role === "admin" && <FormContainer table="objective" type="create" />}
+            {canCreate && <FormContainer table="objective" type="create" />}
           </div>
         </div>
       </div>

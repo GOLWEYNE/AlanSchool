@@ -2,6 +2,7 @@ import prisma from "@/lib/prisma";
 import FormModal from "./FormModal";
 import { auth, currentUser } from "@clerk/nextjs/server";
 import { getUserRole } from "@/lib/auth";
+import { getTeacherSubjectIds } from "@/lib/teacherSubjects";
 
 export type FormContainerProps = {
   table:
@@ -48,7 +49,9 @@ const FormContainer = async ({ table, type, data, id }: FormContainerProps) => {
     // logs, and lesson scheduling for their own classes — never subjects,
     // classes, or user accounts (those stay admin-only).
     const teacherFullCrudTables = ["exam", "assignment", "result", "behaviorLog"];
-    const teacherCreateUpdateOnlyTables = ["lesson"];
+    // Curriculum objectives: teachers may add/edit them for the subjects they
+    // teach (enforced again in the server actions); deleting stays admin-only.
+    const teacherCreateUpdateOnlyTables = ["lesson", "objective"];
 
     // Class supervisors may also delete lessons from the class they supervise
     // (deleteLesson re-checks which class on the server).
@@ -104,7 +107,12 @@ const FormContainer = async ({ table, type, data, id }: FormContainerProps) => {
         };
         break;
       case "objective": {
+        // A teacher can only pick from the subjects they teach.
         const objectiveSubjects = await prisma.subject.findMany({
+          where:
+            role === "teacher"
+              ? { id: { in: await getTeacherSubjectIds(currentUserId!) } }
+              : {},
           select: { id: true, name: true },
         });
         const objectiveGrades = await prisma.grade.findMany({

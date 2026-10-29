@@ -32,6 +32,7 @@ import { setClubSupervisors } from "./clubSupervision";
 import { deleteStudentCascade, deleteTeacherCascade } from "./purge";
 import { getTranslations } from "next-intl/server";
 import { fromWallClock, parseWallClockString, schoolMinutesOfDay } from "./schoolTime";
+import { getTeacherSubjectIds } from "./teacherSubjects";
 
 // Server-action messages surface in toasts, so they follow the NEXT_LOCALE
 // cookie the same way page content does.
@@ -146,14 +147,22 @@ export const deleteSubject = async (
 };
 
 // A subject's curriculum-objective bank (e.g. the Grade 1-2 science
-// curriculum's objectives) is admin-managed, same as the subjects list
-// itself - teachers tag lessons/exams against existing objectives, but
-// don't add to or edit the master list.
+// curriculum's objectives). Admins manage every subject's objectives; a
+// teacher may add and edit objectives only for the subjects they teach, and
+// only admins may delete one (deleting un-tags it from every lesson and exam
+// that uses it, across all teachers).
+const canManageObjectivesFor = async (subjectId: number) => {
+  if (isAdmin()) return true;
+  const { userId } = auth();
+  if (!userId || getCurrentRole() !== "teacher") return false;
+  return (await getTeacherSubjectIds(userId)).includes(subjectId);
+};
+
 export const createCurriculumObjective = async (
   currentState: CurrentState,
   data: CurriculumObjectiveSchema
 ) => {
-  if (!isAdmin()) return rejectUnauthorized();
+  if (!(await canManageObjectivesFor(data.subjectId))) return rejectUnauthorized();
   try {
     await prisma.curriculumObjective.create({
       data: {
@@ -177,8 +186,22 @@ export const updateCurriculumObjective = async (
   currentState: CurrentState,
   data: CurriculumObjectiveSchema
 ) => {
-  if (!isAdmin()) return rejectUnauthorized();
+  if (!isAdminOrTeacher()) return rejectUnauthorized();
   if (!data.id) return { success: false, error: true };
+  // An edit must be allowed for the objective's current subject AND for the
+  // subject it is being moved to, so a teacher can't hand an objective to a
+  // subject they don't teach (or take one over from a subject they don't).
+  const existing = await prisma.curriculumObjective.findUnique({
+    where: { id: data.id },
+    select: { subjectId: true },
+  });
+  if (!existing) return { success: false, error: true };
+  if (
+    !(await canManageObjectivesFor(existing.subjectId)) ||
+    !(await canManageObjectivesFor(data.subjectId))
+  ) {
+    return rejectUnauthorized();
+  }
   try {
     await prisma.curriculumObjective.update({
       where: { id: data.id },
