@@ -431,7 +431,28 @@
       "covered": "Covered",
       "gap": "Not yet covered",
       "lessonBadge": "Lesson",
-      "examBadge": "Exam"
+      "examBadge": "Exam",
+      "kpa": {
+        "targetLabel": "KPA target %",
+        "title": "KPA: Curriculum Delivery",
+        "subtitle": "Share of curriculum objectives covered by each teacher's tagged lessons and exams. Target: {target}%.",
+        "summary": "{meets} of {total} teachers meet the target",
+        "empty": "No lessons found to score yet.",
+        "howCalculated": "Calculated per teacher across every class and subject they teach, counting only objectives that apply to that class's grade. Classes and subjects with no objectives defined yet are not scored.",
+        "unscored": "{count} not scored - no objectives defined",
+        "columns": {
+          "teacher": "Teacher",
+          "coverage": "Coverage",
+          "objectives": "Objectives covered",
+          "lessonsTagged": "Lessons tagged",
+          "rating": "Rating"
+        },
+        "rating": {
+          "meets": "Meets target",
+          "below": "Below target",
+          "noData": "No data"
+        }
+      }
     },
     "events": {
       "title": "Events",
