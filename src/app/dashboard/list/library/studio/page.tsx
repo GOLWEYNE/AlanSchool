@@ -3,7 +3,7 @@ import { getTranslations } from "next-intl/server";
 import prisma from "@/lib/prisma";
 import { requireRole } from "@/lib/auth";
 import { routeAccessMap } from "@/lib/settings";
-import { getReadingOverview } from "@/lib/library";
+import { canUseStudio, getReadingOverview } from "@/lib/library";
 import { getPickerData, loadAnnouncements } from "@/lib/libraryAnnouncements";
 import { schoolMonthKey } from "@/lib/libraryShared";
 import {
@@ -21,11 +21,11 @@ import { Empty, Section } from "@/components/library/LibraryUi";
 
 type TFn = (key: string, values?: Record<string, string | number>) => string;
 
-// Library Studio: the admin-only place to write announcements, pick students,
+// Library Studio: the place (admins and the librarian teacher) to write announcements, pick students,
 // grades and classes, and manage the library's photo / video / audio spaces.
 const LibraryStudio = async () => {
-  const { role } = requireRole(routeAccessMap["/dashboard/list/library/studio(.*)"]);
-  if (role !== "admin") redirect("/dashboard/list/library");
+  const { userId, role } = requireRole(routeAccessMap["/dashboard/list/library/studio(.*)"]);
+  if (!(await canUseStudio(userId, role))) redirect("/dashboard/list/library");
 
   const t = (await getTranslations("Library")) as unknown as TFn;
 
