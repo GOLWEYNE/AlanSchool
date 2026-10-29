@@ -2,7 +2,7 @@ import { getFormatter, getTranslations } from "next-intl/server";
 import prisma from "@/lib/prisma";
 import { requireRole } from "@/lib/auth";
 import { routeAccessMap } from "@/lib/settings";
-import { studentsByIds } from "@/lib/library";
+import { keepLibrarianInStudio, studentsByIds } from "@/lib/library";
 import { askForBook, submitReview } from "@/lib/libraryActions";
 import { ActionForm, FIELD } from "@/components/library/LibraryClient";
 import { Avatar, Empty, Section, Stars } from "@/components/library/LibraryUi";
@@ -11,6 +11,7 @@ type TFn = (key: string, values?: Record<string, string | number>) => string;
 
 const LibraryCommunity = async () => {
   const { userId, role } = requireRole(routeAccessMap["/dashboard/list/library(.*)"]);
+  await keepLibrarianInStudio(userId, role);
   const t = (await getTranslations("Library")) as unknown as TFn;
   const format = await getFormatter();
   const isStudent = role === "student";

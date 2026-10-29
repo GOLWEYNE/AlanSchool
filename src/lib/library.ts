@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation";
 import prisma from "@/lib/prisma";
 import { LIBRARY_DDL } from "@/lib/libraryDdl";
 import { schoolMonthKey, schoolMonthStart } from "@/lib/libraryShared";
@@ -41,15 +42,37 @@ export async function ensureLibrary(): Promise<boolean> {
   return ok;
 }
 
-// Admins always manage the library; so does the teacher chosen as librarian.
-export async function canManageLibrary(userId: string | null | undefined, role: string): Promise<boolean> {
-  if (role === "admin") return true;
+// The full librarian desk (lending, returns, review moderation, book requests,
+// the collection and settings) is for admins only. The teacher chosen as
+// librarian gets Library Studio instead (see canUseStudio).
+export async function canManageLibrary(_userId: string | null | undefined, role: string): Promise<boolean> {
+  return role === "admin";
+}
+
+// True for the teacher an admin picked as the school librarian.
+export async function isLibrarianTeacher(userId: string | null | undefined, role: string): Promise<boolean> {
   if (role !== "teacher" || !userId) return false;
-  const settings = await prisma.librarySettings.findUnique({
-    where: { id: 1 },
-    select: { librarianTeacherId: true },
-  });
-  return settings?.librarianTeacherId === userId;
+  try {
+    const settings = await prisma.librarySettings.findUnique({
+      where: { id: 1 },
+      select: { librarianTeacherId: true },
+    });
+    return settings?.librarianTeacherId === userId;
+  } catch {
+    return false;
+  }
+}
+
+// Library Studio (write announcements, upload photos / video / audio) is open to
+// admins and to the teacher chosen as librarian.
+export async function canUseStudio(userId: string | null | undefined, role: string): Promise<boolean> {
+  return role === "admin" || (await isLibrarianTeacher(userId, role));
+}
+
+// The librarian teacher only works in Library Studio: every other library page
+// sends them straight there.
+export async function keepLibrarianInStudio(userId: string | null | undefined, role: string): Promise<void> {
+  if (await isLibrarianTeacher(userId, role)) redirect("/dashboard/list/library/studio");
 }
 
 export type PersonLite = {

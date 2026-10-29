@@ -3,6 +3,7 @@ import { getTranslations } from "next-intl/server";
 import prisma from "@/lib/prisma";
 import { requireRole } from "@/lib/auth";
 import { routeAccessMap } from "@/lib/settings";
+import { keepLibrarianInStudio } from "@/lib/library";
 import { BOOK_CATEGORIES, CATEGORY_EMOJI, type BookCategory } from "@/lib/libraryShared";
 import { BookCover, CARD, Empty, Stars } from "@/components/library/LibraryUi";
 import { FIELD, BTN } from "@/components/library/LibraryClient";
@@ -12,7 +13,8 @@ type SP = { [key: string]: string | undefined };
 const BASE = "/dashboard/list/library";
 
 const LibraryBooks = async ({ searchParams }: { searchParams: Promise<SP> | SP }) => {
-  requireRole(routeAccessMap["/dashboard/list/library(.*)"]);
+  const { userId, role } = requireRole(routeAccessMap["/dashboard/list/library(.*)"]);
+  await keepLibrarianInStudio(userId, role);
   const t = (await getTranslations("Library")) as unknown as TFn;
   const sp = await Promise.resolve(searchParams);
   const q = (sp.q ?? "").trim().slice(0, 100);

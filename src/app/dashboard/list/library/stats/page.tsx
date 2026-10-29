@@ -2,7 +2,7 @@ import { getTranslations } from "next-intl/server";
 import prisma from "@/lib/prisma";
 import { requireRole } from "@/lib/auth";
 import { routeAccessMap } from "@/lib/settings";
-import { getReadingOverview } from "@/lib/library";
+import { getReadingOverview, keepLibrarianInStudio } from "@/lib/library";
 import { schoolMonthStart } from "@/lib/libraryShared";
 import LibraryChart from "@/components/library/LibraryChart";
 import { Avatar, Empty, Section, StatTile } from "@/components/library/LibraryUi";
@@ -10,7 +10,8 @@ import { Avatar, Empty, Section, StatTile } from "@/components/library/LibraryUi
 type TFn = (key: string, values?: Record<string, string | number>) => string;
 
 const LibraryStats = async () => {
-  requireRole(routeAccessMap["/dashboard/list/library(.*)"]);
+  const { userId, role } = requireRole(routeAccessMap["/dashboard/list/library(.*)"]);
+  await keepLibrarianInStudio(userId, role);
   const t = (await getTranslations("Library")) as unknown as TFn;
   const overview = await getReadingOverview();
 
