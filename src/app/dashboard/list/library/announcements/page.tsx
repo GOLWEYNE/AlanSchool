@@ -2,6 +2,7 @@ import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { requireRole } from "@/lib/auth";
 import { routeAccessMap } from "@/lib/settings";
+import { keepLibrarianInStudio } from "@/lib/library";
 import prisma from "@/lib/prisma";
 import { loadAnnouncements, viewerAudience } from "@/lib/libraryAnnouncements";
 import { ANNOUNCEMENT_TYPES, ANNOUNCEMENT_TYPE_KEYS } from "@/lib/libraryShared";
@@ -16,6 +17,7 @@ const BASE = "/dashboard/list/library/announcements";
 // parents only see school-wide ones and the ones aimed at their own grade or class.
 const LibraryAnnouncements = async ({ searchParams }: { searchParams: Promise<SP> | SP }) => {
   const { userId, role } = requireRole(routeAccessMap["/dashboard/list/library(.*)"]);
+  await keepLibrarianInStudio(userId, role);
   const t = (await getTranslations("Library")) as unknown as TFn;
   const sp = await Promise.resolve(searchParams);
 
