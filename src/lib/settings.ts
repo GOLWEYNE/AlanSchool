@@ -62,7 +62,7 @@ export const routeAccessMap: RouteAccessMap = {
   "/dashboard/list/noise-monitor": ["admin"],
 "/dashboard/list/noise-monitor/board(.*)": ["admin", "teacher"],
 "/dashboard/list/curriculum-coverage(.*)": ["admin", "teacher"],
-  "/dashboard/list/objectives(.*)": ["admin"],
+  "/dashboard/list/objectives(.*)": ["admin", "teacher"],
   "/dashboard/list/messages(.*)": ["admin", "teacher", "student", "parent"],
   "/dashboard/list/featured-video(.*)": ["admin", "teacher", "student", "parent"],
   "/dashboard/list/library(.*)": ["admin", "teacher", "student", "parent"],
