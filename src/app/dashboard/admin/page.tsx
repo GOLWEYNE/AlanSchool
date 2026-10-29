@@ -9,6 +9,7 @@ import AttendanceChartContainer from "@/components/AttendanceChartContainer";
 import CountChartContainer from "@/components/CountChartContainer";
 import EventCalendarContainer from "@/components/EventCalendarContainer";
 import ClubActivity from "@/components/ClubActivity";
+import SchoolPulseBanner from "@/components/SchoolPulseBanner";
 import UserCard from "@/components/UserCard";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { getUserRole } from "@/lib/auth";
@@ -35,7 +36,10 @@ const AdminPage = async ({
 
   return (
     <ProtectedRoute allowedRoles={["admin"]}>
-    <div className="p-4 flex gap-4 flex-col md:flex-row">
+    <div className="p-4 flex flex-col gap-4">
+    {/* PRINCIPAL'S SCHOOL PULSE BANNER */}
+    <SchoolPulseBanner searchParams={searchParams} />
+    <div className="flex gap-4 flex-col md:flex-row">
       {/* LEFT */}
       <div className="w-full lg:w-2/3 flex flex-col gap-8">
         {/* USER CARDS HEADER */}
@@ -106,6 +110,7 @@ const AdminPage = async ({
         <EventCalendarContainer searchParams={searchParams}/>
         <Announcements />
       </div>
+    </div>
     </div>
     </ProtectedRoute>
   );
