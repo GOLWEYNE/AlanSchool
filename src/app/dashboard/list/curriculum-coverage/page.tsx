@@ -4,6 +4,8 @@ import prisma from "@/lib/prisma";
 import { requireRole } from "@/lib/auth";
 import { routeAccessMap } from "@/lib/settings";
 import { getTranslations } from "next-intl/server";
+import CurriculumDeliveryKpaSection from "@/components/CurriculumDeliveryKpaSection";
+import { clampTarget, getCurriculumDeliveryKpa } from "@/lib/curriculumDeliveryKpa";
 
 type IdName = { id: number; name: string };
 
@@ -18,7 +20,7 @@ type IdName = { id: number; name: string };
 const CurriculumCoveragePage = async ({
   searchParams,
 }: {
-  searchParams: { classId?: string; subjectId?: string; from?: string; to?: string };
+  searchParams: { classId?: string; subjectId?: string; from?: string; to?: string; target?: string };
 }) => {
   const { userId, role } = requireRole(routeAccessMap["/dashboard/list/curriculum-coverage(.*)"]);
   const t = await getTranslations("List.curriculumCoverage");
@@ -55,6 +57,16 @@ const CurriculumCoveragePage = async ({
   const fromDate = searchParams.from ? new Date(searchParams.from) : undefined;
   // Include the whole "to" day, not just its midnight.
   const toDate = searchParams.to ? new Date(`${searchParams.to}T23:59:59`) : undefined;
+
+  // KPA "Curriculum Delivery": every teacher's coverage across all of their
+  // class+subject assignments (admins), or just the signed-in teacher's own.
+  const kpaTarget = clampTarget(searchParams.target);
+  const kpaRows = await getCurriculumDeliveryKpa({
+    teacherId: role === "teacher" ? userId : undefined,
+    from: fromDate,
+    to: toDate,
+    target: kpaTarget,
+  });
 
   type ObjectiveRow = {
     id: number;
@@ -241,6 +253,17 @@ const CurriculumCoveragePage = async ({
             className="ring-[1.5px] ring-gray-300 dark:ring-slate-700 dark:bg-slate-800 dark:text-slate-100 p-2 rounded-md text-sm"
           />
         </div>
+        <div className="flex flex-col gap-1">
+          <label className="text-xs text-gray-500 dark:text-slate-400">{t("kpa.targetLabel")}</label>
+          <input
+            type="number"
+            name="target"
+            min={1}
+            max={100}
+            defaultValue={kpaTarget}
+            className="ring-[1.5px] ring-gray-300 dark:ring-slate-700 dark:bg-slate-800 dark:text-slate-100 p-2 rounded-md text-sm w-24"
+          />
+        </div>
         <button className="bg-blue-500 text-white px-4 py-2 rounded-md text-sm font-semibold">
           {t("loadButton")}
         </button>
@@ -256,6 +279,8 @@ const CurriculumCoveragePage = async ({
       ) : (
         <Table columns={columns} renderRow={renderRow} data={objectiveRows} />
       )}
+
+      <CurriculumDeliveryKpaSection rows={kpaRows} target={kpaTarget} isAdmin={role === "admin"} />
     </div>
   );
 };
