@@ -3,7 +3,7 @@ import { auth } from "@clerk/nextjs/server";
 import { getTranslations } from "next-intl/server";
 import { getUserRole, requireRole } from "@/lib/auth";
 import { routeAccessMap } from "@/lib/settings";
-import { canManageLibrary, ensureLibrary } from "@/lib/library";
+import { canManageLibrary, canUseStudio, ensureLibrary, isLibrarianTeacher } from "@/lib/library";
 import { LibraryNav } from "@/components/library/LibraryClient";
 import { CARD } from "@/components/library/LibraryUi";
 
@@ -19,15 +19,20 @@ export default async function LibraryLayout({ children }: { children: ReactNode 
 
   const ready = await ensureLibrary();
   const manager = ready ? await canManageLibrary(userId, role) : false;
+  const studio = ready ? await canUseStudio(userId, role) : false;
+  // The librarian teacher only gets Library Studio (write / upload).
+  const studioOnly = ready ? await isLibrarianTeacher(userId, role) : false;
 
-  const tabs = [
+  const tabs = studioOnly
+    ? [{ href: BASE + "/studio", label: t("tabs.studio") }]
+    : [
     { href: BASE, label: t("tabs.home") },
     { href: BASE + "/books", label: t("tabs.books") },
     { href: BASE + "/stats", label: t("tabs.stats") },
     { href: BASE + "/announcements", label: t("tabs.announcements") },
     { href: BASE + "/community", label: t("tabs.community") },
     ...(manager ? [{ href: BASE + "/desk", label: t("tabs.desk") }] : []),
-    ...(role === "admin" ? [{ href: BASE + "/studio", label: t("tabs.studio") }] : []),
+    ...(studio ? [{ href: BASE + "/studio", label: t("tabs.studio") }] : []),
   ];
 
   return (
