@@ -6,7 +6,7 @@ import { getTranslations } from "next-intl/server";
 import prisma from "@/lib/prisma";
 import { getUserRole } from "@/lib/auth";
 import { notifyUser } from "@/lib/notify";
-import { canManageLibrary, ensureLibrary } from "@/lib/library";
+import { canManageLibrary, canUseStudio, ensureLibrary } from "@/lib/library";
 import {
   ANNOUNCEMENT_TYPE_KEYS,
   AUDIENCES,
@@ -32,7 +32,8 @@ async function context() {
   return { t, userId: userId ?? null, role };
 }
 
-// Runs `fn` only for a signed-in librarian (admin or the chosen librarian teacher).
+// Runs `fn` only for a signed-in admin: the librarian desk (lending, reviews,
+// requests, collection, settings).
 async function asLibrarian(
   fn: (ctx: { t: TFn; userId: string }) => Promise<LibraryResult>
 ): Promise<LibraryResult> {
@@ -64,13 +65,14 @@ async function asStudent(
   }
 }
 
-// Runs `fn` only for a signed-in admin (the Library Studio is admin-only).
-async function asAdmin(
+// Runs `fn` only for someone who may use Library Studio: an admin or the
+// teacher chosen as librarian.
+async function asStudio(
   fn: (ctx: { t: TFn; userId: string }) => Promise<LibraryResult>
 ): Promise<LibraryResult> {
   const { t, userId, role } = await context();
   if (!userId) return { ok: false, error: t("errors.notSignedIn") };
-  if (role !== "admin") return { ok: false, error: t("errors.adminOnly") };
+  if (!(await canUseStudio(userId, role))) return { ok: false, error: t("errors.notAllowed") };
   if (!(await ensureLibrary())) return { ok: false, error: t("errors.notReady") };
   try {
     return await fn({ t, userId });
@@ -348,7 +350,7 @@ const strs = (values: FormDataEntryValue[], max: number) =>
   Array.from(new Set(values.map((v) => String(v).trim()).filter(Boolean))).slice(0, max);
 
 export async function publishAnnouncement(formData: FormData): Promise<LibraryResult> {
-  return asAdmin(async ({ t, userId }) => {
+  return asStudio(async ({ t, userId }) => {
     const type = String(formData.get("type") ?? "");
     if (!ANNOUNCEMENT_TYPE_KEYS.includes(type)) return { ok: false, error: t("errors.invalid") };
     const picker = typeMeta(type).picker;
@@ -464,7 +466,7 @@ export async function publishAnnouncement(formData: FormData): Promise<LibraryRe
 }
 
 export async function deleteAnnouncement(id: number): Promise<LibraryResult> {
-  return asAdmin(async () => {
+  return asStudio(async () => {
     await prisma.libraryAnnouncement.delete({ where: { id } });
     refresh();
     return { ok: true };
@@ -472,7 +474,7 @@ export async function deleteAnnouncement(id: number): Promise<LibraryResult> {
 }
 
 export async function togglePinAnnouncement(id: number, pinned: boolean): Promise<LibraryResult> {
-  return asAdmin(async () => {
+  return asStudio(async () => {
     await prisma.libraryAnnouncement.update({ where: { id }, data: { pinned } });
     refresh();
     return { ok: true };
@@ -481,7 +483,7 @@ export async function togglePinAnnouncement(id: number, pinned: boolean): Promis
 
 // Several library photos at once (the Studio's photo space).
 export async function addPhotos(formData: FormData): Promise<LibraryResult> {
-  return asAdmin(async ({ t }) => {
+  return asStudio(async ({ t }) => {
     const urls = strs(formData.getAll("photoUrls"), MAX_PHOTOS).map(safeUrl).filter((u): u is string => !!u);
     if (urls.length === 0) return { ok: false, error: t("errors.photoRequired") };
     const caption = clamp(String(formData.get("caption") ?? ""), 200) || null;
@@ -493,7 +495,7 @@ export async function addPhotos(formData: FormData): Promise<LibraryResult> {
 
 // The "Watch & listen" video and audio spaces on the library home page.
 export async function saveSpotlight(formData: FormData): Promise<LibraryResult> {
-  return asAdmin(async ({ t }) => {
+  return asStudio(async ({ t }) => {
     const data = {
       spotlightVideoUrl: safeUrl(String(formData.get("videoUrl") ?? "")),
       spotlightVideoTitle: clamp(String(formData.get("videoTitle") ?? ""), 140) || null,
