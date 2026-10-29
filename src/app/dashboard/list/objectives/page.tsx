@@ -9,6 +9,8 @@ import Image from "next/image";
 import { requireRole } from "@/lib/auth";
 import { getTranslations } from "next-intl/server";
 import { getTeacherSubjectIds } from "@/lib/teacherSubjects";
+import { countStandardObjectives } from "@/lib/standardObjectives";
+import LoadStandardObjectives from "@/components/LoadStandardObjectives";
 
 type ObjectiveList = CurriculumObjective & { subject: Subject; grade: Grade | null };
 
@@ -144,6 +146,7 @@ const ObjectiveListPage = async ({
         </div>
       </div>
       <p className="text-xs text-gray-400 dark:text-slate-500 mt-2">{t("subheading")}</p>
+      {role === "admin" && <LoadStandardObjectives total={countStandardObjectives()} />}
       {/* LIST */}
       <Table columns={columns} renderRow={renderRow} data={data} />
       {/* PAGINATION */}
