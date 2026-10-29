@@ -3,7 +3,7 @@ import { getFormatter, getTranslations } from "next-intl/server";
 import prisma from "@/lib/prisma";
 import { requireRole } from "@/lib/auth";
 import { routeAccessMap } from "@/lib/settings";
-import { getReadingOverview, getStudentReading } from "@/lib/library";
+import { getReadingOverview, getStudentReading, keepLibrarianInStudio } from "@/lib/library";
 import { BADGE_TIERS, CATEGORY_EMOJI, type BookCategory, earnedBadges, nextBadge, weekStreak } from "@/lib/libraryShared";
 import { loadAnnouncements, viewerAudience } from "@/lib/libraryAnnouncements";
 import AnnouncementCard, { AudioPlayer, VideoPlayer } from "@/components/library/AnnouncementCard";
@@ -98,6 +98,7 @@ async function ReadingCard({
 
 const LibraryHome = async () => {
   const { userId, role } = requireRole(routeAccessMap["/dashboard/list/library(.*)"]);
+  await keepLibrarianInStudio(userId, role);
   const t = (await getTranslations("Library")) as unknown as TFn;
   const format = await getFormatter();
   const now = Date.now();
