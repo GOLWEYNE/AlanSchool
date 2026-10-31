@@ -180,7 +180,8 @@ const UniformPage = async ({ searchParams }: { searchParams: Promise<SP> | SP })
   };
 
   const recorded = dayChecks.length > 0;
-  const canEdit = isAdmin || date >= addDays(today, -7);
+  // Same as attendance: any past date can be filled in, not only the last week.
+  const canEdit = true;
 
   // Per-class overview for the selected date.
   const perClass = classes.map((c) => {
