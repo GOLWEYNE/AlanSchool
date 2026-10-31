@@ -10,7 +10,6 @@ import type { UniformStatus } from "@/generated/prisma/client";
 import {
   UNIFORM_ITEM_KEYS,
   UNIFORM_STATUSES,
-  addDays,
   isValidDateStr,
   schoolToday,
   toDbDate,
@@ -32,9 +31,8 @@ type TFn = (key: string, values?: Record<string, string | number>) => string;
 const NOTIFY_LOCALES = ["kk", "ru", "en"] as const;
 
 // Saves (creates or overwrites) one day's uniform check for a whole class.
-// Only the class supervisor - or an admin - may do this, and supervisors can
-// only record today or the last 7 days so old records can't be rewritten.
-// When today's check newly marks a student as not in full uniform, the
+// Only the class supervisor - or an admin - may do this, and they can record
+// today or any past date (same as attendance). When today's check newly marks a student as not in full uniform, the
 // student's parent is notified (push + email).
 export async function saveUniformChecks(
   classId: number,
@@ -52,10 +50,9 @@ export async function saveUniformChecks(
   if (!isValidDateStr(date)) return { ok: false, error: t("errors.invalidDate") };
 
   const today = schoolToday();
+  // Same rule as taking attendance: any past date may be filled in, only
+  // future dates are refused.
   if (date > today) return { ok: false, error: t("errors.future") };
-  if (role === "teacher" && date < addDays(today, -7)) {
-    return { ok: false, error: t("errors.tooOld") };
-  }
 
   const cls = await prisma.class.findUnique({
     where: { id: classId },
