@@ -32,7 +32,7 @@ const NOTIFY_LOCALES = ["kk", "ru", "en"] as const;
 
 // Saves (creates or overwrites) one day's uniform check for a whole class.
 // Only the class supervisor - or an admin - may do this, and they can record
-// today or any past date (same as attendance). When today's check newly marks a student as not in full uniform, the
+// any date, past or future (same as attendance). When today's check newly marks a student as not in full uniform, the
 // student's parent is notified (push + email).
 export async function saveUniformChecks(
   classId: number,
@@ -50,9 +50,9 @@ export async function saveUniformChecks(
   if (!isValidDateStr(date)) return { ok: false, error: t("errors.invalidDate") };
 
   const today = schoolToday();
-  // Same rule as taking attendance: any past date may be filled in, only
-  // future dates are refused.
-  if (date > today) return { ok: false, error: t("errors.future") };
+  // Same rule as taking attendance: any date may be filled in - a past date,
+  // today or a future date - no date limit is applied.
+  // (no date check here - future dates are allowed too)
 
   const cls = await prisma.class.findUnique({
     where: { id: classId },
