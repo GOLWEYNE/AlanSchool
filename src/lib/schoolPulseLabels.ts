@@ -40,7 +40,7 @@ const LABELS = {
     kpaShort: "KPA",
     days: { MONDAY: "Mon", TUESDAY: "Tue", WEDNESDAY: "Wed", THURSDAY: "Thu", FRIDAY: "Fri" },
     footnote:
-      "Attendance: teachers with lessons who marked the register. Uniform: class supervisors who checked uniform. KPA: curriculum objectives covered by tagged lessons (all time).",
+      "Attendance: class supervisors and club supervisors who took the register. Uniform: class supervisors who checked uniform. KPA: curriculum objectives covered by tagged lessons (all time).",
   },
   ru: {
     title: "Пульс школы",
@@ -82,7 +82,7 @@ const LABELS = {
     kpaShort: "KPA",
     days: { MONDAY: "Пн", TUESDAY: "Вт", WEDNESDAY: "Ср", THURSDAY: "Чт", FRIDAY: "Пт" },
     footnote:
-      "Посещаемость: учителя с уроками, отметившие журнал. Форма: классные руководители, проверившие форму. KPA: цели программы, покрытые размеченными уроками (за всё время).",
+      "Посещаемость: классные руководители и руководители кружков, отметившие журнал. Форма: классные руководители, проверившие форму. KPA: цели программы, покрытые размеченными уроками (за всё время).",
   },
   kk: {
     title: "Мектеп пульсі",
@@ -124,7 +124,7 @@ const LABELS = {
     kpaShort: "KPA",
     days: { MONDAY: "Дс", TUESDAY: "Сс", WEDNESDAY: "Ср", THURSDAY: "Бс", FRIDAY: "Жм" },
     footnote:
-      "Қатысу: сабағы бар және журналды белгілеген мұғалімдер. Форма: форманы тексерген сынып жетекшілері. KPA: белгіленген сабақтармен қамтылған бағдарлама мақсаттары (барлық уақыт).",
+      "Қатысу: журналды белгілеген сынып жетекшілері мен үйірме жетекшілері. Форма: форманы тексерген сынып жетекшілері. KPA: белгіленген сабақтармен қамтылған бағдарлама мақсаттары (барлық уақыт).",
   },
 } as const;
 

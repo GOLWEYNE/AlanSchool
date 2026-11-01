@@ -182,8 +182,18 @@ export async function getSchoolPulse(period: PulsePeriod): Promise<SchoolPulse> 
     day: Number(nextDay.slice(8, 10)),
   });
 
-  const [teachers, lessons, classes, attendanceGroups, uniformGroups, kpaRows, clubs, sessions] =
-    await Promise.all([
+  const [
+    teachers,
+    lessons,
+    classes,
+    attendanceGroups,
+    uniformGroups,
+    kpaRows,
+    clubs,
+    sessions,
+    clubSupervisorRows,
+    clubSessionRows,
+  ] = await Promise.all([
       prisma.teacher.findMany({ select: { id: true, name: true, surname: true } }),
       prisma.lesson.findMany({
         select: { id: true, day: true, teacherId: true, startTime: true, endTime: true },
@@ -193,7 +203,7 @@ export async function getSchoolPulse(period: PulsePeriod): Promise<SchoolPulse> 
         select: { id: true, supervisorId: true },
       }),
       prisma.attendanceRecord.groupBy({
-        by: ["date", "markedById", "lessonId"],
+        by: ["date", "classId"],
         where: { date: { gte: rangeStart, lt: rangeEnd } },
         _count: { _all: true },
       }),
@@ -211,31 +221,30 @@ export async function getSchoolPulse(period: PulsePeriod): Promise<SchoolPulse> 
         },
       }),
       prisma.clubSession.count({ where: { date: { gte: rangeStart, lt: rangeEnd } } }),
+      prisma.clubSupervisor.findMany({ select: { clubId: true, teacherId: true } }),
+      // Club sessions on which attendance was actually taken.
+      prisma.clubSession.findMany({
+        where: { date: { gte: rangeStart, lt: rangeEnd }, attendances: { some: {} } },
+        select: { clubId: true, date: true },
+      }),
     ]);
 
   // --- School days in the period -------------------------------------------
   // A day counts as a school day when anyone took attendance on it (so
   // holidays are not held against teachers); today counts if it is a weekday.
   const schoolDaySet = new Set<string>();
-  const attendanceByTeacher = new Map<string, Set<string>>();
-  const teacherByLesson = new Map<number, string>();
-  for (const l of lessons) teacherByLesson.set(l.id, l.teacherId);
+  // Days on which a class register was saved, per class. Like the uniform
+  // check, the register is credited to the class (not to whoever saved it), so
+  // a register later saved or edited by an admin or a colleague still counts
+  // for the class's supervisor.
+  const attendanceDaysByClass = new Map<number, Set<string>>();
   for (const g of attendanceGroups) {
     const day = schoolDateString(g.date);
     if (!dayOfDate(day)) continue;
     schoolDaySet.add(day);
-    // Credit the register to the person who saved it AND to the teacher the
-    // lesson belongs to, so a register saved by an admin or a colleague still
-    // counts for the teacher whose lesson it was.
-    const credited = new Set<string>();
-    if (g.markedById) credited.add(g.markedById);
-    const owner = g.lessonId !== null ? teacherByLesson.get(g.lessonId) : undefined;
-    if (owner) credited.add(owner);
-    credited.forEach((teacherId) => {
-      const set = attendanceByTeacher.get(teacherId) ?? new Set<string>();
-      set.add(day);
-      attendanceByTeacher.set(teacherId, set);
-    });
+    const set = attendanceDaysByClass.get(g.classId) ?? new Set<string>();
+    set.add(day);
+    attendanceDaysByClass.set(g.classId, set);
   }
   if (dayOfDate(range.today) && range.today >= range.from && range.today <= range.to) {
     schoolDaySet.add(range.today);
@@ -260,26 +269,6 @@ export async function getSchoolPulse(period: PulsePeriod): Promise<SchoolPulse> 
   }
 
   // --- Per-duty completion per teacher -------------------------------------
-  const lessonDaysByTeacher = new Map<string, Set<LessonDay>>();
-  for (const l of lessons) {
-    const set = lessonDaysByTeacher.get(l.teacherId) ?? new Set<LessonDay>();
-    set.add(l.day as LessonDay);
-    lessonDaysByTeacher.set(l.teacherId, set);
-  }
-
-  const attendanceRates = new Map<string, { done: number; expected: number }>();
-  lessonDaysByTeacher.forEach((days, teacherId) => {
-    const expectedDays = schoolDays.filter((d) => {
-      const ld = dayOfDate(d);
-      return ld && days.has(ld);
-    });
-    const marked = attendanceByTeacher.get(teacherId) ?? new Set<string>();
-    attendanceRates.set(teacherId, {
-      expected: expectedDays.length,
-      done: expectedDays.filter((d) => marked.has(d)).length,
-    });
-  });
-
   const classIdsBySupervisor = new Map<string, number[]>();
   for (const c of classes) {
     const id = c.supervisorId as string;
@@ -293,6 +282,62 @@ export async function getSchoolPulse(period: PulsePeriod): Promise<SchoolPulse> 
     uniformRates.set(teacherId, {
       expected: schoolDays.length,
       done: schoolDays.filter((d) => checked.has(d)).length,
+    });
+  });
+
+  // Attendance register: measured the same way as the uniform check, and only
+  // for the people who run a register - class supervisors (curators) and club
+  // supervisors (a club's lead instructor or co-supervisor).
+  const clubIdsBySupervisor = new Map<string, Set<number>>();
+  const addClubSupervisor = (teacherId: string | null, clubId: number) => {
+    if (!teacherId) return;
+    const set = clubIdsBySupervisor.get(teacherId) ?? new Set<number>();
+    set.add(clubId);
+    clubIdsBySupervisor.set(teacherId, set);
+  };
+  for (const c of clubs) addClubSupervisor(c.instructorId, c.id);
+  for (const r of clubSupervisorRows) addClubSupervisor(r.teacherId, r.clubId);
+
+  // Days on which each club took attendance.
+  const clubSessionDays = new Map<number, Set<string>>();
+  for (const cs of clubSessionRows) {
+    const day = schoolDateString(cs.date);
+    if (!dayOfDate(day)) continue;
+    const set = clubSessionDays.get(cs.clubId) ?? new Set<string>();
+    set.add(day);
+    clubSessionDays.set(cs.clubId, set);
+  }
+
+  const attendanceRates = new Map<string, { done: number; expected: number }>();
+  const registerKeepers = new Set<string>();
+  classIdsBySupervisor.forEach((_ids, teacherId) => registerKeepers.add(teacherId));
+  clubIdsBySupervisor.forEach((_ids, teacherId) => registerKeepers.add(teacherId));
+  registerKeepers.forEach((teacherId) => {
+    const marked = new Set<string>();
+    for (const cid of classIdsBySupervisor.get(teacherId) ?? []) {
+      attendanceDaysByClass.get(cid)?.forEach((d) => marked.add(d));
+    }
+    // Weekdays on which this person's clubs have actually met this period.
+    const clubWeekdays = new Set<LessonDay>();
+    clubIdsBySupervisor.get(teacherId)?.forEach((clubId) => {
+      clubSessionDays.get(clubId)?.forEach((d) => {
+        marked.add(d);
+        const ld = dayOfDate(d);
+        if (ld) clubWeekdays.add(ld);
+      });
+    });
+    // A curator is expected to take the register every school day (as for the
+    // uniform check). A club-only supervisor is expected on the weekdays their
+    // club meets, since clubs do not meet every day.
+    const expectedDays = classIdsBySupervisor.has(teacherId)
+      ? schoolDays
+      : schoolDays.filter((d) => {
+          const ld = dayOfDate(d);
+          return ld && clubWeekdays.has(ld);
+        });
+    attendanceRates.set(teacherId, {
+      expected: expectedDays.length,
+      done: expectedDays.filter((d) => marked.has(d)).length,
     });
   });
 
