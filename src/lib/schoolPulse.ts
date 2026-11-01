@@ -186,16 +186,19 @@ export async function getSchoolPulse(period: PulsePeriod): Promise<SchoolPulse> 
     await Promise.all([
       prisma.teacher.findMany({ select: { id: true, name: true, surname: true } }),
       prisma.lesson.findMany({
-        select: { day: true, teacherId: true, startTime: true, endTime: true },
+        select: { id: true, day: true, teacherId: true, startTime: true, endTime: true },
       }),
-      prisma.class.findMany({ where: { supervisorId: { not: null } }, select: { supervisorId: true } }),
+      prisma.class.findMany({
+        where: { supervisorId: { not: null } },
+        select: { id: true, supervisorId: true },
+      }),
       prisma.attendanceRecord.groupBy({
-        by: ["date", "markedById"],
+        by: ["date", "markedById", "lessonId"],
         where: { date: { gte: rangeStart, lt: rangeEnd } },
         _count: { _all: true },
       }),
       prisma.uniformCheck.groupBy({
-        by: ["date", "checkedById"],
+        by: ["date", "classId"],
         where: { date: { gte: toUtc(range.from), lte: toUtc(range.to) } },
         _count: { _all: true },
       }),
@@ -215,15 +218,24 @@ export async function getSchoolPulse(period: PulsePeriod): Promise<SchoolPulse> 
   // holidays are not held against teachers); today counts if it is a weekday.
   const schoolDaySet = new Set<string>();
   const attendanceByTeacher = new Map<string, Set<string>>();
+  const teacherByLesson = new Map<number, string>();
+  for (const l of lessons) teacherByLesson.set(l.id, l.teacherId);
   for (const g of attendanceGroups) {
     const day = schoolDateString(g.date);
     if (!dayOfDate(day)) continue;
     schoolDaySet.add(day);
-    if (g.markedById) {
-      const set = attendanceByTeacher.get(g.markedById) ?? new Set<string>();
+    // Credit the register to the person who saved it AND to the teacher the
+    // lesson belongs to, so a register saved by an admin or a colleague still
+    // counts for the teacher whose lesson it was.
+    const credited = new Set<string>();
+    if (g.markedById) credited.add(g.markedById);
+    const owner = g.lessonId !== null ? teacherByLesson.get(g.lessonId) : undefined;
+    if (owner) credited.add(owner);
+    credited.forEach((teacherId) => {
+      const set = attendanceByTeacher.get(teacherId) ?? new Set<string>();
       set.add(day);
-      attendanceByTeacher.set(g.markedById, set);
-    }
+      attendanceByTeacher.set(teacherId, set);
+    });
   }
   if (dayOfDate(range.today) && range.today >= range.from && range.today <= range.to) {
     schoolDaySet.add(range.today);
@@ -234,13 +246,17 @@ export async function getSchoolPulse(period: PulsePeriod): Promise<SchoolPulse> 
   }
   const schoolDays = Array.from(schoolDaySet).sort();
 
-  const uniformByTeacher = new Map<string, Set<string>>();
+  // A class counts as checked on a day when any uniform check was saved for it
+  // that day. Checks are stored per student and the last person to save a day
+  // is the one recorded as "checked by", so crediting only that account would
+  // under-count a supervisor whose checks were later saved or edited by an
+  // admin or a colleague.
+  const uniformDaysByClass = new Map<number, Set<string>>();
   for (const g of uniformGroups) {
-    if (!g.checkedById) continue;
     const day = g.date.toISOString().slice(0, 10);
-    const set = uniformByTeacher.get(g.checkedById) ?? new Set<string>();
+    const set = uniformDaysByClass.get(g.classId) ?? new Set<string>();
     set.add(day);
-    uniformByTeacher.set(g.checkedById, set);
+    uniformDaysByClass.set(g.classId, set);
   }
 
   // --- Per-duty completion per teacher -------------------------------------
@@ -264,15 +280,21 @@ export async function getSchoolPulse(period: PulsePeriod): Promise<SchoolPulse> 
     });
   });
 
-  const supervisors = Array.from(new Set(classes.map((c) => c.supervisorId as string)));
+  const classIdsBySupervisor = new Map<string, number[]>();
+  for (const c of classes) {
+    const id = c.supervisorId as string;
+    classIdsBySupervisor.set(id, [...(classIdsBySupervisor.get(id) ?? []), c.id]);
+  }
   const uniformRates = new Map<string, { done: number; expected: number }>();
-  for (const teacherId of supervisors) {
-    const checked = uniformByTeacher.get(teacherId) ?? new Set<string>();
+  classIdsBySupervisor.forEach((classIds, teacherId) => {
+    // A day is done when at least one of the supervisor's classes was checked.
+    const checked = new Set<string>();
+    for (const cid of classIds) uniformDaysByClass.get(cid)?.forEach((d) => checked.add(d));
     uniformRates.set(teacherId, {
       expected: schoolDays.length,
       done: schoolDays.filter((d) => checked.has(d)).length,
     });
-  }
+  });
 
   // KPA: share of scored teachers whose curriculum coverage meets the target.
   const scored = kpaRows.filter((r) => r.coveragePct !== null);
