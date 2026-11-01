@@ -101,7 +101,7 @@ const UniformPage = async ({ searchParams }: { searchParams: Promise<SP> | SP })
 
   const sp = await Promise.resolve(searchParams);
   const today = schoolToday();
-  const date = isValidDateStr(sp.date) && sp.date <= today ? sp.date : today;
+  const date = isValidDateStr(sp.date) ? sp.date : today;
   const isAdmin = role === "admin";
 
   // Admins see every class; a teacher only sees the classes they supervise.
@@ -247,7 +247,7 @@ const UniformPage = async ({ searchParams }: { searchParams: Promise<SP> | SP })
           </label>
           <label className="flex flex-col gap-1">
             <span className="text-xs text-gray-500">{t("date")}</span>
-            <input type="date" name="date" defaultValue={date} max={today} className="rounded-lg border border-gray-200 bg-white px-3 py-2 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100" />
+            <input type="date" name="date" defaultValue={date} className="rounded-lg border border-gray-200 bg-white px-3 py-2 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100" />
           </label>
           <button type="submit" className="rounded-lg bg-slate-800 px-4 py-2 font-medium text-white hover:bg-slate-700">
             {t("open")}
