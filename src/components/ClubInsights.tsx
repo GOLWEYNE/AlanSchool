@@ -2,6 +2,8 @@ import Link from "next/link";
 import { fmtDay, ScoreRing, toneOf } from "@/components/LessonMonitoring";
 import type { ClassRow, ClubInsight, ClubInsights, Tally } from "@/lib/clubInsights";
 import type { ClubInsightsLabels } from "@/lib/clubInsightsLabels";
+import type { ClubIntegrity } from "@/lib/clubIntegrity";
+import { fill, type ClubRulesLabels } from "@/lib/clubRulesLabels";
 
 // Presentational pieces of the Club insights page. All server components: the
 // only interactivity is links and native <details> toggles.
@@ -120,7 +122,18 @@ export const WeekNav = ({
 
 // --- Today ---------------------------------------------------------------------
 
-export const TodayCards = ({ L, data }: { L: ClubInsightsLabels; data: ClubInsights }) => {
+export const TodayCards = ({
+  L,
+  R,
+  data,
+  multiClub,
+}: {
+  L: ClubInsightsLabels;
+  R: ClubRulesLabels;
+  data: ClubInsights;
+  // Students marked present in more than one club today.
+  multiClub: number;
+}) => {
   const t = data.todaySummary;
   return (
     <div className="mb-4">
@@ -134,14 +147,25 @@ export const TodayCards = ({ L, data }: { L: ClubInsightsLabels; data: ClubInsig
           </div>
           <div>
             <p className="text-sm font-semibold text-slate-700 dark:text-slate-200">{L.studentsToday}</p>
-            <p className="text-xs text-slate-400">{L.ofEnrolled(t.enrolledStudents)}</p>
+            <p className="text-xs text-slate-400">
+              {fill(R.studentsNote, { enrolled: t.enrolledStudents, checkins: t.came })}
+            </p>
+            {multiClub > 0 && (
+              <p className="text-xs font-semibold text-rose-600 dark:text-rose-400">
+                {fill(R.studentsMulti, { n: multiClub })}
+              </p>
+            )}
           </div>
         </div>
         <div className={`${CARD} flex items-center gap-4 p-4`}>
           <ScoreRing value={t.pct} size={84} stroke={11} textClass="text-lg" />
           <div>
-            <p className="text-sm font-semibold text-slate-700 dark:text-slate-200">{L.rateToday}</p>
-            <p className="text-xs text-slate-400">{t.marked > 0 ? L.cameOfMarked(t.came, t.marked) : L.noRegisterToday}</p>
+            <p className="text-sm font-semibold text-slate-700 dark:text-slate-200">{R.rateTodayTitle}</p>
+            <p className="text-xs text-slate-400">
+              {t.marked > 0
+                ? fill(R.rateTodayNote, { came: t.came, marked: t.marked, clubs: t.clubsMet })
+                : L.noRegisterToday}
+            </p>
           </div>
         </div>
         <div className={`${CARD} flex items-center gap-4 p-4`}>
@@ -472,5 +496,148 @@ export const InsightsLegend = ({ L }: { L: ClubInsightsLabels }) => (
     <span className={`rounded-full px-2.5 py-1 font-semibold ${TONE.great.chip}`}>{L.legendGreat}</span>
     <span className={`rounded-full px-2.5 py-1 font-semibold ${TONE.fair.chip}`}>{L.legendFair}</span>
     <span className={`rounded-full px-2.5 py-1 font-semibold ${TONE.low.chip}`}>{L.legendLow}</span>
+  </div>
+);
+
+// --- Needs checking -----------------------------------------------------------
+
+const Chips = ({ items, tone = "slate" }: { items: string[]; tone?: "slate" | "rose" }) => (
+  <div className="flex flex-wrap gap-1">
+    {items.map((x) => (
+      <span
+        key={x}
+        className={`rounded-full px-2 py-0.5 text-[11px] font-semibold ${
+          tone === "rose"
+            ? "bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-300"
+            : "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300"
+        }`}
+      >
+        {x}
+      </span>
+    ))}
+  </div>
+);
+
+const SectionHead = ({ title, hint, count }: { title: string; hint: string; count: number }) => (
+  <div className="px-4 pt-4">
+    <h3 className="text-sm font-semibold text-slate-800 dark:text-slate-100">
+      {title} <span className="ml-1 rounded-full bg-rose-600 px-2 py-0.5 text-[11px] font-bold text-white">{count}</span>
+    </h3>
+    <p className="text-xs text-slate-400">{hint}</p>
+  </div>
+);
+
+const TH = "px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400";
+const HEAD_ROW = "bg-slate-50 dark:bg-slate-800/60";
+const BODY = "divide-y divide-gray-100 dark:divide-slate-800";
+
+export const ClubIntegrityPanel = ({ R, data }: { R: ClubRulesLabels; data: ClubIntegrity }) => (
+  <div className={`${CARD} mb-4 overflow-hidden`}>
+    <div className="px-4 pt-4">
+      <h2 className="text-lg font-semibold text-slate-800 dark:text-slate-100">
+        <span aria-hidden>🚩</span> {R.integrityTitle}
+      </h2>
+      <p className="text-xs text-slate-400">{R.integritySubtitle}</p>
+    </div>
+
+    {data.total === 0 && <p className="px-4 py-6 text-sm text-emerald-600 dark:text-emerald-400">✅ {R.allClear}</p>}
+
+    {data.mismatches.length > 0 && (
+      <div className="pb-2">
+        <SectionHead title={R.mismatchTitle} hint={R.mismatchHint} count={data.mismatches.length} />
+        <div className="overflow-x-auto">
+          <table className="mt-2 w-full min-w-[720px] text-left text-sm">
+            <thead>
+              <tr className={HEAD_ROW}>
+                <th className={`${TH} pl-4`}>{R.studentCol}</th>
+                <th className={TH}>{R.classCol}</th>
+                <th className={TH}>{R.classStatusCol}</th>
+                <th className={`${TH} hidden md:table-cell`}>{R.classSupervisorCol}</th>
+                <th className={TH}>{R.clubCol}</th>
+                <th className={`${TH} hidden md:table-cell`}>{R.clubSupervisorCol}</th>
+              </tr>
+            </thead>
+            <tbody className={BODY}>
+              {data.mismatches.map((m) => (
+                <tr key={m.studentId}>
+                  <td className="py-2.5 pl-4 pr-3 font-semibold text-slate-800 dark:text-slate-100">{m.student}</td>
+                  <td className="px-3 py-2.5 text-slate-500 dark:text-slate-400">{m.className || R.noClass}</td>
+                  <td className="px-3 py-2.5">
+                    <Chips items={[m.classStatus === "ABSENT" ? R.statusABSENT : R.statusEXCUSED]} tone="rose" />
+                  </td>
+                  <td className="hidden px-3 py-2.5 text-slate-500 dark:text-slate-400 md:table-cell">
+                    {m.classSupervisor ?? R.none}
+                  </td>
+                  <td className="px-3 py-2.5">
+                    <Chips items={m.clubs} />
+                  </td>
+                  <td className="hidden px-3 py-2.5 text-slate-500 dark:text-slate-400 md:table-cell">
+                    {m.clubSupervisors.length > 0 ? m.clubSupervisors.join(", ") : R.noSupervisor}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    )}
+
+    {data.doubleToday.length > 0 && (
+      <div className="pb-2">
+        <SectionHead title={R.doubleTitle} hint={R.doubleHint} count={data.doubleToday.length} />
+        <div className="overflow-x-auto">
+          <table className="mt-2 w-full min-w-[520px] text-left text-sm">
+            <thead>
+              <tr className={HEAD_ROW}>
+                <th className={`${TH} pl-4`}>{R.studentCol}</th>
+                <th className={TH}>{R.classCol}</th>
+                <th className={TH}>{R.clubsCol}</th>
+              </tr>
+            </thead>
+            <tbody className={BODY}>
+              {data.doubleToday.map((r) => (
+                <tr key={r.studentId}>
+                  <td className="py-2.5 pl-4 pr-3 font-semibold text-slate-800 dark:text-slate-100">{r.student}</td>
+                  <td className="px-3 py-2.5 text-slate-500 dark:text-slate-400">{r.className || R.noClass}</td>
+                  <td className="px-3 py-2.5">
+                    <Chips items={r.clubs} />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    )}
+
+    {data.overLimit.length > 0 && (
+      <div className="pb-4">
+        <SectionHead title={R.overTitle} hint={R.overHint} count={data.overLimit.length} />
+        <div className="overflow-x-auto">
+          <table className="mt-2 w-full min-w-[520px] text-left text-sm">
+            <thead>
+              <tr className={HEAD_ROW}>
+                <th className={`${TH} pl-4`}>{R.studentCol}</th>
+                <th className={TH}>{R.classCol}</th>
+                <th className={`${TH} text-center`}>{R.countCol}</th>
+                <th className={TH}>{R.clubsCol}</th>
+              </tr>
+            </thead>
+            <tbody className={BODY}>
+              {data.overLimit.map((r) => (
+                <tr key={r.studentId}>
+                  <td className="py-2.5 pl-4 pr-3 font-semibold text-slate-800 dark:text-slate-100">{r.student}</td>
+                  <td className="px-3 py-2.5 text-slate-500 dark:text-slate-400">{r.className || R.noClass}</td>
+                  <td className="px-3 py-2.5 text-center font-bold text-rose-600 dark:text-rose-400">{r.clubs.length}</td>
+                  <td className="px-3 py-2.5">
+                    <Chips items={r.clubs} />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    )}
   </div>
 );

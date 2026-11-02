@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { toast } from "react-toastify";
 import { registerStudentsInClub, removeStudentsFromClub } from "@/lib/clubSupervisionActions";
+import { CLUBS_PER_STUDENT } from "@/lib/clubRules";
+import { fill, type ClubRulesLabels } from "@/lib/clubRulesLabels";
 
 export type RegistrationStudent = {
   id: string;
@@ -15,12 +17,14 @@ export type RegistrationStudent = {
   gradeId: number;
   gradeLevel: number;
   status: "ACTIVE" | "WAITLISTED" | null;
+  // Names of the OTHER clubs the student is actively in.
+  otherClubs: string[];
 };
 
 export type RegistrationGrade = { id: number; level: number };
 export type RegistrationClass = { id: number; name: string; gradeId: number };
 
-type View = "all" | "notIn" | "in";
+type View = "all" | "notIn" | "in" | "over";
 
 const FIELD =
   "ring-[1.5px] ring-gray-300 dark:ring-slate-700 dark:bg-slate-800 dark:text-slate-100 p-2 rounded-md text-sm";
@@ -34,12 +38,14 @@ export default function ClubRegistration({
   grades,
   classes,
   students,
+  rules,
 }: {
   clubId: number;
   capacity: number;
   grades: RegistrationGrade[];
   classes: RegistrationClass[];
   students: RegistrationStudent[];
+  rules: ClubRulesLabels;
 }) {
   const t = useTranslations("List.clubRegister");
   const router = useRouter();
@@ -50,6 +56,12 @@ export default function ClubRegistration({
   const [query, setQuery] = useState("");
   const [view, setView] = useState<View>("all");
   const [selected, setSelected] = useState<Set<string>>(new Set());
+
+  // How many active clubs the student is in, counting this one when they are
+  // already an active member of it.
+  const clubTotal = (s: RegistrationStudent) => s.otherClubs.length + (s.status === "ACTIVE" ? 1 : 0);
+  const wouldExceed = (s: RegistrationStudent) =>
+    s.status !== "ACTIVE" && s.otherClubs.length >= CLUBS_PER_STUDENT;
 
   const visibleClasses = useMemo(
     () => classes.filter((c) => !gradeId || c.gradeId === Number(gradeId)),
@@ -63,6 +75,7 @@ export default function ClubRegistration({
       if (classId && s.classId !== Number(classId)) return false;
       if (view === "notIn" && s.status) return false;
       if (view === "in" && !s.status) return false;
+      if (view === "over" && clubTotal(s) <= CLUBS_PER_STUDENT) return false;
       if (q && !`${s.name} ${s.surname} ${s.className}`.toLowerCase().includes(q)) return false;
       return true;
     });
@@ -91,7 +104,15 @@ export default function ClubRegistration({
       return next;
     });
 
+  const selectedOver = selectedNew
+    .map((id) => students.find((s) => s.id === id))
+    .filter((s): s is RegistrationStudent => !!s && wouldExceed(s));
+
   const register = () => {
+    if (selectedOver.length > 0) {
+      const names = selectedOver.map((s) => `- ${s.name} ${s.surname} (${s.otherClubs.join(", ")})`).join("\n");
+      if (!window.confirm(fill(rules.confirmOver, { count: selectedOver.length, names }))) return;
+    }
     startTransition(async () => {
       const res = await registerStudentsInClub(clubId, selectedNew);
       if (!res.ok) {
@@ -99,6 +120,9 @@ export default function ClubRegistration({
         return;
       }
       toast(t("registered", { added: res.added ?? 0, waitlisted: res.waitlisted ?? 0 }));
+      if (res.overLimit && res.overLimit.length > 0) {
+        toast.warn(fill(rules.overToast, { names: res.overLimit.map((s) => s.name).join(", ") }));
+      }
       setSelected(new Set());
       router.refresh();
     });
@@ -155,6 +179,7 @@ export default function ClubRegistration({
             <option value="all">{t("viewAll")}</option>
             <option value="notIn">{t("viewNotIn")}</option>
             <option value="in">{t("viewIn")}</option>
+            <option value="over">{rules.filterOver}</option>
           </select>
         </div>
         <div className="flex flex-col gap-1 flex-1 min-w-[10rem]">
@@ -181,6 +206,11 @@ export default function ClubRegistration({
         <span className="text-gray-500 dark:text-slate-400">
           {t("shownCount", { shown: shown.length, total: students.length })}
         </span>
+        {selectedOver.length > 0 && (
+          <span className="rounded-full bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-300 px-3 py-1 font-semibold">
+            {fill(rules.selectedOver, { count: selectedOver.length })}
+          </span>
+        )}
         <button
           type="button"
           onClick={toggleShown}
@@ -199,9 +229,30 @@ export default function ClubRegistration({
           <li key={s.id}>
             <label className="flex items-center gap-3 p-3 cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-800/60">
               <input type="checkbox" checked={selected.has(s.id)} onChange={() => toggle(s.id)} />
-              <span className="flex-1 font-medium text-gray-800 dark:text-slate-100">
-                {s.name} {s.surname}
+              <span className="flex-1 min-w-0">
+                <span className="font-medium text-gray-800 dark:text-slate-100">
+                  {s.name} {s.surname}
+                </span>
+                {s.otherClubs.length > 0 && (
+                  <span className="block truncate text-[11px] text-gray-400 dark:text-slate-500">
+                    {fill(rules.alsoIn, { clubs: s.otherClubs.join(", ") })}
+                  </span>
+                )}
+                {wouldExceed(s) && (
+                  <span className="block text-[11px] font-semibold text-rose-600 dark:text-rose-400">
+                    {fill(rules.thirdClubWarn, { n: s.otherClubs.length + 1 })}
+                  </span>
+                )}
               </span>
+              {clubTotal(s) > CLUBS_PER_STUDENT ? (
+                <span className="rounded-full bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-300 px-2 py-0.5 text-xs font-semibold">
+                  {fill(rules.overBadge, { n: clubTotal(s) })}
+                </span>
+              ) : (
+                <span className="rounded-full bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300 px-2 py-0.5 text-xs font-semibold">
+                  {fill(rules.clubsCount, { n: clubTotal(s) })}
+                </span>
+              )}
               <span className="text-xs text-gray-500 dark:text-slate-400">{s.className}</span>
               {s.status === "ACTIVE" && (
                 <span className="rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300 px-2 py-0.5 text-xs font-semibold">

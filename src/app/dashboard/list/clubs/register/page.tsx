@@ -4,7 +4,8 @@ import ClubRegistration from "@/components/ClubRegistration";
 import prisma from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 import { getUserRole } from "@/lib/auth";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
+import { clubRulesLabels } from "@/lib/clubRulesLabels";
 import { getSupervisedClubIds } from "@/lib/clubSupervision";
 
 // Club registration: pick a club, then choose students from the whole school
@@ -37,7 +38,7 @@ const ClubRegisterPage = async ({
   const requestedId = searchParams.clubId ? parseInt(searchParams.clubId, 10) : NaN;
   const selected = clubs.find((c) => c.id === requestedId) ?? clubs[0];
 
-  const [grades, classes, students, enrollments] = selected
+  const [grades, classes, students, enrollments, allActive] = selected
     ? await Promise.all([
         prisma.grade.findMany({ orderBy: { level: "asc" }, select: { id: true, level: true } }),
         prisma.class.findMany({
@@ -60,8 +61,23 @@ const ClubRegisterPage = async ({
           where: { clubId: selected.id, status: { in: ["ACTIVE", "WAITLISTED"] } },
           select: { studentId: true, status: true },
         }),
+        // Every active club seat in the school, to show how many clubs each
+        // student is already in (the rule is two per student).
+        prisma.clubEnrollment.findMany({
+          where: { status: "ACTIVE" },
+          select: { studentId: true, club: { select: { id: true, name: true } } },
+        }),
       ])
-    : [[], [], [], []];
+    : [[], [], [], [], []];
+
+  const clubsByStudent = new Map<string, { id: number; name: string }[]>();
+  for (const row of allActive) {
+    const list = clubsByStudent.get(row.studentId) ?? [];
+    list.push(row.club);
+    clubsByStudent.set(row.studentId, list);
+  }
+  const locale = await getLocale();
+  const rules = clubRulesLabels(locale);
 
   const statusByStudent = new Map(
     enrollments.map((e) => [e.studentId, e.status as "ACTIVE" | "WAITLISTED"])
@@ -146,7 +162,11 @@ const ClubRegisterPage = async ({
             gradeId: s.gradeId,
             gradeLevel: s.grade.level,
             status: statusByStudent.get(s.id) ?? null,
+            otherClubs: (clubsByStudent.get(s.id) ?? [])
+              .filter((c) => c.id !== selected.id)
+              .map((c) => c.name),
           }))}
+          rules={rules}
         />
       )}
     </div>

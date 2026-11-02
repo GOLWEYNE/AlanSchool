@@ -7,6 +7,7 @@ import prisma from "@/lib/prisma";
 import { getUserRole } from "@/lib/auth";
 import { notifyUser } from "@/lib/notify";
 import { canSuperviseClub, ensureClubSupervision } from "@/lib/clubSupervision";
+import { CLUBS_PER_STUDENT } from "@/lib/clubRules";
 import type { UniformStatus } from "@/generated/prisma/client";
 import {
   UNIFORM_ITEM_KEYS,
@@ -19,6 +20,9 @@ import {
 
 type TFn = (key: string, values?: Record<string, string | number>) => string;
 
+// A student who is now in more than CLUBS_PER_STUDENT active clubs.
+export type OverLimitStudent = { id: string; name: string; clubs: string[] };
+
 export type RegisterResult = {
   ok: boolean;
   error?: string;
@@ -26,6 +30,7 @@ export type RegisterResult = {
   waitlisted?: number;
   alreadyIn?: number;
   removed?: number;
+  overLimit?: OverLimitStudent[];
 };
 
 async function requireClubAccess(clubId: number) {
@@ -101,10 +106,33 @@ export async function registerStudentsInClub(
       }
     });
 
+    // Flag anyone who now sits in more than two active clubs.
+    const touched = Array.from(validIds);
+    const active = await prisma.clubEnrollment.findMany({
+      where: { studentId: { in: touched }, status: "ACTIVE" },
+      select: {
+        studentId: true,
+        club: { select: { name: true } },
+        student: { select: { name: true, surname: true } },
+      },
+    });
+    const perStudent = new Map<string, OverLimitStudent>();
+    for (const row of active) {
+      const entry = perStudent.get(row.studentId) ?? {
+        id: row.studentId,
+        name: `${row.student.name} ${row.student.surname}`,
+        clubs: [],
+      };
+      entry.clubs.push(row.club.name);
+      perStudent.set(row.studentId, entry);
+    }
+    const overLimit = Array.from(perStudent.values()).filter((s) => s.clubs.length > CLUBS_PER_STUDENT);
+
     revalidatePath("/dashboard/list/clubs");
     revalidatePath("/dashboard/list/clubs/register");
     revalidatePath("/dashboard/list/clubs/attendance");
-    return { ok: true, added, waitlisted, alreadyIn };
+    revalidatePath("/dashboard/list/clubs/insights");
+    return { ok: true, added, waitlisted, alreadyIn, overLimit };
   } catch (error) {
     console.error("[clubs] register students failed", error);
     return { ok: false, error: t("failed") };
