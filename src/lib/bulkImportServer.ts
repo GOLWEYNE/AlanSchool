@@ -43,6 +43,8 @@ export type CommitRow = {
   email: string | null;
   phone: string | null;
   address: string;
+  // Optional: when blank, a random temporary password is generated instead.
+  password?: string;
   bloodType?: string;
   sex?: "MALE" | "FEMALE";
   birthday?: string; // ISO date
@@ -175,6 +177,9 @@ export async function validateRows(
     const address = readField(raw, "address");
     preview.address = address;
 
+    // Never echoed into the preview; only carried to the commit step.
+    const passwordRaw = readField(raw, "password");
+
     const commit: CommitRow = {
       row: rowNumber,
       username,
@@ -183,6 +188,7 @@ export async function validateRows(
       email,
       phone,
       address,
+      ...(passwordRaw ? { password: passwordRaw } : {}),
     };
 
     if (role === "student" || role === "teacher") {
@@ -311,7 +317,7 @@ export async function commitRows(role: BulkImportRole, rows: CommitRow[]): Promi
       continue;
     }
 
-    const password = generateTempPassword();
+    const password = row.password && row.password.trim() ? row.password.trim() : generateTempPassword();
 
     try {
       const user = await clerkClient.users.createUser({

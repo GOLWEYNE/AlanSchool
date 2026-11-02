@@ -34,6 +34,7 @@ export const ROLE_FIELDS: Record<BulkImportRole, FieldSpec[]> = {
     { key: "email", header: "Email", required: false },
     { key: "phone", header: "Phone", required: false },
     { key: "address", header: "Address", required: false },
+    { key: "password", header: "Password (optional)", required: false },
   ],
   teacher: [
     { key: "username", header: "Username", required: false },
@@ -46,6 +47,7 @@ export const ROLE_FIELDS: Record<BulkImportRole, FieldSpec[]> = {
     { key: "email", header: "Email", required: false },
     { key: "phone", header: "Phone", required: false },
     { key: "address", header: "Address", required: false },
+    { key: "password", header: "Password (optional)", required: false },
   ],
   parent: [
     { key: "username", header: "Username", required: false },
@@ -54,6 +56,7 @@ export const ROLE_FIELDS: Record<BulkImportRole, FieldSpec[]> = {
     { key: "phone", header: "Phone", required: true },
     { key: "address", header: "Address", required: true },
     { key: "email", header: "Email", required: false },
+    { key: "password", header: "Password (optional)", required: false },
   ],
 };
 
@@ -73,6 +76,7 @@ const EXTRA_ALIASES: Record<string, string[]> = {
   phone: ["telephone", "phonenumber", "телефон"],
   address: ["адрес"],
   subjects: ["subject", "предметы", "предмет"],
+  password: ["пароль", "parol", "құпиясөз"],
 };
 
 /** Strips everything but letters/digits and lowercases - so "First Name",
@@ -223,7 +227,7 @@ export type RowResult = {
 // The template always ships one example row so the expected shape is
 // obvious in Excel/Sheets - callers should replace or delete it.
 export const TEMPLATE_EXAMPLES: Record<BulkImportRole, string[]> = {
-  student: ["", "АЙГЕРІМ", "ЕРМЕКОВА", "F", "2016-03-14", "O+", "5A", "parent1011", "", "", ""],
-  teacher: ["", "ЕРЛАН", "ТӨЛЕГЕНОВ", "M", "1990-07-02", "A+", "Mathematics, Algebra", "", "", ""],
-  parent: ["", "Parent", "1099", "9001234567", "N/A", ""],
+  student: ["", "АЙГЕРІМ", "ЕРМЕКОВА", "F", "2016-03-14", "O+", "5A", "parent1011", "", "", "", ""],
+  teacher: ["", "ЕРЛАН", "ТӨЛЕГЕНОВ", "M", "1990-07-02", "A+", "Mathematics, Algebra", "", "", "", ""],
+  parent: ["", "Parent", "1099", "9001234567", "N/A", "", ""],
 };
