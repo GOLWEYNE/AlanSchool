@@ -1,9 +1,14 @@
 import { auth, currentUser } from "@clerk/nextjs/server";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import MenuContent from "./MenuContent";
 import { getUserRole } from "@/lib/auth";
+import { monitorLabels } from "@/lib/lessonMonitoringLabels";
 
-const getMenuItems = (t: Awaited<ReturnType<typeof getTranslations>>, role: string) => {
+const getMenuItems = (
+  t: Awaited<ReturnType<typeof getTranslations>>,
+  role: string,
+  lessonMonitoringLabel: string
+) => {
   const baseItems = [
     {
       title: t("menuTitle"),
@@ -169,6 +174,12 @@ const getMenuItems = (t: Awaited<ReturnType<typeof getTranslations>>, role: stri
           visible: ["admin", "teacher"],
         },
         {
+          icon: "/result.png",
+          label: lessonMonitoringLabel,
+          href: "/dashboard/list/lesson-monitoring",
+          visible: ["admin", "teacher"],
+        },
+        {
           icon: "/calendar.png",
           label: t("studyPlanner"),
           href: "/dashboard/list/study-planner",
@@ -290,7 +301,8 @@ const Menu = async () => {
   const { sessionClaims } = await auth();
   const role = getUserRole(sessionClaims);
   const t = await getTranslations("Menu");
-  const menuItems = getMenuItems(t, role);
+  const locale = await getLocale();
+  const menuItems = getMenuItems(t, role, monitorLabels(locale).menu);
 
   return <MenuContent items={menuItems} role={role} />;
 };
