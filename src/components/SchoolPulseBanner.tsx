@@ -1,6 +1,12 @@
 import Link from "next/link";
 import { getLocale } from "next-intl/server";
-import { getSchoolPulse, parsePeriod, type DutyStat, type PulsePeriod } from "@/lib/schoolPulse";
+import {
+  getSchoolPulse,
+  parsePeriod,
+  type ByClassStat,
+  type DutyStat,
+  type PulsePeriod,
+} from "@/lib/schoolPulse";
 import { pulseLabels } from "@/lib/schoolPulseLabels";
 import { dateLocale } from "@/lib/dateLocale";
 
@@ -36,6 +42,7 @@ const Gauge = ({
   hint,
   extra,
   noData,
+  byClass,
 }: {
   emoji: string;
   title: string;
@@ -44,28 +51,89 @@ const Gauge = ({
   hint: string;
   extra?: string | null;
   noData: string;
+  // Same duty, class by class: a second ring, a one-line summary and (tap to
+  // open) every class's own percentage.
+  byClass: {
+    label: string;
+    stat: ByClassStat;
+    hint: string;
+    showAll: string;
+  };
 }) => (
-  <div className="rounded-xl bg-white/15 p-4 backdrop-blur-sm flex items-center gap-4">
-    <div className="relative">
-      <Ring value={stat.pct} color={color} />
-      <div className="absolute inset-0 flex items-center justify-center text-xl font-bold">
-        {stat.pct === null ? "-" : `${stat.pct}%`}
+  <div className="rounded-xl bg-white/15 p-4 backdrop-blur-sm">
+    <div className="flex items-center gap-4">
+      <div className="relative">
+        <Ring value={stat.pct} color={color} />
+        <div className="absolute inset-0 flex items-center justify-center text-xl font-bold">
+          {stat.pct === null ? "-" : `${stat.pct}%`}
+        </div>
+      </div>
+      <div className="min-w-0">
+        <p className="text-sm font-semibold flex items-center gap-1.5">
+          <span aria-hidden>{emoji}</span>
+          <span className="truncate">{title}</span>
+        </p>
+        {stat.pct === null ? (
+          <p className="text-xs text-white/80 mt-1">{noData}</p>
+        ) : (
+          <>
+            <p className="text-xs text-white/90 mt-1">{hint}</p>
+            {extra && <p className="text-[11px] text-white/70 mt-0.5">{extra}</p>}
+          </>
+        )}
       </div>
     </div>
-    <div className="min-w-0">
-      <p className="text-sm font-semibold flex items-center gap-1.5">
-        <span aria-hidden>{emoji}</span>
-        <span className="truncate">{title}</span>
-      </p>
-      {stat.pct === null ? (
-        <p className="text-xs text-white/80 mt-1">{noData}</p>
-      ) : (
-        <>
-          <p className="text-xs text-white/90 mt-1">{hint}</p>
-          {extra && <p className="text-[11px] text-white/70 mt-0.5">{extra}</p>}
-        </>
-      )}
+
+    {/* BY CLASS */}
+    <div className="mt-3 border-t border-white/20 pt-3 flex items-center gap-3">
+      <div className="relative">
+        <svg viewBox="0 0 100 100" className="w-14 h-14 shrink-0 -rotate-90" aria-hidden>
+          <circle cx="50" cy="50" r="38" fill="none" stroke="rgba(255,255,255,0.22)" strokeWidth="12" />
+          <circle
+            cx="50"
+            cy="50"
+            r="38"
+            fill="none"
+            stroke={color}
+            strokeWidth="12"
+            strokeLinecap="round"
+            strokeDasharray={`${(2 * Math.PI * 38 * (byClass.stat.pct ?? 0)) / 100} ${2 * Math.PI * 38}`}
+          />
+        </svg>
+        <div className="absolute inset-0 flex items-center justify-center text-sm font-bold">
+          {byClass.stat.pct === null ? "-" : `${byClass.stat.pct}%`}
+        </div>
+      </div>
+      <div className="min-w-0">
+        <p className="text-xs font-semibold">{byClass.label}</p>
+        <p className="text-[11px] text-white/85 mt-0.5">
+          {byClass.stat.pct === null ? noData : byClass.hint}
+        </p>
+      </div>
     </div>
+    {byClass.stat.rows.length > 0 && (
+      <details className="mt-2 group">
+        <summary className="cursor-pointer select-none text-[11px] text-white/80 hover:text-white list-none">
+          <span className="underline underline-offset-2">{byClass.showAll}</span>
+        </summary>
+        <div className="mt-2 flex flex-wrap gap-1.5">
+          {byClass.stat.rows.map((r) => (
+            <span
+              key={r.id}
+              className={`rounded-full px-2 py-0.5 text-[11px] ${
+                r.pct === null
+                  ? "bg-white/10 text-white/70"
+                  : r.onTrack
+                    ? "bg-emerald-300/90 text-emerald-950"
+                    : "bg-amber-300 text-amber-900"
+              }`}
+            >
+              <b>{r.name}</b> {r.pct === null ? "-" : `${r.pct}%`}
+            </span>
+          ))}
+        </div>
+      </details>
+    )}
   </div>
 );
 
@@ -153,6 +221,12 @@ const SchoolPulseBanner = async ({
           hint={`${L.teachersOf(pulse.kpa.onTrack, pulse.kpa.expected)} ${L.kpaHint(pulse.kpa.target)}`}
           extra={pulse.kpa.avgCoverage === null ? null : L.avgCoverage(pulse.kpa.avgCoverage)}
           noData={L.noData}
+          byClass={{
+            label: L.byClass,
+            stat: pulse.kpa.byClass,
+            hint: `${L.classesOf(pulse.kpa.byClass.onTrack, pulse.kpa.byClass.total)} ${L.classKpaHint(pulse.kpa.target)}`,
+            showAll: L.showClasses,
+          }}
         />
         <Gauge
           emoji="👔"
@@ -162,6 +236,14 @@ const SchoolPulseBanner = async ({
           hint={dutyHint(pulse.uniform)}
           extra={dutyExtra(pulse.uniform)}
           noData={L.noData}
+          byClass={{
+            label: L.byClass,
+            stat: pulse.uniform.byClass,
+            hint: `${L.classesOf(pulse.uniform.byClass.onTrack, pulse.uniform.byClass.total)} ${
+              period === "day" ? L.doneToday : L.classOnTrackHint
+            }`,
+            showAll: L.showClasses,
+          }}
         />
         <Gauge
           emoji="📝"
@@ -171,6 +253,14 @@ const SchoolPulseBanner = async ({
           hint={dutyHint(pulse.attendance)}
           extra={dutyExtra(pulse.attendance)}
           noData={L.noData}
+          byClass={{
+            label: L.byClass,
+            stat: pulse.attendance.byClass,
+            hint: `${L.classesOf(pulse.attendance.byClass.onTrack, pulse.attendance.byClass.total)} ${
+              period === "day" ? L.doneToday : L.classOnTrackHint
+            }`,
+            showAll: L.showClasses,
+          }}
         />
       </div>
 
