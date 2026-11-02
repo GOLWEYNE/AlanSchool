@@ -3,11 +3,13 @@ import { getLocale, getTranslations } from "next-intl/server";
 import MenuContent from "./MenuContent";
 import { getUserRole } from "@/lib/auth";
 import { monitorLabels } from "@/lib/lessonMonitoringLabels";
+import { studentInsightsLabels } from "@/lib/studentInsightsLabels";
 
 const getMenuItems = (
   t: Awaited<ReturnType<typeof getTranslations>>,
   role: string,
-  lessonMonitoringLabel: string
+  lessonMonitoringLabel: string,
+  studentInsightsLabel: string
 ) => {
   const baseItems = [
     {
@@ -180,6 +182,12 @@ const getMenuItems = (
           visible: ["admin", "teacher"],
         },
         {
+          icon: "/student.png",
+          label: studentInsightsLabel,
+          href: "/dashboard/list/student-insights",
+          visible: ["admin", "teacher"],
+        },
+        {
           icon: "/calendar.png",
           label: t("studyPlanner"),
           href: "/dashboard/list/study-planner",
@@ -302,7 +310,7 @@ const Menu = async () => {
   const role = getUserRole(sessionClaims);
   const t = await getTranslations("Menu");
   const locale = await getLocale();
-  const menuItems = getMenuItems(t, role, monitorLabels(locale).menu);
+  const menuItems = getMenuItems(t, role, monitorLabels(locale).menu, studentInsightsLabels(locale).menu);
 
   return <MenuContent items={menuItems} role={role} />;
 };
