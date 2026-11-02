@@ -10,8 +10,9 @@ import { resolvePageSize } from "@/lib/settings";
 import { Club, ClubEnrollment, Prisma, Teacher } from "@/generated/prisma/client";
 import { auth } from "@clerk/nextjs/server";
 import { getUserRole } from "@/lib/auth";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { getClubSupervisors, getSupervisedClubIds, type ClubSupervisorLite } from "@/lib/clubSupervision";
+import { clubInsightsLabels } from "@/lib/clubInsightsLabels";
 
 type ClubList = Club & {
   instructor: Teacher | null;
@@ -26,6 +27,7 @@ const ClubListPage = async ({
   searchParams: { [key: string]: string | undefined };
 }) => {
   const t = await getTranslations("List.clubs");
+  const locale = await getLocale();
   const { userId, sessionClaims } = auth();
   const role = getUserRole(sessionClaims);
 
@@ -239,6 +241,12 @@ const ClubListPage = async ({
                   className="bg-amber-500 text-white px-3 py-1.5 rounded-md text-sm font-semibold whitespace-nowrap"
                 >
                   {t("clubUniformButton")}
+                </Link>
+                <Link
+                  href="/dashboard/list/clubs/insights"
+                  className="bg-indigo-600 text-white px-3 py-1.5 rounded-md text-sm font-semibold whitespace-nowrap"
+                >
+                  {clubInsightsLabels(locale).button}
                 </Link>
               </>
             )}
