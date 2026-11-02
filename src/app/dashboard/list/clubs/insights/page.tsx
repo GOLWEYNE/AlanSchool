@@ -6,9 +6,12 @@ import { routeAccessMap } from "@/lib/settings";
 import { getClubInsights, resolveClubWeek } from "@/lib/clubInsights";
 import { clubInsightsLabels } from "@/lib/clubInsightsLabels";
 import { getSupervisedClubIds } from "@/lib/clubSupervision";
+import { getClubIntegrity } from "@/lib/clubIntegrity";
+import { clubRulesLabels } from "@/lib/clubRulesLabels";
 import { addDays } from "@/lib/uniform";
 import {
   ClubDetails,
+  ClubIntegrityPanel,
   DailyTotals,
   InsightsLegend,
   TodayCards,
@@ -26,9 +29,13 @@ const ClubInsightsPage = async ({ searchParams }: { searchParams: SP }) => {
   const { userId, role } = requireRole(routeAccessMap["/dashboard/list/clubs/insights(.*)"]);
   const locale = await getLocale();
   const L = clubInsightsLabels(locale);
+  const R = clubRulesLabels(locale);
 
   const clubIds = role === "teacher" ? await getSupervisedClubIds(userId) : undefined;
-  const data = await getClubInsights({ weekOf: searchParams.week, clubIds });
+  const [data, integrity] = await Promise.all([
+    getClubInsights({ weekOf: searchParams.week, clubIds }),
+    getClubIntegrity({ clubIds }),
+  ]);
 
   const { monday: thisMonday } = resolveClubWeek(undefined);
   const isCurrentWeek = data.monday === thisMonday;
@@ -47,7 +54,7 @@ const ClubInsightsPage = async ({ searchParams }: { searchParams: SP }) => {
         emoji="🎯"
         stats={[
           { label: L.studentsToday, value: data.todaySummary.uniqueCame },
-          { label: L.rateToday, value: data.todaySummary.pct === null ? "-" : `${data.todaySummary.pct}%` },
+          { label: R.rateTodayTitle, value: data.todaySummary.pct === null ? "-" : `${data.todaySummary.pct}%` },
           { label: L.clubsMet, value: L.clubsMetOf(data.todaySummary.clubsMet, data.todaySummary.clubsTotal) },
         ]}
         action={
@@ -67,7 +74,9 @@ const ClubInsightsPage = async ({ searchParams }: { searchParams: SP }) => {
         </div>
       ) : (
         <>
-          <TodayCards L={L} data={data} />
+          <TodayCards L={L} R={R} data={data} multiClub={integrity.doubleToday.length} />
+
+          <ClubIntegrityPanel R={R} data={integrity} />
 
           <WeekNav
             L={L}
