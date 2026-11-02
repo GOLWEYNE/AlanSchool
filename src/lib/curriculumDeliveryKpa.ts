@@ -37,8 +37,20 @@ type LessonRow = {
   classId: number;
   subjectId: number;
   teacher: { name: string; surname: string };
-  class: { gradeId: number };
+  class: { gradeId: number; name: string };
   objectives: { id: number }[];
+};
+
+// The same KPA, seen from the class side: for each class, how many of the
+// curriculum objectives that apply to it (across every subject it studies)
+// were covered by ANY teacher's tagged lessons or exams.
+export type ClassKpaRow = {
+  classId: number;
+  name: string;
+  totalObjectives: number;
+  coveredObjectives: number;
+  coveragePct: number | null;
+  rating: KpaRating;
 };
 
 type ObjectiveRow = { id: number; subjectId: number; gradeId: number | null };
@@ -151,13 +163,82 @@ export function scoreTeachers(
   });
 }
 
-export async function getCurriculumDeliveryKpa(opts: {
+// Pure scoring step for the by-class view. Uses the same rules as
+// scoreTeachers (an objective with no gradeId applies at every grade; exams
+// count as coverage) but pools every teacher's lessons for a class + subject.
+export function scoreClasses(
+  lessons: LessonRow[],
+  objectives: ObjectiveRow[],
+  exams: ExamRow[],
+  target: number
+): ClassKpaRow[] {
+  const examsByLesson = new Map<number, ExamRow[]>();
+  for (const e of exams) {
+    const list = examsByLesson.get(e.lessonId) ?? [];
+    list.push(e);
+    examsByLesson.set(e.lessonId, list);
+  }
+
+  // classId -> subjectId -> lessons of that class + subject (any teacher)
+  const byClass = new Map<number, { name: string; gradeId: number; subjects: Map<number, LessonRow[]> }>();
+  for (const l of lessons) {
+    const entry =
+      byClass.get(l.classId) ??
+      { name: l.class.name, gradeId: l.class.gradeId, subjects: new Map<number, LessonRow[]>() };
+    const list = entry.subjects.get(l.subjectId) ?? [];
+    list.push(l);
+    entry.subjects.set(l.subjectId, list);
+    byClass.set(l.classId, entry);
+  }
+
+  const rows: ClassKpaRow[] = [];
+  byClass.forEach((entry, classId) => {
+    let totalObjectives = 0;
+    let coveredObjectives = 0;
+    entry.subjects.forEach((subjectLessons, subjectId) => {
+      const applicable = objectives.filter(
+        (o) => o.subjectId === subjectId && (o.gradeId === null || o.gradeId === entry.gradeId)
+      );
+      if (applicable.length === 0) return;
+      const coveredIds = new Set<number>();
+      for (const l of subjectLessons) {
+        l.objectives.forEach((o) => coveredIds.add(o.id));
+        (examsByLesson.get(l.id) ?? []).forEach((e) => e.objectives.forEach((o) => coveredIds.add(o.id)));
+      }
+      totalObjectives += applicable.length;
+      coveredObjectives += applicable.filter((o) => coveredIds.has(o.id)).length;
+    });
+    const coveragePct = pct(coveredObjectives, totalObjectives);
+    rows.push({
+      classId,
+      name: entry.name,
+      totalObjectives,
+      coveredObjectives,
+      coveragePct,
+      rating: coveragePct === null ? "noData" : coveragePct >= target ? "meets" : "below",
+    });
+  });
+
+  // Lowest coverage first; classes with nothing to score sink to the bottom.
+  return rows.sort((a, b) => {
+    if (a.coveragePct === null && b.coveragePct === null) return a.name.localeCompare(b.name);
+    if (a.coveragePct === null) return 1;
+    if (b.coveragePct === null) return -1;
+    return a.coveragePct - b.coveragePct || a.name.localeCompare(b.name);
+  });
+}
+
+type KpaOpts = {
   // Set for a teacher viewing their own score; omit for the admin view.
   teacherId?: string;
   from?: Date;
   to?: Date;
   target: number;
-}): Promise<TeacherKpaRow[]> {
+};
+
+async function loadKpaInputs(
+  opts: KpaOpts
+): Promise<{ lessons: LessonRow[]; objectives: ObjectiveRow[]; exams: ExamRow[] }> {
   const lessons: LessonRow[] = await prisma.lesson.findMany({
     where: opts.teacherId ? { teacherId: opts.teacherId } : {},
     select: {
@@ -166,11 +247,11 @@ export async function getCurriculumDeliveryKpa(opts: {
       classId: true,
       subjectId: true,
       teacher: { select: { name: true, surname: true } },
-      class: { select: { gradeId: true } },
+      class: { select: { gradeId: true, name: true } },
       objectives: { select: { id: true } },
     },
   });
-  if (lessons.length === 0) return [];
+  if (lessons.length === 0) return { lessons, objectives: [], exams: [] };
 
   const subjectIds: number[] = Array.from(new Set(lessons.map((l: LessonRow) => l.subjectId)));
   const objectives: ObjectiveRow[] = await prisma.curriculumObjective.findMany({
@@ -193,5 +274,21 @@ export async function getCurriculumDeliveryKpa(opts: {
     select: { lessonId: true, objectives: { select: { id: true } } },
   });
 
+  return { lessons, objectives, exams };
+}
+
+export async function getCurriculumDeliveryKpa(opts: KpaOpts): Promise<TeacherKpaRow[]> {
+  const { lessons, objectives, exams } = await loadKpaInputs(opts);
   return scoreTeachers(lessons, objectives, exams, opts.target);
+}
+
+// Both views from a single database read (used by the admin School Pulse).
+export async function getCurriculumDeliveryKpaBundle(
+  opts: KpaOpts
+): Promise<{ teachers: TeacherKpaRow[]; classes: ClassKpaRow[] }> {
+  const { lessons, objectives, exams } = await loadKpaInputs(opts);
+  return {
+    teachers: scoreTeachers(lessons, objectives, exams, opts.target),
+    classes: scoreClasses(lessons, objectives, exams, opts.target),
+  };
 }

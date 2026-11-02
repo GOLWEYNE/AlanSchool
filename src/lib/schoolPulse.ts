@@ -1,5 +1,5 @@
 import prisma from "@/lib/prisma";
-import { getCurriculumDeliveryKpa, DEFAULT_KPA_TARGET } from "@/lib/curriculumDeliveryKpa";
+import { getCurriculumDeliveryKpaBundle, DEFAULT_KPA_TARGET } from "@/lib/curriculumDeliveryKpa";
 import {
   fromWallClock,
   onSchoolDayOf,
@@ -102,6 +102,24 @@ export type DutyStat = {
   daysPct: number | null;
 };
 
+// The same duty seen class by class: each class's own percentage, plus how
+// many classes are "on track" (the same 80% rule as for teachers; for the KPA,
+// a class meets the curriculum target).
+export type ClassPulseRow = {
+  id: number;
+  name: string;
+  pct: number | null;
+  onTrack: boolean;
+};
+
+export type ByClassStat = {
+  total: number;
+  onTrack: number;
+  pct: number | null;
+  // Lowest first, so the classes that need attention are at the top.
+  rows: ClassPulseRow[];
+};
+
 export type NudgeTeacher = {
   id: string;
   name: string;
@@ -121,9 +139,9 @@ export type SchoolPulse = {
   range: PulseRange;
   schoolDays: number;
   teachersTotal: number;
-  kpa: DutyStat & { target: number; avgCoverage: number | null };
-  uniform: DutyStat;
-  attendance: DutyStat;
+  kpa: DutyStat & { target: number; avgCoverage: number | null; byClass: ByClassStat };
+  uniform: DutyStat & { byClass: ByClassStat };
+  attendance: DutyStat & { byClass: ByClassStat };
   clubs: {
     total: number;
     active: number;
@@ -144,6 +162,18 @@ export type SchoolPulse = {
 };
 
 const pct = (a: number, b: number): number | null => (b > 0 ? Math.round((a / b) * 100) : null);
+
+const byClassStat = (rows: ClassPulseRow[]): ByClassStat => {
+  const scored = rows.filter((r) => r.pct !== null);
+  const onTrack = scored.filter((r) => r.onTrack).length;
+  const sorted = [...rows].sort((a, b) => {
+    if (a.pct === null && b.pct === null) return a.name.localeCompare(b.name, undefined, { numeric: true });
+    if (a.pct === null) return 1;
+    if (b.pct === null) return -1;
+    return a.pct - b.pct || a.name.localeCompare(b.name, undefined, { numeric: true });
+  });
+  return { total: scored.length, onTrack, pct: pct(onTrack, scored.length), rows: sorted };
+};
 
 const toStat = (rates: Map<string, { done: number; expected: number }>): DutyStat => {
   let onTrack = 0;
@@ -188,11 +218,12 @@ export async function getSchoolPulse(period: PulsePeriod): Promise<SchoolPulse> 
     classes,
     attendanceGroups,
     uniformGroups,
-    kpaRows,
+    kpaBundle,
     clubs,
     sessions,
     clubSupervisorRows,
     clubSessionRows,
+    allClasses,
   ] = await Promise.all([
       prisma.teacher.findMany({ select: { id: true, name: true, surname: true } }),
       prisma.lesson.findMany({
@@ -212,7 +243,7 @@ export async function getSchoolPulse(period: PulsePeriod): Promise<SchoolPulse> 
         where: { date: { gte: toUtc(range.from), lte: toUtc(range.to) } },
         _count: { _all: true },
       }),
-      getCurriculumDeliveryKpa({ target: DEFAULT_KPA_TARGET }),
+      getCurriculumDeliveryKpaBundle({ target: DEFAULT_KPA_TARGET }),
       prisma.club.findMany({
         select: {
           id: true,
@@ -227,7 +258,9 @@ export async function getSchoolPulse(period: PulsePeriod): Promise<SchoolPulse> 
         where: { date: { gte: rangeStart, lt: rangeEnd }, attendances: { some: {} } },
         select: { clubId: true, date: true },
       }),
+      prisma.class.findMany({ select: { id: true, name: true } }),
     ]);
+  const kpaRows = kpaBundle.teachers;
 
   // --- School days in the period -------------------------------------------
   // A day counts as a school day when anyone took attendance on it (so
@@ -341,6 +374,32 @@ export async function getSchoolPulse(period: PulsePeriod): Promise<SchoolPulse> 
     });
   });
 
+  // --- By class ----------------------------------------------------------------
+  // A class is on track when its register (or uniform check) was saved on at
+  // least ON_TRACK_RATE of the period's school days. Both are credited to the
+  // class, not to whoever saved them.
+  const classDutyRows = (daysByClass: Map<number, Set<string>>): ClassPulseRow[] =>
+    allClasses.map((c) => {
+      const done = schoolDays.filter((d) => daysByClass.get(c.id)?.has(d)).length;
+      const expected = schoolDays.length;
+      return {
+        id: c.id,
+        name: c.name,
+        pct: pct(done, expected),
+        onTrack: expected > 0 && done / expected >= ON_TRACK_RATE,
+      };
+    });
+  const uniformByClass = byClassStat(classDutyRows(uniformDaysByClass));
+  const attendanceByClass = byClassStat(classDutyRows(attendanceDaysByClass));
+  const kpaByClass = byClassStat(
+    kpaBundle.classes.map((c) => ({
+      id: c.classId,
+      name: c.name,
+      pct: c.coveragePct,
+      onTrack: c.rating === "meets",
+    }))
+  );
+
   // KPA: share of scored teachers whose curriculum coverage meets the target.
   const scored = kpaRows.filter((r) => r.coveragePct !== null);
   const kpaOnTrack = scored.filter((r) => r.rating === "meets").length;
@@ -354,6 +413,7 @@ export async function getSchoolPulse(period: PulsePeriod): Promise<SchoolPulse> 
     daysPct: null,
     target: DEFAULT_KPA_TARGET,
     avgCoverage: scored.length ? Math.round(covSum / scored.length) : null,
+    byClass: kpaByClass,
   };
 
   // --- Timetable -------------------------------------------------------------
@@ -425,8 +485,8 @@ export async function getSchoolPulse(period: PulsePeriod): Promise<SchoolPulse> 
     schoolDays: schoolDays.length,
     teachersTotal: teachers.length,
     kpa,
-    uniform: toStat(uniformRates),
-    attendance: toStat(attendanceRates),
+    uniform: { ...toStat(uniformRates), byClass: uniformByClass },
+    attendance: { ...toStat(attendanceRates), byClass: attendanceByClass },
     clubs: clubStats,
     week,
     today: {
