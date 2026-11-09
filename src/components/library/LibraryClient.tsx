@@ -8,19 +8,19 @@ import { CldUploadWidget } from "next-cloudinary";
 import type { LibraryResult } from "@/lib/libraryActions";
 
 export const FIELD =
-  "w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-800 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:focus:ring-blue-900";
+  "w-full rounded-lg border border-blue-200/80 bg-white/70 px-3 py-2 text-sm text-gray-800 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:border-slate-700 dark:bg-slate-900/60 dark:text-slate-100 dark:focus:ring-blue-900";
 export const BTN =
   "inline-flex items-center justify-center gap-1 rounded-lg bg-gradient-to-r from-blue-600 to-blue-500 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:from-blue-700 hover:to-blue-600 disabled:cursor-not-allowed disabled:opacity-60";
 export const BTN_GHOST =
-  "inline-flex items-center justify-center gap-1 rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-xs font-semibold text-gray-700 transition hover:bg-gray-50 disabled:opacity-60 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800";
+  "inline-flex items-center justify-center gap-1 rounded-lg border border-blue-200/80 bg-white/70 px-3 py-1.5 text-xs font-semibold text-gray-700 transition hover:bg-white disabled:opacity-60 dark:border-slate-700 dark:bg-slate-900/60 dark:text-slate-200 dark:hover:bg-slate-800";
 
 type Tab = { href: string; label: string };
 
 // Tab bar shared by every library page.
-export function LibraryNav({ tabs }: { tabs: Tab[] }) {
+export function LibraryNav({ tabs, label }: { tabs: Tab[]; label: string }) {
   const pathname = usePathname();
   return (
-    <nav className="flex flex-wrap gap-2" aria-label="Library">
+    <nav className="flex flex-wrap gap-2" aria-label={label}>
       {tabs.map((tab, index) => {
         const active =
           index === 0 ? pathname === tab.href : pathname === tab.href || pathname.startsWith(tab.href + "/");
@@ -32,7 +32,7 @@ export function LibraryNav({ tabs }: { tabs: Tab[] }) {
               "rounded-full px-4 py-2 text-sm font-semibold transition " +
               (active
                 ? "bg-blue-600 text-white shadow"
-                : "bg-white text-blue-700 ring-1 ring-blue-100 hover:bg-blue-50 dark:bg-slate-900 dark:text-blue-300 dark:ring-slate-700 dark:hover:bg-slate-800")
+                : "bg-white/60 text-blue-700 ring-1 ring-blue-100 hover:bg-white dark:bg-slate-900/50 dark:text-blue-300 dark:ring-slate-700 dark:hover:bg-slate-800")
             }
           >
             {tab.label}
