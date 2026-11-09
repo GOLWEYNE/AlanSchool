@@ -19,7 +19,7 @@ const Navbar = async () => {
   // roles that have browsable student/ticket detail pages today.
   const canSearch = role === "admin" || role === "teacher";
   return (
-    <div className="mx-4 mt-4 panel-card px-4 py-3 flex items-center justify-between gap-2">
+    <div className="glass-topbar mx-4 mt-4 panel-card px-4 py-3 flex items-center justify-between gap-2">
       <div className="shrink-0">
         <MobileMenuButton />
       </div>
