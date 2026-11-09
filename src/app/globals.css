@@ -1404,6 +1404,45 @@ body {
   background-color: rgba(250, 204, 21, 0.08);
 }
 
+/* ---- teacher profile page ------------------------------------------------ */
+/* brand cover band behind the photo: blue glass with a yellow glow */
+.app-shell-bg .glass-cover {
+  background:
+    radial-gradient(70% 140% at 100% 0%, rgba(250, 204, 21, 0.5), transparent 55%),
+    radial-gradient(60% 120% at 0% 100%, rgba(147, 197, 253, 0.3), transparent 60%),
+    linear-gradient(120deg, #1e40af, #2563eb 60%, #3b82f6);
+}
+
+.dark .app-shell-bg .glass-cover {
+  background:
+    radial-gradient(70% 140% at 100% 0%, rgba(250, 204, 21, 0.22), transparent 55%),
+    radial-gradient(60% 120% at 0% 100%, rgba(96, 165, 250, 0.16), transparent 60%),
+    linear-gradient(120deg, #172554, #1e3a8a 60%, #1d4ed8);
+}
+
+/* gives a shared white-card widget (Performance) the glass look without editing it */
+.app-shell-bg .glass-host > .bg-white {
+  border-radius: var(--glass-radius);
+  background-color: var(--glass-bg);
+  background-image: linear-gradient(135deg, rgba(255, 255, 255, 0.42), rgba(255, 255, 255, 0) 55%);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+  transition:
+    transform 0.45s var(--ease-out),
+    box-shadow 0.45s var(--ease-out),
+    border-color 0.3s ease;
+}
+
+.dark .app-shell-bg .glass-host > .bg-white {
+  background-image: linear-gradient(135deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0) 55%);
+}
+
+.app-shell-bg .glass-host > .bg-white:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--glass-shadow-hover);
+  border-color: var(--glass-edge-hover);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .app-shell-bg .glass-bar,
   .app-shell-bg .glass-bubble {
@@ -1411,6 +1450,7 @@ body {
   }
 
   .app-shell-bg .glass-surface,
+  .app-shell-bg .glass-host > .bg-white,
   .app-shell-bg .glass-row,
   .app-shell-bg .glass-thread,
   .app-shell-bg .glass-btn {
@@ -1420,6 +1460,7 @@ body {
   .app-shell-bg .glass-surface.glass-lift:hover,
   .app-shell-bg a.glass-surface:hover,
   .app-shell-bg .glass-row:hover,
+  .app-shell-bg .glass-host > .bg-white:hover,
   .app-shell-bg .glass-thread:hover,
   .app-shell-bg .glass-btn:hover {
     transform: none;
