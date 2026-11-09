@@ -12,6 +12,7 @@ import {
   AUDIENCES,
   BOOK_CATEGORIES,
   LOAN_DAYS,
+  MAX_LOAN_DAYS,
   MAX_PHOTOS,
   MAX_PICKED_STUDENTS,
   clamp,
@@ -149,7 +150,7 @@ export async function lendBook(formData: FormData): Promise<LibraryResult> {
     if (same > 0) return { ok: false, error: t("errors.alreadyBorrowed") };
     if (out >= book.copies) return { ok: false, error: t("errors.noCopies") };
 
-    const period = Number.isFinite(days) ? Math.min(Math.max(days, 1), 60) : LOAN_DAYS;
+    const period = Number.isFinite(days) ? Math.min(Math.max(days, 1), MAX_LOAN_DAYS) : LOAN_DAYS;
     const dueAt = new Date(Date.now() + period * 24 * 60 * 60 * 1000);
     await prisma.libraryLoan.create({ data: { bookId, studentId, dueAt, recordedBy: userId } });
     refresh();
