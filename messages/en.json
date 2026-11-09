@@ -2502,6 +2502,7 @@
       "fLibrarianName": "Librarian's name",
       "fLibrarianPhoto": "Librarian's photo",
       "fHours": "Opening hours",
+      "hoursPlaceholder": "Mon–Fri 08:30–16:30",
       "fLibrarianTeacher": "Teacher who is the librarian (works in Library Studio: write and upload)",
       "fIntro": "Short introduction to the library",
       "fGoals": "Main goals (one per line)",

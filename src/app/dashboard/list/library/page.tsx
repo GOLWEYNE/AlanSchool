@@ -1,11 +1,12 @@
 import Link from "next/link";
-import { getFormatter, getTranslations } from "next-intl/server";
+import { getFormatter, getLocale, getTranslations } from "next-intl/server";
 import prisma from "@/lib/prisma";
 import { requireRole } from "@/lib/auth";
 import { routeAccessMap } from "@/lib/settings";
 import { getReadingOverview, getStudentReading, keepLibrarianInStudio } from "@/lib/library";
-import { BADGE_TIERS, CATEGORY_EMOJI, type BookCategory, earnedBadges, nextBadge, weekStreak } from "@/lib/libraryShared";
+import { BADGE_TIERS, CATEGORY_EMOJI, LIBRARY_FRESH_HOURS, type BookCategory, earnedBadges, nextBadge, weekStreak } from "@/lib/libraryShared";
 import { loadAnnouncements, viewerAudience } from "@/lib/libraryAnnouncements";
+import { SCHOOL_TIME_ZONE } from "@/lib/schoolTime";
 import AnnouncementCard, { AudioPlayer, VideoPlayer } from "@/components/library/AnnouncementCard";
 import AnimatedNumber from "@/components/dashboard/AnimatedNumber";
 import { Avatar, BookCover, CARD, Empty, Section, StatTile, Stars } from "@/components/library/LibraryUi";
@@ -86,7 +87,7 @@ async function ReadingCard({
                       : "bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300")
                   }
                 >
-                  {late ? t("me.overdue") : t("me.due", { date: format.dateTime(loan.dueAt, { day: "numeric", month: "short", timeZone: "Asia/Almaty" }) })}
+                  {late ? t("me.overdue") : t("me.due", { date: format.dateTime(loan.dueAt, { day: "numeric", month: "short", timeZone: SCHOOL_TIME_ZONE }) })}
                 </span>
               </li>
             );
@@ -102,6 +103,7 @@ const LibraryHome = async () => {
   await keepLibrarianInStudio(userId, role);
   const t = (await getTranslations("Library")) as unknown as TFn;
   const format = await getFormatter();
+  const locale = await getLocale();
   const now = Date.now();
 
   const viewer = await viewerAudience(userId, role);
@@ -133,7 +135,7 @@ const LibraryHome = async () => {
   const readerOfMonth = overview.thisMonth[0] ?? null;
   const topClasses = overview.classRows.slice(0, 3);
   const topReaders = overview.allTime.slice(0, 5);
-  const todayIsFresh = today ? now - today.createdAt.getTime() < 36 * 3600 * 1000 : false;
+  const todayIsFresh = today ? now - today.createdAt.getTime() < LIBRARY_FRESH_HOURS * 3600 * 1000 : false;
 
   let myStudentId: string | null = null;
   let children: { id: string; name: string }[] = [];
@@ -158,7 +160,7 @@ const LibraryHome = async () => {
             <div className="mt-2 text-xs text-blue-800/70 dark:text-blue-200/70">
               {todayIsFresh
                 ? t("today.fresh")
-                : format.dateTime(today.createdAt, { day: "numeric", month: "long", timeZone: "Asia/Almaty" })}
+                : format.dateTime(today.createdAt, { day: "numeric", month: "long", timeZone: SCHOOL_TIME_ZONE })}
             </div>
           </div>
         ) : (
@@ -194,7 +196,7 @@ const LibraryHome = async () => {
         ) : (
           <div className="grid gap-4 xl:grid-cols-2">
             {latest.map((item) => (
-              <AnnouncementCard key={item.id} item={item} t={t} compact />
+              <AnnouncementCard key={item.id} item={item} t={t} compact locale={locale} />
             ))}
           </div>
         )}
@@ -377,7 +379,7 @@ const LibraryHome = async () => {
                     <div className="font-semibold text-gray-800 dark:text-slate-100">{n.title}</div>
                     <p className="line-clamp-3 whitespace-pre-line text-sm text-gray-600 dark:text-slate-300">{n.body}</p>
                     <div className="mt-1 text-xs text-gray-400">
-                      {format.dateTime(n.createdAt, { day: "numeric", month: "short", year: "numeric", timeZone: "Asia/Almaty" })}
+                      {format.dateTime(n.createdAt, { day: "numeric", month: "short", year: "numeric", timeZone: SCHOOL_TIME_ZONE })}
                     </div>
                   </div>
                 </li>

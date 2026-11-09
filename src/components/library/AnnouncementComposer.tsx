@@ -30,7 +30,7 @@ type Props = {
 };
 
 const Step = ({ n, title, children }: { n: number; title: string; children: React.ReactNode }) => (
-  <section className="flex flex-col gap-3 rounded-2xl border border-gray-200 bg-gray-50/60 p-4 dark:border-slate-800 dark:bg-slate-900/40">
+  <section className="flex flex-col gap-3 glass-surface p-4">
     <h3 className="flex items-center gap-2 text-sm font-bold text-gray-800 dark:text-blue-100">
       <span className="flex h-6 w-6 items-center justify-center rounded-full bg-blue-600 text-xs text-white">{n}</span>
       {title}
@@ -101,7 +101,7 @@ export default function AnnouncementComposer(props: Props) {
                 "flex flex-col items-start gap-1 rounded-xl p-3 text-left transition " +
                 (type === x.key
                   ? "bg-gradient-to-br from-blue-600 to-blue-500 text-white shadow-lg"
-                  : "bg-white ring-1 ring-gray-200 hover:ring-blue-300 dark:bg-slate-900 dark:ring-slate-700")
+                  : "bg-white/60 ring-1 ring-blue-100 hover:ring-blue-300 dark:bg-slate-900/50 dark:ring-slate-700")
               }
             >
               <span className="text-2xl">{x.emoji}</span>

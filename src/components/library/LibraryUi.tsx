@@ -127,7 +127,7 @@ export function StatTile({
       style={{ ["--i" as string]: index }}
       className="glass-surface glass-tile glass-lift glass-rise flex flex-col gap-2 p-4"
     >
-      <span className="glass-icon glass-icon--blue text-xl">{emoji}</span>
+      <span className="glass-icon glass-icon--blue !w-auto min-w-10 px-2 text-xl">{emoji}</span>
       {typeof value === "number" ? (
         <AnimatedNumber value={value} className="block text-3xl font-bold tracking-tight text-blue-950 dark:text-blue-50" />
       ) : (

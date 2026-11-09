@@ -2,6 +2,7 @@ import { getFormatter, getTranslations } from "next-intl/server";
 import prisma from "@/lib/prisma";
 import { requireRole } from "@/lib/auth";
 import { routeAccessMap } from "@/lib/settings";
+import { SCHOOL_TIME_ZONE } from "@/lib/schoolTime";
 import { keepLibrarianInStudio, studentsByIds } from "@/lib/library";
 import { askForBook, submitReview } from "@/lib/libraryActions";
 import { ActionForm, FIELD } from "@/components/library/LibraryClient";
@@ -72,7 +73,7 @@ const LibraryCommunity = async () => {
               {myRequests.length > 0 && (
                 <ul className="mt-4 flex flex-col gap-3">
                   {myRequests.map((r) => (
-                    <li key={r.id} className="rounded-xl bg-gray-50 p-3 text-sm dark:bg-slate-800/60">
+                    <li key={r.id} className="glass-row rounded-xl bg-blue-500/5 p-3 text-sm">
                       <div className="text-gray-700 dark:text-slate-200">“{r.message}”</div>
                       {r.status === "ANSWERED" ? (
                         <div className="mt-2 rounded-lg bg-emerald-50 p-2 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-200">
@@ -149,7 +150,7 @@ const LibraryCommunity = async () => {
             {reviews.map((r) => {
               const who = people.get(r.studentId);
               return (
-                <article key={r.id} className="flex flex-col gap-2 rounded-xl bg-gray-50 p-4 dark:bg-slate-800/60">
+                <article key={r.id} className="flex flex-col gap-2 glass-row rounded-xl bg-blue-500/5 p-4">
                   <div className="flex items-center gap-2">
                     <Avatar src={who?.img} name={who?.name ?? "?"} size={32} />
                     <div className="min-w-0 text-sm">
@@ -161,7 +162,7 @@ const LibraryCommunity = async () => {
                   <Stars value={r.rating} />
                   <p className="text-sm text-gray-700 dark:text-slate-300">“{r.text}”</p>
                   <div className="text-xs text-gray-400">
-                    {format.dateTime(r.createdAt, { day: "numeric", month: "short", year: "numeric", timeZone: "Asia/Almaty" })}
+                    {format.dateTime(r.createdAt, { day: "numeric", month: "short", year: "numeric", timeZone: SCHOOL_TIME_ZONE })}
                   </div>
                 </article>
               );

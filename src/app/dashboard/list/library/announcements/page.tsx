@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { requireRole } from "@/lib/auth";
 import { routeAccessMap } from "@/lib/settings";
 import { keepLibrarianInStudio } from "@/lib/library";
@@ -19,6 +19,7 @@ const LibraryAnnouncements = async ({ searchParams }: { searchParams: Promise<SP
   const { userId, role } = requireRole(routeAccessMap["/dashboard/list/library(.*)"]);
   await keepLibrarianInStudio(userId, role);
   const t = (await getTranslations("Library")) as unknown as TFn;
+  const locale = await getLocale();
   const sp = await Promise.resolve(searchParams);
 
   const type = ANNOUNCEMENT_TYPE_KEYS.includes(sp.type ?? "") ? (sp.type as string) : undefined;
@@ -42,7 +43,7 @@ const LibraryAnnouncements = async ({ searchParams }: { searchParams: Promise<SP
     "rounded-full px-4 py-2 text-sm font-semibold transition " +
     (active
       ? "bg-amber-400 text-blue-950 shadow"
-      : "bg-white text-gray-700 ring-1 ring-gray-200 hover:bg-gray-50 dark:bg-slate-900 dark:text-slate-200 dark:ring-slate-700");
+      : "bg-white/60 text-gray-700 ring-1 ring-blue-100 hover:bg-white dark:bg-slate-900/50 dark:text-slate-200 dark:ring-slate-700");
 
   return (
     <div className="flex flex-col gap-4">
@@ -76,7 +77,7 @@ const LibraryAnnouncements = async ({ searchParams }: { searchParams: Promise<SP
       ) : (
         <div className="grid gap-4 xl:grid-cols-2">
           {items.map((item) => (
-            <AnnouncementCard key={item.id} item={item} t={t} />
+            <AnnouncementCard key={item.id} item={item} t={t} locale={locale} />
           ))}
         </div>
       )}
