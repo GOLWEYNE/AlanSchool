@@ -12,6 +12,10 @@ export const CATEGORY_EMOJI: Record<BookCategory, string> = {
 
 // Default number of days a book can be kept.
 export const LOAN_DAYS = 14;
+// Longest loan a librarian can set, in days.
+export const MAX_LOAN_DAYS = 60;
+// How long "Today in the library" is labelled as fresh, in hours.
+export const LIBRARY_FRESH_HOURS = 36;
 
 // Reading badges are earned from the number of finished (returned) non-textbook books.
 export const BADGE_TIERS = [
