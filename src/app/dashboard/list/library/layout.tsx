@@ -44,7 +44,7 @@ export default async function LibraryLayout({ children }: { children: ReactNode 
         </h1>
         <p className="mt-2 max-w-xl text-sm text-blue-50 md:text-base">{t("subtitle")}</p>
       </div>
-      <LibraryNav tabs={tabs} />
+      <LibraryNav tabs={tabs} label={t("title")} />
       {ready ? (
         children
       ) : (
