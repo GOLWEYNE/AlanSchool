@@ -90,13 +90,17 @@ const MessagesPage = async ({
               {t("noMessagesYet")}
             </p>
           ) : (
-            messages.map((m) => (
-              <div key={m.id} className={`flex ${m.fromMe ? "justify-end" : "justify-start"}`}>
+            messages.map((m, mi) => (
+              <div
+                key={m.id}
+                style={{ ["--i" as string]: Math.min(mi, 10) }}
+                className={`glass-bubble flex ${m.fromMe ? "justify-end" : "justify-start"}`}
+              >
                 <div
                   className={`max-w-[75%] rounded-2xl px-4 py-2.5 text-sm whitespace-pre-wrap ${
                     m.fromMe
-                      ? "bg-blue-600 text-white rounded-br-sm"
-                      : "bg-gray-100 dark:bg-slate-800 text-gray-800 dark:text-slate-100 rounded-bl-sm"
+                      ? "glass-bubble--me bg-blue-600 text-white rounded-br-sm"
+                      : "glass-bubble--them text-gray-800 dark:text-slate-100 rounded-bl-sm"
                   }`}
                 >
                   {m.content}
@@ -149,7 +153,7 @@ const MessagesPage = async ({
         </p>
         <Link
           href="/dashboard/list/messages?new=1"
-          className="mt-1 flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 transition-colors text-white px-4 py-2 rounded-lg text-xs font-semibold shine-hover"
+          className="glass-btn mt-1 flex items-center gap-1.5 text-white px-4 py-2 rounded-xl text-xs font-semibold"
         >
           <Plus size={14} /> {t("newMessage")}
         </Link>
@@ -170,10 +174,10 @@ const MessagesPage = async ({
       />
 
       <div className="flex flex-col md:flex-row gap-4">
-        <div className="w-full md:w-72 shrink-0 panel-card rounded-2xl p-3 flex flex-col gap-1 h-fit">
+        <div style={{ ["--i" as string]: 1 }} className="glass-rise w-full md:w-72 shrink-0 panel-card rounded-2xl p-3 flex flex-col gap-1 h-fit">
           <Link
             href="/dashboard/list/messages?new=1"
-            className={`flex items-center gap-1.5 justify-center mb-2 bg-blue-600 hover:bg-blue-700 transition-colors text-white px-3 py-2 rounded-lg text-xs font-semibold shine-hover ${
+            className={`glass-btn flex items-center gap-1.5 justify-center mb-2 text-white px-3 py-2 rounded-xl text-xs font-semibold ${
               composingNew ? "ring-2 ring-blue-300" : ""
             }`}
           >
@@ -194,10 +198,8 @@ const MessagesPage = async ({
               <Link
                 key={key}
                 href={`/dashboard/list/messages?${qs}`}
-                className={`flex items-start gap-2.5 rounded-xl px-2.5 py-2 transition-colors ${
-                  isActive
-                    ? "bg-blue-50 dark:bg-blue-500/10"
-                    : "hover:bg-gray-50 dark:hover:bg-slate-800/60"
+                className={`glass-thread flex items-start gap-2.5 rounded-xl px-2.5 py-2 ${
+                  isActive ? "is-active" : "hover:bg-blue-500/5"
                 }`}
               >
                 <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-200 text-xs font-bold">
@@ -229,7 +231,7 @@ const MessagesPage = async ({
           })}
         </div>
 
-        <div className="flex-1 min-w-0">{panel}</div>
+        <div style={{ ["--i" as string]: 2 }} className="glass-rise flex-1 min-w-0">{panel}</div>
       </div>
     </div>
   );

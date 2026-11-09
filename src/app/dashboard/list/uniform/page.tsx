@@ -3,6 +3,8 @@ import { getTranslations } from "next-intl/server";
 import prisma from "@/lib/prisma";
 import { requireRole } from "@/lib/auth";
 import { routeAccessMap } from "@/lib/settings";
+import AnimatedNumber from "@/components/dashboard/AnimatedNumber";
+import { ClipboardCheck, Clock, Flag, Users } from "lucide-react";
 import UniformChecker, { type UniformLabels, type UniformRow } from "@/components/UniformChecker";
 import {
   REPEAT_THRESHOLD,
@@ -23,15 +25,15 @@ const BADGE: Record<UniformStatusKey, string> = {
   NONE: "bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-300",
 };
 
-const CARD = "rounded-2xl border border-gray-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900";
+const CARD = "glass-surface p-4";
 
 const pct = (part: number, total: number) => (total === 0 ? 0 : Math.round((part / total) * 100));
 
 function Hero({ title, subtitle }: { title: string; subtitle: string }) {
   return (
-    <div className="rounded-2xl bg-gradient-to-r from-blue-600 to-amber-400 p-5 text-white">
-      <h1 className="text-2xl font-bold">{title}</h1>
-      <p className="mt-1 text-sm opacity-90">{subtitle}</p>
+    <div className="page-top-banner shine-hover p-5 md:p-6">
+      <h1 className="text-2xl font-bold tracking-tight md:text-3xl">{title}</h1>
+      <p className="mt-1 text-sm text-blue-50 md:text-base">{subtitle}</p>
     </div>
   );
 }
@@ -215,22 +217,48 @@ const UniformPage = async ({ searchParams }: { searchParams: Promise<SP> | SP })
       <Hero title={t("title")} subtitle={isAdmin ? t("subtitleAdmin") : t("subtitleSupervisor")} />
 
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-        <div className={CARD}>
-          <p className="text-xs text-gray-500">{t("complianceOn", { date })}</p>
-          <p className="text-3xl font-bold text-emerald-600">{pct(totalFull, totalChecked)}%</p>
-        </div>
-        <div className={CARD}>
-          <p className="text-xs text-gray-500">{t("studentsChecked")}</p>
-          <p className="text-3xl font-bold dark:text-slate-100">{totalChecked}</p>
-        </div>
-        <div className={CARD}>
-          <p className="text-xs text-gray-500">{t("classesNotChecked")}</p>
-          <p className={"text-3xl font-bold " + (pending.length ? "text-amber-600" : "text-emerald-600")}>{pending.length}</p>
-        </div>
-        <div className={CARD}>
-          <p className="text-xs text-gray-500">{t("repeatAlerts")}</p>
-          <p className={"text-3xl font-bold " + (flagged.length ? "text-rose-600" : "text-emerald-600")}>{flagged.length}</p>
-        </div>
+        {[
+          {
+            label: t("complianceOn", { date }),
+            value: pct(totalFull, totalChecked),
+            suffix: "%",
+            Icon: ClipboardCheck,
+            tone: "text-emerald-600 dark:text-emerald-400",
+            icon: "blue",
+          },
+          { label: t("studentsChecked"), value: totalChecked, suffix: "", Icon: Users, tone: "text-blue-950 dark:text-blue-50", icon: "blue" },
+          {
+            label: t("classesNotChecked"),
+            value: pending.length,
+            suffix: "",
+            Icon: Clock,
+            tone: pending.length ? "text-amber-600 dark:text-amber-400" : "text-emerald-600 dark:text-emerald-400",
+            icon: "gold",
+          },
+          {
+            label: t("repeatAlerts"),
+            value: flagged.length,
+            suffix: "",
+            Icon: Flag,
+            tone: flagged.length ? "text-rose-600 dark:text-rose-400" : "text-emerald-600 dark:text-emerald-400",
+            icon: "gold",
+          },
+        ].map(({ label, value, suffix, Icon, tone, icon }, i) => (
+          <div
+            key={label}
+            style={{ ["--i" as string]: i }}
+            className="glass-surface glass-tile glass-lift glass-rise group flex flex-col gap-2 p-4"
+          >
+            <span className={"glass-icon glass-icon--" + icon}>
+              <Icon size={20} strokeWidth={2.2} />
+            </span>
+            <p className={"text-3xl font-bold tracking-tight " + tone}>
+              <AnimatedNumber value={value} />
+              {suffix}
+            </p>
+            <p className="text-xs font-medium text-blue-800/80 dark:text-blue-200/80">{label}</p>
+          </div>
+        ))}
       </div>
 
       <div className={CARD}>
@@ -249,7 +277,7 @@ const UniformPage = async ({ searchParams }: { searchParams: Promise<SP> | SP })
             <span className="text-xs text-gray-500">{t("date")}</span>
             <input type="date" name="date" defaultValue={date} className="rounded-lg border border-gray-200 bg-white px-3 py-2 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100" />
           </label>
-          <button type="submit" className="rounded-lg bg-slate-800 px-4 py-2 font-medium text-white hover:bg-slate-700">
+          <button type="submit" className="glass-btn rounded-xl px-4 py-2 font-medium text-white">
             {t("open")}
           </button>
           <a href={exportHref} className="ml-auto rounded-lg border border-blue-300 px-4 py-2 font-medium text-blue-700 hover:bg-blue-50 dark:border-blue-700 dark:text-blue-300 dark:hover:bg-blue-900/30">
@@ -280,8 +308,11 @@ const UniformPage = async ({ searchParams }: { searchParams: Promise<SP> | SP })
             {trend.map((tr) => (
               <div key={tr.d} className="flex flex-1 flex-col items-center gap-1">
                 <span className="text-xs text-gray-500">{tr.total ? tr.value + "%" : "-"}</span>
-                <div className="flex h-28 w-full items-end rounded bg-gray-100 dark:bg-slate-800">
-                  <div className="w-full rounded bg-emerald-500" style={{ height: tr.value + "%" }} />
+                <div className="flex h-28 w-full items-end overflow-hidden rounded-lg bg-blue-500/10">
+                  <div
+                    className="glass-bar w-full rounded-lg bg-gradient-to-t from-emerald-600 to-emerald-400"
+                    style={{ height: tr.value + "%", ["--i" as string]: trend.indexOf(tr) }}
+                  />
                 </div>
                 <span className="text-[10px] text-gray-400">{tr.d.slice(5)}</span>
               </div>
@@ -296,7 +327,7 @@ const UniformPage = async ({ searchParams }: { searchParams: Promise<SP> | SP })
           ) : (
             <ul className="divide-y divide-gray-100 text-sm dark:divide-slate-800">
               {flaggedStudents.map((s) => (
-                <li key={s.id} className="flex items-center gap-3 py-2">
+                <li key={s.id} className="glass-row flex items-center gap-3 rounded-lg px-2 py-2">
                   <span className="font-medium dark:text-slate-100">
                     {s.name} {s.surname}
                   </span>
@@ -326,7 +357,7 @@ const UniformPage = async ({ searchParams }: { searchParams: Promise<SP> | SP })
             </thead>
             <tbody>
               {perClass.map((c) => (
-                <tr key={c.id} className="border-t border-gray-100 dark:border-slate-800">
+                <tr key={c.id} className="glass-row border-t border-blue-500/10">
                   <td className="p-2 font-medium dark:text-slate-100">
                     <Link href={"/dashboard/list/uniform?classId=" + c.id + "&date=" + date} className="hover:underline">
                       {c.name}

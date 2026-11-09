@@ -1244,3 +1244,184 @@ body {
     transform: none;
   }
 }
+
+/* ==========================================================================
+   Glass pages (Library, Uniform Check, Messages, Events)
+   Shared building blocks used by the per-page polish. Scope: .app-shell-bg.
+   No backdrop-filter here on purpose (pop-ups inside would be trapped).
+   ========================================================================== */
+.app-shell-bg .glass-surface {
+  position: relative;
+  border-radius: var(--glass-radius);
+  background-color: var(--glass-bg);
+  background-image: linear-gradient(135deg, rgba(255, 255, 255, 0.42), rgba(255, 255, 255, 0) 55%);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+  transition:
+    transform 0.45s var(--ease-out),
+    box-shadow 0.45s var(--ease-out),
+    border-color 0.3s ease;
+}
+
+.dark .app-shell-bg .glass-surface {
+  background-image: linear-gradient(135deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0) 55%);
+}
+
+.app-shell-bg .glass-surface.glass-lift:hover,
+.app-shell-bg a.glass-surface:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--glass-shadow-hover);
+  border-color: var(--glass-edge-hover);
+}
+
+/* stat tile: soft yellow/blue glow in the corner */
+.app-shell-bg .glass-tile {
+  background-image:
+    radial-gradient(circle at 100% 0%, rgba(250, 204, 21, 0.2), transparent 45%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.42), rgba(255, 255, 255, 0) 55%);
+}
+
+.dark .app-shell-bg .glass-tile {
+  background-image:
+    radial-gradient(circle at 100% 0%, rgba(250, 204, 21, 0.12), transparent 45%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0) 55%);
+}
+
+/* hero strip on a page: light glass with a yellow glow instead of a flat gradient */
+.app-shell-bg .glass-feature {
+  background-image:
+    radial-gradient(circle at 100% 0%, rgba(250, 204, 21, 0.28), transparent 42%),
+    radial-gradient(circle at 0% 100%, rgba(59, 130, 246, 0.18), transparent 45%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.45), rgba(255, 255, 255, 0) 55%);
+}
+
+.dark .app-shell-bg .glass-feature {
+  background-image:
+    radial-gradient(circle at 100% 0%, rgba(250, 204, 21, 0.14), transparent 42%),
+    radial-gradient(circle at 0% 100%, rgba(59, 130, 246, 0.2), transparent 45%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0) 55%);
+}
+
+/* list rows inside cards: gentle tint + nudge on hover */
+.app-shell-bg .glass-row {
+  transition: background-color 0.25s ease, transform 0.35s var(--ease-out);
+}
+
+.app-shell-bg .glass-row:hover {
+  background-color: rgba(59, 130, 246, 0.08);
+  transform: translateX(3px);
+}
+
+.dark .app-shell-bg .glass-row:hover {
+  background-color: rgba(96, 165, 250, 0.1);
+}
+
+/* bars grow from the baseline */
+@keyframes glass-bar-grow {
+  from { transform: scaleY(0); }
+}
+
+.app-shell-bg .glass-bar {
+  transform-origin: bottom;
+  animation: glass-bar-grow 0.9s var(--ease-out) backwards;
+  animation-delay: calc(var(--i, 0) * 60ms + 200ms);
+}
+
+/* chat bubbles ease in */
+@keyframes glass-bubble-in {
+  from { opacity: 0; transform: translateY(8px) scale(0.98); }
+}
+
+.app-shell-bg .glass-bubble {
+  animation: glass-bubble-in 0.45s var(--ease-out) backwards;
+  animation-delay: calc(var(--i, 0) * 45ms);
+}
+
+.app-shell-bg .glass-bubble--me {
+  background-image: linear-gradient(145deg, #3b82f6, #1d4ed8);
+  box-shadow: 0 10px 22px -10px rgba(29, 78, 216, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+
+.app-shell-bg .glass-bubble--them {
+  background-color: rgba(255, 255, 255, 0.7);
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 6px 16px -10px rgba(29, 78, 216, 0.3);
+}
+
+.dark .app-shell-bg .glass-bubble--them {
+  background-color: rgba(30, 41, 59, 0.7);
+}
+
+/* primary buttons: brand blue with a lift */
+.app-shell-bg .glass-btn {
+  background-image: linear-gradient(145deg, #3b82f6, #1d4ed8);
+  box-shadow: 0 10px 20px -10px rgba(29, 78, 216, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  transition: transform 0.35s var(--ease-out), box-shadow 0.35s var(--ease-out);
+}
+
+.app-shell-bg .glass-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 26px -12px rgba(29, 78, 216, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+}
+
+/* thread list: active pill gets the yellow marker used by the sidebar */
+.app-shell-bg .glass-thread {
+  position: relative;
+  transition: background-color 0.25s ease, transform 0.35s var(--ease-out);
+}
+
+.app-shell-bg .glass-thread:hover {
+  transform: translateX(3px);
+}
+
+.app-shell-bg .glass-thread.is-active {
+  background-color: rgba(59, 130, 246, 0.14);
+  box-shadow: inset 0 0 0 1px rgba(59, 130, 246, 0.22);
+}
+
+.app-shell-bg .glass-thread.is-active::before {
+  content: "";
+  position: absolute;
+  left: -2px;
+  top: 22%;
+  bottom: 22%;
+  width: 3px;
+  border-radius: 3px;
+  background: linear-gradient(180deg, #facc15, #3b82f6);
+}
+
+/* calendar: softer toolbar buttons and today cell on the glass card */
+.app-shell-bg .rbc-toolbar button {
+  border-radius: 10px;
+  transition: background-color 0.25s ease, box-shadow 0.25s ease, color 0.25s ease;
+}
+
+.app-shell-bg .rbc-today {
+  background-color: rgba(250, 204, 21, 0.14);
+}
+
+.dark .app-shell-bg .rbc-today {
+  background-color: rgba(250, 204, 21, 0.08);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-shell-bg .glass-bar,
+  .app-shell-bg .glass-bubble {
+    animation: none !important;
+  }
+
+  .app-shell-bg .glass-surface,
+  .app-shell-bg .glass-row,
+  .app-shell-bg .glass-thread,
+  .app-shell-bg .glass-btn {
+    transition-duration: 0.01ms !important;
+  }
+
+  .app-shell-bg .glass-surface.glass-lift:hover,
+  .app-shell-bg a.glass-surface:hover,
+  .app-shell-bg .glass-row:hover,
+  .app-shell-bg .glass-thread:hover,
+  .app-shell-bg .glass-btn:hover {
+    transform: none;
+  }
+}

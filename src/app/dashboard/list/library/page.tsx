@@ -7,6 +7,7 @@ import { getReadingOverview, getStudentReading, keepLibrarianInStudio } from "@/
 import { BADGE_TIERS, CATEGORY_EMOJI, type BookCategory, earnedBadges, nextBadge, weekStreak } from "@/lib/libraryShared";
 import { loadAnnouncements, viewerAudience } from "@/lib/libraryAnnouncements";
 import AnnouncementCard, { AudioPlayer, VideoPlayer } from "@/components/library/AnnouncementCard";
+import AnimatedNumber from "@/components/dashboard/AnimatedNumber";
 import { Avatar, BookCover, CARD, Empty, Section, StatTile, Stars } from "@/components/library/LibraryUi";
 
 type TFn = (key: string, values?: Record<string, string | number>) => string;
@@ -33,15 +34,15 @@ async function ReadingCard({
   return (
     <Section title={title} emoji="🎒">
       <div className="grid grid-cols-3 gap-3 text-center">
-        <div className="rounded-xl bg-blue-50 p-3 dark:bg-blue-950/40">
-          <div className="text-2xl font-bold text-blue-700 dark:text-blue-300">{reading.booksRead}</div>
+        <div className="glass-row rounded-xl bg-blue-500/10 p-3">
+          <AnimatedNumber value={reading.booksRead} className="block text-2xl font-bold text-blue-700 dark:text-blue-300" />
           <div className="text-xs text-gray-500 dark:text-slate-400">{t("me.read")}</div>
         </div>
-        <div className="rounded-xl bg-amber-50 p-3 dark:bg-amber-950/30">
-          <div className="text-2xl font-bold text-amber-600">{reading.active.length}</div>
+        <div className="glass-row rounded-xl bg-amber-400/15 p-3">
+          <AnimatedNumber value={reading.active.length} className="block text-2xl font-bold text-amber-600" />
           <div className="text-xs text-gray-500 dark:text-slate-400">{t("me.reading")}</div>
         </div>
-        <div className="rounded-xl bg-emerald-50 p-3 dark:bg-emerald-950/30">
+        <div className="glass-row rounded-xl bg-emerald-500/10 p-3">
           <div className="text-2xl font-bold text-emerald-600">🔥 {streak}</div>
           <div className="text-xs text-gray-500 dark:text-slate-400">{t("me.streak")}</div>
         </div>
@@ -148,29 +149,29 @@ const LibraryHome = async () => {
   return (
     <div className="flex flex-col gap-4">
       {/* Today in the library */}
-      <div className="rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 p-5 text-white shadow-sm">
-        <div className="text-sm font-semibold uppercase tracking-wider opacity-90">☀️ {t("today.title")}</div>
+      <div style={{ ["--i" as string]: 0 }} className="glass-surface glass-feature glass-rise p-5 md:p-6">
+        <div className="text-xs font-semibold uppercase tracking-wider text-blue-700 dark:text-yellow-300">☀️ {t("today.title")}</div>
         {today ? (
           <div className="mt-2">
-            <div className="text-xl font-bold">{today.title}</div>
-            <p className="mt-1 whitespace-pre-line text-sm opacity-95">{today.body}</p>
-            <div className="mt-2 text-xs opacity-80">
+            <div className="text-xl font-bold text-blue-950 dark:text-blue-50">{today.title}</div>
+            <p className="mt-1 whitespace-pre-line text-sm text-blue-900/85 dark:text-blue-100/85">{today.body}</p>
+            <div className="mt-2 text-xs text-blue-800/70 dark:text-blue-200/70">
               {todayIsFresh
                 ? t("today.fresh")
                 : format.dateTime(today.createdAt, { day: "numeric", month: "long", timeZone: "Asia/Almaty" })}
             </div>
           </div>
         ) : (
-          <p className="mt-2 text-sm opacity-95">{t("today.empty")}</p>
+          <p className="mt-2 text-sm text-blue-900/85 dark:text-blue-100/85">{t("today.empty")}</p>
         )}
       </div>
 
       {/* Counters */}
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-        <StatTile emoji="📚" label={t("stats.titles")} value={bookCount} />
-        <StatTile emoji="🧺" label={t("stats.copies")} value={copies._sum.copies ?? 0} />
-        <StatTile emoji="📖" label={t("stats.booksRead")} value={overview.totalRead} />
-        <StatTile emoji="🧑‍🎓" label={t("stats.readers")} value={overview.readers} />
+        <StatTile emoji="📚" index={1} label={t("stats.titles")} value={bookCount} />
+        <StatTile emoji="🧺" index={2} label={t("stats.copies")} value={copies._sum.copies ?? 0} />
+        <StatTile emoji="📖" index={3} label={t("stats.booksRead")} value={overview.totalRead} />
+        <StatTile emoji="🧑‍🎓" index={4} label={t("stats.readers")} value={overview.readers} />
       </div>
       {overdue > 0 && (role === "admin" || role === "teacher") ? (
         <p className="text-xs text-gray-500 dark:text-slate-400">
@@ -314,7 +315,7 @@ const LibraryHome = async () => {
           ) : (
             <ol className="flex flex-col gap-2">
               {topClasses.map((c, i) => (
-                <li key={c.classId} className="flex items-center gap-3 rounded-xl bg-gray-50 p-3 dark:bg-slate-800/60">
+                <li key={c.classId} className="glass-row flex items-center gap-3 rounded-xl bg-blue-500/5 p-3">
                   <span className="text-2xl">{["🥇", "🥈", "🥉"][i]}</span>
                   <div className="flex-1">
                     <div className="font-semibold text-gray-800 dark:text-slate-100">{c.name}</div>
@@ -345,7 +346,7 @@ const LibraryHome = async () => {
           ) : (
             <ol className="flex flex-col gap-2">
               {topReaders.map((row, i) => (
-                <li key={row.student.id} className="flex items-center gap-3 text-sm">
+                <li key={row.student.id} className="glass-row flex items-center gap-3 rounded-lg px-1 py-0.5 text-sm">
                   <span className="w-5 text-center font-bold text-gray-400">{i + 1}</span>
                   <Avatar src={row.student.img} name={row.student.name} size={32} />
                   <span className="flex-1 truncate font-medium text-gray-800 dark:text-slate-100">{row.student.name}</span>
@@ -367,7 +368,7 @@ const LibraryHome = async () => {
           ) : (
             <ul className="flex flex-col gap-3">
               {news.map((n) => (
-                <li key={n.id} className="flex gap-3 rounded-xl bg-gray-50 p-3 dark:bg-slate-800/60">
+                <li key={n.id} className="glass-row flex gap-3 rounded-xl bg-blue-500/5 p-3">
                   {n.imageUrl && (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img src={n.imageUrl} alt="" className="h-16 w-16 shrink-0 rounded-lg object-cover" />
@@ -392,7 +393,7 @@ const LibraryHome = async () => {
               <div className="font-semibold text-gray-800 dark:text-slate-100">🎯 {t("about.goals")}</div>
               <p className="mt-1 whitespace-pre-line">{settings?.goals || t("about.goalsDefault")}</p>
             </div>
-            <div className="flex items-center gap-3 rounded-xl bg-blue-50 p-3 dark:bg-blue-950/40">
+            <div className="glass-row flex items-center gap-3 rounded-xl bg-blue-500/10 p-3">
               <Avatar src={settings?.librarianImg} name={settings?.librarianName || "L"} size={52} />
               <div>
                 <div className="text-xs uppercase tracking-wider text-gray-500 dark:text-slate-400">{t("about.librarian")}</div>
@@ -414,7 +415,7 @@ const LibraryHome = async () => {
         ) : (
           <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
             {photos.map((p) => (
-              <figure key={p.id} className="overflow-hidden rounded-xl bg-gray-100 dark:bg-slate-800">
+              <figure key={p.id} className="glass-surface glass-lift overflow-hidden !rounded-xl">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={p.url} alt={p.caption ?? ""} className="h-40 w-full object-cover" loading="lazy" />
                 {p.caption && <figcaption className="p-2 text-xs text-gray-600 dark:text-slate-300">{p.caption}</figcaption>}
