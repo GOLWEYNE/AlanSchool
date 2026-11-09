@@ -28,7 +28,9 @@ const MenuContent = ({ items, role }: MenuContentProps) => {
 
   const isActiveLink = (href: string) => {
     if (href === "/dashboard") {
-      return pathname === "/dashboard" || pathname.startsWith("/dashboard/");
+      // Home is only "current" on the dashboard landing pages, not on every
+      // page underneath /dashboard.
+      return /^\/dashboard(\/(admin|teacher|student|parent))?\/?$/.test(pathname);
     }
 
     return pathname === href || pathname.startsWith(`${href}/`);
