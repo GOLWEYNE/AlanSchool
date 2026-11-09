@@ -71,7 +71,7 @@ const LibraryBooks = async ({ searchParams }: { searchParams: Promise<SP> | SP }
           "rounded-full px-4 py-2 text-sm font-semibold transition " +
           (active
             ? "bg-amber-400 text-blue-950 shadow"
-            : "bg-white text-gray-700 ring-1 ring-gray-200 hover:bg-gray-50 dark:bg-slate-900 dark:text-slate-200 dark:ring-slate-700")
+            : "bg-white/60 text-gray-700 ring-1 ring-blue-100 hover:bg-white dark:bg-slate-900/50 dark:text-slate-200 dark:ring-slate-700")
         }
       >
         {label} <span className="opacity-60">({n})</span>
