@@ -1,9 +1,10 @@
 import { ReactNode } from "react";
+import AnimatedNumber from "@/components/dashboard/AnimatedNumber";
 
 // Small presentational pieces shared by the library pages (server-safe).
 
-export const CARD =
-  "rounded-2xl border border-gray-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900";
+// Glass surface (see globals.css, ".glass-surface"): translucent card with a soft lift.
+export const CARD = "glass-surface p-4";
 
 export function Section({
   title,
@@ -11,15 +12,17 @@ export function Section({
   action,
   children,
   className = "",
+  index = 0,
 }: {
   title: string;
   emoji?: string;
   action?: ReactNode;
   children: ReactNode;
   className?: string;
+  index?: number;
 }) {
   return (
-    <section className={CARD + " " + className}>
+    <section style={{ ["--i" as string]: index }} className={"glass-rise " + CARD + " " + className}>
       <div className="mb-3 flex items-center justify-between gap-3">
         <h2 className="text-lg font-bold text-gray-800 dark:text-blue-100">
           {emoji ? <span className="mr-2">{emoji}</span> : null}
@@ -108,12 +111,29 @@ export function BookCover({
   );
 }
 
-export function StatTile({ label, value, emoji }: { label: string; value: string | number; emoji: string }) {
+export function StatTile({
+  label,
+  value,
+  emoji,
+  index = 0,
+}: {
+  label: string;
+  value: string | number;
+  emoji: string;
+  index?: number;
+}) {
   return (
-    <div className="rounded-2xl bg-gradient-to-br from-blue-500 to-blue-400 p-4 text-white shadow-sm">
-      <div className="text-2xl">{emoji}</div>
-      <div className="mt-1 text-3xl font-bold">{value}</div>
-      <div className="text-sm opacity-90">{label}</div>
+    <div
+      style={{ ["--i" as string]: index }}
+      className="glass-surface glass-tile glass-lift glass-rise flex flex-col gap-2 p-4"
+    >
+      <span className="glass-icon glass-icon--blue text-xl">{emoji}</span>
+      {typeof value === "number" ? (
+        <AnimatedNumber value={value} className="block text-3xl font-bold tracking-tight text-blue-950 dark:text-blue-50" />
+      ) : (
+        <div className="text-3xl font-bold tracking-tight text-blue-950 dark:text-blue-50">{value}</div>
+      )}
+      <div className="text-sm font-medium text-blue-800/80 dark:text-blue-200/80">{label}</div>
     </div>
   );
 }
