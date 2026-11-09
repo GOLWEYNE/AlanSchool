@@ -29,7 +29,7 @@ export default function SidebarShell({ children }: { children: React.ReactNode }
           ${isOpen ? "translate-x-0" : "-translate-x-full"}
           md:static md:z-auto md:translate-x-0 md:w-[8%] lg:w-[16%] xl:w-[14%] md:p-4`}
       >
-        <div className="panel-card shine-hover h-full p-3 lg:p-4 flex flex-col overflow-hidden">
+        <div className="glass-sidebar panel-card shine-hover h-full p-3 lg:p-4 flex flex-col overflow-hidden">
           {/* Close (X) button - only rendered visually below md */}
           <button
             type="button"
