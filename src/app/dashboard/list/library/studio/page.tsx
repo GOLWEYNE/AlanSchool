@@ -51,9 +51,9 @@ const LibraryStudio = async () => {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="rounded-2xl bg-gradient-to-r from-blue-700 via-blue-600 to-amber-400 p-5 text-white shadow-sm">
-        <h2 className="text-xl font-bold">🎬 {t("studio.title")}</h2>
-        <p className="mt-1 max-w-2xl text-sm opacity-95">{t("studio.subtitle")}</p>
+      <div className="glass-surface glass-feature p-5">
+        <h2 className="text-xl font-bold text-blue-950 dark:text-blue-50">🎬 {t("studio.title")}</h2>
+        <p className="mt-1 max-w-2xl text-sm text-blue-900/85 dark:text-blue-100/85">{t("studio.subtitle")}</p>
       </div>
 
       <Section title={t("studio.composeTitle")} emoji="✍️">
