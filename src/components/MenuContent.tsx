@@ -56,13 +56,13 @@ const MenuContent = ({ items, role }: MenuContentProps) => {
                   router.push(item.href);
                   close();
                 }}
-                className={`flex w-full items-center justify-start md:justify-center lg:justify-start gap-4 rounded-xl px-2 py-2.5 transition-all shine-hover ${
+                className={`glass-nav-item ${active ? "is-active" : ""} flex w-full items-center justify-start md:justify-center lg:justify-start gap-4 rounded-xl px-2 py-2.5 transition-all shine-hover ${
                   active
                     ? "bg-gradient-to-r from-blue-100 to-yellow-100 text-blue-900 shadow-md dark:from-blue-950/70 dark:to-yellow-950/40 dark:text-blue-100"
                     : "text-blue-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-yellow-50 hover:text-blue-900 dark:text-blue-300 dark:hover:from-blue-950/50 dark:hover:to-yellow-950/30 dark:hover:text-blue-100"
                 }`}
               >
-                <div className={`flex h-8 w-8 items-center justify-center rounded-full ${active ? "bg-white/90 border border-blue-200 dark:bg-slate-900/80 dark:border-blue-800" : "bg-blue-50 border border-blue-100 dark:bg-slate-900/60 dark:border-slate-800"}`}>
+                <div className={`glass-nav-icon flex h-8 w-8 items-center justify-center rounded-full ${active ? "bg-white/90 border border-blue-200 dark:bg-slate-900/80 dark:border-blue-800" : "bg-blue-50 border border-blue-100 dark:bg-slate-900/60 dark:border-slate-800"}`}>
                   <Image src={item.icon} alt="" width={18} height={18} />
                 </div>
                 <span className="block md:hidden lg:block font-medium">{item.label}</span>
