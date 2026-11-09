@@ -1,5 +1,6 @@
 import { getEmbeddableVideoUrl, isDirectVideoFile } from "@/lib/videoEmbed";
 import { typeMeta } from "@/lib/libraryShared";
+import { SCHOOL_TIME_ZONE } from "@/lib/schoolTime";
 import type { AnnouncementView } from "@/lib/libraryAnnouncements";
 import { Avatar, BookCover } from "@/components/library/LibraryUi";
 
@@ -34,10 +35,21 @@ export function AudioPlayer({ url, title }: { url: string; title?: string | null
   );
 }
 
-const fmt = (d: Date, opts: Intl.DateTimeFormatOptions) =>
-  new Intl.DateTimeFormat("en-GB", { timeZone: "Asia/Almaty", ...opts }).format(d);
+// Dates follow the viewer's interface language (en / kk / ru) on the school clock.
+const fmt = (locale: string, d: Date, opts: Intl.DateTimeFormatOptions) =>
+  new Intl.DateTimeFormat(locale, { timeZone: SCHOOL_TIME_ZONE, ...opts }).format(d);
 
-export default function AnnouncementCard({ item, t, compact = false }: { item: AnnouncementView; t: TFn; compact?: boolean }) {
+export default function AnnouncementCard({
+  item,
+  t,
+  compact = false,
+  locale = "en-GB",
+}: {
+  item: AnnouncementView;
+  t: TFn;
+  compact?: boolean;
+  locale?: string;
+}) {
   const meta = typeMeta(item.type);
   const audienceText =
     item.audience === "GRADES"
@@ -47,7 +59,7 @@ export default function AnnouncementCard({ item, t, compact = false }: { item: A
         : t("announce.forEveryone");
 
   return (
-    <article className="flex flex-col gap-3 rounded-2xl border border-gray-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+    <article className="glass-surface glass-lift flex flex-col gap-3 p-4">
       <header className="flex flex-wrap items-center gap-2">
         <span className="rounded-full bg-blue-100 px-3 py-1 text-xs font-bold text-blue-700 dark:bg-blue-900/40 dark:text-blue-300">
           {meta.emoji} {t("studio.types." + meta.key + ".name")}
@@ -57,7 +69,7 @@ export default function AnnouncementCard({ item, t, compact = false }: { item: A
             📌 {t("announce.pinned")}
           </span>
         )}
-        <span className="ml-auto text-xs text-gray-400">{fmt(item.createdAt, { day: "numeric", month: "short", year: "numeric" })}</span>
+        <span className="ml-auto text-xs text-gray-400">{fmt(locale, item.createdAt, { day: "numeric", month: "short", year: "numeric" })}</span>
       </header>
 
       <h3 className="text-lg font-bold leading-snug text-gray-900 dark:text-slate-100">{item.title}</h3>
@@ -69,7 +81,7 @@ export default function AnnouncementCard({ item, t, compact = false }: { item: A
       )}
       {item.eventAt && (
         <div className="rounded-lg bg-emerald-50 px-3 py-2 text-sm font-semibold text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-200">
-          🗓️ {fmt(item.eventAt, { weekday: "long", day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" })}
+          🗓️ {fmt(locale, item.eventAt, { weekday: "long", day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" })}
         </div>
       )}
 
@@ -99,7 +111,7 @@ export default function AnnouncementCard({ item, t, compact = false }: { item: A
       {item.books.length > 0 && (
         <ul className="flex flex-wrap gap-3">
           {item.books.map((b) => (
-            <li key={b.id} className="flex w-56 items-center gap-3 rounded-xl bg-gray-50 p-2 dark:bg-slate-800/60">
+            <li key={b.id} className="flex w-56 items-center gap-3 glass-row rounded-xl bg-blue-500/5 p-2">
               <BookCover src={b.coverUrl} title={b.title} emoji="📖" className="h-16 w-12" />
               <span className="min-w-0 text-sm">
                 <span className="block truncate font-semibold text-gray-800 dark:text-slate-100">{b.title}</span>
