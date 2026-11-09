@@ -3,6 +3,7 @@ import { getFormatter, getTranslations } from "next-intl/server";
 import prisma from "@/lib/prisma";
 import { requireRole } from "@/lib/auth";
 import { routeAccessMap } from "@/lib/settings";
+import { SCHOOL_TIME_ZONE } from "@/lib/schoolTime";
 import { canManageLibrary, studentsByIds } from "@/lib/library";
 import {
   addPhoto,
@@ -187,7 +188,7 @@ const LibraryDesk = async () => {
                               : "bg-gray-100 text-gray-600 dark:bg-slate-800 dark:text-slate-300")
                           }
                         >
-                          {format.dateTime(l.dueAt, { day: "numeric", month: "short", timeZone: "Asia/Almaty" })}
+                          {format.dateTime(l.dueAt, { day: "numeric", month: "short", timeZone: SCHOOL_TIME_ZONE })}
                           {late ? " ⚠️" : ""}
                         </span>
                       </td>
@@ -210,7 +211,7 @@ const LibraryDesk = async () => {
           ) : (
             <ul className="flex flex-col gap-3">
               {pendingReviews.map((r) => (
-                <li key={r.id} className="rounded-xl bg-gray-50 p-3 text-sm dark:bg-slate-800/60">
+                <li key={r.id} className="glass-row rounded-xl bg-blue-500/5 p-3 text-sm">
                   <div className="flex items-center justify-between gap-2">
                     <span className="font-semibold text-gray-800 dark:text-slate-100">{r.book.title}</span>
                     <Stars value={r.rating} size="text-sm" />
@@ -238,7 +239,7 @@ const LibraryDesk = async () => {
           ) : (
             <ul className="flex flex-col gap-3">
               {openRequests.map((r) => (
-                <li key={r.id} className="rounded-xl bg-gray-50 p-3 text-sm dark:bg-slate-800/60">
+                <li key={r.id} className="glass-row rounded-xl bg-blue-500/5 p-3 text-sm">
                   <div className="text-xs text-gray-500 dark:text-slate-400">
                     {people.get(r.studentId)?.name} · {people.get(r.studentId)?.className}
                   </div>
@@ -389,7 +390,7 @@ const LibraryDesk = async () => {
             <ImageField name="librarianImg" label={t("desk.fLibrarianPhoto")} uploadLabel={t("desk.upload")} initial={settings?.librarianImg} />
             <label className={LABEL}>
               {t("desk.fHours")}
-              <input className={FIELD} name="hours" maxLength={200} defaultValue={settings?.hours ?? ""} placeholder="Mon–Fri 08:30–16:30" />
+              <input className={FIELD} name="hours" maxLength={200} defaultValue={settings?.hours ?? ""} placeholder={t("desk.hoursPlaceholder")} />
             </label>
             {role === "admin" && (
               <label className={LABEL}>
