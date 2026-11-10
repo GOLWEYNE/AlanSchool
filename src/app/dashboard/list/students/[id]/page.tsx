@@ -126,8 +126,9 @@ const SingleStudentPage = async ({
         {/* LEFT */}
         <div className="w-full xl:w-2/3 flex flex-col gap-4 min-w-0">
           {/* HERO: brand cover, photo ring, name, contact chips */}
-          <section className="glass-surface glass-feature glass-rise overflow-hidden" style={rise(0)}>
-            <div className="glass-cover h-28" aria-hidden="true" />
+          {/* Not positioned and not clipped: the admin edit form opens a full-screen overlay from inside this card. */}
+          <section className="glass-surface glass-feature glass-rise !static" style={rise(0)}>
+            <div className="glass-cover h-28 rounded-t-[inherit]" aria-hidden="true" />
             <div className="px-5 pb-5 sm:px-6">
               <div className="-mt-14 flex flex-col items-center gap-4 text-center sm:flex-row sm:items-end sm:text-left">
                 <div className="shrink-0 rounded-full bg-gradient-to-br from-yellow-300 via-sky-300 to-blue-500 p-1 shadow-xl shadow-blue-900/25 transition-transform duration-500 hover:scale-105">
