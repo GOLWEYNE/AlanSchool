@@ -1,3 +1,4 @@
+import { PEOPLE_ORDER } from "@/lib/sort";
 import PageHero from "@/components/PageHero";
 import ClerkSyncList, { OrphanRow } from "@/components/ClerkSyncList";
 import prisma from "@/lib/prisma";
@@ -17,9 +18,11 @@ const ClerkSyncPage = async () => {
   const [students, teachers] = await Promise.all([
     prisma.student.findMany({
       select: { id: true, name: true, surname: true, username: true },
+      orderBy: PEOPLE_ORDER,
     }),
     prisma.teacher.findMany({
       select: { id: true, name: true, surname: true, username: true },
+      orderBy: PEOPLE_ORDER,
     }),
   ]);
 
