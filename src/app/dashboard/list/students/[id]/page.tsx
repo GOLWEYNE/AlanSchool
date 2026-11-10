@@ -4,16 +4,34 @@ import FormContainer from "@/components/FormContainer";
 import Performance from "@/components/Performance";
 import StudentAttendanceCard from "@/components/StudentAttendanceCard";
 import StudentStudyPlanner from "@/components/StudentStudyPlanner";
+import AnimatedNumber from "@/components/dashboard/AnimatedNumber";
 import prisma from "@/lib/prisma";
 import { getUserRole } from "@/lib/auth";
 import { teacherCanAccessStudent } from "@/lib/teacherScope";
 import { auth } from "@clerk/nextjs/server";
-import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
+import type { CSSProperties } from "react";
 import { getLocale, getTranslations } from "next-intl/server";
-import { MessageSquare } from "lucide-react";
+import {
+  BookOpen,
+  CalendarCheck,
+  CalendarDays,
+  CalendarRange,
+  ChevronRight,
+  ClipboardList,
+  Droplet,
+  FileText,
+  GraduationCap,
+  Mail,
+  MessageSquare,
+  NotebookPen,
+  Phone,
+  School,
+  Trophy,
+  Users,
+} from "lucide-react";
 import { Class, Student } from "@/generated/prisma/client";
 
 type MessageableTeacher = { id: string; name: string; surname: string };
@@ -73,176 +91,197 @@ const SingleStudentPage = async ({
   // English keeps the day/month/year order it always had; other locales use their own.
   const dateLocale = locale === "en" ? "en-GB" : locale;
 
+  const photoSrc =
+    typeof student.img === "string" && student.img.trim() ? student.img : "/Alan.png";
+
+  const contacts = [
+    { Icon: Droplet, text: student.bloodType || "-", href: null },
+    {
+      Icon: CalendarDays,
+      text: new Intl.DateTimeFormat(dateLocale).format(student.birthday),
+      href: null,
+    },
+    { Icon: Mail, text: student.email || "-", href: student.email ? `mailto:${student.email}` : null },
+    { Icon: Phone, text: student.phone || "-", href: student.phone ? `tel:${student.phone}` : null },
+  ];
+
+  const classId = student.class.id;
+  const shortcuts: { Icon: typeof BookOpen; label: string; href: string }[] = [
+    { Icon: BookOpen, label: t("studentLessons"), href: `/dashboard/list/lessons?classId=${classId}` },
+    { Icon: Users, label: t("studentTeachers"), href: `/dashboard/list/teachers?classId=${classId}` },
+    { Icon: FileText, label: t("studentExams"), href: `/dashboard/list/exams?classId=${classId}` },
+    { Icon: ClipboardList, label: t("studentAssignments"), href: `/dashboard/list/assignments?classId=${classId}` },
+    { Icon: Trophy, label: t("studentResults"), href: `/dashboard/list/results?studentId=${student.id}` },
+  ];
+
+  // Entrance stagger: each block rises a beat after the one before it.
+  const rise = (i: number) => ({ "--i": i }) as CSSProperties;
+
   return (
     <div className="flex-1 p-4 flex flex-col gap-4">
       <div className="flex flex-col gap-4 xl:flex-row">
-      {/* LEFT */}
-      <div className="w-full xl:w-2/3">
-        {/* TOP */}
-        <div className="flex flex-col lg:flex-row gap-4">
-          {/* USER INFO CARD */}
-          <div className="bg-lamaSky py-6 px-4 rounded-md flex-1 flex gap-4">
-            <div className="w-1/3">
-              <Image
-                src={typeof student.img === "string" && student.img.trim() ? student.img : "/Alan.png"}
-                alt=""
-                width={144}
-                height={144}
-                className="w-36 h-36 rounded-full object-cover"
-              />
-            </div>
-            <div className="w-2/3 flex flex-col justify-between gap-4">
-              <div className="flex items-center gap-4">
-                <h1 className="text-xl font-semibold">
-                  {student.name + " " + student.surname}
-                </h1>
-                {role === "admin" && (
-                  <FormContainer table="student" type="update" data={student} />
-                )}
-              </div>
-              <p className="text-sm text-gray-500">
-                Lorem ipsum, dolor sit amet consectetur adipisicing elit.
-              </p>
-              <div className="flex items-center justify-between gap-2 flex-wrap text-xs font-medium">
-                <div className="w-full md:w-1/3 lg:w-full 2xl:w-1/3 flex items-center gap-2">
-                  <Image src="/blood.png" alt="" width={14} height={14} />
-                  <span>{student.bloodType}</span>
+        {/* LEFT */}
+        <div className="w-full xl:w-2/3 flex flex-col gap-4 min-w-0">
+          {/* HERO: brand cover, photo ring, name, contact chips */}
+          <section className="glass-surface glass-feature glass-rise overflow-hidden" style={rise(0)}>
+            <div className="glass-cover h-28" aria-hidden="true" />
+            <div className="px-5 pb-5 sm:px-6">
+              <div className="-mt-14 flex flex-col items-center gap-4 text-center sm:flex-row sm:items-end sm:text-left">
+                <div className="shrink-0 rounded-full bg-gradient-to-br from-yellow-300 via-sky-300 to-blue-500 p-1 shadow-xl shadow-blue-900/25 transition-transform duration-500 hover:scale-105">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={photoSrc}
+                    alt=""
+                    width={128}
+                    height={128}
+                    className="h-32 w-32 rounded-full border-4 border-white object-cover dark:border-slate-900"
+                  />
                 </div>
-                <div className="w-full md:w-1/3 lg:w-full 2xl:w-1/3 flex items-center gap-2">
-                  <Image src="/date.png" alt="" width={14} height={14} />
-                  <span>
-                    {new Intl.DateTimeFormat(dateLocale).format(student.birthday)}
+                <div className="flex min-w-0 flex-1 flex-col items-center gap-2 sm:items-start sm:pb-1">
+                  <div className="flex flex-wrap items-center justify-center gap-3 sm:justify-start">
+                    <h1 className="text-2xl font-bold text-blue-900 dark:text-blue-100">
+                      {student.name + " " + student.surname}
+                    </h1>
+                    {role === "admin" && (
+                      <FormContainer table="student" type="update" data={student} />
+                    )}
+                  </div>
+                  <span className="glass-chip glass-chip--gold">
+                    <School className="h-3.5 w-3.5" aria-hidden="true" />
+                    {t("class")} {student.class.name}
                   </span>
                 </div>
-                <div className="w-full md:w-1/3 lg:w-full 2xl:w-1/3 flex items-center gap-2">
-                  <Image src="/mail.png" alt="" width={14} height={14} />
-                  <span>{student.email || "-"}</span>
-                </div>
-                <div className="w-full md:w-1/3 lg:w-full 2xl:w-1/3 flex items-center gap-2">
-                  <Image src="/phone.png" alt="" width={14} height={14} />
-                  <span>{student.phone || "-"}</span>
-                </div>
+              </div>
+              <div className="mt-5 flex flex-wrap gap-2">
+                {contacts.map(({ Icon, text, href }, i) => {
+                  const chip =
+                    "glass-row inline-flex min-w-0 max-w-full items-center gap-2 rounded-full border border-blue-200/70 bg-white/60 px-3 py-1.5 text-xs font-medium text-blue-900 dark:border-slate-700 dark:bg-slate-900/50 dark:text-blue-100";
+                  const inner = (
+                    <>
+                      <Icon className="h-3.5 w-3.5 shrink-0 text-blue-600 dark:text-blue-300" aria-hidden="true" />
+                      <span className="truncate">{text}</span>
+                    </>
+                  );
+                  return href ? (
+                    <a key={i} href={href} className={chip} title={text}>
+                      {inner}
+                    </a>
+                  ) : (
+                    <span key={i} className={chip}>
+                      {inner}
+                    </span>
+                  );
+                })}
               </div>
             </div>
-          </div>
-          {/* SMALL CARDS */}
-          <div className="flex-1 flex gap-4 justify-between flex-wrap">
-            {/* CARD */}
-            <div className="bg-white p-4 rounded-md flex gap-4 w-full md:w-[48%] xl:w-[45%] 2xl:w-[48%]">
-              <Image
-                src="/singleAttendance.png"
-                alt=""
-                width={24}
-                height={24}
-                className="w-6 h-6"
-              />
-              <Suspense fallback={t("loading")}>
-                <StudentAttendanceCard id={student.id} />
-              </Suspense>
+          </section>
+
+          {/* STAT TILES */}
+          <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+            <div className="group glass-surface glass-tile glass-lift glass-rise flex items-center gap-3 p-4" style={rise(1)}>
+              <span className="glass-icon glass-icon--blue">
+                <CalendarCheck className="h-5 w-5" aria-hidden="true" />
+              </span>
+              <div className="min-w-0">
+                <Suspense fallback={<p className="text-2xl font-bold leading-none text-blue-900 dark:text-blue-100">…</p>}>
+                  <StudentAttendanceCard id={student.id} />
+                </Suspense>
+              </div>
             </div>
-            {/* CARD */}
-            <div className="bg-white p-4 rounded-md flex gap-4 w-full md:w-[48%] xl:w-[45%] 2xl:w-[48%]">
-              <Image
-                src="/singleBranch.png"
-                alt=""
-                width={24}
-                height={24}
-                className="w-6 h-6"
-              />
-              <div className="">
-                <h1 className="text-xl font-semibold">
+            <div className="group glass-surface glass-tile glass-lift glass-rise flex items-center gap-3 p-4" style={rise(2)}>
+              <span className="glass-icon glass-icon--gold">
+                <GraduationCap className="h-5 w-5" aria-hidden="true" />
+              </span>
+              <div className="min-w-0">
+                <p className="text-2xl font-bold leading-none text-blue-900 dark:text-blue-100">
                   {t("gradeOrdinal", { n: student.class.name.charAt(0) })}
-                </h1>
-                <span className="text-sm text-gray-400">{t("grade")}</span>
+                </p>
+                <p className="mt-1 truncate text-xs font-medium text-slate-500 dark:text-slate-400">{t("grade")}</p>
               </div>
             </div>
-            {/* CARD */}
-            <div className="bg-white p-4 rounded-md flex gap-4 w-full md:w-[48%] xl:w-[45%] 2xl:w-[48%]">
-              <Image
-                src="/singleLesson.png"
-                alt=""
-                width={24}
-                height={24}
-                className="w-6 h-6"
-              />
-              <div className="">
-                <h1 className="text-xl font-semibold">
-                  {student.class._count.lessons}
-                </h1>
-                <span className="text-sm text-gray-400">{t("lessons")}</span>
+            <div className="group glass-surface glass-tile glass-lift glass-rise flex items-center gap-3 p-4" style={rise(3)}>
+              <span className="glass-icon glass-icon--blue">
+                <BookOpen className="h-5 w-5" aria-hidden="true" />
+              </span>
+              <div className="min-w-0">
+                <p className="text-2xl font-bold leading-none text-blue-900 dark:text-blue-100">
+                  <AnimatedNumber value={student.class._count.lessons} />
+                </p>
+                <p className="mt-1 truncate text-xs font-medium text-slate-500 dark:text-slate-400">{t("lessons")}</p>
               </div>
             </div>
-            {/* CARD */}
-            <div className="bg-white p-4 rounded-md flex gap-4 w-full md:w-[48%] xl:w-[45%] 2xl:w-[48%]">
-              <Image
-                src="/singleClass.png"
-                alt=""
-                width={24}
-                height={24}
-                className="w-6 h-6"
-              />
-              <div className="">
-                <h1 className="text-xl font-semibold">{student.class.name}</h1>
-                <span className="text-sm text-gray-400">{t("class")}</span>
+            <div className="group glass-surface glass-tile glass-lift glass-rise flex items-center gap-3 p-4" style={rise(4)}>
+              <span className="glass-icon glass-icon--gold">
+                <School className="h-5 w-5" aria-hidden="true" />
+              </span>
+              <div className="min-w-0">
+                <p className="text-2xl font-bold leading-none text-blue-900 dark:text-blue-100">{student.class.name}</p>
+                <p className="mt-1 truncate text-xs font-medium text-slate-500 dark:text-slate-400">{t("class")}</p>
               </div>
             </div>
           </div>
         </div>
-      </div>
-      {/* RIGHT */}
-      <div className="w-full xl:w-1/3 flex flex-col gap-4">
-        <div className="bg-white p-4 rounded-md">
-          <h1 className="text-xl font-semibold">{t("shortcuts")}</h1>
-          <div className="mt-4 flex gap-4 flex-wrap text-xs text-gray-500">
-            {role === "parent" && messageableTeacher && (
-              <Link
-                className="p-3 rounded-md bg-blue-600 text-white flex items-center gap-1.5 font-semibold"
-                href={`/dashboard/list/messages?peer=${messageableTeacher.id}&role=teacher&student=${student.id}`}
-              >
-                <MessageSquare size={14} />
-                {t("messageTeacher", { name: `${messageableTeacher.name} ${messageableTeacher.surname}` })}
-              </Link>
-            )}
-            <Link
-              className="p-3 rounded-md bg-lamaSkyLight"
-              href={`/dashboard/list/lessons?classId=${student.class.id}`}
-            >
-              {t("studentLessons")}
-            </Link>
-            <Link
-              className="p-3 rounded-md bg-lamaPurpleLight"
-              href={`/dashboard/list/teachers?classId=${student.class.id}`}
-            >
-              {t("studentTeachers")}
-            </Link>
-            <Link
-              className="p-3 rounded-md bg-pink-50"
-              href={`/dashboard/list/exams?classId=${student.class.id}`}
-            >
-              {t("studentExams")}
-            </Link>
-            <Link
-              className="p-3 rounded-md bg-lamaSkyLight"
-              href={`/dashboard/list/assignments?classId=${student.class.id}`}
-            >
-              {t("studentAssignments")}
-            </Link>
-            <Link
-              className="p-3 rounded-md bg-lamaYellowLight"
-              href={`/dashboard/list/results?studentId=${student.id}`}
-            >
-              {t("studentResults")}
-            </Link>
-            {canSeeStudyPlanner && (
-              <a className="p-3 rounded-md bg-lamaPurpleLight" href="#study-planner">
-                {t("studentStudyPlanner")}
-              </a>
-            )}
+
+        {/* RIGHT */}
+        <div className="w-full xl:w-1/3 flex flex-col gap-4 min-w-0">
+          <section className="glass-surface glass-rise p-5" style={rise(2)}>
+            <h2 className="text-lg font-bold text-blue-900 dark:text-blue-100">{t("shortcuts")}</h2>
+            <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-1 2xl:grid-cols-2">
+              {role === "parent" && messageableTeacher && (
+                <Link
+                  className="group glass-btn !items-center !p-3 text-sm font-semibold text-white flex gap-2 rounded-2xl sm:col-span-2 xl:col-span-1 2xl:col-span-2"
+                  href={`/dashboard/list/messages?peer=${messageableTeacher.id}&role=teacher&student=${student.id}`}
+                >
+                  <MessageSquare className="h-4 w-4 shrink-0" aria-hidden="true" />
+                  <span className="min-w-0 flex-1 truncate">
+                    {t("messageTeacher", { name: `${messageableTeacher.name} ${messageableTeacher.surname}` })}
+                  </span>
+                  <ChevronRight
+                    className="h-4 w-4 shrink-0 transition-transform duration-300 group-hover:translate-x-1"
+                    aria-hidden="true"
+                  />
+                </Link>
+              )}
+              {shortcuts.map(({ Icon, label, href }, i) => (
+                <Link
+                  key={href}
+                  href={href}
+                  className="group glass-action !items-center !p-3 text-sm font-semibold text-blue-900 dark:text-blue-100"
+                >
+                  <span className={`glass-icon !h-9 !w-9 !rounded-xl ${i % 2 ? "glass-icon--gold" : "glass-icon--blue"}`}>
+                    <Icon className="h-4 w-4" aria-hidden="true" />
+                  </span>
+                  <span className="min-w-0 flex-1 truncate">{label}</span>
+                  <ChevronRight
+                    className="h-4 w-4 shrink-0 text-blue-400 transition-transform duration-300 group-hover:translate-x-1"
+                    aria-hidden="true"
+                  />
+                </Link>
+              ))}
+              {canSeeStudyPlanner && (
+                <a
+                  href="#study-planner"
+                  className="group glass-action !items-center !p-3 text-sm font-semibold text-blue-900 dark:text-blue-100"
+                >
+                  <span className="glass-icon glass-icon--gold !h-9 !w-9 !rounded-xl">
+                    <NotebookPen className="h-4 w-4" aria-hidden="true" />
+                  </span>
+                  <span className="min-w-0 flex-1 truncate">{t("studentStudyPlanner")}</span>
+                  <ChevronRight
+                    className="h-4 w-4 shrink-0 text-blue-400 transition-transform duration-300 group-hover:translate-x-1"
+                    aria-hidden="true"
+                  />
+                </a>
+              )}
+            </div>
+          </section>
+          <div className="glass-host glass-rise" style={rise(3)}>
+            <Performance />
+          </div>
+          <div className="glass-rise" style={rise(4)}>
+            <Announcements />
           </div>
         </div>
-        <Performance />
-        <Announcements />
-      </div>
       </div>
 
       {/* STUDY PLANNER - goals, upcoming deadlines and the calendar export (staff only, read-only) */}
@@ -255,13 +294,18 @@ const SingleStudentPage = async ({
       )}
 
       {/* SCHEDULE - full page width so the whole week is easy to read at a glance */}
-      <div className="bg-white dark:bg-slate-900 rounded-md p-4 min-h-[700px] flex flex-col">
-        <h1 className="text-blue-900 dark:text-blue-100">{t("studentSchedule")}</h1>
-        <div className="flex-1 mt-2">
+      <section className="glass-surface glass-rise flex min-h-[700px] flex-col p-5" style={rise(5)}>
+        <h2 className="flex items-center gap-3 text-lg font-bold text-blue-900 dark:text-blue-100">
+          <span className="glass-icon glass-icon--gold !h-9 !w-9 !rounded-xl">
+            <CalendarRange className="h-4 w-4" aria-hidden="true" />
+          </span>
+          {t("studentSchedule")}
+        </h2>
+        <div className="mt-3 flex-1">
           {/* @ts-ignore */}
           <BigCalendarContainer type="classId" id={student.class.id} />
         </div>
-      </div>
+      </section>
     </div>
   );
 };
