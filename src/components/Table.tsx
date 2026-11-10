@@ -3,14 +3,21 @@ import { Key, ReactElement, JSXElementConstructor, ReactNode, ReactPortal, Await
 const Table = ({
     columns,
     renderRow,
+    renderCard,
     data
 }: {
     columns: { header: string; accessor: string; className?: string }[];
     renderRow: (item: any) => React.ReactNode;
+    // When given, phones (below md) show these as tappable cards instead of the table.
+    renderCard?: (item: any) => React.ReactNode;
     data: any[];
 }) => {
     return(
-        <div className="data-table-shell mt-4">
+        <>
+        {renderCard && (
+            <div className="mt-4 flex flex-col gap-3 md:hidden">{data.map((item: any) => renderCard(item))}</div>
+        )}
+        <div className={`data-table-shell mt-4 ${renderCard ? "hidden md:block" : ""}`}>
         <table className="w-full">
             <thead className="bg-gradient-to-r from-blue-50 via-sky-50 to-yellow-50 dark:from-blue-950/40 dark:via-slate-900/60 dark:to-yellow-950/20 border-b border-blue-100 dark:border-slate-800">
                 <tr className="text-left text-blue-700 dark:text-blue-300 text-sm">
@@ -22,6 +29,7 @@ const Table = ({
             <tbody>{data.map((item: any) => renderRow(item))}</tbody>
         </table>
         </div>
+        </>
     )
 }
 
