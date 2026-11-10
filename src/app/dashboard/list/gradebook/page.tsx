@@ -168,7 +168,7 @@ const GradebookPage = async ({
       />
 
       <form
-        className="panel-card p-4 rounded-md mb-4 shine-hover flex flex-wrap items-end gap-4"
+        className="panel-card p-4 rounded-md mb-4 shine-hover flex flex-wrap items-end gap-4 max-md:flex-col max-md:items-stretch max-md:gap-3"
         method="GET"
       >
         <div className="flex flex-col gap-1">
@@ -176,7 +176,7 @@ const GradebookPage = async ({
           <select
             name="classId"
             defaultValue={selectedClassId}
-            className="ring-[1.5px] ring-gray-300 dark:ring-slate-700 dark:bg-slate-800 dark:text-slate-100 p-2 rounded-md text-sm min-w-[10rem]"
+            className="ring-[1.5px] ring-gray-300 dark:ring-slate-700 dark:bg-slate-800 dark:text-slate-100 p-2 rounded-md text-sm min-w-[10rem] max-md:min-h-12 max-md:w-full max-md:text-base"
           >
             {classes.map((c) => (
               <option key={c.id} value={c.id}>
@@ -190,7 +190,7 @@ const GradebookPage = async ({
           <select
             name="subjectId"
             defaultValue={selectedSubjectId}
-            className="ring-[1.5px] ring-gray-300 dark:ring-slate-700 dark:bg-slate-800 dark:text-slate-100 p-2 rounded-md text-sm min-w-[10rem]"
+            className="ring-[1.5px] ring-gray-300 dark:ring-slate-700 dark:bg-slate-800 dark:text-slate-100 p-2 rounded-md text-sm min-w-[10rem] max-md:min-h-12 max-md:w-full max-md:text-base"
           >
             {subjects.map((s) => (
               <option key={s.id} value={s.id}>
@@ -199,7 +199,7 @@ const GradebookPage = async ({
             ))}
           </select>
         </div>
-        <button className="bg-blue-500 text-white px-4 py-2 rounded-md text-sm font-semibold">
+        <button className="bg-blue-500 text-white px-4 py-2 rounded-md text-sm font-semibold max-md:min-h-12 max-md:rounded-xl max-md:text-base">
           {t("loadButton")}
         </button>
       </form>
