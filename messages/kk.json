@@ -986,7 +986,17 @@
       "todaysSchedule": "Бүгінгі кесте",
       "childrenAttendance": "Балалардың қатысуы",
       "noChildren": "Бұл ата-анаға бекітілген бала жоқ.",
-      "behaviorConduct": "Мінез-құлық: {name}"
+      "behaviorConduct": "Мінез-құлық: {name}",
+      "today": "Бүгін",
+      "attendanceToday": "Бүгінгі қатысу",
+      "attNotMarked": "Әлі белгіленбеген",
+      "attPresent": "Қатысты",
+      "attAbsent": "Қатыспады",
+      "attPartly": "Қатысқан сабақ: {present}/{total}",
+      "nextExam": "Келесі емтихан",
+      "noUpcomingExam": "Емтихан жоқ",
+      "latestResult": "Соңғы нәтиже",
+      "noResultsYet": "Әзірге нәтиже жоқ"
     },
     "teacher": {
       "title": "Мұғалім жоспарлаушысы",
