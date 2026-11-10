@@ -106,6 +106,9 @@ const SingleStudentPage = async ({
   ];
 
   const classId = student.class.id;
+  // "10A" -> 10 (a class name like "1A" or "11B" always starts with its grade number).
+  const parsedGrade = parseInt(student.class.name, 10);
+  const gradeNumber = Number.isNaN(parsedGrade) ? 0 : parsedGrade;
   const shortcuts: { Icon: typeof BookOpen; label: string; href: string }[] = [
     { Icon: BookOpen, label: t("studentLessons"), href: `/dashboard/list/lessons?classId=${classId}` },
     { Icon: Users, label: t("studentTeachers"), href: `/dashboard/list/teachers?classId=${classId}` },
@@ -194,7 +197,7 @@ const SingleStudentPage = async ({
               </span>
               <div className="min-w-0">
                 <p className="text-2xl font-bold leading-none text-blue-900 dark:text-blue-100">
-                  {t("gradeOrdinal", { n: student.class.name.charAt(0) })}
+                  {t("gradeOrdinal", { n: gradeNumber })}
                 </p>
                 <p className="mt-1 truncate text-xs font-medium text-slate-500 dark:text-slate-400">{t("grade")}</p>
               </div>
