@@ -1,6 +1,7 @@
 import FormContainer from "@/components/FormContainer";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
+import PersonCard from "@/components/PersonCard";
 import TableSearch from "@/components/TableSearch";
 import PageHero from "@/components/PageHero";
 import prisma from "@/lib/prisma";
@@ -92,6 +93,32 @@ const renderRow = (item: ClassList) => (
   </tr>
 );
 
+  const renderCard = (item: ClassList) => (
+    <PersonCard
+      key={item.id}
+      badge={item.name}
+      title={item.name}
+      subtitle={item.supervisor ? item.supervisor.name + " " + item.supervisor.surname : undefined}
+      fields={[
+        { label: t("columns.capacity"), value: item.capacity },
+        {
+          label: locators.column,
+          value: item.roomNumber
+            ? `${item.roomNumber}${floorOfRoom(item.roomNumber) ? ` · ${locators.floor} ${floorOfRoom(item.roomNumber)}` : ""}`
+            : null,
+        },
+      ]}
+      actions={
+        role === "admin" ? (
+          <>
+            <FormContainer table="class" type="update" data={item} />
+            <FormContainer table="class" type="delete" id={item.id} />
+          </>
+        ) : undefined
+      }
+    />
+  );
+
   const { page, pageSize, ...queryParams } = searchParams;
 
   const p = page ? parseInt(page) : 1;
@@ -169,7 +196,7 @@ const renderRow = (item: ClassList) => (
         </div>
       </div>
       {/* LIST */}
-      <Table columns={columns} renderRow={renderRow} data={rows} />
+      <Table columns={columns} renderRow={renderRow} renderCard={renderCard} data={rows} />
       {/* PAGINATION */}
       <Pagination page={p} count={count} pageSize={size} />
     </div>

@@ -2,6 +2,7 @@ import { alphabeticalPageIds, orderByIds } from "@/lib/sort";
 import FormContainer from "@/components/FormContainer";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
+import PersonCard from "@/components/PersonCard";
 import TableSearch from "@/components/TableSearch";
 import PageHero from "@/components/PageHero";
 import ReportCardGenerateButton from "@/components/ReportCardGenerateButton";
@@ -109,6 +110,31 @@ const StudentListPage = async ({
     </tr>
   );
 
+  const renderCard = (item: StudentList) => (
+    <PersonCard
+      key={item.id}
+      href={`/dashboard/list/students/${item.id}`}
+      img={item.img}
+      title={item.name}
+      subtitle={item.class.name}
+      fields={[
+        { label: t("columns.studentId"), value: item.username },
+        { label: t("columns.phone"), value: item.phone },
+      ]}
+      actions={
+        role === "admin" || role === "teacher" ? (
+          <>
+            <ReportCardGenerateButton
+              studentId={item.id}
+              studentLabel={`${item.name} ${item.surname}`}
+            />
+            {role === "admin" && <FormContainer table="student" type="delete" id={item.id} />}
+          </>
+        ) : undefined
+      }
+    />
+  );
+
   const { page, pageSize, ...queryParams } = searchParams;
 
   const p = page ? parseInt(page) : 1;
@@ -201,7 +227,7 @@ const StudentListPage = async ({
         </div>
       </div>
       {/* LIST */}
-      <Table columns={columns} renderRow={renderRow} data={data} />
+      <Table columns={columns} renderRow={renderRow} renderCard={renderCard} data={data} />
       {/* PAGINATION */}
       <Pagination page={p} count={count} pageSize={size} />
     </div>

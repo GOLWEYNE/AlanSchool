@@ -2,6 +2,7 @@ import { alphabeticalPageIds, orderByIds } from "@/lib/sort";
 import FormContainer from "@/components/FormContainer";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
+import PersonCard from "@/components/PersonCard";
 import TableSearch from "@/components/TableSearch";
 import PageHero from "@/components/PageHero";
 import prisma from "@/lib/prisma";
@@ -107,6 +108,29 @@ const TeacherListPage = async ({
       </td>
     </tr>
   );
+  const renderCard = (item: TeacherList) => (
+    <PersonCard
+      key={item.id}
+      href={`/dashboard/list/teachers/${item.id}`}
+      img={item.img}
+      title={item.name}
+      subtitle={item.email}
+      fields={[
+        { label: t("columns.subjects"), value: item.subjects.map((s) => s.name).join(", ") },
+        { label: t("columns.classes"), value: item.classes.map((c) => c.name).join(", ") },
+        { label: t("columns.phone"), value: item.phone },
+      ]}
+      actions={
+        role === "admin" ? (
+          <>
+            <FormContainer table="teacher" type="update" data={item} />
+            <FormContainer table="teacher" type="delete" id={item.id} />
+          </>
+        ) : undefined
+      }
+    />
+  );
+
   const { page, pageSize, ...queryParams } = searchParams;
 
   const p = page ? parseInt(page) : 1;
@@ -186,7 +210,7 @@ const TeacherListPage = async ({
         </div>
       </div>
       {/* LIST */}
-      <Table columns={columns} renderRow={renderRow} data={data} />
+      <Table columns={columns} renderRow={renderRow} renderCard={renderCard} data={data} />
       {/* PAGINATION */}
       <Pagination page={p} count={count} pageSize={size} />
     </div>
