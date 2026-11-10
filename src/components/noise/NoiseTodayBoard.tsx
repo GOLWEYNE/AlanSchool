@@ -160,7 +160,7 @@ export default function NoiseTodayBoard({ initial }: { initial: NoiseTodayPayloa
             type="date"
             value={date}
             onChange={(e) => changeDate(e.target.value)}
-            className="rounded-lg border border-gray-300 bg-white px-2 py-1 text-sm dark:border-slate-700 dark:bg-slate-900"
+            className="rounded-lg border border-gray-300 bg-white px-2 py-1 text-sm dark:border-slate-700 dark:bg-slate-900 max-md:min-h-11 max-md:text-base"
           />
         </label>
       </div>
@@ -246,7 +246,7 @@ export default function NoiseTodayBoard({ initial }: { initial: NoiseTodayPayloa
               max={MAX_LIMIT_DB}
               value={limit}
               onChange={(e) => setLimit(e.target.value)}
-              className="w-28 rounded-lg border border-gray-300 bg-white px-2 py-1.5 text-sm dark:border-slate-700 dark:bg-slate-900"
+              className="w-28 rounded-lg border border-gray-300 bg-white px-2 py-1.5 text-sm dark:border-slate-700 dark:bg-slate-900 max-md:min-h-11 max-md:text-base"
             />
           </label>
           <label className="flex flex-col gap-1 text-xs text-gray-600 dark:text-slate-300">
@@ -257,14 +257,14 @@ export default function NoiseTodayBoard({ initial }: { initial: NoiseTodayPayloa
               max={MAX_YELLOW_MARGIN}
               value={margin}
               onChange={(e) => setMargin(e.target.value)}
-              className="w-28 rounded-lg border border-gray-300 bg-white px-2 py-1.5 text-sm dark:border-slate-700 dark:bg-slate-900"
+              className="w-28 rounded-lg border border-gray-300 bg-white px-2 py-1.5 text-sm dark:border-slate-700 dark:bg-slate-900 max-md:min-h-11 max-md:text-base"
             />
           </label>
           <button
             type="button"
             onClick={save}
             disabled={saving}
-            className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-60"
+            className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-60 max-md:min-h-12 max-md:rounded-2xl max-md:text-base"
           >
             {t("admin.save")}
           </button>
