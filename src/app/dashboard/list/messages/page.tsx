@@ -1,10 +1,12 @@
+import { Fragment } from "react";
 import Link from "next/link";
 import { getFormatter, getTranslations } from "next-intl/server";
-import { Inbox, Plus } from "lucide-react";
+import { ChevronLeft, Inbox, Plus } from "lucide-react";
 import { requireRole } from "@/lib/auth";
 import { routeAccessMap } from "@/lib/settings";
 import PageHero from "@/components/PageHero";
 import MessageComposeForm from "@/components/forms/MessageComposeForm";
+import ScrollToEnd from "@/components/ScrollToEnd";
 import {
   getThreadsForUser,
   getThreadMessages,
@@ -48,6 +50,27 @@ const MessagesPage = async ({
   const activeKey = selectedPeer && selectedRole ? threadKey(selectedPeer, selectedRole, selectedStudent) : null;
   const unreadTotal = threads.reduce((sum, thread) => sum + thread.unreadCount, 0);
 
+  // Phones behave like iMessage: the conversation list OR one open conversation,
+  // never both stacked. Tablet and desktop keep the two-pane layout.
+  const inChat = composingNew || Boolean(selectedPeer && selectedRole);
+  const hidePanelOnPhone = !inChat && threads.length > 0;
+  const startOfToday = new Date();
+  startOfToday.setHours(0, 0, 0, 0);
+  const listTime = (d: Date) =>
+    d >= startOfToday
+      ? format.dateTime(d, { timeStyle: "short" })
+      : format.dateTime(d, { month: "short", day: "numeric" });
+
+  const backToList = (
+    <Link
+      href="/dashboard/list/messages"
+      className="md:hidden -ml-1 flex min-h-11 items-center gap-0.5 pr-2 text-sm font-semibold text-blue-600 dark:text-blue-300"
+    >
+      <ChevronLeft size={22} aria-hidden="true" />
+      {t("hero.title")}
+    </Link>
+  );
+
   let panel: React.ReactNode;
 
   if (composingNew) {
@@ -57,6 +80,7 @@ const MessagesPage = async ({
     ]);
     panel = (
       <div className="panel-card p-5 md:p-6 rounded-2xl shine-hover">
+        {backToList}
         <h2 className="text-base font-bold text-gray-800 dark:text-blue-100 mb-4">{t("newMessage")}</h2>
         <MessageComposeForm mode="new" contacts={contacts} studentOptions={studentOptions} />
       </div>
@@ -70,8 +94,9 @@ const MessagesPage = async ({
     ]);
 
     panel = (
-      <div className="panel-card rounded-2xl shine-hover flex flex-col h-[70vh]">
-        <div className="p-4 md:p-5 border-b border-gray-100 dark:border-slate-800 flex items-center gap-3">
+      <div className="panel-card rounded-2xl shine-hover flex flex-col h-[calc(100dvh-14rem)] md:h-[70vh]">
+        <div className="p-3 md:p-5 border-b border-gray-100 dark:border-slate-800 flex items-center gap-2 md:gap-3">
+          {backToList}
           <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-200 text-sm font-bold">
             {initials(peerLabel)}
           </div>
@@ -90,34 +115,43 @@ const MessagesPage = async ({
               {t("noMessagesYet")}
             </p>
           ) : (
-            messages.map((m, mi) => (
-              <div
-                key={m.id}
-                style={{ ["--i" as string]: Math.min(mi, 10) }}
-                className={`glass-bubble flex ${m.fromMe ? "justify-end" : "justify-start"}`}
-              >
-                <div
-                  className={`max-w-[75%] rounded-2xl px-4 py-2.5 text-sm whitespace-pre-wrap ${
-                    m.fromMe
-                      ? "glass-bubble--me bg-blue-600 text-white rounded-br-sm"
-                      : "glass-bubble--them text-gray-800 dark:text-slate-100 rounded-bl-sm"
-                  }`}
-                >
-                  {m.content}
-                  <p
-                    className={`text-[10px] mt-1 ${
-                      m.fromMe ? "text-blue-100" : "text-gray-400 dark:text-slate-500"
-                    }`}
+            messages.map((m, mi) => {
+              const day = format.dateTime(m.createdAt, { dateStyle: "medium" });
+              const prevDay = mi > 0 ? format.dateTime(messages[mi - 1].createdAt, { dateStyle: "medium" }) : null;
+              return (
+                <Fragment key={m.id}>
+                  {day !== prevDay && (
+                    <p className="my-1 text-center text-[11px] font-semibold text-gray-400 dark:text-slate-500">{day}</p>
+                  )}
+                  <div
+                    style={{ ["--i" as string]: Math.min(mi, 10) }}
+                    className={`glass-bubble flex ${m.fromMe ? "justify-end" : "justify-start"}`}
                   >
-                    {format.dateTime(m.createdAt, { dateStyle: "medium", timeStyle: "short" })}
-                  </p>
-                </div>
-              </div>
-            ))
+                    <div
+                      className={`max-w-[80%] md:max-w-[75%] rounded-2xl px-4 py-2.5 text-[15px] md:text-sm whitespace-pre-wrap ${
+                        m.fromMe
+                          ? "glass-bubble--me bg-blue-600 text-white rounded-br-sm"
+                          : "glass-bubble--them text-gray-800 dark:text-slate-100 rounded-bl-sm"
+                      }`}
+                    >
+                      {m.content}
+                      <p
+                        className={`text-[10px] mt-1 ${
+                          m.fromMe ? "text-blue-100" : "text-gray-400 dark:text-slate-500"
+                        }`}
+                      >
+                        {format.dateTime(m.createdAt, { timeStyle: "short" })}
+                      </p>
+                    </div>
+                  </div>
+                </Fragment>
+              );
+            })
           )}
+          <ScrollToEnd count={messages.length} />
         </div>
 
-        <div className="p-4 md:p-5 border-t border-gray-100 dark:border-slate-800">
+        <div className="p-3 md:p-5 border-t border-gray-100 dark:border-slate-800">
           <MessageComposeForm
             mode="reply"
             peerId={selectedPeer}
@@ -163,21 +197,23 @@ const MessagesPage = async ({
 
   return (
     <div className="p-4 flex flex-col gap-4 max-w-6xl">
-      <PageHero
-        title={t("hero.title")}
-        subtitle={t("hero.subtitle")}
-        emoji="💬"
-        stats={[
-          { label: t("hero.conversations"), value: threads.length },
-          { label: t("hero.unread"), value: unreadTotal },
-        ]}
-      />
+      <div className={inChat ? "hidden md:block" : ""}>
+        <PageHero
+          title={t("hero.title")}
+          subtitle={t("hero.subtitle")}
+          emoji="💬"
+          stats={[
+            { label: t("hero.conversations"), value: threads.length },
+            { label: t("hero.unread"), value: unreadTotal },
+          ]}
+        />
+      </div>
 
       <div className="flex flex-col md:flex-row gap-4">
-        <div style={{ ["--i" as string]: 1 }} className="glass-rise w-full md:w-72 shrink-0 panel-card rounded-2xl p-3 flex flex-col gap-1 h-fit">
+        <div style={{ ["--i" as string]: 1 }} className={`glass-rise w-full md:w-72 shrink-0 panel-card rounded-2xl p-3 flex-col gap-1 h-fit ${inChat ? "hidden md:flex" : "flex"}`}>
           <Link
             href="/dashboard/list/messages?new=1"
-            className={`glass-btn flex items-center gap-1.5 justify-center mb-2 text-white px-3 py-2 rounded-xl text-xs font-semibold ${
+            className={`glass-btn flex items-center gap-1.5 justify-center mb-2 text-white px-3 py-3 md:py-2 rounded-xl text-sm md:text-xs font-semibold ${
               composingNew ? "ring-2 ring-blue-300" : ""
             }`}
           >
@@ -198,30 +234,33 @@ const MessagesPage = async ({
               <Link
                 key={key}
                 href={`/dashboard/list/messages?${qs}`}
-                className={`glass-thread flex items-start gap-2.5 rounded-xl px-2.5 py-2 ${
+                className={`glass-thread flex items-start gap-3 md:gap-2.5 rounded-xl px-2.5 py-3 md:py-2 ${
                   isActive ? "is-active" : "hover:bg-blue-500/5"
                 }`}
               >
-                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-200 text-xs font-bold">
+                <div className="flex h-12 w-12 md:h-9 md:w-9 shrink-0 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-200 text-sm md:text-xs font-bold">
                   {initials(thread.peerLabel)}
                 </div>
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center justify-between gap-1">
-                    <p className="text-xs font-semibold text-gray-800 dark:text-blue-100 truncate">
+                    <p className="text-sm md:text-xs font-semibold text-gray-800 dark:text-blue-100 truncate">
                       {thread.peerLabel}
                     </p>
-                    {thread.unreadCount > 0 && (
-                      <span className="shrink-0 min-w-4 h-4 px-1 flex items-center justify-center bg-blue-600 text-white rounded-full text-[10px]">
-                        {thread.unreadCount}
-                      </span>
-                    )}
+                    <span className="flex shrink-0 items-center gap-1.5">
+                      <span className="text-[11px] text-gray-400 dark:text-slate-500">{listTime(thread.lastAt)}</span>
+                      {thread.unreadCount > 0 && (
+                        <span className="shrink-0 min-w-5 h-5 md:min-w-4 md:h-4 px-1 flex items-center justify-center bg-blue-600 text-white rounded-full text-[11px] md:text-[10px]">
+                          {thread.unreadCount}
+                        </span>
+                      )}
+                    </span>
                   </div>
                   {thread.studentLabel && (
                     <p className="text-[10px] text-blue-400 dark:text-blue-500 truncate">
                       {t("re", { name: thread.studentLabel })}
                     </p>
                   )}
-                  <p className="text-[11px] text-gray-400 dark:text-slate-500 truncate">
+                  <p className="text-[13px] md:text-[11px] text-gray-500 md:text-gray-400 dark:text-slate-500 truncate">
                     {thread.lastFromMe ? t("you") : ""}
                     {thread.lastMessage}
                   </p>
@@ -231,7 +270,9 @@ const MessagesPage = async ({
           })}
         </div>
 
-        <div style={{ ["--i" as string]: 2 }} className="glass-rise flex-1 min-w-0">{panel}</div>
+        <div style={{ ["--i" as string]: 2 }} className={`glass-rise flex-1 min-w-0 ${hidePanelOnPhone ? "hidden md:block" : ""}`}>
+          {panel}
+        </div>
       </div>
     </div>
   );
