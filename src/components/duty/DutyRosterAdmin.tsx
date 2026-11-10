@@ -35,11 +35,11 @@ type Props = {
 type Tab = "grid" | "teachers" | "import" | "settings";
 
 const INPUT =
-  "rounded-md border border-gray-300 bg-white px-2 py-1 text-sm dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100";
+  "rounded-md border border-gray-300 bg-white px-2 py-1 text-sm dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 max-md:min-h-11 max-md:text-base";
 const BTN =
-  "rounded-md bg-blue-600 px-3 py-1.5 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-50";
+  "rounded-md bg-blue-600 px-3 py-1.5 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-50 max-md:min-h-11 max-md:rounded-xl";
 const BTN_GHOST =
-  "rounded-md border border-gray-300 px-3 py-1.5 text-sm font-semibold hover:bg-gray-50 disabled:opacity-50 dark:border-slate-700 dark:text-slate-100 dark:hover:bg-slate-800";
+  "rounded-md border border-gray-300 px-3 py-1.5 text-sm font-semibold hover:bg-gray-50 disabled:opacity-50 dark:border-slate-700 dark:text-slate-100 dark:hover:bg-slate-800 max-md:min-h-11 max-md:rounded-xl";
 
 const DutyRosterAdmin = ({ slots, teachers, accounts, settings, daysOff }: Props) => {
   const t = useTranslations("Duty");
