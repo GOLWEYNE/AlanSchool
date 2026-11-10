@@ -232,6 +232,7 @@ const FormModal = ({
   relatedData,
 }: FormContainerProps & { relatedData?: any }) => {
   const t = useTranslations("Modal");
+  const tn = useTranslations("Navbar");
   const [open, setOpen] = useState(false);
 
   // Falls back to the raw table key for any table without an entity label.
@@ -297,15 +298,24 @@ const FormModal = ({
         )}
       </button>
       {open && (
-        <div className="w-screen h-screen absolute left-0 top-0 bg-black bg-opacity-60 z-50 flex items-center justify-center">
-          <div className="bg-white dark:bg-slate-900 p-4 rounded-md relative w-[90%] md:w-[70%] lg:w-[60%] xl:w-[50%] 2xl:w-[40%] max-h-[90vh] overflow-y-auto">
+        <div
+          className="form-overlay w-screen absolute left-0 top-0 bg-black bg-opacity-60 z-50 flex items-end md:items-center justify-center"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setOpen(false);
+          }}
+        >
+          {/* Phones: a sheet that slides up from the bottom. Tablet and desktop: the usual centred pop-up. */}
+          <div className="form-sheet bg-white dark:bg-slate-900 p-4 rounded-t-3xl md:rounded-md relative w-full md:w-[70%] lg:w-[60%] xl:w-[50%] 2xl:w-[40%] max-h-[92%] md:max-h-[90vh] overflow-y-auto">
+            <div className="mx-auto mb-3 h-1.5 w-10 rounded-full bg-gray-300 dark:bg-slate-600 md:hidden" aria-hidden="true" />
             <Form />
-            <div
-              className="absolute top-4 right-4 cursor-pointer"
+            <button
+              type="button"
+              aria-label={tn("close")}
+              className="absolute top-2 right-2 flex h-10 w-10 items-center justify-center rounded-full cursor-pointer md:top-4 md:right-4 md:h-auto md:w-auto"
               onClick={() => setOpen(false)}
             >
               <Image src="/close.png" alt="" width={14} height={14} className="dark:invert dark:opacity-70" />
-            </div>
+            </button>
           </div>
         </div>
       )}
