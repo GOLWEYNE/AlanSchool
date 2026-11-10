@@ -2,6 +2,7 @@ import { alphabeticalPageIds, orderByIds } from "@/lib/sort";
 import FormContainer from "@/components/FormContainer";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
+import PersonCard from "@/components/PersonCard";
 import TableSearch from "@/components/TableSearch";
 import prisma from "@/lib/prisma";
 import { resolvePageSize } from "@/lib/settings";
@@ -91,6 +92,27 @@ const renderRow = (item: ParentList) => (
   </tr>
 );
 
+  const renderCard = (item: ParentList) => (
+    <PersonCard
+      key={item.id}
+      href={`/dashboard/list/parents/${item.id}`}
+      title={item.name}
+      subtitle={item.email}
+      fields={[
+        { label: t("columns.studentNames"), value: item.students.map((s) => s.name).join(", ") },
+        { label: t("columns.phone"), value: item.phone },
+      ]}
+      actions={
+        role === "admin" ? (
+          <>
+            <FormContainer table="parent" type="update" data={item} />
+            <FormContainer table="parent" type="delete" id={item.id} />
+          </>
+        ) : undefined
+      }
+    />
+  );
+
   const { page, pageSize, ...queryParams } = searchParams;
 
   const p = page ? parseInt(page) : 1;
@@ -159,7 +181,7 @@ const renderRow = (item: ParentList) => (
         </div>
       </div>
       {/* LIST */}
-      <Table columns={columns} renderRow={renderRow} data={data} />
+      <Table columns={columns} renderRow={renderRow} renderCard={renderCard} data={data} />
       {/* PAGINATION */}
       <Pagination page={p} count={count} pageSize={size} />
     </div>
