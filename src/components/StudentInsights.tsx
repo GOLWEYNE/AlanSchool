@@ -24,7 +24,7 @@ import {
 // Presentational pieces of Student insights. Server components only: the only
 // interactivity is links and plain forms (the olympiad form posts to a server action).
 
-const CARD = "rounded-2xl border border-gray-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900";
+const CARD = "glass-surface";
 
 const TEXT = {
   great: "text-emerald-600 dark:text-emerald-400",
@@ -111,19 +111,21 @@ export const PeriodBar = ({
   return (
     <div className="mt-4 flex flex-wrap items-center gap-2">
       <span className="text-xs font-semibold uppercase tracking-wide text-slate-400">{L.period}</span>
+      <div className="inline-flex flex-wrap gap-1 rounded-full bg-slate-100/80 p-1 dark:bg-slate-800/70">
       {DAY_OPTIONS.map((d) => (
         <Link
           key={d}
           href={href(d)}
-          className={`rounded-full px-3 py-1 text-xs font-semibold ${
+          className={`rounded-full px-4 py-1.5 text-xs font-semibold transition-all duration-300 ${
             d === days
-              ? "bg-blue-600 text-white"
-              : "bg-white text-slate-600 ring-1 ring-gray-200 hover:bg-slate-50 dark:bg-slate-900 dark:text-slate-300 dark:ring-slate-700"
+              ? "bg-white text-blue-700 shadow-sm dark:bg-slate-600 dark:text-white"
+              : "text-slate-600 hover:text-blue-700 dark:text-slate-300 dark:hover:text-white"
           }`}
         >
           {name(d)}
         </Link>
       ))}
+      </div>
       <span className="text-[11px] text-slate-400">{L.periodNote}</span>
     </div>
   );

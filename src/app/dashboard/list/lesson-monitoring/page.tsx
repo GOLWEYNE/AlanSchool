@@ -78,7 +78,7 @@ const LessonMonitoringPage = async ({ searchParams }: { searchParams: SP }) => {
             subtitle={L.liveNote}
           />
         ) : (
-          <div className="rounded-2xl border border-gray-200 bg-white p-10 text-center shadow-sm dark:border-slate-800 dark:bg-slate-900">
+          <div className="glass-surface p-10 text-center">
             <p className="text-base font-semibold text-slate-700 dark:text-slate-200">{L.noLessons}</p>
             {isAdmin && (
               <Link href="?" className="mt-3 inline-block text-sm font-semibold text-blue-600 hover:underline">
@@ -155,13 +155,13 @@ const LessonMonitoringPage = async ({ searchParams }: { searchParams: SP }) => {
             name="q"
             defaultValue={searchParams.q ?? ""}
             placeholder={L.search}
-            className="w-56 rounded-full border border-gray-200 bg-white px-4 py-2 text-xs text-slate-700 placeholder:text-slate-400 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200"
+            className="w-56 rounded-full border border-gray-200/80 bg-white/70 px-4 py-2 text-xs text-slate-700 placeholder:text-slate-400 dark:border-slate-700 dark:bg-slate-800/70 dark:text-slate-200"
           />
         </form>
       </div>
 
       {shown.length === 0 ? (
-        <div className="rounded-2xl border border-gray-200 bg-white p-10 text-center shadow-sm dark:border-slate-800 dark:bg-slate-900">
+        <div className="glass-surface p-10 text-center">
           <p className="text-base font-semibold text-slate-700 dark:text-slate-200">{L.emptyTitle}</p>
           <p className="mt-1 text-sm text-slate-400">{L.emptyBody}</p>
         </div>
