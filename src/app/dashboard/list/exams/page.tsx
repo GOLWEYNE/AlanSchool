@@ -180,6 +180,7 @@ const renderRow = (item: ExamList) => (
         // tag picker's boxes when editing.
         objectives: { select: { id: true } },
       },
+      orderBy: { title: "asc" },
       take: size,
       skip: size * (p - 1),
     }),
