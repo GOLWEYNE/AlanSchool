@@ -21,7 +21,7 @@ const NoiseMonitorPage = async ({ searchParams }: { searchParams: { date?: strin
       <div>
         <Link
           href="/dashboard/list/noise-monitor/board"
-          className="inline-block rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800"
+          className="inline-block max-md:flex max-md:min-h-12 max-md:items-center max-md:justify-center max-md:rounded-2xl rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800"
         >
           {t("admin.openBoard")}
         </Link>

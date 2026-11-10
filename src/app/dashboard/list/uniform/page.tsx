@@ -264,10 +264,10 @@ const UniformPage = async ({ searchParams }: { searchParams: Promise<SP> | SP })
       </div>
 
       <div className={CARD}>
-        <form method="get" className="mb-4 flex flex-wrap items-end gap-3 text-sm">
+        <form method="get" className="mb-4 flex flex-wrap items-end gap-3 text-sm max-md:flex-col max-md:items-stretch">
           <label className="flex flex-col gap-1">
             <span className="text-xs text-gray-500">{t("class")}</span>
-            <select name="classId" defaultValue={selected.id} className="rounded-lg border border-gray-200 bg-white px-3 py-2 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100">
+            <select name="classId" defaultValue={selected.id} className="rounded-lg border border-gray-200 bg-white px-3 py-2 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 max-md:min-h-12 max-md:text-base">
               {classes.map((c) => (
                 <option key={c.id} value={c.id}>
                   {c.name}
@@ -277,12 +277,12 @@ const UniformPage = async ({ searchParams }: { searchParams: Promise<SP> | SP })
           </label>
           <label className="flex flex-col gap-1">
             <span className="text-xs text-gray-500">{t("date")}</span>
-            <input type="date" name="date" defaultValue={date} className="rounded-lg border border-gray-200 bg-white px-3 py-2 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100" />
+            <input type="date" name="date" defaultValue={date} className="rounded-lg border border-gray-200 bg-white px-3 py-2 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 max-md:min-h-12 max-md:text-base" />
           </label>
-          <button type="submit" className="glass-btn rounded-xl px-4 py-2 font-medium text-white">
+          <button type="submit" className="glass-btn rounded-xl px-4 py-2 font-medium text-white max-md:min-h-12 max-md:text-base">
             {t("open")}
           </button>
-          <a href={exportHref} className="ml-auto rounded-lg border border-blue-300 px-4 py-2 font-medium text-blue-700 hover:bg-blue-50 dark:border-blue-700 dark:text-blue-300 dark:hover:bg-blue-900/30">
+          <a href={exportHref} className="ml-auto max-md:ml-0 max-md:flex max-md:min-h-12 max-md:items-center max-md:justify-center rounded-lg border border-blue-300 px-4 py-2 font-medium text-blue-700 hover:bg-blue-50 dark:border-blue-700 dark:text-blue-300 dark:hover:bg-blue-900/30">
             {t("exportCsv")}
           </a>
         </form>
@@ -346,7 +346,35 @@ const UniformPage = async ({ searchParams }: { searchParams: Promise<SP> | SP })
 
       <div className={CARD}>
         <h2 className="mb-3 text-lg font-semibold dark:text-slate-100">{isAdmin ? t("allClasses", { date }) : t("yourClasses", { date })}</h2>
-        <div className="overflow-x-auto">
+        <ul className="flex flex-col gap-2 md:hidden">
+          {perClass.map((c) => (
+            <li key={c.id}>
+              <Link
+                href={"/dashboard/list/uniform?classId=" + c.id + "&date=" + date}
+                className="flex min-h-16 items-center gap-3 rounded-2xl border border-blue-100 bg-white/80 px-4 py-2 dark:border-slate-700 dark:bg-slate-900/60"
+              >
+                <span className="flex h-11 min-w-11 shrink-0 items-center justify-center rounded-full bg-blue-100 px-2 text-sm font-bold text-blue-700 dark:bg-blue-500/20 dark:text-blue-200">
+                  {c.name}
+                </span>
+                <span className="min-w-0 flex-1">
+                  <span className="block truncate text-sm font-semibold text-gray-800 dark:text-slate-100">
+                    {c.supervisor ? c.supervisor.name + " " + c.supervisor.surname : "-"}
+                  </span>
+                  <span className="block text-xs text-gray-500 dark:text-slate-400">
+                    {c.checked}/{c._count.students}
+                    {c.checked ? " \u00b7 " + c.compliance + "%" : ""}
+                  </span>
+                </span>
+                {c.checked === 0 ? (
+                  <span className="shrink-0 rounded-full bg-amber-100 px-2.5 py-1 text-xs font-semibold text-amber-700">{t("notChecked")}</span>
+                ) : (
+                  <span className="shrink-0 rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-semibold text-emerald-700">{t("done")}</span>
+                )}
+              </Link>
+            </li>
+          ))}
+        </ul>
+        <div className="hidden overflow-x-auto md:block">
           <table className="w-full text-left text-sm">
             <thead className="text-xs uppercase text-gray-500">
               <tr>
