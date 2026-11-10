@@ -20,7 +20,11 @@ type Tab = { href: string; label: string };
 export function LibraryNav({ tabs, label }: { tabs: Tab[]; label: string }) {
   const pathname = usePathname();
   return (
-    <nav className="flex flex-wrap gap-2" aria-label={label}>
+    <nav
+      className="flex flex-wrap gap-2 max-md:-mx-4 max-md:flex-nowrap max-md:overflow-x-auto max-md:px-4 max-md:pb-1"
+      style={{ scrollbarWidth: "none" }}
+      aria-label={label}
+    >
       {tabs.map((tab, index) => {
         const active =
           index === 0 ? pathname === tab.href : pathname === tab.href || pathname.startsWith(tab.href + "/");
@@ -29,7 +33,7 @@ export function LibraryNav({ tabs, label }: { tabs: Tab[]; label: string }) {
             key={tab.href}
             href={tab.href}
             className={
-              "rounded-full px-4 py-2 text-sm font-semibold transition " +
+              "rounded-full px-4 py-2 text-sm font-semibold transition max-md:flex max-md:min-h-11 max-md:shrink-0 max-md:items-center max-md:whitespace-nowrap " +
               (active
                 ? "bg-blue-600 text-white shadow"
                 : "bg-white/60 text-blue-700 ring-1 ring-blue-100 hover:bg-white dark:bg-slate-900/50 dark:text-blue-300 dark:ring-slate-700 dark:hover:bg-slate-800")
