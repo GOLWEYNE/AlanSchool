@@ -1,6 +1,7 @@
 import FormContainer from "@/components/FormContainer";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
+import PersonCard from "@/components/PersonCard";
 import TableSearch from "@/components/TableSearch";
 import prisma from "@/lib/prisma";
 import { resolvePageSize, routeAccessMap } from "@/lib/settings";
@@ -88,6 +89,29 @@ const ObjectiveListPage = async ({
     </tr>
   );
 
+  // Phones: one card per objective (long titles wrap), subject and grade underneath.
+  const renderCard = (item: ObjectiveList) => (
+    <PersonCard
+      key={item.id}
+      wrapTitle
+      badge={item.subject.name.slice(0, 2).toUpperCase()}
+      title={item.title}
+      subtitle={`${item.subject.name} · ${item.grade ? item.grade.level : t("allGrades")}`}
+      fields={[
+        { label: t("columns.code"), value: item.code },
+        { label: t("columns.strand"), value: item.strand },
+      ]}
+      actions={
+        canEdit(item.subjectId) || role === "admin" ? (
+          <>
+            {canEdit(item.subjectId) && <FormContainer table="objective" type="update" data={item} />}
+            {role === "admin" && <FormContainer table="objective" type="delete" id={item.id} />}
+          </>
+        ) : undefined
+      }
+    />
+  );
+
   const { page, pageSize, ...queryParams } = searchParams;
 
   const p = page ? parseInt(page) : 1;
@@ -130,8 +154,8 @@ const ObjectiveListPage = async ({
   return (
     <div className="panel-card p-4 md:p-5 rounded-md flex-1 m-4 mt-0 list-page-shell">
       {/* TOP */}
-      <div className="flex items-center justify-between">
-        <h1 className="hidden md:block text-lg font-semibold text-blue-900">{t("heading")}</h1>
+      <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+        <h1 className="text-2xl font-bold text-blue-900 md:text-lg md:font-semibold">{t("heading")}</h1>
         <div className="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
           <TableSearch />
           <div className="flex items-center gap-4 self-end">
@@ -148,7 +172,7 @@ const ObjectiveListPage = async ({
       <p className="text-xs text-gray-400 dark:text-slate-500 mt-2">{t("subheading")}</p>
       {role === "admin" && <LoadStandardObjectives total={countStandardObjectives()} />}
       {/* LIST */}
-      <Table columns={columns} renderRow={renderRow} data={data} />
+      <Table columns={columns} renderRow={renderRow} renderCard={renderCard} data={data} />
       {/* PAGINATION */}
       <Pagination page={p} count={count} pageSize={size} />
     </div>
