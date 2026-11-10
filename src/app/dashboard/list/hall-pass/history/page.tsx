@@ -12,6 +12,7 @@ import {
   parseHistoryFilters,
 } from "@/lib/hallPass";
 import Table from "@/components/Table";
+import PersonCard from "@/components/PersonCard";
 import Pagination from "@/components/Pagination";
 import { CARD, Hero, StaffNav } from "@/components/hallPass/HallPassUi";
 
@@ -21,7 +22,7 @@ type SP = { [key: string]: string | undefined };
 type TFn = (key: string, values?: Record<string, string | number>) => string;
 
 const FIELD =
-  "rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm text-gray-900 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100";
+  "rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm text-gray-900 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 max-md:min-h-12 max-md:w-full max-md:text-base";
 
 const STATUS_STYLE: Record<string, string> = {
   ACTIVE: "bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300",
@@ -79,7 +80,7 @@ const HallPassHistoryPage = async ({ searchParams }: { searchParams: Promise<SP>
         labels={{ live: t("nav.live"), history: t("nav.history"), settings: t("nav.settings") }}
       />
 
-      <form method="get" className={CARD + " flex flex-wrap items-end gap-3"}>
+      <form method="get" className={CARD + " flex flex-wrap items-end gap-3 max-md:flex-col max-md:items-stretch"}>
         <label className="flex min-w-[12rem] flex-1 flex-col gap-1 text-xs text-gray-500 dark:text-slate-400">
           {t("history.search")}
           <input name="q" defaultValue={filters.q ?? ""} placeholder={t("history.searchPlaceholder")} className={FIELD} />
@@ -136,10 +137,10 @@ const HallPassHistoryPage = async ({ searchParams }: { searchParams: Promise<SP>
             ))}
           </select>
         </label>
-        <button type="submit" className="rounded-lg bg-blue-600 px-4 py-1.5 text-sm font-semibold text-white hover:bg-blue-700">
+        <button type="submit" className="rounded-lg bg-blue-600 px-4 py-1.5 text-sm font-semibold text-white hover:bg-blue-700 max-md:min-h-12 max-md:rounded-2xl max-md:text-base">
           {t("history.apply")}
         </button>
-        <a href="/dashboard/list/hall-pass/history" className="rounded-lg border border-gray-300 px-4 py-1.5 text-sm font-semibold text-gray-600 hover:bg-gray-50 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-800">
+        <a href="/dashboard/list/hall-pass/history" className="max-md:flex max-md:min-h-12 max-md:items-center max-md:justify-center max-md:rounded-2xl rounded-lg border border-gray-300 px-4 py-1.5 text-sm font-semibold text-gray-600 hover:bg-gray-50 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-800">
           {t("history.reset")}
         </a>
       </form>
@@ -148,7 +149,7 @@ const HallPassHistoryPage = async ({ searchParams }: { searchParams: Promise<SP>
         <p className="text-sm text-gray-600 dark:text-slate-300">{t("history.total", { count: total })}</p>
         <a
           href={"/api/hall-pass/export" + (exportQuery ? "?" + exportQuery : "")}
-          className="rounded-lg border border-blue-300 px-3 py-1.5 text-sm font-semibold text-blue-700 hover:bg-blue-50 dark:border-blue-800 dark:text-blue-300 dark:hover:bg-blue-900/30"
+          className="rounded-lg border border-blue-300 px-3 py-1.5 text-sm font-semibold text-blue-700 hover:bg-blue-50 dark:border-blue-800 dark:text-blue-300 dark:hover:bg-blue-900/30 max-md:flex max-md:min-h-11 max-md:items-center max-md:rounded-full"
         >
           {t("history.exportCsv")}
         </a>
@@ -161,6 +162,25 @@ const HallPassHistoryPage = async ({ searchParams }: { searchParams: Promise<SP>
           <Table
             columns={columns}
             data={rows}
+            renderCard={(r: (typeof rows)[number]) => {
+              const minutes = r.returnedAt
+                ? Math.max(0, Math.round((new Date(r.returnedAt).getTime() - new Date(r.issuedAt).getTime()) / 60000))
+                : null;
+              return (
+                <PersonCard
+                  key={r.id}
+                  badge={minutes === null ? "..." : minutes + "m"}
+                  title={r.studentName}
+                  subtitle={r.className + " - " + r.destination}
+                  fields={[
+                    { label: t("history.cols.date"), value: formatSchoolDate(r.issuedAt) },
+                    { label: t("history.cols.out"), value: formatSchoolTime(r.issuedAt) },
+                    { label: t("history.cols.back"), value: r.returnedAt ? formatSchoolTime(r.returnedAt) : "-" },
+                    { label: t("history.cols.status"), value: t("status." + r.status) },
+                  ]}
+                />
+              );
+            }}
             renderRow={(r: (typeof rows)[number]) => {
               const minutes = r.returnedAt
                 ? Math.max(0, Math.round((new Date(r.returnedAt).getTime() - new Date(r.issuedAt).getTime()) / 60000))
