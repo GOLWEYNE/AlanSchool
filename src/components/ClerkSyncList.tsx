@@ -50,7 +50,39 @@ const ClerkSyncList = ({ rows }: { rows: OrphanRow[] }) => {
 
   return (
     <div>
-      <div className="data-table-shell mt-4 overflow-x-auto">
+      <ul className="mt-4 overflow-hidden rounded-3xl border border-blue-100 bg-white/80 shadow-sm dark:border-slate-700 dark:bg-slate-900/70 md:hidden">
+        <li className="flex min-h-14 items-center gap-3 border-b border-blue-50 px-4 dark:border-slate-800">
+          <input
+            type="checkbox"
+            className="h-6 w-6 shrink-0"
+            checked={allSelected}
+            onChange={toggleAll}
+            aria-label={t("selectAll")}
+          />
+          <span className="text-sm font-semibold text-blue-800 dark:text-blue-200">{t("selectAll")}</span>
+        </li>
+        {rows.map((r) => (
+          <li key={r.key} className="border-b border-blue-50 last:border-b-0 dark:border-slate-800">
+            <label className="flex min-h-16 items-center gap-3 px-4 py-2">
+              <input
+                type="checkbox"
+                className="h-6 w-6 shrink-0"
+                checked={selected.has(r.key)}
+                onChange={() => toggle(r.key)}
+              />
+              <span className="min-w-0 flex-1">
+                <span className="block truncate text-base font-semibold text-gray-800 dark:text-slate-100">{r.name}</span>
+                <span className="block truncate text-sm text-gray-500 dark:text-slate-400">{r.username}</span>
+              </span>
+              <span className="shrink-0 rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700 dark:bg-blue-500/15 dark:text-blue-200">
+                {t(`types.${r.type}`)}
+              </span>
+            </label>
+          </li>
+        ))}
+      </ul>
+
+      <div className="data-table-shell mt-4 hidden overflow-x-auto md:block">
         <table className="w-full">
           <thead className="bg-gradient-to-r from-blue-50 via-sky-50 to-yellow-50 dark:from-blue-950/40 dark:via-slate-900/60 dark:to-yellow-950/20 border-b border-blue-100 dark:border-slate-800">
             <tr className="text-left text-blue-700 dark:text-blue-300 text-sm">
@@ -99,18 +131,18 @@ const ClerkSyncList = ({ rows }: { rows: OrphanRow[] }) => {
         <label className="flex items-start gap-2 text-sm text-gray-700 dark:text-slate-300">
           <input
             type="checkbox"
-            className="mt-1"
+            className="mt-1 max-md:h-6 max-md:w-6 max-md:shrink-0"
             checked={understood}
             onChange={(e) => setUnderstood(e.target.checked)}
           />
           <span>{t("confirm")}</span>
         </label>
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4 max-md:flex-col max-md:items-stretch">
           <button
             type="button"
             onClick={submit}
             disabled={pending || selected.size === 0 || !understood}
-            className="rounded-md bg-red-600 text-white px-4 py-2 text-sm font-semibold disabled:opacity-40"
+            className="rounded-md bg-red-600 text-white px-4 py-2 text-sm font-semibold disabled:opacity-40 max-md:min-h-12 max-md:rounded-2xl max-md:text-base"
           >
             {pending ? t("working") : t("remove", { count: selected.size })}
           </button>
