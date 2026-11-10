@@ -189,7 +189,9 @@ const TicketBoard = ({
   const t = useTranslations("Tickets.board");
   const [open, setOpen] = useState(false);
   // Phones show one status at a time (like iOS segmented tabs); wider screens show all four columns.
-  const [activeCol, setActiveCol] = useState<BoardTicket["status"]>("OPEN");
+  const [activeCol, setActiveCol] = useState<BoardTicket["status"]>(
+    () => COLUMN_KEYS.find((key) => tickets.some((ticket) => ticket.status === key)) ?? "OPEN"
+  );
 
   const grouped = COLUMN_KEYS.map((key) => ({
     key,
