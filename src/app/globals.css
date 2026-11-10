@@ -1768,6 +1768,11 @@ body:has(.form-overlay.fixed) .support-chat-fab {
    - pull-to-refresh spinner
    - springy press feedback on buttons and tappable cards
    ========================================================================== */
+.phone-title-bar,
+.phone-ptr {
+  display: none;
+}
+
 @media (max-width: 767px) {
   .phone-title-bar {
     position: fixed;
