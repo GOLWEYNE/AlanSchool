@@ -21,7 +21,7 @@ import dynamic from "next/dynamic";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { useFormState } from "react-dom";
+import { createPortal, useFormState } from "react-dom";
 import { useTranslations } from "next-intl";
 import { toast } from "react-toastify";
 import { FormContainerProps } from "./FormContainer";
@@ -234,6 +234,18 @@ const FormModal = ({
   const t = useTranslations("Modal");
   const tn = useTranslations("Navbar");
   const [open, setOpen] = useState(false);
+  // On phones the sheet is rendered straight into <body> and pinned to the
+  // screen, so it can never be clipped or pushed sideways by the page around it.
+  const [phone, setPhone] = useState(false);
+
+  useEffect(() => {
+    if (!open || !phone) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [open, phone]);
 
   // Falls back to the raw table key for any table without an entity label.
   const entityName = t.has(`entities.${table}`) ? t(`entities.${table}`) : table;
@@ -283,12 +295,40 @@ const FormModal = ({
     );
   };
 
+  const overlay = (
+    <div
+      className={`form-overlay bg-black bg-opacity-60 flex items-end md:items-center justify-center ${
+        phone ? "fixed inset-0 z-[1000]" : "w-screen absolute left-0 top-0 z-50"
+      }`}
+      onClick={(e) => {
+        if (e.target === e.currentTarget) setOpen(false);
+      }}
+    >
+      {/* Phones: a sheet that slides up from the bottom. Tablet and desktop: the usual centred pop-up. */}
+      <div className="form-sheet bg-white dark:bg-slate-900 p-4 rounded-t-3xl md:rounded-md relative w-full md:w-[70%] lg:w-[60%] xl:w-[50%] 2xl:w-[40%] max-h-[92%] md:max-h-[90vh] overflow-y-auto">
+        <div className="mx-auto mb-3 h-1.5 w-10 rounded-full bg-gray-300 dark:bg-slate-600 md:hidden" aria-hidden="true" />
+        <Form />
+        <button
+          type="button"
+          aria-label={tn("close")}
+          className="absolute top-2 right-2 flex h-10 w-10 items-center justify-center rounded-full cursor-pointer md:top-4 md:right-4 md:h-auto md:w-auto"
+          onClick={() => setOpen(false)}
+        >
+          <Image src="/close.png" alt="" width={14} height={14} className="dark:invert dark:opacity-70" />
+        </button>
+      </div>
+    </div>
+  );
+
   return (
     <>
       <button
         disabled={!hasForm}
         className={`${size} flex items-center justify-center rounded-full ${bgColor} hover:shadow-lg transition-shadow`}
-        onClick={() => setOpen(true)}
+        onClick={() => {
+          setPhone(window.matchMedia("(max-width: 767px)").matches);
+          setOpen(true);
+        }}
         title={type === "create" ? t("createNew") : type === "update" ? t("update") : t("delete")}
       >
         {type === "create" ? (
@@ -297,28 +337,7 @@ const FormModal = ({
           <Image src={`/${type}.png`} alt="" width={16} height={16} />
         )}
       </button>
-      {open && (
-        <div
-          className="form-overlay w-screen absolute left-0 top-0 bg-black bg-opacity-60 z-50 flex items-end md:items-center justify-center"
-          onClick={(e) => {
-            if (e.target === e.currentTarget) setOpen(false);
-          }}
-        >
-          {/* Phones: a sheet that slides up from the bottom. Tablet and desktop: the usual centred pop-up. */}
-          <div className="form-sheet bg-white dark:bg-slate-900 p-4 rounded-t-3xl md:rounded-md relative w-full md:w-[70%] lg:w-[60%] xl:w-[50%] 2xl:w-[40%] max-h-[92%] md:max-h-[90vh] overflow-y-auto">
-            <div className="mx-auto mb-3 h-1.5 w-10 rounded-full bg-gray-300 dark:bg-slate-600 md:hidden" aria-hidden="true" />
-            <Form />
-            <button
-              type="button"
-              aria-label={tn("close")}
-              className="absolute top-2 right-2 flex h-10 w-10 items-center justify-center rounded-full cursor-pointer md:top-4 md:right-4 md:h-auto md:w-auto"
-              onClick={() => setOpen(false)}
-            >
-              <Image src="/close.png" alt="" width={14} height={14} className="dark:invert dark:opacity-70" />
-            </button>
-          </div>
-        </div>
-      )}
+      {open && (phone ? createPortal(overlay, document.body) : overlay)}
     </>
   );
 };
