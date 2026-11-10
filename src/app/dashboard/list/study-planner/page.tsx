@@ -62,8 +62,8 @@ const StudyPlannerPage = async () => {
   return (
     <ProtectedRoute allowedRoles={["student"]}>
       <div className="p-4 flex flex-col gap-4">
-        <div className="rounded-2xl p-6 text-white shadow-lg bg-gradient-to-r from-yellow-400 via-blue-500 to-blue-400">
-          <h1 className="text-3xl font-bold mb-2">📅 {t("title")}</h1>
+        <div className="rounded-2xl p-5 md:p-6 text-white shadow-lg bg-gradient-to-r from-yellow-400 via-blue-500 to-blue-400">
+          <h1 className="text-2xl md:text-3xl font-bold mb-2">📅 {t("title")}</h1>
           <p className="text-blue-50">{t("subtitle")}</p>
           {student?.class?.name && (
             <div className="mt-3">
@@ -76,7 +76,7 @@ const StudyPlannerPage = async () => {
 
         <div className="flex gap-4 flex-col xl:flex-row">
           {/* GOALS */}
-          <section className="w-full xl:w-2/3 panel-card p-6 rounded-lg shadow-md border-t-4 border-blue-400">
+          <section className="w-full xl:w-2/3 panel-card p-4 md:p-6 rounded-lg shadow-md border-t-4 border-blue-400">
             <div className="mb-4">
               <h2 className="text-xl font-semibold text-gray-800 dark:text-blue-100">{t("goals.title")}</h2>
               <p className="text-sm text-gray-500 dark:text-slate-400">{t("goals.subtitle")}</p>
@@ -91,7 +91,7 @@ const StudyPlannerPage = async () => {
 
           <div className="w-full xl:w-1/3 flex flex-col gap-4">
             {/* CALENDAR EXPORT */}
-            <section className="panel-card p-6 rounded-lg shadow-md border-t-4 border-yellow-400">
+            <section className="panel-card p-4 md:p-6 rounded-lg shadow-md border-t-4 border-yellow-400">
               <h2 className="text-xl font-semibold text-gray-800 dark:text-blue-100">{t("export.title")}</h2>
               <p className="mt-2 text-sm text-gray-600 dark:text-slate-300">
                 {classId ? t("export.description") : t("noClass")}
@@ -101,7 +101,7 @@ const StudyPlannerPage = async () => {
                   <a
                     href="/api/study-planner/calendar"
                     download
-                    className="mt-4 inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700"
+                    className="mt-4 inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 max-md:flex max-md:min-h-12 max-md:w-full max-md:justify-center max-md:rounded-xl max-md:text-base"
                   >
                     ⬇ {t("export.button")}
                   </a>
@@ -114,7 +114,7 @@ const StudyPlannerPage = async () => {
             </section>
 
             {/* COMING UP */}
-            <section className="panel-card p-6 rounded-lg shadow-md border-t-4 border-blue-400">
+            <section className="panel-card p-4 md:p-6 rounded-lg shadow-md border-t-4 border-blue-400">
               <h2 className="text-xl font-semibold text-gray-800 dark:text-blue-100">{t("upcoming.title")}</h2>
               <p className="text-xs text-gray-500 dark:text-slate-400 mb-3">
                 {t("upcoming.subtitle", { days: UPCOMING_DAYS })}
@@ -130,7 +130,7 @@ const StudyPlannerPage = async () => {
                     return (
                       <li
                         key={item.key}
-                        className="rounded-xl border border-blue-50 dark:border-slate-800 bg-white dark:bg-slate-900/60 p-3"
+                        className="rounded-xl border border-blue-50 dark:border-slate-800 bg-white dark:bg-slate-900/60 p-3 max-md:rounded-2xl max-md:p-4"
                       >
                         <div className="flex items-center justify-between gap-2">
                           <span

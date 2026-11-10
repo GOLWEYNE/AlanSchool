@@ -43,8 +43,8 @@ const AssignmentManagementPage = async () => {
 
   return (
     <div className="flex-1 p-4 md:p-8">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-800 dark:text-white mb-2">
+      <div className="mb-5 md:mb-8">
+        <h1 className="text-2xl md:text-3xl font-bold text-gray-800 dark:text-white mb-2">
           {t("mgmt.assignmentTitle")}
         </h1>
         <p className="text-gray-600 dark:text-gray-400">

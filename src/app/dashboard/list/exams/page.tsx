@@ -3,6 +3,7 @@ import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
 import PageHero from "@/components/PageHero";
+import PersonCard from "@/components/PersonCard";
 import prisma from "@/lib/prisma";
 import { resolvePageSize } from "@/lib/settings";
 import { Class, Exam, Prisma, Subject, Teacher } from "@/generated/prisma/client";
@@ -100,6 +101,30 @@ const renderRow = (item: ExamList) => (
       </div>
     </td>
   </tr>
+);
+
+// Phones: a card per exam. The whole top opens it; edit and delete sit below for staff.
+const renderCard = (item: ExamList) => (
+  <PersonCard
+    key={item.id}
+    href={`/dashboard/list/exams/${item.id}`}
+    badge={format.dateTime(item.startTime, { month: "short", day: "numeric" })}
+    title={item.lesson.subject.name}
+    subtitle={item.title}
+    fields={[
+      { label: t("columns.class"), value: item.lesson.class.name },
+      { label: t("columns.teacher"), value: item.lesson.teacher.name + " " + item.lesson.teacher.surname },
+      { label: t("columns.date"), value: format.dateTime(item.startTime, { dateStyle: "medium" }) },
+    ]}
+    actions={
+      role === "admin" || role === "teacher" ? (
+        <>
+          <FormContainer table="exam" type="update" data={item} />
+          <FormContainer table="exam" type="delete" id={item.id} />
+        </>
+      ) : undefined
+    }
+  />
 );
 
   const { page, pageSize, ...queryParams } = searchParams;
@@ -222,7 +247,7 @@ const renderRow = (item: ExamList) => (
         </div>
       </div>
       {/* LIST */}
-      <Table columns={columns} renderRow={renderRow} data={data} />
+      <Table columns={columns} renderRow={renderRow} renderCard={renderCard} data={data} />
       {/* PAGINATION */}
       <Pagination page={p} count={count} pageSize={size} />
     </div>
