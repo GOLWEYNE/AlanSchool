@@ -141,7 +141,7 @@ export default function ActivePassBoard({ initial }: { initial: ActivePassesPayl
                 type="button"
                 disabled={endingId === p.id}
                 onClick={() => end(p)}
-                className="mt-1 self-start rounded-lg border border-gray-300 px-3 py-1.5 text-xs font-semibold text-gray-700 hover:bg-gray-50 disabled:opacity-60 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-800"
+                className="mt-1 self-start rounded-lg border border-gray-300 px-3 py-1.5 text-xs font-semibold text-gray-700 hover:bg-gray-50 disabled:opacity-60 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-800 max-md:min-h-11 max-md:w-full max-md:rounded-xl max-md:text-sm"
               >
                 {endingId === p.id ? t("board.ending") : t("board.end")}
               </button>
