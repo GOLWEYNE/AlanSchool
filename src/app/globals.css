@@ -1553,3 +1553,12 @@ body {
     transform: none;
   }
 }
+
+/* On phones the support chat button would sit on top of the tab bar's "More"
+   tab, so lift it just above the bar. Inline styles need !important to lose. */
+@media (max-width: 767px) {
+  body:has(.glass-tabbar) .support-chat-fab {
+    bottom: calc(5.5rem + env(safe-area-inset-bottom)) !important;
+    right: 0.75rem !important;
+  }
+}
