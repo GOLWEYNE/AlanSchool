@@ -3,7 +3,9 @@
 // numerical wherever a name contains a number, so class "2B" comes before
 // "10A" instead of after it.
 
-const collator = new Intl.Collator(["en", "ru", "kk"], {
+// Kazakh first so its own letters (Ә, Ғ, Қ, Ң, Ө, Ұ, Ү, Һ, І) fall where a
+// Kazakh reader expects them; Russian and Latin letters sort as usual.
+const collator = new Intl.Collator(["kk", "ru", "en"], {
   numeric: true,
   sensitivity: "base",
 });
@@ -26,6 +28,21 @@ export const sortPeople = <T extends Person>(items: T[]): T[] =>
 
 export const sortClasses = <T extends { name: string }>(items: T[]): T[] =>
   sortByText(items, (c) => c.name);
+
+// Alphabetical paging for people lists. The database sorts by raw character
+// code, which misplaces Kazakh letters and mixes capitals with lower case, so
+// big lists load only id + names, sort them here, and then fetch the full
+// rows for just the requested page (see the students/teachers/parents pages).
+export const alphabeticalPageIds = <T extends Person & { id: string }>(
+  rows: T[],
+  skip: number,
+  take: number
+): string[] => sortPeople(rows).slice(skip, skip + take).map((r) => r.id);
+
+export const orderByIds = <T extends { id: string }>(items: T[], ids: string[]): T[] => {
+  const position = new Map(ids.map((id, i) => [id, i]));
+  return [...items].sort((a, b) => (position.get(a.id) ?? 0) - (position.get(b.id) ?? 0));
+};
 
 // Prisma orderBy for people tables: first name, then surname.
 export const PEOPLE_ORDER = [{ name: "asc" as const }, { surname: "asc" as const }];
