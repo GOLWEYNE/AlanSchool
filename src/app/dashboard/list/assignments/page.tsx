@@ -176,6 +176,7 @@ const AssignmentListPage = async ({
           },
         },
       },
+      orderBy: { title: "asc" },
       take: size,
       skip: size * (p - 1),
     }),
