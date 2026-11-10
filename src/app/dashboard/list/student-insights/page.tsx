@@ -90,7 +90,7 @@ const StudentInsightsPage = async ({ searchParams }: { searchParams: SP }) => {
       <PeriodBar L={L} days={days} href={(d) => (d === 30 ? BASE : `${BASE}?days=${d}`)} />
 
       {data.classes.length === 0 ? (
-        <div className="mt-6 rounded-2xl border border-gray-200 bg-white p-10 text-center shadow-sm dark:border-slate-800 dark:bg-slate-900">
+        <div className="mt-6 glass-surface p-10 text-center">
           <p className="text-base font-semibold text-slate-700 dark:text-slate-200">{L.emptyTitle}</p>
           <p className="mt-1 text-sm text-slate-400">{L.emptyBody}</p>
         </div>
