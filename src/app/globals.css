@@ -1600,6 +1600,7 @@ a.person-card__main:active {
 
 .person-card__actions {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 0.6rem;
   padding: 0.55rem 1rem 0.75rem;
