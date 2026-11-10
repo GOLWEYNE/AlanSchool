@@ -1,3 +1,4 @@
+import { PEOPLE_ORDER } from "@/lib/sort";
 import Link from "next/link";
 import { getFormatter, getLocale, getTranslations } from "next-intl/server";
 import prisma from "@/lib/prisma";
@@ -144,6 +145,7 @@ const LibraryHome = async () => {
     const kids = await prisma.student.findMany({
       where: { parentId: userId },
       select: { id: true, name: true, surname: true },
+      orderBy: PEOPLE_ORDER,
     });
     children = kids.map((k) => ({ id: k.id, name: `${k.name} ${k.surname}` }));
   }
