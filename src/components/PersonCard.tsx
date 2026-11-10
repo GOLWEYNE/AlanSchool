@@ -16,6 +16,7 @@ export default function PersonCard({
   subtitle,
   fields = [],
   actions,
+  wrapTitle = false,
 }: {
   href?: string;
   img?: string | null;
@@ -24,6 +25,7 @@ export default function PersonCard({
   subtitle?: string | null;
   fields?: { label: string; value?: string | number | null }[];
   actions?: ReactNode;
+  wrapTitle?: boolean;
 }) {
   const shown = fields.filter((f) => f.value !== undefined && f.value !== null && f.value !== "");
 
@@ -43,7 +45,9 @@ export default function PersonCard({
         />
       )}
       <span className="min-w-0 flex-1">
-        <span className="block truncate text-base font-semibold text-blue-950 dark:text-blue-50">
+        <span
+          className={`${wrapTitle ? "line-clamp-3" : "block truncate"} text-base font-semibold text-blue-950 dark:text-blue-50`}
+        >
           {title}
         </span>
         {subtitle && (
