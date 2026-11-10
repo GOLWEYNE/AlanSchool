@@ -1,5 +1,6 @@
 import Table from "@/components/Table";
 import PageHero from "@/components/PageHero";
+import PersonCard from "@/components/PersonCard";
 import BulkGenerateReportCardsPanel from "@/components/BulkGenerateReportCardsPanel";
 import ReportCardGenerateButton from "@/components/ReportCardGenerateButton";
 import prisma from "@/lib/prisma";
@@ -111,6 +112,49 @@ const ReportCardsListPage = async () => {
     </tr>
   );
 
+  // Phones: one card per report card, GPA as the badge, big View / PDF / Regenerate buttons.
+  const renderCard = (item: (typeof reportCards)[number]) => {
+    const term = tc.has(`terms.${item.term}`) ? tc(`terms.${item.term}`) : item.term;
+    return (
+      <PersonCard
+        key={item.id}
+        href={`/dashboard/list/report-cards/${item.id}`}
+        badge={item.gpa !== null ? String(Math.round(item.gpa * 100) / 100) : "—"}
+        title={`${item.student.name} ${item.student.surname}`}
+        subtitle={`${item.student.class.name} · ${term} · ${item.schoolYear}`}
+        fields={[
+          { label: t("columns.gpa"), value: item.gpa !== null ? Math.round(item.gpa * 100) / 100 : "—" },
+          {
+            label: t("columns.attendance"),
+            value: item.attendanceRate !== null ? `${Math.round(item.attendanceRate * 100) / 100}%` : "—",
+          },
+          {
+            label: t("columns.generatedAt"),
+            value: format.dateTime(new Date(item.generatedAt), { dateStyle: "medium" }),
+          },
+        ]}
+        actions={
+          <>
+            <Link
+              href={item.pdfUrl ?? `/api/report-cards/${item.id}/pdf`}
+              target="_blank"
+              className="flex min-h-11 items-center rounded-full bg-blue-50 px-4 text-sm font-semibold text-blue-700 dark:bg-blue-500/15 dark:text-blue-200"
+            >
+              {t("downloadLabel")}
+            </Link>
+            <ReportCardGenerateButton
+              studentId={item.studentId}
+              studentLabel={`${item.student.name} ${item.student.surname}`}
+              defaultTerm={item.term}
+              defaultSchoolYear={item.schoolYear}
+              variant="button"
+            />
+          </>
+        }
+      />
+    );
+  };
+
   return (
     <div className="panel-card p-4 md:p-5 rounded-md flex-1 m-4 mt-0 list-page-shell">
       <PageHero
@@ -134,7 +178,7 @@ const ReportCardsListPage = async () => {
           {t("empty")}
         </p>
       ) : (
-        <Table columns={columns} renderRow={renderRow} data={reportCards} />
+        <Table columns={columns} renderRow={renderRow} renderCard={renderCard} data={reportCards} />
       )}
     </div>
   );

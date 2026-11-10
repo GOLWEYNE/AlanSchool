@@ -3,6 +3,7 @@ import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
 import PageHero from "@/components/PageHero";
+import PersonCard from "@/components/PersonCard";
 import prisma from "@/lib/prisma";
 import { resolvePageSize } from "@/lib/settings";
 import { Prisma } from "@/generated/prisma/client";
@@ -108,6 +109,32 @@ const renderRow = (item: ResultList) => (
       </div>
     </td>
   </tr>
+);
+
+// Phones: one tappable-style card per result with the score as a big badge.
+const renderCard = (item: ResultList) => (
+  <PersonCard
+    key={item.id}
+    badge={String(item.score)}
+    title={item.title}
+    subtitle={item.studentName + " " + item.studentSurname}
+    fields={[
+      { label: t("columns.class"), value: item.className },
+      { label: t("columns.teacher"), value: item.teacherName + " " + item.teacherSurname },
+      {
+        label: t("columns.date"),
+        value: format.dateTime(item.startTime, { dateStyle: "medium" }),
+      },
+    ]}
+    actions={
+      role === "admin" || role === "teacher" ? (
+        <>
+          <FormContainer table="result" type="update" data={item} />
+          <FormContainer table="result" type="delete" id={item.id} />
+        </>
+      ) : undefined
+    }
+  />
 );
 
   const { page, pageSize, ...queryParams } = searchParams;
@@ -255,7 +282,7 @@ const renderRow = (item: ResultList) => (
         </div>
       </div>
       {/* LIST */}
-      <Table columns={columns} renderRow={renderRow} data={data} />
+      <Table columns={columns} renderRow={renderRow} renderCard={renderCard} data={data} />
       {/* PAGINATION */}
       <Pagination page={p} count={count} pageSize={size} />
     </div>
