@@ -96,7 +96,7 @@ const AnnouncementListPage = async ({
                 </span>
               )}
             </span>
-            <span className="mt-1.5 line-clamp-2 block text-sm text-gray-600 group-open:hidden dark:text-slate-300">
+            <span className="mt-1.5 line-clamp-2 text-sm text-gray-600 group-open:hidden dark:text-slate-300">
               {item.description}
             </span>
           </span>
