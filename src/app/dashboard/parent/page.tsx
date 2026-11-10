@@ -7,6 +7,7 @@ import AttendancePulse from "@/components/AttendancePulse";
 import ClassLeaderboard from "@/components/ClassLeaderboard";
 import BigCalendarContainer from "@/components/BigCalendarContainer";
 import ParentChildAttendanceCard from "@/components/ParentChildAttendanceCard";
+import ParentTodayCards from "@/components/dashboard/ParentTodayCards";
 import ParentClassVideos from "@/components/ParentClassVideos";
 import ReportCardsPanel from "@/components/ReportCardsPanel";
 import ReportCardBehaviorTimeline from "@/components/reportCard/ReportCardBehaviorTimeline";
@@ -94,6 +95,43 @@ const Parentpage = async () => {
   // Merit/incident notes a teacher has explicitly marked visible to
   // parents - the BehaviorLog model has existed since the master module
   // package landed, but nothing surfaced it here until now.
+  const nextExams = await Promise.all(
+    children.map((child) =>
+      prisma.exam.findFirst({
+        where: { startTime: { gte: today }, lesson: { classId: child.classId } },
+        orderBy: { startTime: "asc" },
+        select: { title: true, startTime: true },
+      })
+    )
+  );
+  const latestResults = await Promise.all(
+    children.map((child) =>
+      prisma.result.findFirst({
+        where: { studentId: child.id },
+        orderBy: { id: "desc" },
+        select: {
+          score: true,
+          exam: { select: { title: true, totalMarks: true } },
+          assignment: { select: { title: true, totalMarks: true } },
+        },
+      })
+    )
+  );
+  const todayCards = children.map((child, index) => {
+    const summary = childAttendanceSummaries.find((item) => item.id === child.id);
+    const latest = latestResults[index];
+    const source = latest?.exam ?? latest?.assignment ?? null;
+    return {
+      id: child.id,
+      name: `${child.name} ${child.surname}`,
+      className: child.class.name,
+      todayPresent: summary?.todayPresent ?? 0,
+      todayTotal: summary?.todayTotal ?? 0,
+      nextExam: nextExams[index],
+      latest: latest && source ? { title: source.title, score: latest.score, total: source.totalMarks ?? null } : null,
+    };
+  });
+
   const behaviorLogs = studentIds.length
     ? await prisma.behaviorLog.findMany({
         where: { studentId: { in: studentIds }, visibleToParent: true },
@@ -122,14 +160,22 @@ const Parentpage = async () => {
       <div className="flex-1 p-4 flex flex-col gap-4">
         <HomeHero eyebrow={tr("parent")} title={t("title")} subtitle={t("subtitle")} />
 
-        <HomeStats
-          stats={[
-            { label: t("children"), value: children.length, Icon: Users },
-            { label: t("upcomingExams"), value: upcomingExamsCount, Icon: FileText, tone: "gold" },
-            { label: t("results"), value: resultsCount, Icon: Trophy },
-            { label: t("events"), value: eventsCount, Icon: CalendarDays, tone: "gold" },
-          ]}
-        />
+        {/* PHONE: a per-child "Today" summary and the next lesson come first */}
+        <ParentTodayCards cards={todayCards} />
+        <div className="md:hidden">
+          <Rise i={3}><TodaysTimetableStrip role="parent" classIds={childClassIds} /></Rise>
+        </div>
+
+        <div className="max-md:hidden">
+          <HomeStats
+            stats={[
+              { label: t("children"), value: children.length, Icon: Users },
+              { label: t("upcomingExams"), value: upcomingExamsCount, Icon: FileText, tone: "gold" },
+              { label: t("results"), value: resultsCount, Icon: Trophy },
+              { label: t("events"), value: eventsCount, Icon: CalendarDays, tone: "gold" },
+            ]}
+          />
+        </div>
 
         <HomeShortcuts
           items={[
@@ -164,7 +210,7 @@ const Parentpage = async () => {
           {/* RIGHT */}
           <div className="w-full xl:w-1/3 flex flex-col gap-4">
             <Rise i={13}><BirthdayAnnouncements /></Rise>
-            <Rise i={14}><TodaysTimetableStrip role="parent" classIds={childClassIds} /></Rise>
+            <Rise i={14} className="max-md:hidden"><TodaysTimetableStrip role="parent" classIds={childClassIds} /></Rise>
             <Rise i={15}><WeekAtAGlance role="parent" classIds={childClassIds} /></Rise>
             <Rise i={16}><AttendancePulse role="parent" studentIds={studentIds} /></Rise>
             <Rise i={17}><ClassLeaderboard role="parent" studentIds={studentIds} /></Rise>

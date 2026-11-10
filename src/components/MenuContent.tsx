@@ -1,6 +1,8 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
+import { ChevronDown } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { useMobileSidebar } from "@/context/MobileSidebarContext";
 
@@ -36,17 +38,44 @@ const MenuContent = ({ items, role }: MenuContentProps) => {
     return pathname === href || pathname.startsWith(`${href}/`);
   };
 
+  // Phones only: each section folds up like an iOS Settings group so a long
+  // menu (teachers have over 30 items) opens as a short list of headings. The
+  // section holding the current page starts open. Tablets and desktops always
+  // show every section, exactly as before.
+  const sections = items
+    .map((section) => ({ ...section, items: section.items.filter((item) => item.visible.includes(role)) }))
+    .filter((section) => section.items.length > 0);
+  const currentSection =
+    sections.find((section) => section.items.some((item) => item.href !== "/dashboard" && isActiveLink(item.href)))
+      ?.title ?? sections[0]?.title;
+  const [openMap, setOpenMap] = useState<Record<string, boolean>>({});
+  const isOpen = (title: string) => openMap[title] ?? title === currentSection;
+
   return (
     <div className="mt-4 text-sm">
-      {items.map((section) => (
+      {sections.map((section) => (
         <div className="flex flex-col gap-1" key={section.title}>
-          <span className="block md:hidden lg:block text-blue-500 font-semibold my-3 uppercase tracking-[0.18em] text-[10px] dark:text-blue-400">
+          <span className="max-md:hidden md:hidden lg:block text-blue-500 font-semibold my-3 uppercase tracking-[0.18em] text-[10px] dark:text-blue-400">
             {section.title}
           </span>
+          <button
+            type="button"
+            aria-expanded={isOpen(section.title)}
+            onClick={() => setOpenMap((prev) => ({ ...prev, [section.title]: !isOpen(section.title) }))}
+            className="flex min-h-11 w-full items-center justify-between rounded-xl px-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-blue-500 active:bg-blue-50/60 md:hidden dark:text-blue-400 dark:active:bg-slate-800/60"
+          >
+            <span>{section.title}</span>
+            <span className="flex items-center gap-2 normal-case tracking-normal">
+              <span className="text-xs font-medium text-blue-400">{section.items.length}</span>
+              <ChevronDown
+                size={16}
+                aria-hidden="true"
+                className={`transition-transform duration-200 ${isOpen(section.title) ? "rotate-180" : ""}`}
+              />
+            </span>
+          </button>
+          <div className={`flex flex-col gap-1 ${isOpen(section.title) ? "" : "max-md:hidden"}`}>
           {section.items.map((item) => {
-            if (!item.visible.includes(role)) {
-              return null;
-            }
 
             const active = isActiveLink(item.href);
 
@@ -71,6 +100,7 @@ const MenuContent = ({ items, role }: MenuContentProps) => {
               </button>
             );
           })}
+          </div>
         </div>
       ))}
     </div>
