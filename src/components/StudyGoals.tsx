@@ -30,7 +30,7 @@ type Props = {
 const STEPS = [0, 25, 50, 75, 100];
 
 const inputClass =
-  "w-full rounded-lg border border-blue-100 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-gray-800 dark:text-slate-100 outline-none focus:ring-2 focus:ring-blue-300";
+  "w-full rounded-lg border border-blue-100 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm max-md:min-h-12 max-md:text-base text-gray-800 dark:text-slate-100 outline-none focus:ring-2 focus:ring-blue-300";
 
 const StudyGoals = ({ goals, subjects, maxGoals, unavailable }: Props) => {
   const t = useTranslations("StudyPlanner.goals");
@@ -151,7 +151,7 @@ const StudyGoals = ({ goals, subjects, maxGoals, unavailable }: Props) => {
             disabled={busy}
             aria-label={t("delete")}
             title={t("delete")}
-            className="shrink-0 rounded-lg px-2 py-1 text-xs text-gray-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30"
+            className="shrink-0 rounded-lg px-2 py-1 text-xs text-gray-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30 max-md:flex max-md:h-11 max-md:w-11 max-md:items-center max-md:justify-center max-md:rounded-full max-md:bg-gray-100 max-md:text-base dark:max-md:bg-slate-800"
           >
             ✕
           </button>
@@ -173,7 +173,7 @@ const StudyGoals = ({ goals, subjects, maxGoals, unavailable }: Props) => {
           />
         </div>
 
-        <div className="mt-2 flex flex-wrap items-center gap-1.5" role="group" aria-label={t("progressLabel")}>
+        <div className="mt-2 flex flex-wrap items-center gap-1.5 max-md:grid max-md:grid-cols-5 max-md:gap-1" role="group" aria-label={t("progressLabel")}>
           {STEPS.map((step) => (
             <button
               key={step}
@@ -181,7 +181,7 @@ const StudyGoals = ({ goals, subjects, maxGoals, unavailable }: Props) => {
               onClick={() => onProgress(goal, step)}
               disabled={busy}
               aria-pressed={goal.progress === step}
-              className={`rounded-full px-2.5 py-1 text-xs font-semibold border transition-colors ${
+              className={`rounded-full px-2.5 py-1 text-xs font-semibold border transition-colors max-md:min-h-11 max-md:px-1 max-md:text-[13px] ${
                 goal.progress === step
                   ? "bg-blue-600 border-blue-600 text-white"
                   : "bg-white dark:bg-slate-900 border-blue-100 dark:border-slate-700 text-blue-700 dark:text-blue-300 hover:bg-blue-50 dark:hover:bg-slate-800"
@@ -258,7 +258,7 @@ const StudyGoals = ({ goals, subjects, maxGoals, unavailable }: Props) => {
           <button
             type="submit"
             disabled={isPending || title.trim().length === 0}
-            className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-50"
+            className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-50 max-md:min-h-12 max-md:rounded-xl max-md:px-6 max-md:text-base"
           >
             {isPending && busyId === null ? t("form.adding") : t("form.add")}
           </button>
