@@ -1,4 +1,4 @@
-import { PEOPLE_ORDER } from "@/lib/sort";
+import { alphabeticalPageIds, orderByIds } from "@/lib/sort";
 import FormContainer from "@/components/FormContainer";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
@@ -148,18 +148,24 @@ const StudentListPage = async ({
       ? { AND: [query, teacherStudentWhere(await getTeacherClassIds(userId!))] }
       : query;
 
-  const [data, count] = await prisma.$transaction([
-    prisma.student.findMany({
-      where: scopedQuery,
+  // Sorted alphabetically in code (the database orders by raw character code,
+  // which misplaces Kazakh letters): load just the names, pick this page, then
+  // fetch the full rows for it.
+  const matching = await prisma.student.findMany({
+    where: scopedQuery,
+    select: { id: true, name: true, surname: true },
+  });
+  const count = matching.length;
+  const pageIds = alphabeticalPageIds(matching, size * (p - 1), size);
+  const data = orderByIds(
+    await prisma.student.findMany({
+      where: { id: { in: pageIds } },
       include: {
         class: true,
       },
-      orderBy: PEOPLE_ORDER,
-      take: size,
-      skip: size * (p - 1),
     }),
-    prisma.student.count({ where: scopedQuery }),
-  ]);
+    pageIds
+  );
 
   return (
     <div className="panel-card p-4 md:p-5 rounded-md flex-1 m-4 mt-0 list-page-shell">
