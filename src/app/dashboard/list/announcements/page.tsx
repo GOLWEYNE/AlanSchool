@@ -71,6 +71,46 @@ const AnnouncementListPage = async ({
       </td>
     </tr>
   );
+
+  // Phones: one news card per post. Tap a card to read the whole text.
+  const renderCard = (item: AnnouncementList) => (
+    <div
+      key={item.id}
+      className="rounded-2xl border border-blue-100 bg-white/80 p-3.5 shadow-sm dark:border-slate-700 dark:bg-slate-900/60"
+    >
+      <details className="group">
+        <summary className="flex cursor-pointer list-none items-start gap-3 [&::-webkit-details-marker]:hidden">
+          <span
+            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-600 to-yellow-400 text-xl"
+            aria-hidden="true"
+          >
+            {t("emoji")}
+          </span>
+          <span className="min-w-0 flex-1">
+            <span className="block text-base font-semibold leading-snug text-blue-950 dark:text-blue-50">{item.title}</span>
+            <span className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-blue-900/70 dark:text-blue-100/70">
+              <span>{format.dateTime(item.date, { dateStyle: "medium" })}</span>
+              {item.class?.name && (
+                <span className="rounded-full bg-blue-100 px-2 py-0.5 font-semibold text-blue-800 dark:bg-blue-500/20 dark:text-blue-200">
+                  {item.class.name}
+                </span>
+              )}
+            </span>
+            <span className="mt-1.5 line-clamp-2 block text-sm text-gray-600 group-open:hidden dark:text-slate-300">
+              {item.description}
+            </span>
+          </span>
+        </summary>
+        <p className="mt-2 whitespace-pre-wrap pl-14 text-sm text-gray-700 dark:text-slate-200">{item.description}</p>
+      </details>
+      {role === "admin" && (
+        <div className="mt-3 flex items-center justify-end gap-3 border-t border-blue-100 pt-3 dark:border-slate-700">
+          <FormContainer table="announcement" type="update" data={item} />
+          <FormContainer table="announcement" type="delete" id={item.id} />
+        </div>
+      )}
+    </div>
+  );
   const { page, pageSize, ...queryParams } = searchParams;
 
   const p = page ? parseInt(page) : 1;
@@ -115,6 +155,7 @@ const AnnouncementListPage = async ({
       include: {
         class: true,
       },
+      orderBy: { date: "desc" },
       take: size,
       skip: size * (p - 1),
     }),
@@ -158,7 +199,7 @@ const AnnouncementListPage = async ({
         </div>
       </div>
       {/* LIST */}
-      <Table columns={columns} renderRow={renderRow} data={data} />
+      <Table columns={columns} renderRow={renderRow} renderCard={renderCard} data={data} />
       {/* PAGINATION */}
       <Pagination page={p} count={count} pageSize={size} />
     </div>
