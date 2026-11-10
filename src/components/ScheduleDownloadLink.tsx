@@ -22,7 +22,7 @@ const ScheduleDownloadLink = async ({
   return (
     <a
       href={`/api/schedule/pdf${query ? `?${query}` : ""}`}
-      className={`inline-flex items-center gap-2 rounded-md bg-gradient-to-r from-blue-600 to-sky-500 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:from-blue-700 hover:to-sky-600 ${className}`}
+      className={`inline-flex items-center gap-2 rounded-md bg-gradient-to-r from-blue-600 to-sky-500 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:from-blue-700 hover:to-sky-600 max-md:min-h-12 max-md:justify-center max-md:rounded-2xl max-md:text-base ${className}`}
     >
       <span aria-hidden="true">📄</span>
       {t("download")}

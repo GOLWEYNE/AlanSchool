@@ -8,11 +8,11 @@ import { CldUploadWidget } from "next-cloudinary";
 import type { LibraryResult } from "@/lib/libraryActions";
 
 export const FIELD =
-  "w-full rounded-lg border border-blue-200/80 bg-white/70 px-3 py-2 text-sm text-gray-800 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:border-slate-700 dark:bg-slate-900/60 dark:text-slate-100 dark:focus:ring-blue-900";
+  "w-full rounded-lg border border-blue-200/80 bg-white/70 px-3 py-2 text-sm text-gray-800 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:border-slate-700 dark:bg-slate-900/60 dark:text-slate-100 dark:focus:ring-blue-900 max-md:min-h-12 max-md:text-base";
 export const BTN =
-  "inline-flex items-center justify-center gap-1 rounded-lg bg-gradient-to-r from-blue-600 to-blue-500 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:from-blue-700 hover:to-blue-600 disabled:cursor-not-allowed disabled:opacity-60";
+  "inline-flex items-center justify-center gap-1 rounded-lg bg-gradient-to-r from-blue-600 to-blue-500 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:from-blue-700 hover:to-blue-600 disabled:cursor-not-allowed disabled:opacity-60 max-md:min-h-12 max-md:rounded-2xl max-md:text-base";
 export const BTN_GHOST =
-  "inline-flex items-center justify-center gap-1 rounded-lg border border-blue-200/80 bg-white/70 px-3 py-1.5 text-xs font-semibold text-gray-700 transition hover:bg-white disabled:opacity-60 dark:border-slate-700 dark:bg-slate-900/60 dark:text-slate-200 dark:hover:bg-slate-800";
+  "inline-flex items-center justify-center gap-1 rounded-lg border border-blue-200/80 bg-white/70 px-3 py-1.5 text-xs font-semibold text-gray-700 transition hover:bg-white disabled:opacity-60 dark:border-slate-700 dark:bg-slate-900/60 dark:text-slate-200 dark:hover:bg-slate-800 max-md:min-h-11 max-md:rounded-full max-md:px-4";
 
 type Tab = { href: string; label: string };
 
