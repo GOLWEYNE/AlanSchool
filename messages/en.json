@@ -1320,7 +1320,7 @@
       "edit": "Edit",
       "loading": "Loading…",
       "grade": "Grade",
-      "gradeOrdinal": "{n}th",
+      "gradeOrdinal": "{n, selectordinal, one {#st} two {#nd} few {#rd} other {#th}}",
       "attendance": "Attendance",
       "lessons": "Lessons",
       "class": "Class",
