@@ -986,7 +986,17 @@
       "todaysSchedule": "Today’s Schedule",
       "childrenAttendance": "Children’s Attendance",
       "noChildren": "No children assigned to this parent.",
-      "behaviorConduct": "{name}’s Behavior & Conduct"
+      "behaviorConduct": "{name}’s Behavior & Conduct",
+      "today": "Today",
+      "attendanceToday": "Attendance today",
+      "attNotMarked": "Not marked yet",
+      "attPresent": "Present",
+      "attAbsent": "Absent",
+      "attPartly": "Attended {present} of {total} lessons",
+      "nextExam": "Next exam",
+      "noUpcomingExam": "No exams coming up",
+      "latestResult": "Latest result",
+      "noResultsYet": "No results yet"
     },
     "teacher": {
       "title": "Teacher Planner",
