@@ -1743,3 +1743,8 @@ a.person-card__main:active {
     animation: none;
   }
 }
+
+/* Hide the chat button while a phone form sheet is open so it cannot cover the fields. */
+body:has(.form-overlay.fixed) .support-chat-fab {
+  display: none !important;
+}
