@@ -1761,3 +1761,94 @@ body:has(.form-overlay.fixed) .support-chat-fab {
     height: 18px;
   }
 }
+
+/* ==========================================================================
+   iPhone touches for the whole dashboard (phones only)
+   - compact title bar that fades in once the big page title has scrolled away
+   - pull-to-refresh spinner
+   - springy press feedback on buttons and tappable cards
+   ========================================================================== */
+@media (max-width: 767px) {
+  .phone-title-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 30;
+    height: calc(2.75rem + env(safe-area-inset-top));
+    padding-top: env(safe-area-inset-top);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.0625rem;
+    font-weight: 600;
+    color: #0f172a;
+    background: rgba(255, 255, 255, 0.78);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    backdrop-filter: saturate(180%) blur(20px);
+    border-bottom: 0.5px solid rgba(15, 23, 42, 0.12);
+    opacity: 0;
+    transform: translateY(-100%);
+    pointer-events: none;
+    transition:
+      opacity 0.2s ease,
+      transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .phone-title-bar.is-on {
+    opacity: 1;
+    transform: none;
+  }
+
+  .phone-title-bar span {
+    max-width: 70%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .dark .phone-title-bar {
+    color: #e2e8f0;
+    background: rgba(11, 18, 32, 0.78);
+    border-bottom-color: rgba(148, 163, 184, 0.2);
+  }
+
+  .phone-ptr {
+    position: fixed;
+    top: calc(0.75rem + env(safe-area-inset-top));
+    left: 50%;
+    z-index: 31;
+    display: flex;
+    width: 2.5rem;
+    height: 2.5rem;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9999px;
+    color: #2563eb;
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 6px 18px rgba(30, 64, 175, 0.25);
+    pointer-events: none;
+  }
+
+  .dark .phone-ptr {
+    color: #93c5fd;
+    background: rgba(30, 41, 59, 0.95);
+  }
+}
+
+@media (max-width: 767px) and (prefers-reduced-motion: no-preference) {
+  .app-shell-bg button:not(:disabled),
+  .app-shell-bg a.person-card__main,
+  .app-shell-bg a.glass-btn,
+  .app-shell-bg .glass-thread {
+    transition: transform 0.38s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .app-shell-bg button:not(:disabled):active,
+  .app-shell-bg a.person-card__main:active,
+  .app-shell-bg a.glass-btn:active,
+  .app-shell-bg .glass-thread:active {
+    transform: scale(0.96);
+    transition-duration: 0.12s;
+  }
+}
