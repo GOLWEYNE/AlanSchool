@@ -160,7 +160,7 @@ const TicketCard = ({
           value={ticket.status}
           disabled={isPending}
           onChange={(e) => handleStatusChange(e.target.value as BoardTicket["status"])}
-          className="mt-1 text-xs ring-[1.5px] ring-gray-200 dark:ring-slate-700 dark:bg-slate-800 dark:text-slate-100 rounded-md px-2 py-1 self-start"
+          className="mt-1 text-xs ring-[1.5px] ring-gray-200 dark:ring-slate-700 dark:bg-slate-800 dark:text-slate-100 rounded-md px-2 py-1 self-start max-md:min-h-11 max-md:w-full max-md:text-base"
         >
           {COLUMN_KEYS.map((key) => (
             <option key={key} value={key}>
@@ -188,6 +188,8 @@ const TicketBoard = ({
 }) => {
   const t = useTranslations("Tickets.board");
   const [open, setOpen] = useState(false);
+  // Phones show one status at a time (like iOS segmented tabs); wider screens show all four columns.
+  const [activeCol, setActiveCol] = useState<BoardTicket["status"]>("OPEN");
 
   const grouped = COLUMN_KEYS.map((key) => ({
     key,
@@ -201,17 +203,46 @@ const TicketBoard = ({
       <div className="flex justify-end">
         <button
           onClick={() => setOpen(true)}
-          className="flex items-center gap-2 bg-lamaYellow hover:shadow-lg transition-shadow text-blue-900 font-semibold text-sm px-4 py-2 rounded-full"
+          className="flex items-center gap-2 bg-lamaYellow hover:shadow-lg transition-shadow text-blue-900 font-semibold text-sm px-4 py-2 rounded-full max-md:min-h-12 max-md:w-full max-md:justify-center max-md:text-base"
         >
           <span className="text-lg leading-none">＋</span> {t("reportItem")}
         </button>
+      </div>
+
+      <div
+        role="tablist"
+        className="-mx-4 flex snap-x gap-2 overflow-x-auto px-4 pb-1 md:hidden"
+        style={{ scrollbarWidth: "none" }}
+      >
+        {grouped.map((col) => {
+          const on = col.key === activeCol;
+          return (
+            <button
+              key={col.key}
+              type="button"
+              role="tab"
+              aria-selected={on}
+              onClick={() => setActiveCol(col.key)}
+              className={`flex min-h-11 shrink-0 snap-start items-center gap-2 rounded-full px-4 text-sm font-semibold transition-colors ${
+                on
+                  ? "bg-blue-600 text-white shadow"
+                  : "bg-white/80 text-blue-800 ring-1 ring-blue-100 dark:bg-slate-800 dark:text-blue-200 dark:ring-slate-700"
+              }`}
+            >
+              {col.label}
+              <span className={`rounded-full px-2 py-0.5 text-xs ${on ? "bg-white/25" : "bg-blue-50 dark:bg-slate-700"}`}>
+                {col.items.length}
+              </span>
+            </button>
+          );
+        })}
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
         {grouped.map((col) => (
           <div
             key={col.key}
-            className={`flex flex-col gap-3 rounded-xl border-t-4 ${COLUMN_ACCENT[col.key]} bg-slate-50/60 dark:bg-slate-900/40 p-3 min-h-[200px]`}
+            className={`${col.key === activeCol ? "" : "max-md:hidden"} flex flex-col gap-3 rounded-xl border-t-4 ${COLUMN_ACCENT[col.key]} bg-slate-50/60 dark:bg-slate-900/40 p-3 min-h-[200px]`}
           >
             <div>
               <div className="flex items-center justify-between">
@@ -244,8 +275,9 @@ const TicketBoard = ({
       </div>
 
       {open && (
-        <div className="w-screen h-screen fixed left-0 top-0 bg-black bg-opacity-60 z-50 flex items-center justify-center">
-          <div className="bg-white dark:bg-slate-900 p-4 rounded-md relative w-[90%] md:w-[70%] lg:w-[60%] xl:w-[45%] max-h-[90vh] overflow-y-auto">
+        <div className="form-overlay fixed inset-0 bg-black bg-opacity-60 z-[1000] flex items-end md:items-center justify-center">
+          <div className="form-sheet bg-white dark:bg-slate-900 p-4 max-md:pt-3 max-md:rounded-t-3xl rounded-md relative max-md:w-full w-[90%] md:w-[70%] lg:w-[60%] xl:w-[45%] max-h-[92%] md:max-h-[90vh] overflow-y-auto">
+            <div className="mx-auto mb-3 h-1.5 w-10 rounded-full bg-gray-300 md:hidden" aria-hidden="true" />
             <TicketForm
               setOpen={setOpen}
               role={role}
@@ -253,7 +285,7 @@ const TicketBoard = ({
               selfStudentId={selfStudentId}
             />
             <div
-              className="absolute top-4 right-4 cursor-pointer text-gray-400 hover:text-gray-600"
+              className="absolute top-4 right-4 cursor-pointer text-gray-400 hover:text-gray-600 max-md:top-3 max-md:right-3 max-md:flex max-md:h-10 max-md:w-10 max-md:items-center max-md:justify-center max-md:rounded-full max-md:bg-gray-100 dark:max-md:bg-slate-800"
               onClick={() => setOpen(false)}
             >
               ✕

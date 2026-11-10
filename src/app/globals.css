@@ -1748,3 +1748,16 @@ a.person-card__main:active {
 body:has(.form-overlay.fixed) .support-chat-fab {
   display: none !important;
 }
+
+/* Phone list cards: Edit / Delete icon buttons big enough for a thumb (44px). */
+@media (max-width: 767px) {
+  .person-card__actions button.w-7.h-7 {
+    width: 2.75rem;
+    height: 2.75rem;
+  }
+
+  .person-card__actions button.w-7.h-7 img {
+    width: 18px;
+    height: 18px;
+  }
+}
