@@ -98,7 +98,10 @@ const MessageComposeForm = ({
   const selectedRoleGroup = watch("receiverRole");
 
   return (
-    <form onSubmit={onSubmit} className="flex flex-col gap-3">
+    <form
+      onSubmit={onSubmit}
+      className={mode === "reply" ? "flex flex-wrap items-end gap-2 md:flex-col md:items-stretch md:gap-3" : "flex flex-col gap-3"}
+    >
       {mode === "new" && contacts && (
         <>
           <div className="flex flex-col gap-2">
@@ -115,7 +118,7 @@ const MessageComposeForm = ({
                   );
                 },
               })}
-              className="ring-[1.5px] ring-gray-300 dark:ring-slate-700 dark:bg-slate-800 dark:text-slate-100 p-2.5 rounded-lg text-sm w-full"
+              className="ring-[1.5px] ring-gray-300 dark:ring-slate-700 dark:bg-slate-800 dark:text-slate-100 p-2.5 rounded-lg text-sm w-full max-md:min-h-12 max-md:text-base"
             >
               <option value="">{t("chooseRecipient")}</option>
               {contacts.teachers.length > 0 && (
@@ -159,7 +162,7 @@ const MessageComposeForm = ({
               </label>
               <select
                 {...register("studentId")}
-                className="ring-[1.5px] ring-gray-300 dark:ring-slate-700 dark:bg-slate-800 dark:text-slate-100 p-2.5 rounded-lg text-sm w-full"
+                className="ring-[1.5px] ring-gray-300 dark:ring-slate-700 dark:bg-slate-800 dark:text-slate-100 p-2.5 rounded-lg text-sm w-full max-md:min-h-12 max-md:text-base"
               >
                 <option value="">{t("general")}</option>
                 {studentOptions.map((s) => (
@@ -181,7 +184,7 @@ const MessageComposeForm = ({
         </>
       )}
 
-      <div className="flex flex-col gap-2">
+      <div className={`flex flex-col gap-2 ${mode === "reply" ? "min-w-0 flex-1 md:flex-none" : ""}`}>
         {mode === "new" && (
           <label className="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-slate-400">
             {t("message")}
@@ -191,7 +194,7 @@ const MessageComposeForm = ({
           {...register("content")}
           rows={mode === "new" ? 4 : 2}
           placeholder={t("placeholder")}
-          className="ring-[1.5px] ring-gray-300 dark:ring-slate-700 dark:bg-slate-800 dark:text-slate-100 p-2.5 rounded-lg text-sm w-full resize-none"
+          className="ring-[1.5px] ring-gray-300 dark:ring-slate-700 dark:bg-slate-800 dark:text-slate-100 p-2.5 rounded-lg text-sm w-full resize-none max-md:text-base max-md:rounded-3xl max-md:px-4"
         />
         {errors.content?.message && (
           <p className="text-xs text-red-400">{tv(errors.content.message)}</p>
@@ -199,15 +202,18 @@ const MessageComposeForm = ({
       </div>
 
       {state.error && (
-        <span className="text-xs text-red-500">{tCommon("somethingWrongRetry")}</span>
+        <span className="basis-full text-xs text-red-500">{tCommon("somethingWrongRetry")}</span>
       )}
 
       <button
         type="submit"
         disabled={pending}
-        className="self-end flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 disabled:opacity-60 transition-colors text-white px-4 py-2 rounded-lg text-sm font-semibold shine-hover"
+        aria-label={mode === "new" ? t("send") : t("reply")}
+        className={`self-end flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 disabled:opacity-60 transition-colors text-white px-4 py-2 rounded-lg text-sm font-semibold shine-hover ${
+          mode === "reply" ? "max-md:h-11 max-md:w-11 max-md:shrink-0 max-md:justify-center max-md:rounded-full max-md:p-0" : ""
+        }`}
       >
-        <Send size={14} /> {mode === "new" ? t("send") : t("reply")}
+        <Send size={14} /> <span className={mode === "reply" ? "max-md:sr-only" : ""}>{mode === "new" ? t("send") : t("reply")}</span>
       </button>
     </form>
   );
