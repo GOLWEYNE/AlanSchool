@@ -80,7 +80,7 @@ const ClubEnrollRow = ({
       {enrollment ? (
         <button
           type="button"
-          className="text-xs font-semibold text-red-600 hover:underline whitespace-nowrap"
+          className="text-xs font-semibold text-red-600 hover:underline whitespace-nowrap max-md:flex max-md:min-h-11 max-md:items-center max-md:rounded-full max-md:bg-red-50 max-md:px-4 max-md:text-sm max-md:no-underline dark:max-md:bg-red-500/15"
           onClick={() => {
             const fd = new FormData();
             fd.set("id", String(enrollment.id));
@@ -92,7 +92,7 @@ const ClubEnrollRow = ({
       ) : (
         <button
           type="button"
-          className="text-xs font-semibold text-blue-700 dark:text-blue-300 hover:underline whitespace-nowrap"
+          className="text-xs font-semibold text-blue-700 dark:text-blue-300 hover:underline whitespace-nowrap max-md:flex max-md:min-h-11 max-md:items-center max-md:rounded-full max-md:bg-blue-50 max-md:px-4 max-md:text-sm max-md:no-underline dark:max-md:bg-blue-500/15"
           onClick={() => enrollAction({ clubId, studentId: student.id })}
         >
           {full ? t("joinWaitlist") : t("join")}

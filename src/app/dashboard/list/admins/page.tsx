@@ -1,6 +1,7 @@
 import FormContainer from "@/components/FormContainer";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
+import PersonCard from "@/components/PersonCard";
 import TableSearch from "@/components/TableSearch";
 import PageHero from "@/components/PageHero";
 import prisma from "@/lib/prisma";
@@ -66,6 +67,21 @@ const AdminListPage = async ({
     </tr>
   );
 
+  // Phones: one card per admin; "you" is shown under your own name.
+  const renderCard = (item: Admin) => (
+    <PersonCard
+      key={item.id}
+      title={item.username}
+      subtitle={item.id === userId ? t("you") : undefined}
+      actions={
+        <>
+          <FormContainer table="admin" type="update" data={item} />
+          {item.id !== userId && <FormContainer table="admin" type="delete" id={item.id} />}
+        </>
+      }
+    />
+  );
+
   const { page, pageSize, ...queryParams } = searchParams;
   const p = page ? parseInt(page) : 1;
   const size = resolvePageSize(pageSize);
@@ -104,7 +120,7 @@ const AdminListPage = async ({
         </div>
       </div>
       {/* LIST */}
-      <Table columns={columns} renderRow={renderRow} data={data} />
+      <Table columns={columns} renderRow={renderRow} renderCard={renderCard} data={data} />
       {/* PAGINATION */}
       <Pagination page={p} count={count} pageSize={size} />
     </div>

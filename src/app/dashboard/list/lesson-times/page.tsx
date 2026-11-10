@@ -35,13 +35,13 @@ const LessonTimesPage = async () => {
   return (
     <ProtectedRoute allowedRoles={["admin"]}>
       <div className="p-4 flex flex-col gap-4">
-        <div className="rounded-2xl p-6 text-white shadow-lg bg-gradient-to-r from-yellow-400 via-blue-500 to-blue-400">
-          <h1 className="text-3xl font-bold mb-2">🕘 {t("title")}</h1>
+        <div className="rounded-2xl p-6 max-md:p-5 text-white shadow-lg bg-gradient-to-r from-yellow-400 via-blue-500 to-blue-400">
+          <h1 className="text-3xl max-md:text-2xl font-bold mb-2">🕘 {t("title")}</h1>
           <p className="text-blue-50">{t("subtitle", { zone: SCHOOL_UTC_LABEL })}</p>
         </div>
 
         {/* THE ROUTINE */}
-        <section className="panel-card p-6 rounded-lg shadow-md border-t-4 border-blue-400">
+        <section className="panel-card p-6 max-md:p-4 rounded-lg shadow-md border-t-4 border-blue-400">
           <h2 className="text-xl font-semibold text-gray-800 dark:text-blue-100">{t("routine.title")}</h2>
           <p className="text-sm text-gray-500 dark:text-slate-400 mb-4">{t("routine.subtitle")}</p>
           <div className="grid gap-4 md:grid-cols-2">
@@ -70,7 +70,7 @@ const LessonTimesPage = async () => {
         </section>
 
         {/* REPAIR */}
-        <section className="panel-card p-6 rounded-lg shadow-md border-t-4 border-yellow-400">
+        <section className="panel-card p-6 max-md:p-4 rounded-lg shadow-md border-t-4 border-yellow-400">
           <h2 className="text-xl font-semibold text-gray-800 dark:text-blue-100">{t("repair.title")}</h2>
           <p className="text-sm text-gray-500 dark:text-slate-400 mb-4">
             {status ? t("repair.summary", { onRoutine: status.onRoutine, total: status.total }) : t("repair.description")}
@@ -95,7 +95,7 @@ const LessonTimesPage = async () => {
 
         {/* LESSONS OFF THE ROUTINE */}
         {status && (
-          <section className="panel-card p-6 rounded-lg shadow-md border-t-4 border-blue-400">
+          <section className="panel-card p-6 max-md:p-4 rounded-lg shadow-md border-t-4 border-blue-400">
             <h2 className="text-xl font-semibold text-gray-800 dark:text-blue-100">{t("off.title")}</h2>
             <p className="text-sm text-gray-500 dark:text-slate-400 mb-4">{t("off.subtitle")}</p>
             {off.length === 0 ? (
@@ -107,7 +107,32 @@ const LessonTimesPage = async () => {
                 <p className="text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
                   {t("off.count", { count: off.length })}
                 </p>
-                <div className="overflow-x-auto">
+                <ul className="flex flex-col gap-2 md:hidden">
+                  {off.slice(0, MAX_OFF_ROWS).map((l) => (
+                    <li key={l.id}>
+                      <Link
+                        href={`/dashboard/list/lessons?classId=${l.classId}`}
+                        className="flex min-h-14 items-center gap-3 rounded-2xl border border-blue-100 bg-white/80 px-4 py-2 dark:border-slate-700 dark:bg-slate-900/60"
+                      >
+                        <span className="flex h-10 min-w-10 shrink-0 items-center justify-center rounded-full bg-blue-100 px-2 text-sm font-bold text-blue-700 dark:bg-blue-500/20 dark:text-blue-200">
+                          {l.className}
+                        </span>
+                        <span className="min-w-0 flex-1">
+                          <span className="block truncate text-sm font-semibold text-gray-800 dark:text-slate-100">
+                            {l.subjectName}
+                          </span>
+                          <span className="block text-xs text-gray-500 dark:text-slate-400">
+                            {common(`days.${l.day.toLowerCase()}`)} · {l.start} – {l.end}
+                          </span>
+                        </span>
+                        <span className="shrink-0 text-xs font-semibold text-blue-600 dark:text-blue-300">
+                          {t("off.open")}
+                        </span>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+                <div className="hidden overflow-x-auto md:block">
                   <table className="w-full text-sm">
                     <thead>
                       <tr className="text-left text-xs uppercase tracking-wide text-gray-500 dark:text-slate-400">
