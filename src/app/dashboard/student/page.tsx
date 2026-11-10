@@ -12,11 +12,13 @@ import ReportCardBehaviorTimeline from "@/components/reportCard/ReportCardBehavi
 import ProtectedRoute from "@/components/ProtectedRoute";
 import prisma from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
-import Link from "next/link";
 import { getTranslations } from "next-intl/server";
+import { CalendarDays, ClipboardList, FileText, MessageSquare, NotebookPen, School, Trophy } from "lucide-react";
+import { HomeHero, HomeSection, HomeShortcuts, HomeStats, Rise } from "@/components/dashboard/HomeBlocks";
 
 const StudentPage = async () => {
   const t = await getTranslations("Dashboards.student");
+  const tr = await getTranslations("Roles");
   const { userId } = auth();
 
   const classItem = await prisma.class.findFirst({
@@ -52,87 +54,73 @@ const StudentPage = async () => {
 
   return (
     <ProtectedRoute allowedRoles={["student"]}>
-    <div className="p-4 flex flex-col gap-4">
-      {/* HEADER CARD */}
-      <div className="rounded-2xl p-6 text-white shadow-lg shine-hover bg-gradient-to-r from-yellow-400 via-blue-500 to-blue-400">
-        <h1 className="text-3xl font-bold mb-2">{t("title")}</h1>
-        <p className="text-blue-50">{t("subtitle")}</p>
-        <div className="mt-3 flex flex-wrap gap-2">
-          <span className="rounded-full bg-white/90 text-blue-900 px-3 py-1 text-xs font-semibold">{t("classLabel")}: {classItem?.name || t("unassigned")}</span>
-          <span className="rounded-full bg-white/90 text-blue-900 px-3 py-1 text-xs font-semibold">{t("dueAssignments")}: {assignmentsDue}</span>
-          <span className="rounded-full bg-white/90 text-blue-900 px-3 py-1 text-xs font-semibold">{t("upcomingExams")}: {upcomingExams}</span>
-          <span className="rounded-full bg-white/90 text-blue-900 px-3 py-1 text-xs font-semibold">{t("results")}: {publishedResults}</span>
-        </div>
-      </div>
+      <div className="p-4 flex flex-col gap-4">
+        <HomeHero eyebrow={tr("student")} title={t("title")} subtitle={t("subtitle")} />
 
-      <div className="grid grid-cols-2 md:grid-cols-6 gap-3">
-        <Link href="/dashboard/list/assignments" className="panel-card p-3 text-blue-900 font-semibold text-sm text-center shine-hover">{t("assignments")}</Link>
-        <Link href="/dashboard/list/exams" className="panel-card p-3 text-blue-900 font-semibold text-sm text-center shine-hover">{t("exams")}</Link>
-        <Link href="/dashboard/list/results" className="panel-card p-3 text-blue-900 font-semibold text-sm text-center shine-hover">{t("results")}</Link>
-        <Link href="/dashboard/list/events" className="panel-card p-3 text-blue-900 font-semibold text-sm text-center shine-hover">{t("events")}</Link>
-        <Link href="/dashboard/list/messages" className="panel-card p-3 text-blue-900 font-semibold text-sm text-center shine-hover">{t("messages")}</Link>
-        <Link href="/dashboard/list/study-planner" className="panel-card p-3 text-blue-900 font-semibold text-sm text-center shine-hover">{t("studyPlanner")}</Link>
-      </div>
+        <HomeStats
+          stats={[
+            { label: t("classLabel"), value: classItem?.name || t("unassigned"), Icon: School },
+            { label: t("dueAssignments"), value: assignmentsDue, Icon: ClipboardList, tone: "gold" },
+            { label: t("upcomingExams"), value: upcomingExams, Icon: FileText },
+            { label: t("results"), value: publishedResults, Icon: Trophy, tone: "gold" },
+          ]}
+        />
 
-      {/* CALENDAR CARD - full page width so the whole week is easy to read at a glance */}
-      <div className="w-full panel-card p-6 rounded-lg shadow-md border-t-4 border-blue-400 hover:shadow-lg transition-shadow min-h-[640px] flex flex-col">
-        <div className="mb-4 flex items-center gap-2">
-          <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
-          <h2 className="text-xl font-semibold text-gray-800 dark:text-blue-100">{t("todaysClasses")}</h2>
-        </div>
-        {classId ? (
-          <div className="flex-1 bg-gradient-to-b from-blue-50 to-white dark:from-slate-900 dark:to-slate-950 rounded-lg overflow-hidden">
-            <BigCalendarContainer type="classId" id={classId} />
-          </div>
-        ) : (
-          <div className="text-center py-12">
-            <div className="text-6xl mb-4">📭</div>
-            <p className="text-gray-500 text-lg">{t("noClass")}</p>
-            <p className="text-gray-400 text-sm mt-2">{t("contactAdmin")}</p>
-          </div>
-        )}
-      </div>
+        <HomeShortcuts
+          items={[
+            { href: "/dashboard/list/assignments", label: t("assignments"), Icon: ClipboardList },
+            { href: "/dashboard/list/exams", label: t("exams"), Icon: FileText, tone: "gold" },
+            { href: "/dashboard/list/results", label: t("results"), Icon: Trophy },
+            { href: "/dashboard/list/events", label: t("events"), Icon: CalendarDays, tone: "gold" },
+            { href: "/dashboard/list/messages", label: t("messages"), Icon: MessageSquare },
+            { href: "/dashboard/list/study-planner", label: t("studyPlanner"), Icon: NotebookPen, tone: "gold" },
+          ]}
+        />
 
-      <div className="flex gap-4 flex-col xl:flex-row">
-        {/* LEFT */}
-        <div className="w-full xl:w-2/3 flex flex-col gap-4">
-          {/* FEATURED VIDEO BROADCAST */}
-          <FeaturedVideoPlayer />
-        </div>
-
-        {/* RIGHT */}
-        <div className="w-full xl:w-1/3 flex flex-col gap-4">
-          <BirthdayAnnouncements />
-          <TodaysTimetableStrip role="student" classIds={classId ? [classId] : []} />
-          <WeekAtAGlance role="student" classIds={classId ? [classId] : []} />
-          <AttendancePulse role="student" studentIds={userId ? [userId] : []} />
-          <ClassLeaderboard role="student" studentIds={userId ? [userId] : []} />
-          {userId && <ReportCardsPanel studentId={userId} />}
-          <ReportCardBehaviorTimeline logs={behaviorLogs} />
-          {/* EVENTS CARD */}
-          <div className="bg-gradient-to-r from-yellow-400 to-yellow-300 rounded-lg p-4 shadow-md">
-            <div className="flex items-center gap-2 mb-3">
-              <div className="text-2xl">🗓️</div>
-              <h3 className="text-lg font-bold text-gray-800">{t("eventsCard")}</h3>
+        {/* CALENDAR - full page width so the whole week is easy to read at a glance */}
+        <HomeSection
+          title={t("todaysClasses")}
+          Icon={CalendarDays}
+          i={11}
+          className="min-h-[640px] flex flex-col"
+        >
+          {classId ? (
+            <div className="flex-1 min-h-[420px]">
+              <BigCalendarContainer type="classId" id={classId} />
             </div>
-            <div className="bg-white rounded-lg overflow-hidden">
+          ) : (
+            <div className="text-center py-12">
+              <div className="text-6xl mb-4">📭</div>
+              <p className="text-blue-900 dark:text-blue-100 text-lg">{t("noClass")}</p>
+              <p className="text-blue-700/70 dark:text-blue-200/70 text-sm mt-2">{t("contactAdmin")}</p>
+            </div>
+          )}
+        </HomeSection>
+
+        <div className="flex gap-4 flex-col xl:flex-row">
+          {/* LEFT */}
+          <div className="w-full xl:w-2/3 flex flex-col gap-4">
+            <Rise i={12}>
+              <FeaturedVideoPlayer />
+            </Rise>
+          </div>
+
+          {/* RIGHT */}
+          <div className="w-full xl:w-1/3 flex flex-col gap-4">
+            <Rise i={13}><BirthdayAnnouncements /></Rise>
+            <Rise i={14}><TodaysTimetableStrip role="student" classIds={classId ? [classId] : []} /></Rise>
+            <Rise i={15}><WeekAtAGlance role="student" classIds={classId ? [classId] : []} /></Rise>
+            <Rise i={16}><AttendancePulse role="student" studentIds={userId ? [userId] : []} /></Rise>
+            <Rise i={17}><ClassLeaderboard role="student" studentIds={userId ? [userId] : []} /></Rise>
+            <Rise i={18}>{userId && <ReportCardsPanel studentId={userId} />}</Rise>
+            <Rise i={19}><ReportCardBehaviorTimeline logs={behaviorLogs} /></Rise>
+            <HomeSection title={t("eventsCard")} Icon={CalendarDays} i={20}>
               <EventCalendar />
-            </div>
-          </div>
-
-          {/* ANNOUNCEMENTS CARD */}
-          <div className="bg-gradient-to-r from-blue-400 to-blue-300 rounded-lg p-4 shadow-md">
-            <div className="flex items-center gap-2 mb-3">
-              <div className="text-2xl">📢</div>
-              <h3 className="text-lg font-bold text-white">{t("announcementsCard")}</h3>
-            </div>
-            <div className="bg-white rounded-lg overflow-hidden">
-              <Announcements />
-            </div>
+            </HomeSection>
+            <Rise i={21}><Announcements /></Rise>
           </div>
         </div>
       </div>
-    </div>
     </ProtectedRoute>
   );
 };
