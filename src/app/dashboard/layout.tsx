@@ -10,6 +10,7 @@ import { getUserRole } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { teacherNeedsProfile } from "@/lib/teacherProfile";
 import MobileTabBar, { type Tab } from "@/components/MobileTabBar";
+import PhoneScrollEffects from "@/components/PhoneScrollEffects";
 import { getTranslations } from "next-intl/server";
 
 export default async function DashboardLayout({
@@ -76,7 +77,8 @@ export default async function DashboardLayout({
           </div>
         </SidebarShell>
         {/* RIGHT */}
-        <div className="w-full md:w-[92%] lg:w-[84%] xl:w-[86%] overflow-scroll flex flex-col">
+        <div className="w-full md:w-[92%] lg:w-[84%] xl:w-[86%] overflow-scroll flex flex-col max-md:overscroll-y-contain">
+          <PhoneScrollEffects />
           <Navbar />
           {children}
           {/* keeps the last card clear of the phone tab bar */}
