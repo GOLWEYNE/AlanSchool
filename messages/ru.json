@@ -986,7 +986,17 @@
       "todaysSchedule": "Расписание на сегодня",
       "childrenAttendance": "Посещаемость детей",
       "noChildren": "За этим родителем не закреплено ни одного ребёнка.",
-      "behaviorConduct": "Поведение: {name}"
+      "behaviorConduct": "Поведение: {name}",
+      "today": "Сегодня",
+      "attendanceToday": "Посещаемость сегодня",
+      "attNotMarked": "Ещё не отмечено",
+      "attPresent": "Присутствует",
+      "attAbsent": "Отсутствует",
+      "attPartly": "Посещено уроков: {present} из {total}",
+      "nextExam": "Ближайший экзамен",
+      "noUpcomingExam": "Экзаменов пока нет",
+      "latestResult": "Последний результат",
+      "noResultsYet": "Результатов пока нет"
     },
     "teacher": {
       "title": "Планировщик учителя",
