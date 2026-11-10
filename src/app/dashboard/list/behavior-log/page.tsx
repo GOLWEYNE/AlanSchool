@@ -1,6 +1,7 @@
 import FormContainer from "@/components/FormContainer";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
+import PersonCard from "@/components/PersonCard";
 import TableSearch from "@/components/TableSearch";
 import PageHero from "@/components/PageHero";
 import prisma from "@/lib/prisma";
@@ -84,6 +85,38 @@ const BehaviorLogPage = async ({
     </tr>
   );
 
+  const TYPE_BADGE_ICON: Record<BehaviorType, string> = {
+    POSITIVE: "\u2b50",
+    CONCERN: "\u26a0\ufe0f",
+    INCIDENT: "\ud83d\udea8",
+  };
+
+  // Phones: one card per note - the type as the badge, student as the subtitle.
+  const renderCard = (item: BehaviorLogRow) => (
+    <PersonCard
+      key={item.id}
+      wrapTitle
+      badge={TYPE_BADGE_ICON[item.type]}
+      title={item.title}
+      subtitle={`${item.student.name} ${item.student.surname}`}
+      fields={[
+        { label: t("columns.type"), value: TYPE_LABELS[item.type] },
+        {
+          label: t("columns.date"),
+          value: format.dateTime(new Date(item.date), { dateStyle: "medium" }),
+        },
+        { label: t("columns.loggedBy"), value: `${item.teacher.name} ${item.teacher.surname}` },
+        item.visibleToParent ? { label: t("columns.visibleToParent"), value: "\u2713" } : { label: "", value: "" },
+      ]}
+      actions={
+        <>
+          <FormContainer table="behaviorLog" type="update" data={item} />
+          <FormContainer table="behaviorLog" type="delete" id={item.id} />
+        </>
+      }
+    />
+  );
+
   const { page, pageSize, ...queryParams } = searchParams;
   const p = page ? parseInt(page) : 1;
   const size = resolvePageSize(pageSize);
@@ -157,7 +190,7 @@ const BehaviorLogPage = async ({
         <TableSearch />
         <FormContainer table="behaviorLog" type="create" />
       </div>
-      <Table columns={columns} renderRow={renderRow} data={data} />
+      <Table columns={columns} renderRow={renderRow} renderCard={renderCard} data={data} />
       <Pagination page={p} count={count} pageSize={size} />
     </div>
   );
