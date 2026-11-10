@@ -46,6 +46,7 @@ const ICONS: Record<TabIconName, LucideIcon> = {
 // iOS-style bottom tab bar. Phones only (md:hidden): on tablets and desktops
 // the sidebar is always visible, so nothing changes there. The last tab, "More",
 // opens the full menu drawer so every page stays one tap away.
+// The tabs themselves are defined per role in src/app/dashboard/layout.tsx.
 export default function MobileTabBar({ tabs, menuLabel }: { tabs: Tab[]; menuLabel: string }) {
   const pathname = usePathname();
   const { open } = useMobileSidebar();
