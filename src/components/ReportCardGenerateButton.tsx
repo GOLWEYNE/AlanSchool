@@ -63,15 +63,15 @@ const ReportCardGenerateButton = ({
         <button
           type="button"
           onClick={() => setOpen(true)}
-          className="text-xs font-semibold text-blue-700 dark:text-blue-300 hover:underline"
+          className="text-xs font-semibold text-blue-700 dark:text-blue-300 hover:underline max-md:flex max-md:min-h-11 max-md:items-center max-md:rounded-full max-md:bg-blue-50 max-md:px-4 max-md:text-sm max-md:no-underline dark:max-md:bg-blue-500/15"
         >
           {isRegenerate ? t("regenerate") : t("generate")}
         </button>
       )}
 
       {open && (
-        <div className="w-screen h-screen fixed left-0 top-0 bg-black bg-opacity-60 z-50 flex items-center justify-center">
-          <div className="bg-white dark:bg-slate-900 p-4 rounded-md relative w-[90%] md:w-[60%] lg:w-[40%] xl:w-[32%]">
+        <div className="form-overlay fixed inset-0 bg-black bg-opacity-60 z-[1000] flex items-center justify-center">
+          <div className="bg-white dark:bg-slate-900 p-4 rounded-2xl md:rounded-md relative w-[90%] md:w-[60%] lg:w-[40%] xl:w-[32%]">
             <form
               onSubmit={(e) => {
                 e.preventDefault();
@@ -89,7 +89,7 @@ const ReportCardGenerateButton = ({
                   {t("term")}
                 </label>
                 <select
-                  className="ring-[1.5px] ring-gray-300 dark:ring-slate-700 dark:bg-slate-800 dark:text-slate-100 p-2 rounded-md text-sm w-full"
+                  className="ring-[1.5px] ring-gray-300 dark:ring-slate-700 dark:bg-slate-800 dark:text-slate-100 p-2 rounded-md text-sm w-full max-md:min-h-12 max-md:text-base"
                   value={term}
                   onChange={(e) => setTerm(e.target.value as Term)}
                 >
@@ -104,7 +104,7 @@ const ReportCardGenerateButton = ({
                   {t("schoolYear")}
                 </label>
                 <input
-                  className="ring-[1.5px] ring-gray-300 dark:ring-slate-700 dark:bg-slate-800 dark:text-slate-100 p-2 rounded-md text-sm w-full"
+                  className="ring-[1.5px] ring-gray-300 dark:ring-slate-700 dark:bg-slate-800 dark:text-slate-100 p-2 rounded-md text-sm w-full max-md:min-h-12 max-md:text-base"
                   value={schoolYear}
                   onChange={(e) => setSchoolYear(e.target.value)}
                   placeholder="2026/2027"
@@ -117,7 +117,7 @@ const ReportCardGenerateButton = ({
                 </span>
               )}
 
-              <button className="bg-blue-500 text-white p-2 rounded-md text-sm">
+              <button className="bg-blue-500 text-white p-2 rounded-md text-sm max-md:min-h-12 max-md:rounded-xl max-md:text-base max-md:font-semibold">
                 {isRegenerate ? t("regenerate") : t("generate")}
               </button>
             </form>
