@@ -243,19 +243,19 @@ const MyClassPage = async ({ searchParams }: { searchParams: Promise<SP> | SP })
           <div className="ml-auto flex flex-wrap gap-2">
             <Link
               href={"/dashboard/list/attendance"}
-              className="rounded-lg border border-blue-300 px-3 py-2 font-medium text-blue-700 hover:bg-blue-50 dark:border-blue-700 dark:text-blue-300 dark:hover:bg-blue-900/30"
+              className="rounded-lg border border-blue-300 px-3 py-3 text-center font-medium text-blue-700 md:py-2 hover:bg-blue-50 dark:border-blue-700 dark:text-blue-300 dark:hover:bg-blue-900/30"
             >
               {t("goAttendance")}
             </Link>
             <Link
               href={"/dashboard/list/behavior-log"}
-              className="rounded-lg border border-blue-300 px-3 py-2 font-medium text-blue-700 hover:bg-blue-50 dark:border-blue-700 dark:text-blue-300 dark:hover:bg-blue-900/30"
+              className="rounded-lg border border-blue-300 px-3 py-3 text-center font-medium text-blue-700 md:py-2 hover:bg-blue-50 dark:border-blue-700 dark:text-blue-300 dark:hover:bg-blue-900/30"
             >
               {t("goBehavior")}
             </Link>
             <Link
               href={"/dashboard/list/uniform" + classQuery}
-              className="rounded-lg border border-blue-300 px-3 py-2 font-medium text-blue-700 hover:bg-blue-50 dark:border-blue-700 dark:text-blue-300 dark:hover:bg-blue-900/30"
+              className="rounded-lg border border-blue-300 px-3 py-3 text-center font-medium text-blue-700 md:py-2 hover:bg-blue-50 dark:border-blue-700 dark:text-blue-300 dark:hover:bg-blue-900/30"
             >
               {t("goUniform")}
             </Link>
@@ -448,7 +448,61 @@ const MyClassPage = async ({ searchParams }: { searchParams: Promise<SP> | SP })
         {roster.length === 0 ? (
           <p className="text-sm text-gray-500">{t("noStudents")}</p>
         ) : (
-          <div className="overflow-x-auto">
+          <>
+          <ul className="flex flex-col gap-3 md:hidden">
+            {roster.map((s) => (
+              <li
+                key={s.id}
+                className="rounded-2xl border border-blue-100 bg-white/70 p-3 dark:border-slate-700 dark:bg-slate-900/50"
+              >
+                <div className="flex items-start justify-between gap-2">
+                  <Link
+                    href={"/dashboard/list/students/" + s.id}
+                    className="min-w-0 text-base font-semibold text-blue-800 dark:text-blue-200"
+                  >
+                    {s.name} {s.surname}
+                  </Link>
+                  {s.reasons.length > 0 ? (
+                    <span className="shrink-0 rounded-full bg-rose-100 px-2.5 py-0.5 text-xs font-semibold text-rose-700 dark:bg-rose-900/40 dark:text-rose-300">
+                      {t("statusAtRisk")}
+                    </span>
+                  ) : (
+                    <span className="shrink-0 rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-semibold text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300">
+                      {t("statusOk")}
+                    </span>
+                  )}
+                </div>
+                <div className="mt-1.5 flex flex-wrap gap-x-4 gap-y-0.5 text-xs text-gray-600 dark:text-slate-300">
+                  <span>
+                    <b>{t("cols.attendance", { days: RISK_RULES.attendanceWindowDays })}:</b>{" "}
+                    {s.att.rate === null ? "-" : pct(s.att.rate)}
+                    {s.att.absentDays > 0 && ` (${s.att.absentDays} ${t("absentShort")})`}
+                  </span>
+                  {s.uniformBad > 0 && (
+                    <span>
+                      <b>{t("cols.uniform", { days: RISK_RULES.uniformWindowDays })}:</b> {s.uniformBad}
+                    </span>
+                  )}
+                  <span>
+                    <b>{t("cols.behavior")}:</b> <span className="text-emerald-600">+{s.positives}</span>{" "}
+                    <span className={s.negatives ? "text-amber-600" : "text-gray-400"}>!{s.negatives}</span>
+                  </span>
+                </div>
+                <div className="mt-2 flex items-center gap-2">
+                  <span className="min-w-0 flex-1 truncate text-sm dark:text-slate-200">
+                    {s.parent.name} {s.parent.surname}
+                  </span>
+                  <a
+                    href={"tel:" + s.parent.phone}
+                    className="inline-flex min-h-11 shrink-0 items-center rounded-xl bg-blue-600 px-4 text-sm font-semibold text-white active:scale-95"
+                  >
+                    {s.parent.phone}
+                  </a>
+                </div>
+              </li>
+            ))}
+          </ul>
+          <div className="hidden overflow-x-auto md:block">
             <table className="w-full min-w-[760px] text-left text-sm">
               <thead>
                 <tr className="border-b border-gray-200 text-xs text-gray-500 dark:border-slate-700">
@@ -521,6 +575,7 @@ const MyClassPage = async ({ searchParams }: { searchParams: Promise<SP> | SP })
               </tbody>
             </table>
           </div>
+          </>
         )}
       </div>
     </div>
