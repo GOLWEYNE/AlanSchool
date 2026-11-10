@@ -1,4 +1,4 @@
-import { PEOPLE_ORDER } from "@/lib/sort";
+import { alphabeticalPageIds, orderByIds } from "@/lib/sort";
 import FormContainer from "@/components/FormContainer";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
@@ -137,19 +137,23 @@ const TeacherListPage = async ({
     }
   }
 
-  const [data, count] = await prisma.$transaction([
-    prisma.teacher.findMany({
-      where: query,
+  // Sorted alphabetically in code (see the students page for why).
+  const matching = await prisma.teacher.findMany({
+    where: query,
+    select: { id: true, name: true, surname: true },
+  });
+  const count = matching.length;
+  const pageIds = alphabeticalPageIds(matching, size * (p - 1), size);
+  const data = orderByIds(
+    await prisma.teacher.findMany({
+      where: { id: { in: pageIds } },
       include: {
         subjects: true,
         classes: true,
       },
-      orderBy: PEOPLE_ORDER,
-      take: size,
-      skip: size * (p - 1),
     }),
-    prisma.teacher.count({ where: query }),
-  ]);
+    pageIds
+  );
 
   return (
     <div className="panel-card p-4 md:p-5 rounded-md flex-1 m-4 mt-0 list-page-shell">
