@@ -5,6 +5,7 @@ import { useFormState } from "react-dom";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { toast } from "react-toastify";
+import StatusSegment from "@/components/StatusSegment";
 import { recordClubAttendanceBulk } from "@/lib/masterModuleActions";
 
 type Status = "PRESENT" | "ABSENT" | "LATE" | "EXCUSED";
@@ -111,8 +112,17 @@ const ClubAttendanceMatrixForm = ({
     setRows((prev) => prev.map((r) => ({ ...r, status })));
   };
 
+  const save = () =>
+    formAction({
+      clubId,
+      date,
+      startTime,
+      endTime,
+      records: rows.map((r) => ({ studentId: r.id, status: r.status })),
+    });
+
   return (
-    <div className="panel-card p-4 rounded-md mb-4 shine-hover">
+    <div className="panel-card p-4 rounded-md mb-4">
       <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
         <h2 className="text-lg font-semibold text-blue-900 dark:text-blue-100">
           {t("markAttendance")}
@@ -174,7 +184,7 @@ const ClubAttendanceMatrixForm = ({
       ) : (
         <div className="flex flex-col divide-y divide-gray-100 dark:divide-slate-800">
           {rows.map((r) => (
-            <div key={r.id} className="flex items-center justify-between gap-3 py-2 text-sm">
+            <div key={r.id} className="flex flex-col gap-2 py-3 text-sm md:flex-row md:items-center md:justify-between md:gap-3 md:py-2">
               <span>
                 {r.name} {r.surname}
                 {r.className && (
@@ -183,8 +193,13 @@ const ClubAttendanceMatrixForm = ({
                   </span>
                 )}
               </span>
+              <StatusSegment
+                value={r.status}
+                options={STATUS_OPTIONS}
+                onChange={(status) => setStatus(r.id, status)}
+              />
               <select
-                className={`ring-[1.5px] ring-gray-300 dark:ring-slate-700 p-1.5 rounded-md text-xs font-semibold ${STATUS_STYLES[r.status]}`}
+                className={`hidden md:block ring-[1.5px] ring-gray-300 dark:ring-slate-700 p-1.5 rounded-md text-xs font-semibold ${STATUS_STYLES[r.status]}`}
                 value={r.status}
                 onChange={(e) => setStatus(r.id, e.target.value as Status)}
               >
@@ -206,22 +221,28 @@ const ClubAttendanceMatrixForm = ({
       )}
 
       {rows.length > 0 && (
-        <button
-          type="button"
-          disabled={!timesValid}
-          onClick={() =>
-            formAction({
-              clubId,
-              date,
-              startTime,
-              endTime,
-              records: rows.map((r) => ({ studentId: r.id, status: r.status })),
-            })
-          }
-          className="bg-blue-500 disabled:opacity-50 text-white px-4 py-2 rounded-md text-sm font-semibold mt-4"
-        >
-          {t("saveAttendance")}
-        </button>
+        <>
+          <button
+            type="button" disabled={!timesValid}
+            onClick={save}
+            className="hidden md:block bg-blue-500 disabled:opacity-50 text-white px-4 py-2 rounded-md text-sm font-semibold mt-4"
+          >
+            {t("saveAttendance")}
+          </button>
+          {/* Phones: Save stays on screen above the tab bar (and clear of the chat button) */}
+          <div className="sticky bottom-24 z-20 mr-16 mt-4 flex items-center gap-2 rounded-2xl bg-white/90 p-2 shadow-lg ring-1 ring-blue-100 md:hidden dark:bg-slate-900/90 dark:ring-slate-700">
+            <span className="px-2 text-xs font-semibold text-emerald-700 dark:text-emerald-300">
+              {tally.PRESENT}/{rows.length}
+            </span>
+            <button
+              type="button" disabled={!timesValid}
+              onClick={save}
+              className="min-h-12 flex-1 rounded-xl bg-blue-600 disabled:opacity-50 text-sm font-semibold text-white active:scale-95"
+            >
+              {t("saveAttendance")}
+            </button>
+          </div>
+        </>
       )}
     </div>
   );
