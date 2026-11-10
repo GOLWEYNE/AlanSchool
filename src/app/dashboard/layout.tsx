@@ -9,6 +9,8 @@ import { auth } from "@clerk/nextjs/server";
 import { getUserRole } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { teacherNeedsProfile } from "@/lib/teacherProfile";
+import MobileTabBar, { type Tab } from "@/components/MobileTabBar";
+import { getTranslations } from "next-intl/server";
 
 export default async function DashboardLayout({
   children,
@@ -26,6 +28,36 @@ export default async function DashboardLayout({
   // Mirrors the same admin/teacher scoping as the search API and its Navbar
   // trigger, so the shortcut doesn't open a palette that can't return anything.
   const canSearch = role === "admin" || role === "teacher";
+
+  // Phone bottom tab bar: four shortcuts per role plus "More" (the full menu).
+  const tm = await getTranslations("Menu");
+  const tabsByRole: Record<string, Tab[]> = {
+    admin: [
+      { icon: "home", label: tm("home"), href: "/dashboard" },
+      { icon: "students", label: tm("students"), href: "/dashboard/list/students" },
+      { icon: "classes", label: tm("classes"), href: "/dashboard/list/classes" },
+      { icon: "inbox", label: tm("messages"), href: "/dashboard/list/messages" },
+    ],
+    teacher: [
+      { icon: "home", label: tm("home"), href: "/dashboard" },
+      { icon: "myClass", label: tm("myClass"), href: "/dashboard/list/my-class" },
+      { icon: "lessons", label: tm("lessons"), href: "/dashboard/list/lessons" },
+      { icon: "inbox", label: tm("messages"), href: "/dashboard/list/messages" },
+    ],
+    student: [
+      { icon: "home", label: tm("home"), href: "/dashboard" },
+      { icon: "assignments", label: tm("assignments"), href: "/dashboard/list/assignments" },
+      { icon: "results", label: tm("results"), href: "/dashboard/list/results" },
+      { icon: "inbox", label: tm("messages"), href: "/dashboard/list/messages" },
+    ],
+    parent: [
+      { icon: "home", label: tm("home"), href: "/dashboard" },
+      { icon: "results", label: tm("results"), href: "/dashboard/list/results" },
+      { icon: "events", label: tm("events"), href: "/dashboard/list/events" },
+      { icon: "inbox", label: tm("messages"), href: "/dashboard/list/messages" },
+    ],
+  };
+  const tabs = tabsByRole[role ?? ""];
 
   return (
     <MobileSidebarProvider>
@@ -47,8 +79,11 @@ export default async function DashboardLayout({
         <div className="w-full md:w-[92%] lg:w-[84%] xl:w-[86%] overflow-scroll flex flex-col">
           <Navbar />
           {children}
+          {/* keeps the last card clear of the phone tab bar */}
+          {tabs && <div aria-hidden="true" className="h-24 shrink-0 md:hidden" />}
         </div>
       </div>
+      {tabs && <MobileTabBar tabs={[...tabs, { icon: "more", label: tm("more") }]} menuLabel={tm("menuTitle")} />}
       {canSearch && <CommandPalette />}
     </MobileSidebarProvider>
   );

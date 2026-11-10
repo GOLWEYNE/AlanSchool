@@ -13,11 +13,13 @@ import ReportCardBehaviorTimeline from "@/components/reportCard/ReportCardBehavi
 import ProtectedRoute from "@/components/ProtectedRoute";
 import prisma from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
-import Link from "next/link";
 import { getTranslations } from "next-intl/server";
+import { CalendarDays, FileText, Trophy, Users, UserRound, ClipboardCheck } from "lucide-react";
+import { HomeHero, HomeSection, HomeShortcuts, HomeStats, Rise } from "@/components/dashboard/HomeBlocks";
 
 const Parentpage = async () => {
   const t = await getTranslations("Dashboards.parent");
+  const tr = await getTranslations("Roles");
   const { userId } = auth();
 
   const children = await prisma.student.findMany({
@@ -117,92 +119,92 @@ const Parentpage = async () => {
 
   return (
     <ProtectedRoute allowedRoles={["parent"]}>
-    <div className="flex-1 p-4 flex flex-col gap-4">
-      <div className="rounded-2xl p-5 shine-hover text-white shadow-xl bg-gradient-to-r from-teal-500 via-blue-500 to-yellow-400">
-        <h1 className="text-3xl font-bold">{t("title")}</h1>
-        <p className="text-cyan-50 mt-2 text-sm">{t("subtitle")}</p>
-        <div className="mt-3 flex flex-wrap gap-2">
-          <span className="rounded-full bg-white/90 text-blue-900 px-3 py-1 text-xs font-semibold">{t("children")}: {children.length}</span>
-          <span className="rounded-full bg-white/90 text-blue-900 px-3 py-1 text-xs font-semibold">{t("upcomingExams")}: {upcomingExamsCount}</span>
-          <span className="rounded-full bg-white/90 text-blue-900 px-3 py-1 text-xs font-semibold">{t("results")}: {resultsCount}</span>
-          <span className="rounded-full bg-white/90 text-blue-900 px-3 py-1 text-xs font-semibold">{t("events")}: {eventsCount}</span>
-        </div>
-      </div>
+      <div className="flex-1 p-4 flex flex-col gap-4">
+        <HomeHero eyebrow={tr("parent")} title={t("title")} subtitle={t("subtitle")} />
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <Link href="/dashboard/list/events" className="panel-card p-3 text-blue-900 font-semibold text-sm text-center shine-hover">{t("events")}</Link>
-        <Link href="/dashboard/list/exams" className="panel-card p-3 text-blue-900 font-semibold text-sm text-center shine-hover">{t("exams")}</Link>
-        <Link href="/dashboard/list/results" className="panel-card p-3 text-blue-900 font-semibold text-sm text-center shine-hover">{t("results")}</Link>
-        <Link href="/dashboard/list/parents" className="panel-card p-3 text-blue-900 font-semibold text-sm text-center shine-hover">{t("parentProfile")}</Link>
-      </div>
+        <HomeStats
+          stats={[
+            { label: t("children"), value: children.length, Icon: Users },
+            { label: t("upcomingExams"), value: upcomingExamsCount, Icon: FileText, tone: "gold" },
+            { label: t("results"), value: resultsCount, Icon: Trophy },
+            { label: t("events"), value: eventsCount, Icon: CalendarDays, tone: "gold" },
+          ]}
+        />
 
-      {/* SCHEDULE - full page width so the whole week is easy to read at a glance */}
-      <div className="w-full panel-card p-4 rounded-md min-h-[640px] flex flex-col">
-        <h1 className="text-xl font-semibold text-blue-900 dark:text-blue-100">{t("todaysSchedule")}</h1>
-        <div className="flex-1 mt-2">
-          <BigCalendarContainer
-            type="parentId"
-            id={userId!}
-            todayOnly
-            defaultView="day"
-          />
-        </div>
-      </div>
+        <HomeShortcuts
+          items={[
+            { href: "/dashboard/list/events", label: t("events"), Icon: CalendarDays },
+            { href: "/dashboard/list/exams", label: t("exams"), Icon: FileText, tone: "gold" },
+            { href: "/dashboard/list/results", label: t("results"), Icon: Trophy },
+            { href: "/dashboard/list/parents", label: t("parentProfile"), Icon: UserRound, tone: "gold" },
+          ]}
+        />
 
-      <div className="flex gap-4 flex-col xl:flex-row">
-        {/* LEFT */}
-        <div className="w-full xl:w-2/3 flex flex-col gap-4">
-          {/* LIVE CLASS + SHARED RECORDINGS FROM THE CHILDREN'S TEACHERS */}
-          <ParentClassVideos />
-          {/* FEATURED VIDEO BROADCAST */}
-          <FeaturedVideoPlayer />
-        </div>
-
-        {/* RIGHT */}
-        <div className="w-full xl:w-1/3 flex flex-col gap-8">
-          <BirthdayAnnouncements />
-          <TodaysTimetableStrip role="parent" classIds={childClassIds} />
-          <WeekAtAGlance role="parent" classIds={childClassIds} />
-          <AttendancePulse role="parent" studentIds={studentIds} />
-          <ClassLeaderboard role="parent" studentIds={studentIds} />
-          <div className="panel-card p-4 rounded-md">
-            <h1 className="text-xl font-semibold text-blue-900">{t("childrenAttendance")}</h1>
-            <div className="mt-4 grid gap-4">
-              {childAttendanceSummaries.map((summary) => (
-                <ParentChildAttendanceCard
-                  key={summary.id}
-                  studentName={summary.studentName}
-                  className={summary.className}
-                  todayPresent={summary.todayPresent}
-                  todayTotal={summary.todayTotal}
-                  overallPercent={summary.overallPercent}
-                />
-              ))}
-              {childAttendanceSummaries.length === 0 && (
-                <p className="text-sm text-gray-500">
-                  {t("noChildren")}
-                </p>
-              )}
-            </div>
+        {/* SCHEDULE - full page width so the whole day is easy to read at a glance */}
+        <HomeSection
+          title={t("todaysSchedule")}
+          Icon={CalendarDays}
+          i={10}
+          className="min-h-[640px] flex flex-col"
+        >
+          <div className="flex-1 min-h-[420px]">
+            <BigCalendarContainer type="parentId" id={userId!} todayOnly defaultView="day" />
           </div>
-          {children.map((child) => {
-            const childBehaviorLogs = behaviorLogs.filter((log) => log.studentId === child.id);
-            return (
-              <div key={child.id} className="flex flex-col gap-4">
-                <ReportCardsPanel studentId={child.id} studentName={`${child.name} ${child.surname}`} />
-                {children.length > 1 && (
-                  <h2 className="text-sm font-semibold text-gray-500 dark:text-slate-400 -mb-2">
-                    {t("behaviorConduct", { name: `${child.name} ${child.surname}` })}
-                  </h2>
+        </HomeSection>
+
+        <div className="flex gap-4 flex-col xl:flex-row">
+          {/* LEFT */}
+          <div className="w-full xl:w-2/3 flex flex-col gap-4">
+            {/* LIVE CLASS + SHARED RECORDINGS FROM THE CHILDREN'S TEACHERS */}
+            <Rise i={11}><ParentClassVideos /></Rise>
+            {/* FEATURED VIDEO BROADCAST */}
+            <Rise i={12}><FeaturedVideoPlayer /></Rise>
+          </div>
+
+          {/* RIGHT */}
+          <div className="w-full xl:w-1/3 flex flex-col gap-4">
+            <Rise i={13}><BirthdayAnnouncements /></Rise>
+            <Rise i={14}><TodaysTimetableStrip role="parent" classIds={childClassIds} /></Rise>
+            <Rise i={15}><WeekAtAGlance role="parent" classIds={childClassIds} /></Rise>
+            <Rise i={16}><AttendancePulse role="parent" studentIds={studentIds} /></Rise>
+            <Rise i={17}><ClassLeaderboard role="parent" studentIds={studentIds} /></Rise>
+            <HomeSection title={t("childrenAttendance")} Icon={ClipboardCheck} i={18}>
+              <div className="grid gap-4">
+                {childAttendanceSummaries.map((summary) => (
+                  <ParentChildAttendanceCard
+                    key={summary.id}
+                    studentName={summary.studentName}
+                    className={summary.className}
+                    todayPresent={summary.todayPresent}
+                    todayTotal={summary.todayTotal}
+                    overallPercent={summary.overallPercent}
+                  />
+                ))}
+                {childAttendanceSummaries.length === 0 && (
+                  <p className="text-sm text-blue-800/70 dark:text-blue-200/70">{t("noChildren")}</p>
                 )}
-                <ReportCardBehaviorTimeline logs={childBehaviorLogs} />
               </div>
-            );
-          })}
-          <Announcements />
+            </HomeSection>
+            {children.map((child) => {
+              const childBehaviorLogs = behaviorLogs.filter((log) => log.studentId === child.id);
+              return (
+                <div key={child.id} className="flex flex-col gap-4">
+                  <Rise i={19}>
+                    <ReportCardsPanel studentId={child.id} studentName={`${child.name} ${child.surname}`} />
+                  </Rise>
+                  {children.length > 1 && (
+                    <h2 className="text-sm font-semibold text-blue-800/70 dark:text-blue-200/70 -mb-2">
+                      {t("behaviorConduct", { name: `${child.name} ${child.surname}` })}
+                    </h2>
+                  )}
+                  <Rise i={20}><ReportCardBehaviorTimeline logs={childBehaviorLogs} /></Rise>
+                </div>
+              );
+            })}
+            <Rise i={21}><Announcements /></Rise>
+          </div>
         </div>
       </div>
-    </div>
     </ProtectedRoute>
   );
 };

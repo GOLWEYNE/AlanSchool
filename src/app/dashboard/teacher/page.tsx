@@ -11,11 +11,13 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 import ScheduleDownloadLink from "@/components/ScheduleDownloadLink";
 import prisma from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
-import Link from "next/link";
 import { getTranslations } from "next-intl/server";
+import { BookOpen, ClipboardList, FileText, MessageSquare, Trophy, CalendarDays } from "lucide-react";
+import { HomeHero, HomeSection, HomeShortcuts, HomeStats, Rise } from "@/components/dashboard/HomeBlocks";
 
 const TeacherPage = async () => {
   const t = await getTranslations("Dashboards.teacher");
+  const tr = await getTranslations("Roles");
   const { userId } = auth();
 
   const [lessonsCount, assignmentsCount, examsCount, resultsCount] =
@@ -35,61 +37,65 @@ const TeacherPage = async () => {
 
   return (
     <ProtectedRoute allowedRoles={["teacher"]}>
-    <div className="flex-1 p-4 flex flex-col gap-4">
-      <div className="rounded-2xl p-5 shine-hover text-white shadow-xl bg-gradient-to-r from-blue-700 via-cyan-600 to-blue-400">
-        <h1 className="text-3xl font-bold">{t("title")}</h1>
-        <p className="text-cyan-50 mt-2 text-sm">{t("subtitle")}</p>
-        <div className="mt-3 flex flex-wrap gap-2">
-          <span className="rounded-full bg-white/90 text-blue-900 px-3 py-1 text-xs font-semibold">{t("lessons")}: {lessonsCount}</span>
-          <span className="rounded-full bg-white/90 text-blue-900 px-3 py-1 text-xs font-semibold">{t("assignments")}: {assignmentsCount}</span>
-          <span className="rounded-full bg-white/90 text-blue-900 px-3 py-1 text-xs font-semibold">{t("exams")}: {examsCount}</span>
-          <span className="rounded-full bg-white/90 text-blue-900 px-3 py-1 text-xs font-semibold">{t("results")}: {resultsCount}</span>
-        </div>
-      </div>
+      <div className="flex-1 p-4 flex flex-col gap-4">
+        <HomeHero eyebrow={tr("teacher")} title={t("title")} subtitle={t("subtitle")} />
 
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-        <Link href="/dashboard/list/lessons" className="panel-card p-3 text-blue-900 font-semibold text-sm text-center shine-hover">{t("myLessons")}</Link>
-        <Link href="/dashboard/list/assignments" className="panel-card p-3 text-blue-900 font-semibold text-sm text-center shine-hover">{t("assignments")}</Link>
-        <Link href="/dashboard/list/exams" className="panel-card p-3 text-blue-900 font-semibold text-sm text-center shine-hover">{t("exams")}</Link>
-        <Link href="/dashboard/list/results" className="panel-card p-3 text-blue-900 font-semibold text-sm text-center shine-hover">{t("results")}</Link>
-        <Link href="/dashboard/list/messages" className="panel-card p-3 text-blue-900 font-semibold text-sm text-center shine-hover">{t("messages")}</Link>
-      </div>
+        <HomeStats
+          stats={[
+            { label: t("lessons"), value: lessonsCount, Icon: BookOpen },
+            { label: t("assignments"), value: assignmentsCount, Icon: ClipboardList, tone: "gold" },
+            { label: t("exams"), value: examsCount, Icon: FileText },
+            { label: t("results"), value: resultsCount, Icon: Trophy, tone: "gold" },
+          ]}
+        />
 
-      {/* SCHEDULE - full page width so the whole week is easy to read at a glance.
-          The camera preview lives here, next to the lessons it's actually for,
-          rather than as a generic sidebar widget unrelated to going live. */}
-      <div className="w-full panel-card p-4 rounded-md min-h-[640px] flex flex-col">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <h1 className="text-xl font-semibold text-blue-900 dark:text-blue-100">{t("schedule")}</h1>
-          <ScheduleDownloadLink />
-        </div>
-        <div className="flex-1 mt-2 flex flex-col lg:flex-row gap-4">
-          <div className="w-full lg:w-2/3 flex-1 min-h-[420px] lg:min-h-0">
-            <BigCalendarContainer type="teacherId" id={userId!} />
+        <HomeShortcuts
+          items={[
+            { href: "/dashboard/list/lessons", label: t("myLessons"), Icon: BookOpen },
+            { href: "/dashboard/list/assignments", label: t("assignments"), Icon: ClipboardList, tone: "gold" },
+            { href: "/dashboard/list/exams", label: t("exams"), Icon: FileText },
+            { href: "/dashboard/list/results", label: t("results"), Icon: Trophy, tone: "gold" },
+            { href: "/dashboard/list/messages", label: t("messages"), Icon: MessageSquare },
+          ]}
+        />
+
+        {/* SCHEDULE - full page width so the whole week is easy to read at a glance.
+            The camera preview lives here, next to the lessons it's actually for. */}
+        <HomeSection
+          title={t("schedule")}
+          Icon={CalendarDays}
+          i={10}
+          className="min-h-[640px] flex flex-col"
+          action={<ScheduleDownloadLink />}
+        >
+          <div className="flex-1 flex flex-col lg:flex-row gap-4">
+            <div className="w-full lg:w-2/3 flex-1 min-h-[420px] lg:min-h-0">
+              <BigCalendarContainer type="teacherId" id={userId!} />
+            </div>
+            <div className="w-full lg:w-1/3">
+              <TeacherWebcamPreview />
+            </div>
           </div>
-          <div className="w-full lg:w-1/3">
-            <TeacherWebcamPreview />
+        </HomeSection>
+
+        <div className="flex gap-4 flex-col xl:flex-row">
+          {/* LEFT */}
+          <div className="w-full xl:w-2/3">
+            <Rise i={11}>
+              <FeaturedVideoPlayer />
+            </Rise>
+          </div>
+          {/* RIGHT */}
+          <div className="w-full xl:w-1/3 flex flex-col gap-4">
+            <Rise i={12}><BirthdayAnnouncements /></Rise>
+            <Rise i={13}><TodaysTimetableStrip role="teacher" teacherId={userId!} /></Rise>
+            <Rise i={14}><WeekAtAGlance role="teacher" teacherId={userId!} /></Rise>
+            <Rise i={15}><AttendancePulse role="teacher" teacherId={userId!} /></Rise>
+            <Rise i={16}><ClassLeaderboard role="teacher" teacherId={userId!} /></Rise>
+            <Rise i={17}><Announcements /></Rise>
           </div>
         </div>
       </div>
-
-      <div className="flex gap-4 flex-col xl:flex-row">
-        {/* LEFT */}
-        <div className="w-full xl:w-2/3">
-          {/* FEATURED VIDEO BROADCAST */}
-          <FeaturedVideoPlayer />
-        </div>
-        {/* RIGHT */}
-        <div className="w-full xl:w-1/3 flex flex-col gap-8">
-          <BirthdayAnnouncements />
-          <TodaysTimetableStrip role="teacher" teacherId={userId!} />
-          <WeekAtAGlance role="teacher" teacherId={userId!} />
-          <AttendancePulse role="teacher" teacherId={userId!} />
-          <ClassLeaderboard role="teacher" teacherId={userId!} />
-          <Announcements />
-        </div>
-      </div>
-    </div>
     </ProtectedRoute>
   );
 };
