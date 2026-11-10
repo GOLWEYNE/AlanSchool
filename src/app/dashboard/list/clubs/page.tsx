@@ -3,6 +3,7 @@ import Link from "next/link";
 import FormContainer from "@/components/FormContainer";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
+import PersonCard from "@/components/PersonCard";
 import TableSearch from "@/components/TableSearch";
 import PageHero from "@/components/PageHero";
 import ClubEnrollControls, { ClubEnrollStudent } from "@/components/ClubEnrollControls";
@@ -144,6 +145,76 @@ const ClubListPage = async ({
     );
   };
 
+  // Phones: one card per club - enrolment count as the badge, big action buttons below.
+  const renderCard = (item: ClubList, waitlistPositions: Map<string, number>) => {
+    const full = item._count.enrollments >= item.capacity;
+    const students: ClubEnrollStudent[] = relevantStudents.map((s) => {
+      const enrollment = item.enrollments.find((e) => e.studentId === s.id) ?? null;
+      return {
+        id: s.id,
+        label: s.label,
+        enrollment:
+          enrollment && enrollment.status !== "WITHDRAWN"
+            ? { id: enrollment.id, status: enrollment.status as "ACTIVE" | "WAITLISTED" }
+            : null,
+        waitlistPosition: enrollment ? waitlistPositions.get(`${item.id}:${s.id}`) : undefined,
+      };
+    });
+    const pill = "flex min-h-11 items-center rounded-full px-4 text-sm font-semibold text-white whitespace-nowrap";
+    return (
+      <div key={item.id}>
+        <PersonCard
+          badge={`${item._count.enrollments}/${item.capacity}`}
+          title={item.name}
+          subtitle={t.has(`categories.${item.category}`) ? t(`categories.${item.category}`) : item.category}
+          fields={[
+            {
+              label: t("columns.supervisors"),
+              value:
+                item.supervisors.length > 0
+                  ? item.supervisors.map((s) => `${s.name} ${s.surname}`).join(", ")
+                  : t("unassigned"),
+            },
+          ]}
+          actions={
+            canSupervise(item.id) || role === "admin" ? (
+              <>
+                {canSupervise(item.id) && (
+                  <>
+                    <Link href={`/dashboard/list/clubs/register?clubId=${item.id}`} className={`${pill} bg-blue-500`}>
+                      {t("registerStudents")}
+                    </Link>
+                    <Link href={`/dashboard/list/clubs/attendance?clubId=${item.id}`} className={`${pill} bg-emerald-500`}>
+                      {t("takeAttendance")}
+                    </Link>
+                    <Link href={`/dashboard/list/clubs/uniform?clubId=${item.id}`} className={`${pill} bg-amber-500`}>
+                      {t("checkUniform")}
+                    </Link>
+                  </>
+                )}
+                {role === "admin" && (
+                  <>
+                    <FormContainer
+                      table="club"
+                      type="update"
+                      data={{ ...item, supervisorIds: item.supervisors.map((s) => s.id) }}
+                    />
+                    <FormContainer table="club" type="delete" id={item.id} />
+                  </>
+                )}
+              </>
+            ) : undefined
+          }
+        />
+        {showEnrollColumn && (
+          <div className="-mt-2 mb-3 rounded-b-2xl bg-white/70 px-4 py-2 dark:bg-slate-900/60">
+            <ClubEnrollControls clubId={item.id} full={full} students={students} />
+          </div>
+        )}
+      </div>
+    );
+  };
+
   const { page, pageSize, ...queryParams } = searchParams;
   const p = page ? parseInt(page) : 1;
   const size = resolvePageSize(pageSize);
@@ -223,7 +294,7 @@ const ClubListPage = async ({
         <h1 className="hidden md:block text-lg font-semibold text-blue-900">{t("heading")}</h1>
         <div className="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
           <TableSearch />
-          <div className="flex items-center gap-4 self-end">
+          <div className="flex items-center gap-4 self-end max-md:grid max-md:w-full max-md:grid-cols-2 max-md:gap-2 max-md:[&_a]:flex max-md:[&_a]:min-h-12 max-md:[&_a]:items-center max-md:[&_a]:justify-center max-md:[&_a]:rounded-2xl max-md:[&_a]:text-center">
             {(role === "admin" || role === "teacher") && (
               <>
                 <Link
@@ -259,6 +330,7 @@ const ClubListPage = async ({
       <Table
         columns={columns}
         renderRow={(item: ClubList) => renderRow(item, waitlistPositions)}
+        renderCard={(item: ClubList) => renderCard(item, waitlistPositions)}
         data={data}
       />
       <Pagination page={p} count={count} pageSize={size} />
