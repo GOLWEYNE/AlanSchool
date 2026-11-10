@@ -90,6 +90,7 @@ const SubjectListPage = async ({
       include: {
         teachers: true,
       },
+      orderBy: { name: "asc" },
       take: size,
       skip: size * (p - 1),
     }),
