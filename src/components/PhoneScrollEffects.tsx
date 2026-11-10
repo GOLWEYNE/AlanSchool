@@ -118,7 +118,8 @@ export default function PhoneScrollEffects() {
         setShowTitle(false);
         return;
       }
-      setTitle(heading.textContent?.trim() ?? "");
+      // Drop the decorative emoji at the start (iOS titles are plain text).
+      setTitle((heading.textContent ?? "").replace(/^[^A-Za-z0-9\u0400-\u04FF]+/, "").trim());
       setShowTitle(heading.getBoundingClientRect().bottom < 40);
     };
 
