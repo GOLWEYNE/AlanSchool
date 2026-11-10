@@ -1,6 +1,5 @@
 import Announcements from "@/components/Announcements";
 import BigCalendarContainer from "@/components/BigCalendarContainer";
-import FormContainer from "@/components/FormContainer";
 import Performance from "@/components/Performance";
 import StudentAttendanceCard from "@/components/StudentAttendanceCard";
 import StudentStudyPlanner from "@/components/StudentStudyPlanner";
@@ -27,6 +26,7 @@ import {
   Mail,
   MessageSquare,
   NotebookPen,
+  Pencil,
   Phone,
   School,
   Trophy,
@@ -146,7 +146,13 @@ const SingleStudentPage = async ({
                       {student.name + " " + student.surname}
                     </h1>
                     {role === "admin" && (
-                      <FormContainer table="student" type="update" data={student} />
+                      <Link
+                        href={`/dashboard/edit/student/${student.id}`}
+                        className="glass-btn inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 text-sm font-semibold text-white"
+                      >
+                        <Pencil className="h-3.5 w-3.5" aria-hidden="true" />
+                        {t("edit")}
+                      </Link>
                     )}
                   </div>
                   <span className="glass-chip glass-chip--gold">

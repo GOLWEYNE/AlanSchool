@@ -835,6 +835,7 @@
     "student": {
       "createTitle": "Create a new student",
       "updateTitle": "Update the student",
+      "editTitle": "Edit Student",
       "parentId": "Parent Id",
       "toastCreated": "Student has been created!",
       "toastUpdated": "Student has been updated!"

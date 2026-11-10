@@ -835,6 +835,7 @@
     "student": {
       "createTitle": "Жаңа оқушы құру",
       "updateTitle": "Оқушыны жаңарту",
+      "editTitle": "Оқушыны өңдеу",
       "parentId": "Ата-ана Id",
       "toastCreated": "Оқушы құрылды!",
       "toastUpdated": "Оқушы жаңартылды!"
