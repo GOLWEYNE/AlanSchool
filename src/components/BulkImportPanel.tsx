@@ -209,13 +209,17 @@ const BulkImportPanel = () => {
 
   return (
     <div className="flex flex-col gap-5">
-      <div className="flex flex-wrap gap-2">
+      <div
+        role="tablist"
+        className="flex flex-wrap gap-2 max-md:-mx-4 max-md:flex-nowrap max-md:overflow-x-auto max-md:px-4 max-md:pb-1"
+        style={{ scrollbarWidth: "none" }}
+      >
         {ROLES.map((r) => (
           <button
             key={r}
             type="button"
             onClick={() => resetForRole(r)}
-            className={`rounded-full px-4 py-1.5 text-sm font-semibold transition ${
+            className={`rounded-full px-4 py-1.5 text-sm font-semibold transition max-md:flex max-md:min-h-11 max-md:shrink-0 max-md:items-center ${
               role === r
                 ? "bg-blue-600 text-white"
                 : "bg-blue-50 text-blue-700 hover:bg-blue-100 dark:bg-slate-800 dark:text-blue-200"
@@ -229,15 +233,15 @@ const BulkImportPanel = () => {
       <div className="rounded-xl border border-blue-100 dark:border-slate-800 bg-blue-50/40 dark:bg-slate-900/40 p-4 flex flex-col gap-3">
         <p className="text-sm text-gray-700 dark:text-slate-300">{t("intro", { role: t(`roles.${role}`) })}</p>
         <p className="text-xs text-gray-500 dark:text-slate-400">{t(`help.${role}`)}</p>
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3 max-md:flex-col max-md:items-stretch">
           <button
             type="button"
             onClick={downloadTemplate}
-            className="rounded-lg border border-blue-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-2 text-sm font-semibold text-blue-700 dark:text-blue-300 hover:bg-blue-50 dark:hover:bg-slate-800"
+            className="max-md:flex max-md:min-h-12 max-md:items-center max-md:justify-center max-md:rounded-2xl max-md:text-base rounded-lg border border-blue-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-2 text-sm font-semibold text-blue-700 dark:text-blue-300 hover:bg-blue-50 dark:hover:bg-slate-800"
           >
             {t("downloadTemplate")}
           </button>
-          <label className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 cursor-pointer">
+          <label className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 cursor-pointer max-md:flex max-md:min-h-12 max-md:items-center max-md:justify-center max-md:rounded-2xl max-md:text-base">
             {t("chooseFile")}
             <input
               ref={fileInputRef}
@@ -326,7 +330,7 @@ const BulkImportPanel = () => {
                 type="button"
                 onClick={runImport}
                 disabled={committing}
-                className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700 disabled:opacity-50"
+                className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700 disabled:opacity-50 max-md:min-h-12 max-md:w-full max-md:rounded-2xl max-md:text-base"
               >
                 {committing ? t("importing", progress) : t("importButton", { count: commits.length })}
               </button>
@@ -381,7 +385,7 @@ const BulkImportPanel = () => {
             <button
               type="button"
               onClick={downloadCredentials}
-              className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700"
+              className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 max-md:min-h-12 max-md:w-full max-md:rounded-2xl max-md:text-base"
             >
               {t("downloadCredentials")}
             </button>
