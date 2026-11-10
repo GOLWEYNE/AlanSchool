@@ -118,7 +118,7 @@ export default function UniformChecker({
           <button
             type="button"
             onClick={markAllFull}
-            className="ml-auto rounded-lg border border-emerald-300 px-3 py-1.5 font-medium text-emerald-700 hover:bg-emerald-50 dark:border-emerald-700 dark:text-emerald-300 dark:hover:bg-emerald-900/30"
+            className="ml-auto max-md:flex max-md:min-h-11 max-md:items-center rounded-lg border border-emerald-300 px-3 py-1.5 font-medium text-emerald-700 hover:bg-emerald-50 dark:border-emerald-700 dark:text-emerald-300 dark:hover:bg-emerald-900/30"
           >
             {labels.everyoneFull}
           </button>
@@ -133,14 +133,14 @@ export default function UniformChecker({
               <span className="min-w-[10rem] flex-1 font-medium text-gray-800 dark:text-slate-100">
                 {r.name} {r.surname}
               </span>
-              <div className="flex gap-1.5">
+              <div className="flex gap-1.5 max-md:grid max-md:w-full max-md:grid-cols-3">
                 {(["FULL", "PARTIAL", "NONE"] as UniformStatusKey[]).map((s) => (
                   <button
                     key={s}
                     type="button"
                     disabled={!canEdit}
                     onClick={() => setStatus(r.id, s)}
-                    className={"rounded-lg border px-3 py-1.5 text-xs font-semibold transition disabled:cursor-not-allowed " + (r.status === s ? STATUS_STYLE[s].on : OFF)}
+                    className={"rounded-lg border px-3 py-1.5 text-xs font-semibold transition disabled:cursor-not-allowed max-md:flex max-md:min-h-11 max-md:items-center max-md:justify-center max-md:text-sm " + (r.status === s ? STATUS_STYLE[s].on : OFF)}
                   >
                     {STATUS_STYLE[s].icon} {labels.status[s]}
                   </button>
@@ -148,7 +148,7 @@ export default function UniformChecker({
               </div>
             </div>
             {r.status !== "FULL" && (
-              <div className="ml-9 flex flex-col gap-2">
+              <div className="ml-9 flex flex-col gap-2 max-md:ml-0">
                 <div className="flex flex-wrap gap-1.5">
                   {labels.items.map((it) => (
                     <button
@@ -156,7 +156,7 @@ export default function UniformChecker({
                       type="button"
                       disabled={!canEdit}
                       onClick={() => toggleItem(r.id, it.key)}
-                      className={"rounded-full border px-2.5 py-1 text-xs transition disabled:cursor-not-allowed " + (r.missingItems.includes(it.key) ? "border-rose-400 bg-rose-50 text-rose-700 dark:bg-rose-900/30 dark:text-rose-300" : OFF)}
+                      className={"rounded-full border px-2.5 py-1 text-xs transition disabled:cursor-not-allowed max-md:min-h-10 max-md:px-3.5 max-md:text-sm " + (r.missingItems.includes(it.key) ? "border-rose-400 bg-rose-50 text-rose-700 dark:bg-rose-900/30 dark:text-rose-300" : OFF)}
                     >
                       {r.missingItems.includes(it.key) ? labels.missingPrefix : ""}
                       {it.label}
@@ -170,7 +170,7 @@ export default function UniformChecker({
                   value={r.note}
                   onChange={(e) => update(r.id, { note: e.target.value })}
                   placeholder={labels.notePlaceholder}
-                  className="w-full rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
+                  className="w-full rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 max-md:min-h-11 max-md:text-base"
                 />
               </div>
             )}
@@ -179,12 +179,12 @@ export default function UniformChecker({
       </ul>
 
       {canEdit && (
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 max-md:flex-col max-md:items-stretch">
           <button
             type="button"
             onClick={save}
             disabled={pending}
-            className="rounded-lg bg-blue-600 px-5 py-2 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-60"
+            className="rounded-lg bg-blue-600 px-5 py-2 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-60 max-md:min-h-12 max-md:rounded-2xl max-md:text-base"
           >
             {pending ? labels.saving : labels.save}
           </button>
