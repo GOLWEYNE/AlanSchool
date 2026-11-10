@@ -1,3 +1,4 @@
+import { PEOPLE_ORDER } from "@/lib/sort";
 import Link from "next/link";
 import FormContainer from "@/components/FormContainer";
 import Pagination from "@/components/Pagination";
@@ -41,6 +42,7 @@ const ClubListPage = async ({
     const children = await prisma.student.findMany({
       where: { parentId: userId },
       select: { id: true, name: true, surname: true },
+      orderBy: PEOPLE_ORDER,
     });
     relevantStudents = children.map((c) => ({ id: c.id, label: `${c.name} ${c.surname}` }));
   }

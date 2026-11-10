@@ -29,6 +29,7 @@ const TeacherEditPage = async ({
 
   const subjectOptions = await prisma.subject.findMany({
     select: { id: true, name: true },
+    orderBy: { name: "asc" },
   });
 
   const teacherData = {

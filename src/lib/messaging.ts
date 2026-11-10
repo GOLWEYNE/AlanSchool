@@ -1,3 +1,4 @@
+import { compareText } from "@/lib/sort";
 import prisma from "@/lib/prisma";
 import { getTranslations } from "next-intl/server";
 
@@ -266,7 +267,7 @@ export const getRelevantStudents = async (
 // students they actually teach, students only see their own teachers -
 // admin can reach any teacher or parent directly. Everyone can reach the
 // front office (Admin).
-export const getMessageableContacts = async (
+const buildMessageableContacts = async (
   role: string,
   userId: string
 ): Promise<{ teachers: Contact[]; parents: Contact[]; admins: Contact[] }> => {
@@ -360,4 +361,18 @@ export const getMessageableContacts = async (
   }
 
   return { teachers: [], parents: [], admins };
+};
+
+// Same lists as above, every group in alphabetical order by name.
+export const getMessageableContacts = async (
+  role: string,
+  userId: string
+): Promise<{ teachers: Contact[]; parents: Contact[]; admins: Contact[] }> => {
+  const contacts = await buildMessageableContacts(role, userId);
+  const byLabel = (list: Contact[]) => [...list].sort((a, b) => compareText(a.label, b.label));
+  return {
+    teachers: byLabel(contacts.teachers),
+    parents: byLabel(contacts.parents),
+    admins: byLabel(contacts.admins),
+  };
 };

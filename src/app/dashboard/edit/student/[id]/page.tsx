@@ -4,6 +4,7 @@ import prisma from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 import { notFound, redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
+import { sortRelatedData } from "@/lib/sort";
 
 // Dedicated student edit page (same pattern as /dashboard/edit/teacher/[id]).
 // Admin only: the route is also guarded in routeAccessMap, this check is a
@@ -40,7 +41,7 @@ const StudentEditPage = async ({
         <StudentEditForm
           studentId={student.id}
           data={student}
-          relatedData={{ grades, classes }}
+          relatedData={sortRelatedData({ grades, classes })}
         />
       </div>
     </div>

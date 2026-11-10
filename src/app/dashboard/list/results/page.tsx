@@ -167,6 +167,7 @@ const renderRow = (item: ResultList) => (
   const [dataRes, count] = await prisma.$transaction([
     prisma.result.findMany({
       where: query,
+      orderBy: [{ student: { name: "asc" } }, { student: { surname: "asc" } }],
       include: {
         student: { select: { name: true, surname: true } },
         exam: {

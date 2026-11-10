@@ -1,3 +1,4 @@
+import { PEOPLE_ORDER } from "@/lib/sort";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import prisma from "@/lib/prisma";
@@ -45,6 +46,7 @@ async function ParentView({ userId, t }: { userId: string; t: TFn }) {
   const children = await prisma.student.findMany({
     where: { parentId: userId },
     select: { id: true, name: true, surname: true, class: { select: { name: true } } },
+    orderBy: PEOPLE_ORDER,
   });
   const checks = await prisma.uniformCheck.findMany({
     where: { studentId: { in: children.map((c) => c.id) }, date: { gte: toDbDate(since) } },

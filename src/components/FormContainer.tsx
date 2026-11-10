@@ -1,3 +1,4 @@
+import { sortRelatedData } from "@/lib/sort";
 import prisma from "@/lib/prisma";
 import FormModal from "./FormModal";
 import { auth, currentUser } from "@clerk/nextjs/server";
@@ -296,7 +297,7 @@ const FormContainer = async ({ table, type, data, id }: FormContainerProps) => {
         type={type}
         data={data}
         id={id}
-        relatedData={relatedData}
+        relatedData={sortRelatedData(relatedData)}
       />
     </div>
   );

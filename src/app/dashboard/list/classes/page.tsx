@@ -128,6 +128,9 @@ const renderRow = (item: ClassList) => (
       include: {
         supervisor: true,
       },
+      // Grade number first (1, 2 ... 10, 11), then the class letter, so
+      // 10A comes after 2B instead of right after 1A.
+      orderBy: [{ grade: { level: "asc" } }, { name: "asc" }],
       take: size,
       skip: size * (p - 1),
     }),

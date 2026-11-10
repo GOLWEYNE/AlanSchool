@@ -1,3 +1,4 @@
+import { PEOPLE_ORDER } from "@/lib/sort";
 import FormContainer from "@/components/FormContainer";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
@@ -153,6 +154,7 @@ const StudentListPage = async ({
       include: {
         class: true,
       },
+      orderBy: PEOPLE_ORDER,
       take: size,
       skip: size * (p - 1),
     }),

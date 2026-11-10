@@ -1,3 +1,4 @@
+import { PEOPLE_ORDER } from "@/lib/sort";
 import FormContainer from "@/components/FormContainer";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
@@ -128,6 +129,7 @@ const renderRow = (item: ParentList) => (
           ? { where: { classId: { in: teacherClassIds } } }
           : true,
       },
+      orderBy: PEOPLE_ORDER,
       take: size,
       skip: size * (p - 1),
     }),
