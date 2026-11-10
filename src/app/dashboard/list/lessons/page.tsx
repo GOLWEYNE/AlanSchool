@@ -10,7 +10,7 @@ import { auth } from "@clerk/nextjs/server";
 import { getUserRole } from "@/lib/auth";
 import { getTranslations } from "next-intl/server";
 import type { ReactNode } from "react";
-import { PEOPLE_ORDER, sortClasses } from "@/lib/sort";
+import { sortClasses, sortPeople } from "@/lib/sort";
 
 type LessonList = Lesson & {
   subject: Subject;
@@ -109,10 +109,11 @@ const LessonsListPage = async ({
         select: { id: true, name: true },
       })
     );
-    teacherOptions = await prisma.teacher.findMany({
-      select: { id: true, name: true, surname: true },
-      orderBy: PEOPLE_ORDER,
-    });
+    teacherOptions = sortPeople(
+      await prisma.teacher.findMany({
+        select: { id: true, name: true, surname: true },
+      })
+    );
 
     if (!selectedClassId && !selectedTeacherId) {
       selectedClassId = classOptions[0]?.id;
