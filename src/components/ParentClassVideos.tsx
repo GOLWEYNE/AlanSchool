@@ -5,6 +5,7 @@ import { Film, Radio, RefreshCw, Volume2, X } from "lucide-react";
 import { useFormatter, useTranslations } from "next-intl";
 import { formatClock } from "@/lib/mediaRecording";
 import type { Room } from "livekit-client";
+import { useSmartPolling } from "@/lib/useSmartPolling";
 
 type LiveTeacher = { teacherId: string; teacherName: string; title: string };
 type SharedClip = {
@@ -18,7 +19,10 @@ type SharedClip = {
 
 type ViewState = "idle" | "joining" | "waiting" | "watching";
 
-const POLL_MS = 10_000;
+// Live status every 20s while the page is in use; shared clips change rarely,
+// so they refresh on every 6th poll (~2 min).
+const POLL_MS = 20_000;
+const CLIPS_EVERY_N_POLLS = 6;
 
 /**
  * Parent dashboard card: shows which of their children's teachers are live right
@@ -58,51 +62,49 @@ const ParentClassVideos = () => {
     if (room) await room.disconnect().catch(() => undefined);
   }, []);
 
-  // Poll who is live (and refresh the shared clips) while the tab is visible.
-  useEffect(() => {
-    let cancelled = false;
-
-    const poll = async () => {
-      if (typeof document !== "undefined" && document.visibilityState === "hidden") return;
-      try {
-        const [statusRes, clipsRes] = await Promise.all([
-          fetch("/api/live/status", { cache: "no-store" }),
-          fetch("/api/teacher-recordings/shared", { cache: "no-store" }),
-        ]);
-        if (cancelled) return;
-        let liveNow: LiveTeacher[] = [];
-        if (statusRes.ok) {
-          const json = (await statusRes.json()) as { live?: LiveTeacher[] };
-          liveNow = json.live ?? [];
-          setLive(liveNow);
-        }
-        if (clipsRes.ok) {
-          const json = (await clipsRes.json()) as { items?: SharedClip[] };
-          setClips(json.items ?? []);
-        }
-
-        // The class we are watching went off the air (twice in a row, to ride out a blip).
-        const current = watchingRef.current;
-        if (current && statusRes.ok) {
-          if (liveNow.some((l) => l.teacherId === current.teacherId)) {
-            missedPollsRef.current = 0;
-          } else if (++missedPollsRef.current >= 2) {
-            missedPollsRef.current = 0;
-            void leave("ended");
-          }
-        }
-      } catch {
-        // Offline for a moment: keep the last known state and try again.
+  // Poll who is live (and, less often, the shared clips) only while the parent
+  // is actually looking at the page — see useSmartPolling. While a class is
+  // being watched polling continues even without mouse/keyboard input, so a
+  // stream that ends is still noticed.
+  const pollCountRef = useRef(0);
+  const poll = useCallback(async () => {
+    const refreshClips = pollCountRef.current % CLIPS_EVERY_N_POLLS === 0;
+    pollCountRef.current += 1;
+    try {
+      const [statusRes, clipsRes] = await Promise.all([
+        fetch("/api/live/status", { cache: "no-store" }),
+        refreshClips ? fetch("/api/teacher-recordings/shared", { cache: "no-store" }) : Promise.resolve(null),
+      ]);
+      let liveNow: LiveTeacher[] = [];
+      if (statusRes.ok) {
+        const json = (await statusRes.json()) as { live?: LiveTeacher[] };
+        liveNow = json.live ?? [];
+        setLive(liveNow);
       }
-    };
+      if (clipsRes?.ok) {
+        const json = (await clipsRes.json()) as { items?: SharedClip[] };
+        setClips(json.items ?? []);
+      }
 
-    void poll();
-    const id = window.setInterval(() => void poll(), POLL_MS);
-    return () => {
-      cancelled = true;
-      window.clearInterval(id);
-    };
+      // The class we are watching went off the air (twice in a row, to ride out a blip).
+      const current = watchingRef.current;
+      if (current && statusRes.ok) {
+        if (liveNow.some((l) => l.teacherId === current.teacherId)) {
+          missedPollsRef.current = 0;
+        } else if (++missedPollsRef.current >= 2) {
+          missedPollsRef.current = 0;
+          void leave("ended");
+        }
+      }
+    } catch {
+      // Offline for a moment: keep the last known state and try again.
+    }
   }, [leave]);
+
+  useSmartPolling(poll, {
+    intervalMs: POLL_MS,
+    keepAlive: () => watchingRef.current !== null,
+  });
 
   // Leave the room when the parent navigates away.
   useEffect(() => {
