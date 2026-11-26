@@ -1,12 +1,13 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useFormatter, useTranslations } from "next-intl";
 import { markMessageRead } from "@/lib/masterModuleActions";
 import { markDutyNotificationRead } from "@/lib/dutyActions";
 import DropdownPortal from "./DropdownPortal";
+import { useSmartPolling } from "@/lib/useSmartPolling";
 
 type MessageItem = {
   id: number;
@@ -54,9 +55,11 @@ const EMPTY: NotificationsResponse = {
   duty: [],
 };
 
-// No websocket/push infrastructure exists yet, so "live" means polling
-// this often — cheap enough for a school-sized dashboard.
-const POLL_MS = 30000;
+// No websocket/push infrastructure exists yet, so "live" means polling.
+// Polls only while the tab is visible and someone is using it (see
+// useSmartPolling), so idle screens and classroom boards let the database
+// sleep instead of keeping it awake all day.
+const POLL_MS = 60_000;
 const NOOP_STATE = { success: false, error: false };
 
 // Single navbar bell aggregating the three things worth interrupting a
@@ -83,11 +86,7 @@ const NotificationBell = () => {
     }
   }, []);
 
-  useEffect(() => {
-    load();
-    const interval = setInterval(load, POLL_MS);
-    return () => clearInterval(interval);
-  }, [load]);
+  useSmartPolling(load, { intervalMs: POLL_MS });
 
   const total = data.counts.messages + data.counts.tickets + data.counts.slips + data.counts.duty;
 
@@ -124,7 +123,11 @@ const NotificationBell = () => {
       <button
         ref={triggerRef}
         type="button"
-        onClick={() => setOpen((prev) => !prev)}
+        onClick={() => {
+          // Opening the bell always shows fresh data, even between polls.
+          if (!open) void load();
+          setOpen((prev) => !prev);
+        }}
         className="circle-icon-btn cursor-pointer relative"
         aria-label={t("notifications")}
         title={t("notifications")}
